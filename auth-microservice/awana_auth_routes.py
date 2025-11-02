@@ -1443,7 +1443,17 @@ async def reset_password(
             )
         
         # Check if token has expired
-        if reset_doc["expires_at"] < datetime.now(timezone.utc):
+        expires_at = reset_doc["expires_at"]
+        if isinstance(expires_at, str):
+            # If stored as string, parse it
+            from dateutil import parser
+            expires_at = parser.parse(expires_at)
+        
+        # Ensure both datetimes are timezone-aware for comparison
+        if expires_at.tzinfo is None:
+            expires_at = expires_at.replace(tzinfo=timezone.utc)
+        
+        if expires_at < datetime.now(timezone.utc):
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Le token a expiré. Veuillez demander un nouveau lien"
