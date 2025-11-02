@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
+import { useAppDispatch } from '@/store/hooks'
+import { setCredentials } from '../slices/authSlice'
 import toast from 'react-hot-toast'
 import { ArrowPathIcon } from '@heroicons/react/24/outline'
 
@@ -8,6 +10,7 @@ type UserRole = 'interim' | 'company'
 export default function RoleSelectionPage() {
   const navigate = useNavigate()
   const location = useLocation()
+  const dispatch = useAppDispatch()
   const [selectedRole, setSelectedRole] = useState<UserRole | null>(null)
   const [isLoading, setIsLoading] = useState(false)
 
