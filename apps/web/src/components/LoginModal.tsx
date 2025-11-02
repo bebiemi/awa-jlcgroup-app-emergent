@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { XMarkIcon } from '@heroicons/react/24/outline'
-import { useLoginMutation } from '@/features/auth/api/authApi'
+import { useLocalLoginMutation } from '@/features/auth/api/authApi'
 import { useAppDispatch } from '@/store/hooks'
 import { setCredentials } from '@/features/auth/slices/authSlice'
 
