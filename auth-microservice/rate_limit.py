@@ -36,6 +36,17 @@ import os
 
 REDIS_URL = os.getenv("REDIS_URL", "memory://")
 
+# Force memory storage if Redis is not available
+try:
+    import redis
+    # Test Redis connection
+    r = redis.from_url(REDIS_URL if REDIS_URL != "memory://" else "redis://localhost:6379")
+    r.ping()
+    logger.info("Redis connection successful")
+except Exception as e:
+    logger.warning(f"Redis not available ({e}), falling back to memory storage")
+    REDIS_URL = "memory://"
+
 limiter = Limiter(
     key_func=get_remote_address,
     default_limits=["200/hour"],  # Global default limit
