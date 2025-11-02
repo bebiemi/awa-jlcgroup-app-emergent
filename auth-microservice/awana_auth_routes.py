@@ -670,6 +670,7 @@ async def local_login(
 @limiter.limit(get_rate_limit("auth_register"))
 async def local_register(
     request: Request,
+    response: Response,
     register_data: LocalRegisterRequest,
     db: AsyncIOMotorDatabase = Depends(get_database),
     jwt_manager: JWTManager = Depends(get_jwt_manager),
