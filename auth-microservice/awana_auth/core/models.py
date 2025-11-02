@@ -44,6 +44,12 @@ class User(BaseModel):
     # Roles (list of role names)
     roles: List[str] = Field(default_factory=list)
     
+    # MFA Settings
+    mfa_enabled: bool = False
+    mfa_methods: List[str] = Field(default_factory=list)  # ['totp', 'email', 'sms']
+    mfa_required: bool = False  # Forced by admin
+    phone_number: Optional[str] = None
+    
     # Metadata
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
