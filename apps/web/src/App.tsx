@@ -29,6 +29,7 @@ function App() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/auth/google/callback" element={<GoogleCallback />} />
+      <Route path="/auth/role-selection" element={<RoleSelectionPage />} />
 
       {/* Protected routes */}
       <Route
