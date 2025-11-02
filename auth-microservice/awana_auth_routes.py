@@ -113,6 +113,15 @@ class LocalLoginRequest(BaseModel):
     password: str
 
 
+class LocalRegisterRequest(BaseModel):
+    """Local user registration"""
+    username: str
+    email: EmailStr
+    password: str
+    full_name: str
+    role: str  # 'interim' or 'company'
+
+
 # ===== Authentication Endpoints =====
 
 @auth_router.post("/entraid/login", response_model=EntraIDLoginResponse)
