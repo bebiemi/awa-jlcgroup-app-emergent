@@ -30,7 +30,7 @@ async def lifespan(app: FastAPI):
     
     from awana_auth.rbac.manager import RBACManager
     rbac_manager = RBACManager(db)
-    await rbac_manager.ensure_default_roles()
+    await rbac_manager.initialize_default_roles()
     logger.info("AWANA Auth initialized")
     
     yield
