@@ -5,6 +5,7 @@ import { validationApi } from '@/features/admin/api/validationApi'
 import { notificationApi } from '@/features/notifications/api/notificationApi'
 import { adminApi } from '@/features/admin/api/adminApi'
 import { usersApi } from '@/features/admin/api/usersApi'
+import { securityApi } from '@/features/admin/api/securityApi'
 import authReducer from '@/features/auth/slices/authSlice'
 
 export const store = configureStore({
@@ -16,6 +17,7 @@ export const store = configureStore({
     [notificationApi.reducerPath]: notificationApi.reducer,
     [adminApi.reducerPath]: adminApi.reducer,
     [usersApi.reducerPath]: usersApi.reducer,
+    [securityApi.reducerPath]: securityApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
@@ -24,7 +26,8 @@ export const store = configureStore({
       .concat(validationApi.middleware)
       .concat(notificationApi.middleware)
       .concat(adminApi.middleware)
-      .concat(usersApi.middleware),
+      .concat(usersApi.middleware)
+      .concat(securityApi.middleware),
 })
 
 export type RootState = ReturnType<typeof store.getState>
