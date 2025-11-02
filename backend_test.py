@@ -17,6 +17,9 @@ import re
 AUTH_BASE_URL = "http://localhost:8000/auth-api"  # Auth service URL through proxy
 FRONTEND_PROXY_URL = "http://localhost:3000/auth-api"  # Through Vite proxy
 
+# Global variable to store test users for MongoDB verification
+test_users = []
+
 class Colors:
     GREEN = '\033[92m'
     RED = '\033[91m'
