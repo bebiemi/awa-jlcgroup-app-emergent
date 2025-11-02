@@ -300,7 +300,7 @@ async def seed_database():
     ]
 
     for notification in notifications_data:
-        notification_dict = notification.dict()
+        notification_dict = notification.model_dump()
         notification_dict['created_at'] = notification.created_at.isoformat()
         if notification.read_at:
             notification_dict['read_at'] = notification.read_at.isoformat()
