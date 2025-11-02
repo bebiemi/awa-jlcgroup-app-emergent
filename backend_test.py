@@ -105,7 +105,7 @@ def test_registration_with_email_validation():
             "name": "1. Inscription Intérimaire avec Email Valide (Auto-validation)",
             "data": {
                 "username": f"interim_test_{random_suffix}",
-                "email": "interim.test@gmail.com",
+                "email": f"interim.test.{random_suffix}@gmail.com",
                 "password": "SecurePass123!",
                 "full_name": "Jean Dupont",
                 "role": "interim",
@@ -119,7 +119,7 @@ def test_registration_with_email_validation():
             "name": "2. Inscription Société avec Email Non-Validé (Validation Manuelle)",
             "data": {
                 "username": f"company_test_{random_suffix}",
-                "email": "contact@entreprise-locale.ga",
+                "email": f"contact.{random_suffix}@entreprise-locale.ga",
                 "password": "SecurePass123!",
                 "full_name": "Marie Martin",
                 "role": "company",
