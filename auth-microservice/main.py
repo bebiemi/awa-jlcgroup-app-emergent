@@ -59,6 +59,7 @@ app.add_middleware(
 app.state.limiter = limiter
 app.include_router(auth_router, prefix="/api")
 app.include_router(google_router, prefix="/api")
+app.include_router(security_router, prefix="/api")
 
 @app.get("/health")
 async def health_check():
