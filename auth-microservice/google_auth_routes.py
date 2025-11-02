@@ -105,17 +105,12 @@ async def google_login(
         # Generate CSRF state token
         state = secrets.token_urlsafe(32)
         
-        # Store state temporarily (with expiry)
-        _state_storage[state] = {
+        # Store state in MongoDB (with 10 min expiry)
+        await save_state(db, state, {
             "redirect_uri": login_request.redirect_uri,
-            "created_at": datetime.utcnow(),
             "ip": get_client_ip(request),
             "user_agent": get_user_agent(request)
-        }
-        
-        # Clean old states (older than 10 minutes)
-        cutoff = datetime.utcnow() - timedelta(minutes=10)
-        _state_storage.clear()  # Simple cleanup for now
+        })
         
         # Get authorization URL
         auth_url = provider.get_authorization_url(
