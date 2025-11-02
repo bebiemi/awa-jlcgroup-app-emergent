@@ -14,8 +14,8 @@ export default defineConfig({
     host: '0.0.0.0',
     port: 3000,
     strictPort: true,
+    allowedHosts: 'all', // Allow all hosts to prevent blocking issues on different preview domains
     hmr: {
-      host: 'staffmanager-5.preview.emergentagent.com',
       port: 443,
       protocol: 'wss',
     },
