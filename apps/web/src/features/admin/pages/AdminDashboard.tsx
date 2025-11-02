@@ -170,7 +170,7 @@ export default function AdminDashboard() {
           </Link>
 
           <Link
-            to="/profile"
+            to="/admin/users"
             className="block p-6 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg shadow-md hover:shadow-lg transition-shadow text-white"
           >
             <UserGroupIcon className="h-8 w-8 mb-3" />
