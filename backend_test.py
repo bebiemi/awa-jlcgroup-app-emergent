@@ -8,6 +8,8 @@ import requests
 import json
 import sys
 import os
+import random
+import string
 from datetime import datetime
 
 # Test configuration
