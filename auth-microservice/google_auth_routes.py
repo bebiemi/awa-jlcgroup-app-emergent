@@ -292,11 +292,11 @@ async def google_callback(
                 "email": auth_result.user.email,
                 "full_name": auth_result.user.full_name,
                 "provider": "google",
-                "provider_user_id": auth_result.provider_data["google_id"],
+                "provider_user_id": auth_result.metadata["google_id"],
                 "status": existing_user["status"] if existing_user else "pending",
                 "is_verified": auth_result.user.is_verified,
                 "roles": roles,
-                "picture": auth_result.provider_data.get("picture"),
+                "picture": auth_result.metadata.get("picture"),
                 "created_at": existing_user["created_at"].isoformat() if existing_user else datetime.now(timezone.utc).isoformat(),
                 "updated_at": datetime.now(timezone.utc).isoformat(),
                 "last_login_at": datetime.now(timezone.utc).isoformat()
