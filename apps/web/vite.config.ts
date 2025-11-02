@@ -14,10 +14,7 @@ export default defineConfig({
     host: '0.0.0.0',
     port: 3000,
     strictPort: true,
-    // Allow all hosts to prevent blocking on different preview domains (forked apps)
-    allowedHosts: 'all',
     hmr: {
-      // Let Vite automatically handle HMR configuration for the environment
       clientPort: 443,
       protocol: 'wss',
     },
@@ -32,5 +29,11 @@ export default defineConfig({
         rewrite: (path) => path.replace(/^\/auth-api/, '/api'),
       },
     },
+  },
+  // Preview configuration (for production builds)
+  preview: {
+    host: '0.0.0.0',
+    port: 3000,
+    strictPort: true,
   },
 })
