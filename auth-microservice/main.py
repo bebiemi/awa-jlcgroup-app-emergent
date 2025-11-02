@@ -10,6 +10,7 @@ from contextlib import asynccontextmanager
 load_dotenv()
 
 from awana_auth_routes import auth_router
+from google_auth_routes import google_router
 from rate_limit import limiter
 
 logging.basicConfig(level=logging.INFO)
