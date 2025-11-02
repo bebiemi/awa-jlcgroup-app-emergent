@@ -146,9 +146,7 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Local Registration with Role Selection"
-    - "Local Admin Login"
-    - "Google OAuth Status Check"
+    - "Système d'Inscription Complet avec Validation Email"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
