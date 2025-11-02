@@ -14,7 +14,6 @@ from awana_auth.core.models import (
     User, UserStatus, AuthProvider
 )
 from awana_auth.core.dependencies import get_database, require_admin, get_current_user
-from awana_auth.database.user_repository import UserRepository
 
 security_router = APIRouter(prefix="/auth/security", tags=["security"])
 
