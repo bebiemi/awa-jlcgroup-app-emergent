@@ -272,9 +272,8 @@ async def google_callback(
                 }
             )
             
-            # Load user roles
-            user_roles = await rbac_manager.get_user_roles(user_id)
-            roles = [role.name for role in user_roles]
+            # Load user roles from user document (not RBAC table)
+            roles = existing_user.get("roles", [])
             
             logger.info(f"Existing Google user logged in: {auth_result.user.email}")
             
