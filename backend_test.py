@@ -93,12 +93,15 @@ def test_local_registration():
     """Test local user registration with role selection"""
     print(f"\n{Colors.BOLD}=== Testing Local Registration ==={Colors.ENDC}")
     
+    # Generate unique identifiers for this test run
+    random_suffix = ''.join(random.choices(string.ascii_lowercase + string.digits, k=6))
+    
     test_cases = [
         {
             "name": "Valid Registration - Interim Role",
             "data": {
-                "username": "testinterim1",
-                "email": "interim1@test.com",
+                "username": f"testinterim_{random_suffix}",
+                "email": f"interim_{random_suffix}@test.com",
                 "password": "testpass123",
                 "full_name": "Test Interim User",
                 "role": "interim"
@@ -108,8 +111,8 @@ def test_local_registration():
         {
             "name": "Valid Registration - Company Role", 
             "data": {
-                "username": "testcompany1",
-                "email": "company1@test.com",
+                "username": f"testcompany_{random_suffix}",
+                "email": f"company_{random_suffix}@test.com",
                 "password": "testpass123",
                 "full_name": "Test Company User",
                 "role": "company"
