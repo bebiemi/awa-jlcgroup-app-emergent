@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { 
   BriefcaseIcon, 
@@ -9,8 +10,11 @@ import {
   EnvelopeIcon,
   MapPinIcon
 } from '@heroicons/react/24/outline'
+import LoginModal from '@/components/LoginModal'
 
 export default function LandingPage() {
+  const [showLoginModal, setShowLoginModal] = useState(false)
+  
   const stats = [
     { label: 'Offres actives', value: '150+' },
     { label: 'Entreprises partenaires', value: '50+' },
