@@ -116,3 +116,77 @@ class TokenPayload(BaseModel):
     exp: datetime
     iat: datetime
     type: str = "access"  # access or refresh
+
+
+
+# ===== Security Models: Permissions, Profiles, Groups =====
+
+class PermissionModule(str, Enum):
+    """Modules for permission organization"""
+    ADMIN = "admin"
+    VALIDATIONS = "validations"
+    INTERIMAIRES = "interimaires"
+    ENTREPRISES = "entreprises"
+    RAPPORTS = "rapports"
+    DASHBOARD = "dashboard"
+
+
+class Permission(BaseModel):
+    """Permission model"""
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str  # e.g., "gestion_utilisateurs"
+    label: str  # e.g., "Gestion des utilisateurs"
+    description: Optional[str] = None
+    module: PermissionModule
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+
+class Profile(BaseModel):
+    """Profile model - defines a set of permissions"""
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str  # e.g., "Admin Complet", "Lecture Seule"
+    description: Optional[str] = None
+    permissions: List[str] = Field(default_factory=list)  # List of permission IDs
+    is_system: bool = False  # True for built-in profiles that cannot be deleted
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    created_by: Optional[str] = None  # User ID who created this profile
+
+
+class Group(BaseModel):
+    """Group model - users can belong to groups which have profiles"""
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    description: Optional[str] = None
+    profile_id: Optional[str] = None  # Profile assigned to this group
+    member_ids: List[str] = Field(default_factory=list)  # List of user IDs
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    created_by: Optional[str] = None  # User ID who created this group
+
+
+class CreateUserRequest(BaseModel):
+    """Request model for creating a new user"""
+    email: EmailStr
+    username: Optional[str] = None  # Auto-generated from email if not provided
+    full_name: Optional[str] = None
+    password: Optional[str] = None  # If None, generate random and send email
+    roles: List[str] = Field(default_factory=list)
+    group_ids: List[str] = Field(default_factory=list)
+    profile_id: Optional[str] = None  # Direct profile assignment
+    send_invitation: bool = True  # Send email with credentials
+
+
+class CreateGroupRequest(BaseModel):
+    """Request model for creating a new group"""
+    name: str
+    description: Optional[str] = None
+    profile_id: Optional[str] = None
+    member_ids: List[str] = Field(default_factory=list)
+
+
+class CreateProfileRequest(BaseModel):
+    """Request model for creating a new profile"""
+    name: str
+    description: Optional[str] = None
+    permissions: List[str] = Field(default_factory=list)
