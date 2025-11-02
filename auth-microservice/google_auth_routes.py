@@ -6,7 +6,7 @@ from pydantic import BaseModel
 from motor.motor_asyncio import AsyncIOMotorDatabase
 import logging
 import secrets
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from awana_auth.core.models import User, AuthProvider as AuthProviderEnum
 from awana_auth.core.dependencies import (
