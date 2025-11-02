@@ -143,11 +143,11 @@ async def seed_database():
     ]
 
     for profile in profiles_data:
-        profile_dict = profile.dict()
+        profile_dict = profile.model_dump()
         profile_dict['created_at'] = profile.created_at.isoformat()
         profile_dict['updated_at'] = profile.updated_at.isoformat()
         await db.profiles.insert_one(profile_dict)
-        print(f"  ✅ Created profile: {profile.first_name} {profile.last_name} ({profile.profile_type.value})")
+        print(f"  ✅ Created profile: {profile.first_name} {profile.last_name} ({profile.profile_type})")
 
     # Seed Validations
     print("\n✅ Seeding validations...")
