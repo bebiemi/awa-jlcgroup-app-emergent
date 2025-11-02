@@ -863,6 +863,16 @@ async def local_register(
             metadata={"provider": "local", "role": register_data.role}
         )
         
+        # Auto-create profile in jlc_db
+        await create_user_profile_if_not_exists(
+            db=db,
+            user_id=user.id,
+            email=user.email,
+            full_name=register_data.full_name,
+            profile_type=register_data.role,
+            picture=None
+        )
+        
         logger.info(f"✅ Registration successful for {user.email}")
         
         return LoginResponse(
