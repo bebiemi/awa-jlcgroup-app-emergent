@@ -122,6 +122,83 @@ class LocalRegisterRequest(BaseModel):
     role: str  # 'interim' or 'company'
 
 
+# ===== Helper: Auto-create Profile in JLC DB =====
+
+async def create_user_profile_if_not_exists(
+    db: AsyncIOMotorDatabase,
+    user_id: str,
+    email: str,
+    full_name: str,
+    profile_type: str,
+    picture: str = None
+):
+    """
+    Auto-create user profile in jlc_db if it doesn't exist
+    This ensures all registered users have a profile in the main application
+    """
+    from datetime import datetime, timezone
+    
+    # Get jlc_db database (main application database)
+    jlc_db = db.client['jlc_db']
+    profiles_collection = jlc_db.profiles
+    
+    # Check if profile already exists
+    existing_profile = await profiles_collection.find_one({"user_id": user_id})
+    if existing_profile:
+        logger.info(f"Profile already exists for user {user_id}")
+        return
+    
+    # Parse name
+    name_parts = full_name.split() if full_name else []
+    first_name = name_parts[0] if len(name_parts) > 0 else ''
+    last_name = ' '.join(name_parts[1:]) if len(name_parts) > 1 else ''
+    
+    # Base profile data
+    profile = {
+        "user_id": user_id,
+        "profile_type": profile_type,
+        "first_name": first_name,
+        "last_name": last_name,
+        "email": email,
+        "phone": None,
+        "avatar_url": picture,
+        "address": None,
+        "city": None,
+        "postal_code": None,
+        "country": "France",
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "updated_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    # Add role-specific fields
+    if profile_type == 'interim':
+        profile.update({
+            "skills": [],
+            "experience_years": 0,
+            "availability": "available",
+            "hourly_rate": None,
+            "resume_url": None
+        })
+    elif profile_type == 'company':
+        profile.update({
+            "company_name": None,
+            "siret": None,
+            "industry": None,
+            "company_size": None,
+            "description": None,
+            "website": None
+        })
+    elif profile_type in ['admin', 'super_admin']:
+        profile.update({
+            "department": "Administration",
+            "position": "Administrator"
+        })
+    
+    # Insert profile
+    await profiles_collection.insert_one(profile)
+    logger.info(f"✅ Auto-created profile for user {user_id} (type: {profile_type})")
+
+
 # ===== Authentication Endpoints =====
 
 @auth_router.post("/entraid/login", response_model=EntraIDLoginResponse)
