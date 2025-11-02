@@ -101,6 +101,18 @@ backend:
         agent: "testing"
         comment: "✅ Vite proxy working correctly. /auth-api routes properly forwarded to auth microservice."
 
+  - task: "Admin User Management Endpoint"
+    implemented: true
+    working: "pending_test"
+    file: "/app/auth-microservice/awana_auth_routes.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "pending_test"
+        agent: "main"
+        comment: "Backend endpoint /auth/users with pagination implemented. Supports search, status, and role filters. Update, delete, and block/unblock status mutations also available. Needs testing."
+
 frontend:
   - task: "Registration Form UI"
     implemented: true
