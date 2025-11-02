@@ -133,8 +133,8 @@ def test_local_registration():
         {
             "name": "Duplicate Username",
             "data": {
-                "username": "testinterim1",  # Same as first test
-                "email": "different@test.com",
+                "username": f"testinterim_{random_suffix}",  # Same as first test
+                "email": f"different_{random_suffix}@test.com",
                 "password": "testpass123",
                 "full_name": "Different User",
                 "role": "interim"
@@ -144,8 +144,8 @@ def test_local_registration():
         {
             "name": "Duplicate Email",
             "data": {
-                "username": "differentuser",
-                "email": "interim1@test.com",  # Same as first test
+                "username": f"differentuser_{random_suffix}",
+                "email": f"interim_{random_suffix}@test.com",  # Same as first test
                 "password": "testpass123", 
                 "full_name": "Different User",
                 "role": "company"
