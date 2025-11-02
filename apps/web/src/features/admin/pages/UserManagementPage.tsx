@@ -139,6 +139,22 @@ export default function UserManagementPage() {
               {data?.pagination.total || 0} utilisateur(s) enregistré(s)
             </p>
           </div>
+          <div className="flex gap-3">
+            <button
+              onClick={() => setShowQuickAddModal(true)}
+              className="flex items-center gap-2 px-4 py-2 bg-white border-2 border-jlc-purple-600 text-jlc-purple-600 rounded-lg hover:bg-jlc-purple-50 transition-colors"
+            >
+              <UserPlusIcon className="h-5 w-5" />
+              Ajout rapide
+            </button>
+            <Link
+              to="/admin/users/new"
+              className="flex items-center gap-2 px-4 py-2 bg-jlc-purple-600 text-white rounded-lg hover:bg-jlc-purple-700 transition-colors"
+            >
+              <PlusIcon className="h-5 w-5" />
+              Création détaillée
+            </Link>
+          </div>
         </div>
 
         {/* Search and Filters */}
