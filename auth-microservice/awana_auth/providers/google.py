@@ -93,15 +93,19 @@ class GoogleAuthProvider(AbstractAuthProvider):
             roles=[]  # Will be assigned based on registration
         )
         
+        from ..core.models import AuthProvider as AuthProviderEnum
+        
         return AuthResult(
+            success=True,
             user=user,
             access_token=tokens["access_token"],
             refresh_token=tokens.get("refresh_token"),
-            expires_in=tokens.get("expires_in", 3600),
-            provider_data={
+            provider=AuthProviderEnum.GOOGLE,
+            metadata={
                 "picture": user_info.get("picture"),
                 "locale": user_info.get("locale"),
-                "google_id": user_info["id"]
+                "google_id": user_info["id"],
+                "expires_in": tokens.get("expires_in", 3600)
             }
         )
     
