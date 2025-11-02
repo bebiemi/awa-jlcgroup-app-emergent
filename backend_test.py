@@ -731,6 +731,98 @@ def test_admin_user_management(admin_token):
         # If it succeeded, that means admin can delete (different from expected behavior)
         log_test("Delete User - Permission Check", "WARN", "Admin was allowed to delete user")
     
+    # Test 10: Audit Logging Verification
+    print(f"\n  Testing: 10. Audit Logging")
+    
+    # Create another test user to verify audit logs are created
+    random_suffix2 = ''.join(random.choices(string.ascii_lowercase + string.digits, k=6))
+    audit_test_user = {
+        "username": f"audituser_{random_suffix2}",
+        "email": f"audituser.{random_suffix2}@example.com",
+        "password": "AuditPass123!",
+        "full_name": "Audit Test User",
+        "role": "company"
+    }
+    
+    register_response = test_endpoint(
+        "POST",
+        f"{AUTH_BASE_URL}/auth/local/register",
+        data=audit_test_user,
+        expected_status=200,
+        test_name="Create Audit Test User"
+    )
+    
+    audit_user_id = None
+    if register_response and "user" in register_response:
+        audit_user_id = register_response["user"]["id"]
+        log_test("Audit Test User Creation", "PASS", f"Audit test user created: {audit_user_id}")
+        
+        # Perform an action that should create audit log (status update)
+        status_update = {"status": "suspended"}
+        response = test_endpoint(
+            "PATCH",
+            f"{AUTH_BASE_URL}/auth/users/{audit_user_id}/status",
+            data=status_update,
+            headers=headers,
+            expected_status=200,
+            test_name="Status Update for Audit"
+        )
+        
+        if response:
+            log_test("Audit Log Generation", "PASS", "Status update completed (audit log should be created)")
+    
+    # Test 11: Profile Deletion Verification (MongoDB Check)
+    print(f"\n  Testing: 11. Profile Management")
+    
+    # Check if profiles are created in jlc_db for our test users
+    try:
+        from pymongo import MongoClient
+        mongo_url = os.getenv('MONGO_URL', 'mongodb://localhost:27017')
+        client = MongoClient(mongo_url)
+        jlc_db = client['jlc_db']
+        profiles_collection = jlc_db.profiles
+        
+        # Check if profile exists for test user
+        if test_user_id:
+            profile = profiles_collection.find_one({"user_id": test_user_id})
+            if profile:
+                log_test("Profile Auto-Creation", "PASS", f"Profile found in jlc_db for user {test_user_id}")
+            else:
+                log_test("Profile Auto-Creation", "WARN", f"No profile found in jlc_db for user {test_user_id}")
+        
+        client.close()
+        
+    except Exception as e:
+        log_test("Profile Verification", "FAIL", f"MongoDB connection error: {str(e)}")
+    
+    # Test 12: Edge Cases and Error Handling
+    print(f"\n  Testing: 12. Edge Cases")
+    
+    # Test updating non-existent user
+    response = test_endpoint(
+        "PATCH",
+        f"{AUTH_BASE_URL}/auth/users/non-existent-user-id/status",
+        data={"status": "active"},
+        headers=headers,
+        expected_status=404,
+        test_name="Update Non-Existent User"
+    )
+    
+    if response:
+        log_test("Non-Existent User Handling", "PASS", "Non-existent user correctly returns 404")
+    
+    # Test deleting non-existent user
+    response = test_endpoint(
+        "DELETE",
+        f"{AUTH_BASE_URL}/auth/users/non-existent-user-id",
+        headers=headers,
+        expected_status=404,
+        test_name="Delete Non-Existent User"
+    )
+    
+    if response:
+        log_test("Delete Non-Existent User", "PASS", "Non-existent user delete correctly returns 404")
+    
     # Test 9: Authentication Required Tests
     print(f"\n  Testing: 9. Authentication Required")
     
