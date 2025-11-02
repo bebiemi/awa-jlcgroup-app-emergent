@@ -76,12 +76,12 @@ export default function LandingPage() {
               </span>
             </div>
             <div className="flex items-center space-x-4">
-              <Link
-                to="/login"
+              <button
+                onClick={() => setShowLoginModal(true)}
                 className="text-gray-700 hover:text-jlc-purple-600 px-3 py-2 rounded-md text-sm font-medium"
               >
                 Connexion
-              </Link>
+              </button>
               <Link
                 to="/register"
                 className="bg-jlc-purple-600 text-white hover:bg-jlc-purple-700 px-4 py-2 rounded-md text-sm font-medium"
