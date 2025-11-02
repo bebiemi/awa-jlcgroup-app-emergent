@@ -853,7 +853,8 @@ def test_admin_user_management(admin_token):
     return {
         "success": True,
         "test_user_id": test_user_id,
-        "total_tests": 15,  # Approximate count of sub-tests
+        "audit_user_id": audit_user_id,
+        "total_tests": 25,  # Updated count of sub-tests
         "message": "Admin user management tests completed"
     }
 
