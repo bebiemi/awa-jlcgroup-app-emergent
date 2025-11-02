@@ -469,9 +469,21 @@ async def complete_google_registration(
         
         logger.info(f"Google user {user_id} completed registration with role: {registration_data.role}")
         
-        # Create new tokens with updated role
+        # Fetch updated user and create User object
         from awana_auth.core.models import User as UserModel
-        updated_user = UserModel(**updated_user_doc)
+        
+        # Update user object roles
+        updated_user = UserModel(
+            id=updated_user_doc["id"],
+            username=updated_user_doc["username"],
+            email=updated_user_doc["email"],
+            full_name=updated_user_doc.get("full_name"),
+            provider=updated_user_doc["provider"],
+            provider_user_id=updated_user_doc.get("provider_user_id"),
+            is_verified=updated_user_doc.get("is_verified", False),
+            status=updated_user_doc.get("status", "pending"),
+            roles=[registration_data.role]
+        )
         
         # Get session
         session = await session_storage.get_session_by_access_token(token)
@@ -479,16 +491,12 @@ async def complete_google_registration(
         
         # Generate new JWT tokens with updated role
         access_token = jwt_manager.create_access_token(
-            user_id=user_id,
-            email=updated_user.email,
-            roles=[registration_data.role],
+            user=updated_user,
             session_id=session_id
         )
         
         refresh_token = jwt_manager.create_refresh_token(
-            user_id=user_id,
-            email=updated_user.email,
-            roles=[registration_data.role],
+            user=updated_user,
             session_id=session_id
         )
         
