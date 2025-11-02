@@ -76,9 +76,13 @@ class GoogleAuthProvider(AbstractAuthProvider):
         # Get user info
         user_info = await self._get_user_info(tokens["access_token"])
         
+        # Generate user ID (will be used if new user)
+        import secrets
+        user_id = secrets.token_urlsafe(16)
+        
         # Create User object
         user = User(
-            id=None,  # Will be created by the system
+            id=user_id,
             username=user_info["email"].split("@")[0],  # Use email prefix
             email=user_info["email"],
             full_name=user_info.get("name"),
