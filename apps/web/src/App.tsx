@@ -74,6 +74,14 @@ function App() {
         }
       />
       <Route
+        path="/admin/profiles"
+        element={
+          <ProtectedRoute requiredRoles={['admin', 'super_admin']}>
+            <ProfilesPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/interimaire"
         element={
           <ProtectedRoute requiredRoles={['interim']}>
