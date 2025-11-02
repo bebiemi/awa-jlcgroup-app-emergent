@@ -52,9 +52,29 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
     }
   }
 
-  const handleGoogleLogin = () => {
-    // Redirect to Google OAuth
-    window.location.href = '/auth-api/google/login'
+  const handleGoogleLogin = async () => {
+    try {
+      const response = await fetch('/auth-api/auth/google/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          redirect_uri: `${window.location.origin}/auth/google/callback`,
+        }),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.detail || 'Échec de l\'initialisation Google OAuth')
+      }
+
+      const data = await response.json()
+      window.location.href = data.authorization_url
+    } catch (error: any) {
+      console.error('Google login error:', error)
+      setError(error.message || 'Échec de l\'initialisation Google OAuth')
+    }
   }
 
   if (!isOpen) return null
