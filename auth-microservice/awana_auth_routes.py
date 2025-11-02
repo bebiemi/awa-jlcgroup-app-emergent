@@ -1321,6 +1321,284 @@ async def revoke_role_from_user(
         target_id=user_id,
         target_email=user.email,
         resource_type="role",
+
+
+
+# ===== User Management Endpoints (Admin) =====
+
+@auth_router.get("/users")
+async def list_users(
+    request: Request,
+    page: int = 1,
+    page_size: int = 15,
+    search: Optional[str] = None,
+    status: Optional[str] = None,
+    role: Optional[str] = None,
+    current_user: User = Depends(require_admin),
+    db: AsyncIOMotorDatabase = Depends(get_database)
+):
+    """
+    List all users with pagination and filters (Admin only)
+    """
+    try:
+        users_collection = db.users
+        
+        # Build query filters
+        query = {}
+        if search:
+            query["$or"] = [
+                {"username": {"$regex": search, "$options": "i"}},
+                {"email": {"$regex": search, "$options": "i"}},
+                {"full_name": {"$regex": search, "$options": "i"}}
+            ]
+        
+        if status:
+            query["status"] = status
+        
+        if role:
+            query["roles"] = role
+        
+        # Count total
+        total = await users_collection.count_documents(query)
+        
+        # Calculate pagination
+        skip = (page - 1) * page_size
+        total_pages = (total + page_size - 1) // page_size
+        
+        # Fetch users
+        cursor = users_collection.find(query, {"_id": 0, "password_hash": 0}).sort("created_at", -1).skip(skip).limit(page_size)
+        users = await cursor.to_list(length=page_size)
+        
+        return {
+            "users": users,
+            "pagination": {
+                "page": page,
+                "page_size": page_size,
+                "total": total,
+                "total_pages": total_pages,
+                "has_next": page < total_pages,
+                "has_prev": page > 1
+            }
+        }
+        
+    except Exception as e:
+        logger.error(f"List users error: {e}", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Erreur lors de la récupération des utilisateurs"
+        )
+
+
+@auth_router.patch("/users/{user_id}/status")
+async def update_user_status(
+    user_id: str,
+    status_update: dict,
+    request: Request,
+    current_user: User = Depends(require_admin),
+    db: AsyncIOMotorDatabase = Depends(get_database)
+):
+    """
+    Update user status (Admin only)
+    Possible statuses: active, pending, suspended, deleted
+    """
+    try:
+        new_status = status_update.get("status")
+        
+        if new_status not in ["active", "pending", "suspended", "deleted"]:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Status invalide. Valeurs autorisées: active, pending, suspended, deleted"
+            )
+        
+        users_collection = db.users
+        user = await users_collection.find_one({"id": user_id})
+        
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Utilisateur non trouvé"
+            )
+        
+        # Update status
+        await users_collection.update_one(
+            {"id": user_id},
+            {
+                "$set": {
+                    "status": new_status,
+                    "updated_at": datetime.now(timezone.utc)
+                }
+            }
+        )
+        
+        # Audit log
+        audit_logger = AuditLogger(db, auth_config)
+        await audit_logger.log(
+            action=AuditAction.USER_UPDATED,
+            actor_id=current_user.id,
+            actor_email=current_user.email,
+            ip_address=get_client_ip(request),
+            user_agent=get_user_agent(request),
+            metadata={
+                "target_user_id": user_id,
+                "target_email": user["email"],
+                "old_status": user["status"],
+                "new_status": new_status
+            }
+        )
+        
+        logger.info(f"User {user_id} status updated to {new_status} by admin {current_user.id}")
+        
+        return {"message": f"Statut mis à jour: {new_status}"}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Update user status error: {e}", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Erreur lors de la mise à jour du statut"
+        )
+
+
+@auth_router.delete("/users/{user_id}")
+async def delete_user(
+    user_id: str,
+    request: Request,
+    current_user: User = Depends(require_super_admin),
+    db: AsyncIOMotorDatabase = Depends(get_database)
+):
+    """
+    Delete user (Super Admin only)
+    """
+    try:
+        users_collection = db.users
+        user = await users_collection.find_one({"id": user_id})
+        
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Utilisateur non trouvé"
+            )
+        
+        # Cannot delete self
+        if user_id == current_user.id:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Vous ne pouvez pas supprimer votre propre compte"
+            )
+        
+        # Delete user
+        await users_collection.delete_one({"id": user_id})
+        
+        # Also delete profile from jlc_db
+        jlc_db = db.client['jlc_db']
+        await jlc_db.profiles.delete_one({"user_id": user_id})
+        
+        # Audit log
+        audit_logger = AuditLogger(db, auth_config)
+        await audit_logger.log(
+            action=AuditAction.USER_DELETED,
+            actor_id=current_user.id,
+            actor_email=current_user.email,
+            ip_address=get_client_ip(request),
+            user_agent=get_user_agent(request),
+            metadata={
+                "target_user_id": user_id,
+                "target_email": user["email"],
+                "target_roles": user.get("roles", [])
+            }
+        )
+        
+        logger.info(f"User {user_id} deleted by super admin {current_user.id}")
+        
+        return {"message": "Utilisateur supprimé avec succès"}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Delete user error: {e}", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Erreur lors de la suppression de l'utilisateur"
+        )
+
+
+@auth_router.patch("/users/{user_id}")
+async def update_user(
+    user_id: str,
+    user_update: dict,
+    request: Request,
+    current_user: User = Depends(require_admin),
+    db: AsyncIOMotorDatabase = Depends(get_database)
+):
+    """
+    Update user information (Admin only)
+    """
+    try:
+        users_collection = db.users
+        user = await users_collection.find_one({"id": user_id})
+        
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Utilisateur non trouvé"
+            )
+        
+        # Fields that can be updated
+        allowed_fields = ["full_name", "email", "roles"]
+        update_data = {k: v for k, v in user_update.items() if k in allowed_fields}
+        
+        if not update_data:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Aucun champ valide à mettre à jour"
+            )
+        
+        # Check email uniqueness if email is being updated
+        if "email" in update_data and update_data["email"] != user["email"]:
+            existing = await users_collection.find_one({"email": update_data["email"]})
+            if existing:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Cet email est déjà utilisé"
+                )
+        
+        update_data["updated_at"] = datetime.now(timezone.utc)
+        
+        # Update user
+        await users_collection.update_one(
+            {"id": user_id},
+            {"$set": update_data}
+        )
+        
+        # Audit log
+        audit_logger = AuditLogger(db, auth_config)
+        await audit_logger.log(
+            action=AuditAction.USER_UPDATED,
+            actor_id=current_user.id,
+            actor_email=current_user.email,
+            ip_address=get_client_ip(request),
+            user_agent=get_user_agent(request),
+            metadata={
+                "target_user_id": user_id,
+                "target_email": user["email"],
+                "updated_fields": list(update_data.keys())
+            }
+        )
+        
+        logger.info(f"User {user_id} updated by admin {current_user.id}")
+        
+        return {"message": "Utilisateur mis à jour avec succès"}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Update user error: {e}", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Erreur lors de la mise à jour de l'utilisateur"
+        )
+
         resource_id=role_name,
         ip_address=get_client_ip(request),
         user_agent=get_user_agent(request),
