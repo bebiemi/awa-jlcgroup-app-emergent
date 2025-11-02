@@ -162,9 +162,18 @@ export default function LoginPage() {
             </div>
           </div>
 
-          <div className="mt-6 text-center">
-            <p className="text-xs text-gray-500">
+          <div className="mt-6 space-y-3">
+            <p className="text-xs text-gray-500 text-center">
               Identifiants par défaut: <span className="font-mono bg-gray-100 px-2 py-1 rounded">admin</span> / <span className="font-mono bg-gray-100 px-2 py-1 rounded">awana2025</span>
+            </p>
+            <p className="text-sm text-gray-600 text-center">
+              Pas encore de compte ?{' '}
+              <a
+                href="/register"
+                className="text-jlc-purple-600 hover:text-jlc-purple-700 font-medium"
+              >
+                S'inscrire
+              </a>
             </p>
           </div>
         </div>
