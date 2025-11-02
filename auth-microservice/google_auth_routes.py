@@ -308,7 +308,7 @@ async def google_callback(
         logger.error(f"Google callback error: {e}", exc_info=True)
         
         # Audit log failed login
-        audit_logger = AuditLogger(db)
+        audit_logger = AuditLogger(db, auth_config)
         await audit_logger.log(
             user_id=None,
             action=AuditAction.LOGIN_FAILED,
