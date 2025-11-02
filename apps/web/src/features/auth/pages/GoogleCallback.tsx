@@ -53,6 +53,18 @@ export default function GoogleCallback() {
 
         const data = await response.json()
 
+        // Check if this is a new user (needs role selection)
+        if (data.user.status === 'pending' && data.user.roles.length === 1 && data.user.roles[0] === 'interim') {
+          // This is a new user with default role, redirect to role selection
+          navigate('/auth/role-selection', {
+            state: {
+              userData: data.user,
+              tempToken: data.access_token,
+            },
+          })
+          return
+        }
+
         // Store credentials in Redux
         dispatch(
           setCredentials({
