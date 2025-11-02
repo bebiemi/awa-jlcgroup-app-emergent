@@ -150,6 +150,18 @@ frontend:
         agent: "main"
         comment: "Google OAuth components created but not tested yet."
 
+  - task: "Admin User Management Page"
+    implemented: true
+    working: "pending_test"
+    file: "/app/apps/web/src/features/admin/pages/UserManagementPage.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "pending_test"
+        agent: "main"
+        comment: "Complete user management page created with table, pagination, search/filters, and modal components (Edit, Delete, Block/Unblock). Integrated with usersApi RTK Query. Accessible at /admin/users for admin and super_admin roles. Needs testing."
+
 metadata:
   created_by: "main_agent"
   version: "1.0"
