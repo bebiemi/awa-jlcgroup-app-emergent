@@ -241,26 +241,57 @@ async def google_callback(
             {"$set": {"last_login_at": datetime.now(timezone.utc)}}
         )
         
-        # Create session
-        session_id = await session_storage.create_session(
-            user_id=user_id,
-            user_agent=get_user_agent(request),
-            ip_address=get_client_ip(request)
+        # Get full user document for session creation
+        user_doc = await users_collection.find_one({"id": user_id})
+        if not user_doc:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="User not found after creation"
+            )
+        
+        # Create User object
+        user_obj = User(
+            id=user_id,
+            username=user_doc["username"],
+            email=user_doc["email"],
+            full_name=user_doc.get("full_name"),
+            provider=user_doc["provider"],
+            provider_user_id=user_doc.get("provider_user_id"),
+            is_verified=user_doc.get("is_verified", False),
+            status=user_doc.get("status", "pending"),
+            roles=roles
         )
         
-        # Generate JWT tokens
+        # Create session (with empty tokens initially)
+        session = await session_storage.create_session(
+            user=user_obj,
+            access_token="",
+            refresh_token="",
+            ip_address=get_client_ip(request),
+            user_agent=get_user_agent(request),
+            metadata={"provider": "google"}
+        )
+        
+        # Generate JWT tokens with real session_id
         access_token = jwt_manager.create_access_token(
             user_id=user_id,
-            email=auth_result.user.email,
+            email=user_obj.email,
             roles=roles,
-            session_id=session_id
+            session_id=session.id
         )
         
         refresh_token = jwt_manager.create_refresh_token(
             user_id=user_id,
-            email=auth_result.user.email,
+            email=user_obj.email,
             roles=roles,
-            session_id=session_id
+            session_id=session.id
+        )
+        
+        # Update session with tokens
+        await session_storage.update_session_tokens(
+            session_id=session.id,
+            access_token=access_token,
+            refresh_token=refresh_token
         )
         
         # Audit log
