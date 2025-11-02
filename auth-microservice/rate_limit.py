@@ -59,6 +59,7 @@ logger.info(f"Rate limiter initialized with storage: {REDIS_URL}")
 # Rate limit definitions for different endpoint categories
 RATE_LIMITS = {
     "auth_login": "5/minute",           # Strict limit for login attempts
+    "auth_register": "3/minute",        # Registration attempts
     "auth_token": "10/minute",          # EntraID token exchange
     "auth_refresh": "30/minute",        # Token refresh
     "upload": "10/hour",                # File uploads
