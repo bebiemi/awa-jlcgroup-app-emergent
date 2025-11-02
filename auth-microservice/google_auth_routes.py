@@ -546,6 +546,16 @@ async def complete_google_registration(
         # Fetch updated user
         updated_user_doc = await users_collection.find_one({"id": user_id})
         
+        # Create or update profile with selected role
+        await create_user_profile(
+            db=db,
+            user_id=user_id,
+            email=updated_user_doc.get("email"),
+            full_name=updated_user_doc.get("full_name"),
+            profile_type=registration_data.role,
+            picture=updated_user_doc.get("picture")
+        )
+        
         # Audit log
         audit_logger = AuditLogger(db, auth_config)
         await audit_logger.log(
