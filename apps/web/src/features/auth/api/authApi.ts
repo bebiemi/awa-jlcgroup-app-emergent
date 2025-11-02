@@ -25,6 +25,22 @@ export const authApi = createApi({
         body: credentials,
       }),
     }),
+    register: builder.mutation<
+      LoginResponse,
+      {
+        username: string
+        email: string
+        password: string
+        full_name: string
+        role: 'interim' | 'company'
+      }
+    >({
+      query: (data) => ({
+        url: '/auth/local/register',
+        method: 'POST',
+        body: data,
+      }),
+    }),
     getCurrentUser: builder.query<User, void>({
       query: () => '/auth/me',
     }),
@@ -46,6 +62,7 @@ export const authApi = createApi({
 
 export const {
   useLocalLoginMutation,
+  useRegisterMutation,
   useGetCurrentUserQuery,
   useLogoutMutation,
   useRefreshTokenMutation,
