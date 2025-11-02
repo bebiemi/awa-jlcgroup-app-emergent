@@ -27,6 +27,7 @@ function App() {
   return (
     <Routes>
       {/* Public routes */}
+      <Route path="/" element={<LandingPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/auth/google/callback" element={<GoogleCallback />} />
@@ -66,9 +67,9 @@ function App() {
         }
       />
 
-      {/* Default redirects */}
+      {/* Dashboard redirect for authenticated users */}
       <Route
-        path="/"
+        path="/dashboard"
         element={
           isAuthenticated ? (
             <Navigate to={getDashboardPath()} replace />
@@ -77,6 +78,7 @@ function App() {
           )
         }
       />
+      
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )
