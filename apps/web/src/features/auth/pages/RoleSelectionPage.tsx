@@ -57,10 +57,6 @@ export default function RoleSelectionPage() {
       const data = await response.json()
 
       // Store credentials in Redux
-      const { useAppDispatch } = await import('@/store/hooks')
-      const { setCredentials } = await import('../slices/authSlice')
-      const dispatch = useAppDispatch()
-
       dispatch(
         setCredentials({
           user: data.user,
