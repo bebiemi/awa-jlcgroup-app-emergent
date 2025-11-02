@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { useAppSelector } from './store/hooks'
+import LandingPage from './pages/LandingPage'
 import LoginPage from './features/auth/pages/LoginPage'
 import RegisterPage from './features/auth/pages/RegisterPage'
 import GoogleCallback from './features/auth/pages/GoogleCallback'
