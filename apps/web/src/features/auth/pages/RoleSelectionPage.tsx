@@ -66,7 +66,11 @@ export default function RoleSelectionPage() {
       )
 
       toast.success('Inscription terminée avec succès !')
-      navigate('/')
+      
+      // Redirect to appropriate dashboard based on selected role
+      const dashboardPath = selectedRole === 'interim' ? '/interimaire' : 
+                           selectedRole === 'company' ? '/entreprise' : '/profile'
+      navigate(dashboardPath, { replace: true })
     } catch (error: any) {
       console.error('Role selection error:', error)
       toast.error(error.message || 'Échec de la sélection du rôle')
