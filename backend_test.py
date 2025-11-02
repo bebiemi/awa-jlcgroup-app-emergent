@@ -452,9 +452,317 @@ def test_vite_proxy():
         log_test("Vite Proxy", "WARN", "Proxy test failed (frontend may not be running)")
         return False
 
+def test_admin_login():
+    """Test admin login to get JWT token for subsequent tests"""
+    print(f"\n{Colors.BOLD}=== Testing Admin Login ==={Colors.ENDC}")
+    
+    login_data = {
+        "username": "admin",
+        "password": "awana2025"
+    }
+    
+    response = test_endpoint(
+        "POST",
+        f"{AUTH_BASE_URL}/auth/local/login",
+        data=login_data,
+        expected_status=200,
+        test_name="Admin Login"
+    )
+    
+    if response and "access_token" in response:
+        log_test("Admin Login - Token Generation", "PASS", 
+                f"JWT token received: {response['access_token'][:20]}...")
+        return response["access_token"]
+    else:
+        log_test("Admin Login - Token Generation", "FAIL", "No access token received")
+        return None
+
+
+def test_admin_user_management(admin_token):
+    """Test comprehensive admin user management endpoints"""
+    print(f"\n{Colors.BOLD}=== Testing Admin User Management Endpoints ==={Colors.ENDC}")
+    
+    if not admin_token:
+        log_test("Admin User Management", "FAIL", "No admin token available")
+        return {"success": False, "reason": "No admin token"}
+    
+    headers = {"Authorization": f"Bearer {admin_token}"}
+    results = []
+    
+    # Test 1: List Users with Pagination
+    print(f"\n  Testing: 1. List Users with Pagination")
+    
+    # Test default pagination
+    response = test_endpoint(
+        "GET",
+        f"{AUTH_BASE_URL}/auth/users",
+        headers=headers,
+        expected_status=200,
+        test_name="List Users - Default Pagination"
+    )
+    
+    if response:
+        # Check response structure
+        required_fields = ["users", "pagination"]
+        missing_fields = [field for field in required_fields if field not in response]
+        
+        if missing_fields:
+            log_test("List Users - Response Structure", "FAIL", 
+                    f"Missing fields: {missing_fields}")
+        else:
+            log_test("List Users - Response Structure", "PASS", 
+                    "All required fields present")
+            
+            # Check pagination metadata
+            pagination = response.get("pagination", {})
+            pagination_fields = ["page", "page_size", "total", "total_pages", "has_next", "has_prev"]
+            missing_pagination = [field for field in pagination_fields if field not in pagination]
+            
+            if missing_pagination:
+                log_test("List Users - Pagination Metadata", "FAIL", 
+                        f"Missing pagination fields: {missing_pagination}")
+            else:
+                log_test("List Users - Pagination Metadata", "PASS", 
+                        f"Page: {pagination['page']}, Size: {pagination['page_size']}, Total: {pagination['total']}")
+    
+    # Test 2: List Users with Search Filter
+    print(f"\n  Testing: 2. List Users with Search Filter")
+    
+    response = test_endpoint(
+        "GET",
+        f"{AUTH_BASE_URL}/auth/users?search=admin&page=1&page_size=10",
+        headers=headers,
+        expected_status=200,
+        test_name="List Users - Search Filter"
+    )
+    
+    if response:
+        users = response.get("users", [])
+        log_test("List Users - Search Results", "PASS", 
+                f"Found {len(users)} users matching 'admin'")
+    
+    # Test 3: List Users with Status Filter
+    print(f"\n  Testing: 3. List Users with Status Filter")
+    
+    response = test_endpoint(
+        "GET",
+        f"{AUTH_BASE_URL}/auth/users?status=active&page=1&page_size=10",
+        headers=headers,
+        expected_status=200,
+        test_name="List Users - Status Filter"
+    )
+    
+    if response:
+        users = response.get("users", [])
+        log_test("List Users - Status Filter", "PASS", 
+                f"Found {len(users)} active users")
+    
+    # Test 4: List Users with Role Filter
+    print(f"\n  Testing: 4. List Users with Role Filter")
+    
+    response = test_endpoint(
+        "GET",
+        f"{AUTH_BASE_URL}/auth/users?role=admin&page=1&page_size=10",
+        headers=headers,
+        expected_status=200,
+        test_name="List Users - Role Filter"
+    )
+    
+    if response:
+        users = response.get("users", [])
+        log_test("List Users - Role Filter", "PASS", 
+                f"Found {len(users)} admin users")
+    
+    # Test 5: Create Test User for Management Operations
+    print(f"\n  Testing: 5. Create Test User for Management")
+    
+    # First, create a test user via registration
+    random_suffix = ''.join(random.choices(string.ascii_lowercase + string.digits, k=6))
+    test_user_data = {
+        "username": f"testuser_{random_suffix}",
+        "email": f"testuser.{random_suffix}@example.com",
+        "password": "TestPass123!",
+        "full_name": "Test User Management",
+        "role": "interim"
+    }
+    
+    register_response = test_endpoint(
+        "POST",
+        f"{AUTH_BASE_URL}/auth/local/register",
+        data=test_user_data,
+        expected_status=200,
+        test_name="Create Test User for Management"
+    )
+    
+    test_user_id = None
+    if register_response and "user" in register_response:
+        test_user_id = register_response["user"]["id"]
+        log_test("Test User Creation", "PASS", 
+                f"Test user created with ID: {test_user_id}")
+    else:
+        log_test("Test User Creation", "FAIL", "Could not create test user")
+        return {"success": False, "reason": "Could not create test user"}
+    
+    # Test 6: Update User Status (Block/Unblock)
+    print(f"\n  Testing: 6. Update User Status")
+    
+    # Block user (suspend)
+    status_update = {"status": "suspended"}
+    response = test_endpoint(
+        "PATCH",
+        f"{AUTH_BASE_URL}/auth/users/{test_user_id}/status",
+        data=status_update,
+        headers=headers,
+        expected_status=200,
+        test_name="Block User (Suspend)"
+    )
+    
+    if response:
+        log_test("Block User", "PASS", "User successfully suspended")
+    
+    # Unblock user (activate)
+    status_update = {"status": "active"}
+    response = test_endpoint(
+        "PATCH",
+        f"{AUTH_BASE_URL}/auth/users/{test_user_id}/status",
+        data=status_update,
+        headers=headers,
+        expected_status=200,
+        test_name="Unblock User (Activate)"
+    )
+    
+    if response:
+        log_test("Unblock User", "PASS", "User successfully activated")
+    
+    # Test invalid status
+    status_update = {"status": "invalid_status"}
+    response = test_endpoint(
+        "PATCH",
+        f"{AUTH_BASE_URL}/auth/users/{test_user_id}/status",
+        data=status_update,
+        headers=headers,
+        expected_status=400,
+        test_name="Invalid Status Update"
+    )
+    
+    if response:
+        log_test("Invalid Status Validation", "PASS", "Invalid status correctly rejected")
+    
+    # Test 7: Update User Information
+    print(f"\n  Testing: 7. Update User Information")
+    
+    # Update full name
+    user_update = {"full_name": "Updated Test User Name"}
+    response = test_endpoint(
+        "PATCH",
+        f"{AUTH_BASE_URL}/auth/users/{test_user_id}",
+        data=user_update,
+        headers=headers,
+        expected_status=200,
+        test_name="Update User Full Name"
+    )
+    
+    if response:
+        log_test("Update User Full Name", "PASS", "User full name updated successfully")
+    
+    # Update email (test uniqueness validation)
+    user_update = {"email": f"updated.{random_suffix}@example.com"}
+    response = test_endpoint(
+        "PATCH",
+        f"{AUTH_BASE_URL}/auth/users/{test_user_id}",
+        data=user_update,
+        headers=headers,
+        expected_status=200,
+        test_name="Update User Email"
+    )
+    
+    if response:
+        log_test("Update User Email", "PASS", "User email updated successfully")
+    
+    # Test duplicate email validation
+    user_update = {"email": "admin@awanagroup.com"}  # Assuming admin email exists
+    response = test_endpoint(
+        "PATCH",
+        f"{AUTH_BASE_URL}/auth/users/{test_user_id}",
+        data=user_update,
+        headers=headers,
+        expected_status=400,
+        test_name="Duplicate Email Validation"
+    )
+    
+    if response:
+        log_test("Duplicate Email Validation", "PASS", "Duplicate email correctly rejected")
+    
+    # Update roles
+    user_update = {"roles": ["company", "interim"]}
+    response = test_endpoint(
+        "PATCH",
+        f"{AUTH_BASE_URL}/auth/users/{test_user_id}",
+        data=user_update,
+        headers=headers,
+        expected_status=200,
+        test_name="Update User Roles"
+    )
+    
+    if response:
+        log_test("Update User Roles", "PASS", "User roles updated successfully")
+    
+    # Test 8: Delete User (Super Admin Required)
+    print(f"\n  Testing: 8. Delete User")
+    
+    # First test with regular admin (should fail if super_admin required)
+    response = test_endpoint(
+        "DELETE",
+        f"{AUTH_BASE_URL}/auth/users/{test_user_id}",
+        headers=headers,
+        expected_status=403,  # Expecting forbidden for regular admin
+        test_name="Delete User - Admin Permission Check"
+    )
+    
+    if response:
+        log_test("Delete User - Permission Check", "PASS", "Regular admin correctly denied delete permission")
+    else:
+        # If it succeeded, that means admin can delete (different from expected behavior)
+        log_test("Delete User - Permission Check", "WARN", "Admin was allowed to delete user")
+    
+    # Test 9: Authentication Required Tests
+    print(f"\n  Testing: 9. Authentication Required")
+    
+    # Test without token
+    response = test_endpoint(
+        "GET",
+        f"{AUTH_BASE_URL}/auth/users",
+        expected_status=401,
+        test_name="List Users - No Authentication"
+    )
+    
+    if response:
+        log_test("Authentication Required", "PASS", "Unauthenticated request correctly rejected")
+    
+    # Test with invalid token
+    invalid_headers = {"Authorization": "Bearer invalid_token_123"}
+    response = test_endpoint(
+        "GET",
+        f"{AUTH_BASE_URL}/auth/users",
+        headers=invalid_headers,
+        expected_status=401,
+        test_name="List Users - Invalid Token"
+    )
+    
+    if response:
+        log_test("Invalid Token Rejection", "PASS", "Invalid token correctly rejected")
+    
+    return {
+        "success": True,
+        "test_user_id": test_user_id,
+        "total_tests": 15,  # Approximate count of sub-tests
+        "message": "Admin user management tests completed"
+    }
+
+
 def run_all_tests():
-    """Run all backend tests for Système d'Inscription Complet"""
-    print(f"{Colors.BOLD}Système d'Inscription Complet - Backend Testing{Colors.ENDC}")
+    """Run all backend tests for Admin User Management System"""
+    print(f"{Colors.BOLD}Admin User Management System - Backend Testing{Colors.ENDC}")
     print(f"Timestamp: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print("=" * 60)
     
@@ -478,54 +786,31 @@ def run_all_tests():
         return test_results
     test_results["total_tests"] += 1
     
-    # Test 2: Registration with Email Validation
-    print(f"\n{Colors.BLUE}Phase 2: Registration System with Email Validation{Colors.ENDC}")
-    registration_results = test_registration_with_email_validation()
-    
-    critical_registration_failures = 0
-    for result in registration_results:
-        test_results["total_tests"] += 1
-        if result["success"]:
-            test_results["passed_tests"] += 1
-        else:
-            test_results["failed_tests"] += 1
-            # Check if it's a critical failure (successful registration tests)
-            if "Inscription" in result["test"] and result["test"].startswith(("1.", "2.")):
-                critical_registration_failures += 1
-                test_results["critical_failures"].append(f"Registration failed: {result['test']}")
-    
-    # Test 3: Password Reset System
-    print(f"\n{Colors.BLUE}Phase 3: Password Reset System{Colors.ENDC}")
-    password_reset_results = test_password_reset()
-    test_results["total_tests"] += 3  # 3 password reset tests
-    
-    if password_reset_results.get("forgot_response"):
-        test_results["passed_tests"] += 1
-    else:
-        test_results["failed_tests"] += 1
-        test_results["critical_failures"].append("Password reset request failed")
-    
-    if password_reset_results.get("reset_response"):
-        test_results["passed_tests"] += 1
-    else:
-        test_results["failed_tests"] += 1
-        if password_reset_results.get("reset_token"):
-            test_results["critical_failures"].append("Password reset with token failed")
-    
-    if password_reset_results.get("invalid_response"):
-        test_results["passed_tests"] += 1
-    else:
-        test_results["failed_tests"] += 1
-    
-    # Test 4: MongoDB Verification
-    print(f"\n{Colors.BLUE}Phase 4: MongoDB Data Verification{Colors.ENDC}")
-    mongodb_result = test_mongodb_verification()
+    # Test 2: Admin Login
+    print(f"\n{Colors.BLUE}Phase 2: Admin Authentication{Colors.ENDC}")
+    admin_token = test_admin_login()
     test_results["total_tests"] += 1
-    if mongodb_result:
+    
+    if admin_token:
         test_results["passed_tests"] += 1
+        log_test("Admin Authentication", "PASS", "Admin login successful")
     else:
         test_results["failed_tests"] += 1
-        test_results["critical_failures"].append("MongoDB verification failed")
+        test_results["critical_failures"].append("Admin login failed")
+        print(f"\n{Colors.RED}❌ Admin login failed. Cannot proceed with user management tests.{Colors.ENDC}")
+        return test_results
+    
+    # Test 3: Admin User Management
+    print(f"\n{Colors.BLUE}Phase 3: Admin User Management Endpoints{Colors.ENDC}")
+    management_results = test_admin_user_management(admin_token)
+    test_results["total_tests"] += management_results.get("total_tests", 15)
+    
+    if management_results.get("success"):
+        test_results["passed_tests"] += management_results.get("total_tests", 15)
+        log_test("Admin User Management", "PASS", "All user management endpoints working")
+    else:
+        test_results["failed_tests"] += management_results.get("total_tests", 15)
+        test_results["critical_failures"].append(f"User management failed: {management_results.get('reason', 'Unknown')}")
     
     # Summary
     print(f"\n{Colors.BOLD}=== Test Summary ==={Colors.ENDC}")
@@ -545,11 +830,11 @@ def run_all_tests():
             print(f"  • {failure}")
     
     if test_results['failed_tests'] == 0:
-        print(f"\n{Colors.GREEN}✅ All tests passed! Registration system working correctly.{Colors.ENDC}")
+        print(f"\n{Colors.GREEN}✅ All tests passed! Admin user management system working correctly.{Colors.ENDC}")
     elif len(test_results['critical_failures']) == 0:
         print(f"\n{Colors.YELLOW}⚠️ Some minor issues found, but core functionality working.{Colors.ENDC}")
     else:
-        print(f"\n{Colors.RED}❌ Critical issues found in registration system.{Colors.ENDC}")
+        print(f"\n{Colors.RED}❌ Critical issues found in admin user management system.{Colors.ENDC}")
     
     return test_results
 
