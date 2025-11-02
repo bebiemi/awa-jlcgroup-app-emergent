@@ -67,6 +67,14 @@ function App() {
         }
       />
       <Route
+        path="/admin/users/new"
+        element={
+          <ProtectedRoute requiredRoles={['admin', 'super_admin']}>
+            <CreateUserPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/admin/groups"
         element={
           <ProtectedRoute requiredRoles={['admin', 'super_admin']}>
