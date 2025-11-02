@@ -831,6 +831,9 @@ async def local_register(
             bcrypt.gensalt()
         ).decode('utf-8')
         
+        # Determine user status based on email domain
+        user_status = UserStatus.ACTIVE if is_valid_email_domain(register_data.email) else UserStatus.PENDING
+        
         # Create new user
         user = User(
             username=register_data.username,
@@ -839,7 +842,7 @@ async def local_register(
             provider=AuthProviderEnum.LOCAL,
             provider_user_id=f"local_{register_data.username}",
             password_hash=password_hash,
-            status=UserStatus.PENDING,  # Requires validation
+            status=user_status,  # Auto-validate for known email domains
             roles=[register_data.role]
         )
         
