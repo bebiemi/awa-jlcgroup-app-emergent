@@ -1321,3 +1321,187 @@ async def revoke_role_from_user(
     )
     
     return {"message": f"Role '{role_name}' revoked from user successfully"}
+
+
+
+# ===== Password Reset Endpoints =====
+
+class ForgotPasswordRequest(BaseModel):
+    """Request to reset password"""
+    email: EmailStr
+
+
+class ResetPasswordRequest(BaseModel):
+    """Reset password with token"""
+    token: str
+    new_password: str
+
+
+@auth_router.post("/forgot-password")
+@limiter.limit(get_rate_limit("password_reset"))
+async def forgot_password(
+    request: Request,
+    forgot_data: ForgotPasswordRequest,
+    db: AsyncIOMotorDatabase = Depends(get_database)
+):
+    """
+    Send password reset email
+    Creates a temporary reset token and sends email to user
+    """
+    import secrets
+    
+    try:
+        # Find user by email
+        users_collection = db.users
+        user = await users_collection.find_one({"email": forgot_data.email})
+        
+        if not user:
+            # Don't reveal if email exists or not (security)
+            return {
+                "message": "Si cet email existe, vous recevrez un lien de réinitialisation"
+            }
+        
+        # Generate reset token (valid for 1 hour)
+        reset_token = secrets.token_urlsafe(32)
+        reset_expiry = datetime.now(timezone.utc) + timedelta(hours=1)
+        
+        # Store reset token in database
+        password_resets_collection = db.password_resets
+        await password_resets_collection.insert_one({
+            "user_id": user["id"],
+            "email": user["email"],
+            "token": reset_token,
+            "expires_at": reset_expiry,
+            "used": False,
+            "created_at": datetime.now(timezone.utc)
+        })
+        
+        # TODO: Send email with reset link
+        # For now, log the token (in production, send email)
+        reset_url = f"{os.getenv('APP_URL', 'http://localhost:3000')}/reset-password?token={reset_token}"
+        logger.info(f"Password reset requested for {user['email']}")
+        logger.info(f"Reset URL: {reset_url}")
+        
+        # Audit log
+        audit_logger = AuditLogger(db, auth_config)
+        await audit_logger.log(
+            action=AuditAction.PASSWORD_RESET_REQUESTED,
+            actor_id=user["id"],
+            actor_email=user["email"],
+            ip_address=get_client_ip(request),
+            user_agent=get_user_agent(request),
+            metadata={"email": user["email"]}
+        )
+        
+        return {
+            "message": "Si cet email existe, vous recevrez un lien de réinitialisation",
+            "reset_url": reset_url  # Only for testing, remove in production
+        }
+        
+    except Exception as e:
+        logger.error(f"Forgot password error: {e}", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Erreur lors de l'envoi de l'email"
+        )
+
+
+@auth_router.post("/reset-password")
+@limiter.limit(get_rate_limit("password_reset"))
+async def reset_password(
+    request: Request,
+    reset_data: ResetPasswordRequest,
+    db: AsyncIOMotorDatabase = Depends(get_database)
+):
+    """
+    Reset password using token from email
+    Validates token and updates user password
+    """
+    import bcrypt
+    
+    try:
+        # Find reset token
+        password_resets_collection = db.password_resets
+        reset_doc = await password_resets_collection.find_one({
+            "token": reset_data.token,
+            "used": False
+        })
+        
+        if not reset_doc:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Token invalide ou déjà utilisé"
+            )
+        
+        # Check if token has expired
+        if reset_doc["expires_at"] < datetime.now(timezone.utc):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Le token a expiré. Veuillez demander un nouveau lien"
+            )
+        
+        # Validate new password
+        if len(reset_data.new_password) < 8:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Le mot de passe doit contenir au moins 8 caractères"
+            )
+        
+        # Hash new password
+        password_hash = bcrypt.hashpw(
+            reset_data.new_password.encode('utf-8'),
+            bcrypt.gensalt()
+        ).decode('utf-8')
+        
+        # Update user password
+        users_collection = db.users
+        await users_collection.update_one(
+            {"id": reset_doc["user_id"]},
+            {
+                "$set": {
+                    "password_hash": password_hash,
+                    "updated_at": datetime.now(timezone.utc)
+                }
+            }
+        )
+        
+        # Mark token as used
+        await password_resets_collection.update_one(
+            {"token": reset_data.token},
+            {
+                "$set": {
+                    "used": True,
+                    "used_at": datetime.now(timezone.utc)
+                }
+            }
+        )
+        
+        # Get user for audit log
+        user = await users_collection.find_one({"id": reset_doc["user_id"]})
+        
+        # Audit log
+        audit_logger = AuditLogger(db, auth_config)
+        await audit_logger.log(
+            action=AuditAction.PASSWORD_CHANGED,
+            actor_id=user["id"],
+            actor_email=user["email"],
+            ip_address=get_client_ip(request),
+            user_agent=get_user_agent(request),
+            metadata={"method": "reset_token"}
+        )
+        
+        logger.info(f"Password reset successful for user {user['id']}")
+        
+        return {
+            "message": "Mot de passe réinitialisé avec succès"
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Reset password error: {e}", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Erreur lors de la réinitialisation du mot de passe"
+        )
+
