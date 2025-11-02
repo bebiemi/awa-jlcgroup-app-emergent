@@ -10,6 +10,8 @@ const routeLabels: Record<string, string> = {
   '': 'Accueil',
   'admin': 'Administration',
   'users': 'Utilisateurs',
+  'groups': 'Groupes',
+  'profiles': 'Profils & Permissions',
   'validations': 'Validations',
   'profile': 'Mon Profil',
   'interimaire': 'Tableau de Bord Intérimaire',
