@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Backend Testing for JLC Auth System
-Tests auth endpoints through Vite proxy configuration
+Backend Testing for Système d'Inscription Complet
+Tests complete registration system with email validation, profile auto-creation, and password reset
 """
 
 import requests
@@ -11,9 +11,10 @@ import os
 import random
 import string
 from datetime import datetime
+import re
 
 # Test configuration
-AUTH_BASE_URL = "http://localhost:8000/api"  # Direct auth service URL
+AUTH_BASE_URL = "http://localhost:8000/auth-api"  # Auth service URL through proxy
 FRONTEND_PROXY_URL = "http://localhost:3000/auth-api"  # Through Vite proxy
 
 class Colors:
