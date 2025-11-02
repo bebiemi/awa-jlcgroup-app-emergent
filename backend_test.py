@@ -811,17 +811,17 @@ def test_admin_user_management(admin_token):
     if response:
         log_test("Non-Existent User Handling", "PASS", "Non-existent user correctly returns 404")
     
-    # Test deleting non-existent user
+    # Test deleting non-existent user (should return 403 for regular admin)
     response = test_endpoint(
         "DELETE",
         f"{AUTH_BASE_URL}/auth/users/non-existent-user-id",
         headers=headers,
-        expected_status=404,
-        test_name="Delete Non-Existent User"
+        expected_status=403,  # Regular admin doesn't have delete permission
+        test_name="Delete Non-Existent User - Permission Check"
     )
     
     if response:
-        log_test("Delete Non-Existent User", "PASS", "Non-existent user delete correctly returns 404")
+        log_test("Delete Permission Check", "PASS", "Regular admin correctly denied delete permission for any user")
     
     # Test 9: Authentication Required Tests
     print(f"\n  Testing: 9. Authentication Required")
