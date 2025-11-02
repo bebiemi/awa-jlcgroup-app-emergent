@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from 'react-router-dom'
 import { useAppSelector } from './store/hooks'
 import LoginPage from './features/auth/pages/LoginPage'
 import RegisterPage from './features/auth/pages/RegisterPage'
+import GoogleCallback from './features/auth/pages/GoogleCallback'
 import AdminDashboard from './features/admin/pages/AdminDashboard'
 import ValidationsList from './features/admin/pages/ValidationsList'
 import InterimDashboard from './features/interim/pages/InterimDashboard'
@@ -26,6 +27,7 @@ function App() {
       {/* Public routes */}
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
+      <Route path="/auth/google/callback" element={<GoogleCallback />} />
 
       {/* Protected routes */}
       <Route
