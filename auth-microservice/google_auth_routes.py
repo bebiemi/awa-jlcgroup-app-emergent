@@ -277,6 +277,16 @@ async def google_callback(
             roles = [role.name for role in user_roles]
             
             logger.info(f"Existing Google user logged in: {auth_result.user.email}")
+            
+            # Ensure profile exists for existing users too
+            await create_user_profile(
+                db=db,
+                user_id=user_id,
+                email=auth_result.user.email,
+                full_name=auth_result.user.full_name,
+                profile_type=roles[0] if roles else "interim",
+                picture=auth_result.metadata.get("picture")
+            )
         
         else:
             # Create new user
