@@ -179,7 +179,7 @@ async def google_callback(
         users_collection = db.users
         existing_user = await users_collection.find_one({
             "provider": "google",
-            "provider_user_id": auth_result.provider_data["google_id"]
+            "provider_user_id": auth_result.metadata["google_id"]
         })
         
         if existing_user:
