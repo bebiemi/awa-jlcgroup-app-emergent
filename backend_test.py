@@ -261,7 +261,8 @@ def test_password_reset():
     print(f"\n{Colors.BOLD}=== Testing Password Reset ==={Colors.ENDC}")
     
     # Use the first successful registration email for testing
-    test_email = "interim.test@gmail.com"
+    global test_users
+    test_email = test_users[0]["email"] if test_users else "interim.test@gmail.com"
     
     # Test 4a: Request password reset
     print(f"\n  Testing: 4a. Demande de réinitialisation")
