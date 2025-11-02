@@ -431,13 +431,14 @@ async def complete_google_registration(
         # Audit log
         audit_logger = AuditLogger(db, auth_config)
         await audit_logger.log(
-            user_id=user_id,
+            actor_id=user_id,
+            actor_email=updated_user_doc.get("email"),
             action=AuditAction.USER_UPDATED,
             resource_type="user",
             resource_id=user_id,
             ip_address=get_client_ip(request),
             user_agent=get_user_agent(request),
-            details={
+            metadata={
                 "provider": "google",
                 "role_selected": registration_data.role
             }
