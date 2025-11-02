@@ -11,7 +11,14 @@ export default defineConfig({
     },
   },
   server: {
-    port: 5173,
+    host: '0.0.0.0',
+    port: 3000,
+    strictPort: true,
+    hmr: {
+      host: 'staffmanager-5.preview.emergentagent.com',
+      port: 443,
+      protocol: 'wss',
+    },
     proxy: {
       '/api': {
         target: 'http://localhost:8001',
