@@ -8,6 +8,7 @@ export default function LoginPage() {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [login, { isLoading }] = useLocalLoginMutation()
+  const [googleLoading, setGoogleLoading] = useState(false)
   const navigate = useNavigate()
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -20,6 +21,36 @@ export default function LoginPage() {
     } catch (error: any) {
       console.error('Login error:', error)
       toast.error(error?.data?.detail || 'Identifiants incorrects')
+    }
+  }
+
+  const handleGoogleLogin = async () => {
+    setGoogleLoading(true)
+    try {
+      const redirectUri = `${window.location.origin}/auth/google/callback`
+      
+      // Call backend to get Google authorization URL
+      const response = await fetch('/auth-api/auth/google/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ redirect_uri: redirectUri }),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.detail || 'Échec de l\'initialisation Google OAuth')
+      }
+
+      const data = await response.json()
+
+      // Redirect to Google authorization page
+      window.location.href = data.authorization_url
+    } catch (error: any) {
+      console.error('Google login error:', error)
+      toast.error(error.message || 'Échec de la connexion Google')
+      setGoogleLoading(false)
     }
   }
 
