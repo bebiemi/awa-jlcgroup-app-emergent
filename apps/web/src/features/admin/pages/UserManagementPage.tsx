@@ -480,6 +480,7 @@ export default function UserManagementPage() {
           />
         </>
       )}
+      <QuickAddUserModal isOpen={showQuickAddModal} onClose={() => setShowQuickAddModal(false)} />
     </Layout>
   )
 }
