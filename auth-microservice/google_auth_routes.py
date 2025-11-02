@@ -225,11 +225,11 @@ async def google_callback(
             
             await users_collection.insert_one(new_user)
             
-            # Assign default role (need to determine based on registration context)
-            # For now, assign "interim" role by default
-            default_role = await rbac_manager.get_role_by_name("interim")
-            if default_role:
-                await rbac_manager.assign_role_to_user(user_id, default_role.id)
+            # Assign default role (interim by default for new Google users)
+            try:
+                await rbac_manager.grant_role(user_id, "interim", granted_by="system")
+            except ValueError as e:
+                logger.warning(f"Could not grant interim role: {e}")
             
             roles = ["interim"]
             
