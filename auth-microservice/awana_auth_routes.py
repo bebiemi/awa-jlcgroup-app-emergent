@@ -666,6 +666,145 @@ async def local_login(
         )
 
 
+@auth_router.post("/local/register", response_model=LoginResponse)
+@limiter.limit(get_rate_limit("auth_register"))
+async def local_register(
+    request: Request,
+    register_data: LocalRegisterRequest,
+    db: AsyncIOMotorDatabase = Depends(get_database),
+    jwt_manager: JWTManager = Depends(get_jwt_manager),
+    session_storage: SessionStorage = Depends(get_session_storage),
+    rbac_manager: RBACManager = Depends(get_rbac_manager)
+):
+    """
+    Register a new user with username/password
+    Creates user account and assigns selected role (interim or company)
+    """
+    import bcrypt
+    
+    try:
+        # Validate role
+        if register_data.role not in ['interim', 'company']:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Invalid role. Must be 'interim' or 'company'"
+            )
+        
+        # Check if username already exists
+        existing_username = await db.users.find_one({
+            "username": register_data.username
+        })
+        
+        if existing_username:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Ce nom d'utilisateur est déjà utilisé"
+            )
+        
+        # Check if email already exists
+        existing_email = await db.users.find_one({
+            "email": register_data.email
+        })
+        
+        if existing_email:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Cet email est déjà utilisé"
+            )
+        
+        # Hash password
+        password_hash = bcrypt.hashpw(
+            register_data.password.encode('utf-8'),
+            bcrypt.gensalt()
+        ).decode('utf-8')
+        
+        # Create new user
+        user = User(
+            username=register_data.username,
+            email=register_data.email,
+            full_name=register_data.full_name,
+            provider=AuthProviderEnum.LOCAL,
+            provider_user_id=f"local_{register_data.username}",
+            password_hash=password_hash,
+            status=UserStatus.PENDING,  # Requires validation
+            roles=[register_data.role]
+        )
+        
+        # Save user to database
+        user_dict = user.dict()
+        user_dict['created_at'] = user.created_at.isoformat()
+        user_dict['updated_at'] = user.updated_at.isoformat()
+        user_dict['last_login_at'] = user.last_login_at.isoformat() if user.last_login_at else None
+        
+        await db.users.insert_one(user_dict)
+        
+        # Grant role in RBAC system
+        try:
+            await rbac_manager.grant_role(user.id, register_data.role, granted_by="system")
+        except ValueError as e:
+            logger.warning(f"Could not grant role {register_data.role}: {e}")
+        
+        logger.info(f"New user registered: {user.email} with role {register_data.role}")
+        
+        # Create session
+        session = await session_storage.create_session(
+            user=user,
+            access_token="",
+            refresh_token="",
+            ip_address=get_client_ip(request),
+            user_agent=get_user_agent(request),
+            metadata={"provider": "local", "registration": True}
+        )
+        
+        # Create JWT tokens
+        access_token = jwt_manager.create_access_token(
+            user=user,
+            session_id=session.id
+        )
+        
+        refresh_token = jwt_manager.create_refresh_token(
+            user=user,
+            session_id=session.id
+        )
+        
+        # Update session with tokens
+        await session_storage.update_session_tokens(
+            session_id=session.id,
+            access_token=access_token,
+            refresh_token=refresh_token
+        )
+        
+        # Audit log
+        audit_logger = AuditLogger(db, auth_config)
+        await audit_logger.log(
+            action=AuditAction.USER_CREATED,
+            actor_id=user.id,
+            actor_email=user.email,
+            ip_address=get_client_ip(request),
+            user_agent=get_user_agent(request),
+            metadata={"provider": "local", "role": register_data.role}
+        )
+        
+        logger.info(f"✅ Registration successful for {user.email}")
+        
+        return LoginResponse(
+            access_token=access_token,
+            refresh_token=refresh_token,
+            token_type="bearer",
+            expires_in=auth_config.jwt_access_token_expire_minutes * 60,
+            user=user
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Registration failed: {e}", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Registration failed: {str(e)}"
+        )
+
+
 
 
 @auth_router.post("/logout")
