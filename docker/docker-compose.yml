@@ -1,0 +1,112 @@
+version: '3.8'
+
+services:
+  # MongoDB
+  mongodb:
+    image: mongo:7
+    container_name: jlc-mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    environment:
+      - MONGO_INITDB_DATABASE=jlc_db
+    networks:
+      - jlc-network
+
+  # JLC API (FastAPI)
+  jlc-api:
+    build:
+      context: ../apps/api
+      dockerfile: Dockerfile
+    container_name: jlc-api
+    ports:
+      - "8001:8001"
+    volumes:
+      - ../apps/api:/app
+      - uploads:/app/uploads
+    environment:
+      - MONGO_URL=mongodb://mongodb:27017
+      - DATABASE_NAME=jlc_db
+      - AUTH_SERVICE_URL=http://auth-microservice:8000
+      - CORS_ORIGINS=http://localhost:3000,http://localhost:5173
+      - UPLOAD_DIR=/app/uploads
+      - BASE_URL=http://localhost:8001
+      - SMTP_HOST=mailhog
+      - SMTP_PORT=1025
+    depends_on:
+      - mongodb
+      - auth-microservice
+    networks:
+      - jlc-network
+
+  # Auth Microservice
+  auth-microservice:
+    build:
+      context: ../auth-microservice
+      dockerfile: Dockerfile
+    container_name: jlc-auth
+    ports:
+      - "8000:8000"
+    environment:
+      - MONGO_URL=mongodb://mongodb:27017
+      - DATABASE_NAME=auth_db
+      - CORS_ORIGINS=http://localhost:3000,http://localhost:5173,http://localhost:8001
+      - JWT_SECRET=your-super-secret-jwt-key-change-in-production
+      - JWT_ACCESS_TOKEN_EXPIRE_MINUTES=60
+    depends_on:
+      - mongodb
+    networks:
+      - jlc-network
+
+  # Frontend (React)
+  jlc-web:
+    build:
+      context: ../apps/web
+      dockerfile: Dockerfile
+    container_name: jlc-web
+    ports:
+      - "5173:5173"
+    volumes:
+      - ../apps/web:/app
+      - /app/node_modules
+    environment:
+      - VITE_API_BASE_URL=http://localhost:8001
+      - VITE_AUTH_SERVICE_URL=http://localhost:8000
+    depends_on:
+      - jlc-api
+    networks:
+      - jlc-network
+
+  # Mailhog (Email testing)
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: jlc-mailhog
+    ports:
+      - "1025:1025"  # SMTP
+      - "8025:8025"  # Web UI
+    networks:
+      - jlc-network
+
+  # MongoDB Admin (optional)
+  mongo-express:
+    image: mongo-express:latest
+    container_name: jlc-mongo-express
+    ports:
+      - "8081:8081"
+    environment:
+      - ME_CONFIG_MONGODB_URL=mongodb://mongodb:27017
+      - ME_CONFIG_BASICAUTH_USERNAME=admin
+      - ME_CONFIG_BASICAUTH_PASSWORD=admin
+    depends_on:
+      - mongodb
+    networks:
+      - jlc-network
+
+volumes:
+  mongodb_data:
+  uploads:
+
+networks:
+  jlc-network:
+    driver: bridge
