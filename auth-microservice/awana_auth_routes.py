@@ -177,16 +177,28 @@ async def create_user_profile_if_not_exists(
             "experience_years": 0,
             "availability": "available",
             "hourly_rate": None,
-            "resume_url": None
+            "resume_url": None,
+            "date_of_birth": None,
+            "place_of_birth": None,
+            "nationality": "Gabonaise",
+            "address": None,
+            "city": None,
+            "postal_code": None
         })
     elif profile_type == 'company':
         profile.update({
-            "company_name": None,
-            "siret": None,
-            "industry": None,
+            "legal_representative": None,  # Représentant légal
+            "company_name": None,  # Nom de la société
+            "nif": None,  # NIF (Numéro d'Identification Fiscale)
+            "address": None,  # Adresse
+            "circuit_file_number": None,  # Numéro de la fiche circuit
+            "country": "Gabon",  # Pays (par défaut GABON)
+            "phone": None,  # Numéro de téléphone
+            "contact_email": email,  # Mail de contact
+            "industry": None,  # Secteur d'activité
             "company_size": None,
-            "description": None,
-            "website": None
+            "website": None,
+            "description": None
         })
     elif profile_type in ['admin', 'super_admin']:
         profile.update({
