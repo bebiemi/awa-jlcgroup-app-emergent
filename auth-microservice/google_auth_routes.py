@@ -337,3 +337,164 @@ async def google_oauth_status():
         "configured": bool(client_id and client_secret),
         "client_id": client_id[:20] + "..." if client_id else None
     }
+
+
+class CompleteRegistrationRequest(BaseModel):
+    """Request to complete Google OAuth registration with role selection"""
+    role: str
+
+
+@google_router.post("/complete-registration")
+async def complete_google_registration(
+    request: Request,
+    registration_data: CompleteRegistrationRequest,
+    db: AsyncIOMotorDatabase = Depends(get_database),
+    jwt_manager: JWTManager = Depends(get_jwt_manager),
+    session_storage: SessionStorage = Depends(get_session_storage),
+    rbac_manager: RBACManager = Depends(get_rbac_manager)
+):
+    """
+    Complete Google OAuth registration by selecting a role
+    Called after new user authenticates with Google and selects their role
+    """
+    try:
+        # Get current user from Authorization header
+        auth_header = request.headers.get("Authorization")
+        if not auth_header or not auth_header.startswith("Bearer "):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Missing or invalid authorization header"
+            )
+        
+        token = auth_header.replace("Bearer ", "")
+        
+        # Decode token to get user_id
+        try:
+            payload = jwt_manager.decode_token(token)
+            user_id = payload.get("sub")
+        except Exception as e:
+            logger.error(f"Token decode error: {e}")
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid or expired token"
+            )
+        
+        # Validate role
+        if registration_data.role not in ['interim', 'company']:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Invalid role. Must be 'interim' or 'company'"
+            )
+        
+        # Get user from database
+        users_collection = db.users
+        user_doc = await users_collection.find_one({"id": user_id})
+        
+        if not user_doc:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="User not found"
+            )
+        
+        # Update user role
+        await users_collection.update_one(
+            {"id": user_id},
+            {
+                "$set": {
+                    "roles": [registration_data.role],
+                    "updated_at": datetime.now(timezone.utc)
+                }
+            }
+        )
+        
+        # Grant role in RBAC system
+        try:
+            # Remove old interim role if it exists
+            default_role = await rbac_manager.get_role_by_name("interim")
+            if default_role:
+                try:
+                    await rbac_manager.revoke_role_from_user(user_id, default_role.id)
+                except:
+                    pass
+            
+            # Assign new role
+            new_role = await rbac_manager.get_role_by_name(registration_data.role)
+            if new_role:
+                await rbac_manager.assign_role_to_user(user_id, new_role.id)
+        except Exception as e:
+            logger.warning(f"Could not update RBAC role: {e}")
+        
+        # Fetch updated user
+        updated_user_doc = await users_collection.find_one({"id": user_id})
+        
+        # Audit log
+        audit_logger = AuditLogger(db)
+        await audit_logger.log(
+            user_id=user_id,
+            action=AuditAction.USER_UPDATED,
+            resource_type="user",
+            resource_id=user_id,
+            ip_address=get_client_ip(request),
+            user_agent=get_user_agent(request),
+            details={
+                "provider": "google",
+                "role_selected": registration_data.role
+            }
+        )
+        
+        logger.info(f"Google user {user_id} completed registration with role: {registration_data.role}")
+        
+        # Create new tokens with updated role
+        from awana_auth.core.models import User as UserModel
+        updated_user = UserModel(**updated_user_doc)
+        
+        # Get session
+        session = await session_storage.get_session_by_access_token(token)
+        session_id = session.id if session else secrets.token_urlsafe(32)
+        
+        # Generate new JWT tokens with updated role
+        access_token = jwt_manager.create_access_token(
+            user_id=user_id,
+            email=updated_user.email,
+            roles=[registration_data.role],
+            session_id=session_id
+        )
+        
+        refresh_token = jwt_manager.create_refresh_token(
+            user_id=user_id,
+            email=updated_user.email,
+            roles=[registration_data.role],
+            session_id=session_id
+        )
+        
+        # Return updated tokens and user info
+        return {
+            "access_token": access_token,
+            "refresh_token": refresh_token,
+            "token_type": "bearer",
+            "expires_in": 1800,
+            "user": {
+                "id": user_id,
+                "username": updated_user.username,
+                "email": updated_user.email,
+                "full_name": updated_user.full_name,
+                "provider": "google",
+                "provider_user_id": updated_user.provider_user_id,
+                "status": updated_user.status,
+                "is_verified": updated_user.is_verified,
+                "roles": [registration_data.role],
+                "picture": updated_user_doc.get("picture"),
+                "created_at": updated_user.created_at.isoformat() if updated_user.created_at else None,
+                "updated_at": datetime.now(timezone.utc).isoformat(),
+                "last_login_at": updated_user.last_login_at.isoformat() if updated_user.last_login_at else None
+            }
+        }
+    
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Complete registration error: {e}", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to complete registration: {str(e)}"
+        )
