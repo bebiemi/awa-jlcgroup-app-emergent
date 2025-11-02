@@ -253,47 +253,181 @@ def test_registration_with_email_validation():
     
     return results
 
-def test_local_login():
-    """Test local login with admin credentials"""
-    print(f"\n{Colors.BOLD}=== Testing Local Login ==={Colors.ENDC}")
+def test_password_reset():
+    """Test password reset functionality"""
+    print(f"\n{Colors.BOLD}=== Testing Password Reset ==={Colors.ENDC}")
     
-    login_data = {
-        "username": "admin",
-        "password": "awana2025"
-    }
+    # Use the first successful registration email for testing
+    test_email = "interim.test@gmail.com"
     
-    response = test_endpoint(
+    # Test 4a: Request password reset
+    print(f"\n  Testing: 4a. Demande de réinitialisation")
+    forgot_response = test_endpoint(
         "POST",
-        f"{AUTH_BASE_URL}/auth/local/login", 
-        data=login_data,
+        f"{AUTH_BASE_URL}/auth/forgot-password",
+        data={"email": test_email},
         expected_status=200,
-        test_name="Admin Login"
+        test_name="Password Reset Request"
     )
     
-    if response:
+    reset_token = None
+    if forgot_response:
         # Check response structure
-        required_fields = ["access_token", "refresh_token", "user"]
-        missing_fields = [field for field in required_fields if field not in response]
+        if "message" in forgot_response:
+            log_test("Password Reset Request - Response", "PASS",
+                    f"Message: {forgot_response['message']}")
         
-        if missing_fields:
-            log_test("Admin Login - Response Structure", "FAIL",
-                    f"Missing fields: {missing_fields}")
-        else:
-            log_test("Admin Login - Response Structure", "PASS",
-                    "All required fields present")
-            
-            # Check user object
-            user = response.get("user", {})
-            if "admin" in user.get("roles", []):
-                log_test("Admin Login - Role Check", "PASS",
-                        "Admin role correctly assigned")
+        # Extract reset token from response (test mode)
+        if "reset_url" in forgot_response:
+            reset_url = forgot_response["reset_url"]
+            # Extract token from URL
+            import re
+            token_match = re.search(r'token=([^&]+)', reset_url)
+            if token_match:
+                reset_token = token_match.group(1)
+                log_test("Password Reset Request - Token Generation", "PASS",
+                        f"Reset token generated: {reset_token[:10]}...")
             else:
-                log_test("Admin Login - Role Check", "FAIL",
-                        f"Admin role missing. Roles: {user.get('roles', [])}")
-        
-        return response
+                log_test("Password Reset Request - Token Generation", "FAIL",
+                        "No token found in reset URL")
+        else:
+            log_test("Password Reset Request - Token Generation", "WARN",
+                    "No reset_url in response (production mode)")
     
-    return None
+    # Test 4b: Reset password with token
+    if reset_token:
+        print(f"\n  Testing: 4b. Réinitialisation avec token")
+        reset_response = test_endpoint(
+            "POST",
+            f"{AUTH_BASE_URL}/auth/reset-password",
+            data={
+                "token": reset_token,
+                "new_password": "NewSecurePass456!"
+            },
+            expected_status=200,
+            test_name="Password Reset with Token"
+        )
+        
+        if reset_response:
+            if "message" in reset_response:
+                log_test("Password Reset with Token - Success", "PASS",
+                        f"Message: {reset_response['message']}")
+    
+    # Test 4c: Invalid token
+    print(f"\n  Testing: 4c. Token invalide/expiré")
+    invalid_response = test_endpoint(
+        "POST",
+        f"{AUTH_BASE_URL}/auth/reset-password",
+        data={
+            "token": "invalid_token_123",
+            "new_password": "NewSecurePass456!"
+        },
+        expected_status=400,
+        test_name="Password Reset with Invalid Token"
+    )
+    
+    if invalid_response:
+        error_detail = invalid_response.get("detail", "")
+        if "invalide" in error_detail or "invalid" in error_detail.lower():
+            log_test("Password Reset Invalid Token - Error Message", "PASS",
+                    f"Correct error: {error_detail}")
+        else:
+            log_test("Password Reset Invalid Token - Error Message", "WARN",
+                    f"Unexpected error: {error_detail}")
+    
+    return {
+        "forgot_response": forgot_response,
+        "reset_token": reset_token,
+        "reset_response": reset_response if reset_token else None,
+        "invalid_response": invalid_response
+    }
+
+
+def test_mongodb_verification():
+    """Test MongoDB data verification"""
+    print(f"\n{Colors.BOLD}=== Testing MongoDB Verification ==={Colors.ENDC}")
+    
+    try:
+        from pymongo import MongoClient
+        import os
+        
+        # Connect to MongoDB
+        mongo_url = os.getenv('MONGO_URL', 'mongodb://localhost:27017')
+        client = MongoClient(mongo_url)
+        
+        # Check auth_db.users
+        auth_db = client['auth_db']
+        users_collection = auth_db.users
+        
+        # Check jlc_db.profiles  
+        jlc_db = client['jlc_db']
+        profiles_collection = jlc_db.profiles
+        
+        print(f"\n  Checking MongoDB Collections:")
+        
+        # Count users in auth_db
+        user_count = users_collection.count_documents({})
+        log_test("MongoDB - auth_db.users", "PASS" if user_count > 0 else "WARN",
+                f"Found {user_count} users in auth_db.users")
+        
+        # Count profiles in jlc_db
+        profile_count = profiles_collection.count_documents({})
+        log_test("MongoDB - jlc_db.profiles", "PASS" if profile_count > 0 else "WARN",
+                f"Found {profile_count} profiles in jlc_db.profiles")
+        
+        # Verify specific test users if available
+        global test_users
+        if 'test_users' in globals() and test_users:
+            print(f"\n  Verifying Test Users:")
+            
+            for test_user in test_users:
+                user_id = test_user.get("user_id")
+                email = test_user.get("email")
+                role = test_user.get("role")
+                
+                if user_id:
+                    # Check user in auth_db
+                    user_doc = users_collection.find_one({"id": user_id})
+                    if user_doc:
+                        status = user_doc.get("status", "unknown")
+                        roles = user_doc.get("roles", [])
+                        log_test(f"User {email} in auth_db", "PASS",
+                                f"Status: {status}, Roles: {roles}")
+                    else:
+                        log_test(f"User {email} in auth_db", "FAIL",
+                                "User not found in auth_db")
+                    
+                    # Check profile in jlc_db
+                    profile_doc = profiles_collection.find_one({"user_id": user_id})
+                    if profile_doc:
+                        profile_type = profile_doc.get("profile_type", "unknown")
+                        log_test(f"Profile {email} in jlc_db", "PASS",
+                                f"Profile type: {profile_type}")
+                        
+                        # Check role-specific fields
+                        if role == "interim":
+                            interim_fields = ["skills", "experience_years", "availability"]
+                            has_interim_fields = all(field in profile_doc for field in interim_fields)
+                            log_test(f"Profile {email} - Interim Fields", 
+                                    "PASS" if has_interim_fields else "WARN",
+                                    f"Interim-specific fields present: {has_interim_fields}")
+                        
+                        elif role == "company":
+                            company_fields = ["company_name", "nif", "legal_representative"]
+                            has_company_fields = any(field in profile_doc for field in company_fields)
+                            log_test(f"Profile {email} - Company Fields",
+                                    "PASS" if has_company_fields else "WARN", 
+                                    f"Company-specific fields present: {has_company_fields}")
+                    else:
+                        log_test(f"Profile {email} in jlc_db", "FAIL",
+                                "Profile not found in jlc_db")
+        
+        client.close()
+        return True
+        
+    except Exception as e:
+        log_test("MongoDB Verification", "FAIL", f"Error connecting to MongoDB: {str(e)}")
+        return False
 
 def test_vite_proxy():
     """Test if Vite proxy is working (optional)"""
