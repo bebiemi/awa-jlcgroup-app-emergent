@@ -26,22 +26,26 @@ export default function ProfilePage() {
         last_name: profile.last_name || '',
         phone: profile.phone || '',
         // Interim fields
-        skills: profile.interim_data?.skills || [],
-        experience_years: profile.interim_data?.experience_years || '',
-        availability: profile.interim_data?.availability || '',
-        bio: profile.interim_data?.bio || '',
-        certifications: profile.interim_data?.certifications || [],
-        // Company fields
-        company_name: profile.company_data?.company_name || '',
-        registration_number: profile.company_data?.registration_number || '',
-        address: profile.company_data?.address || '',
-        industry: profile.company_data?.industry || '',
-        company_size: profile.company_data?.company_size || '',
-        website: profile.company_data?.website || '',
-        // Agency fields
-        agency_name: profile.agency_data?.agency_name || '',
-        agency_code: profile.agency_data?.agency_code || '',
-        description: profile.agency_data?.description || '',
+        skills: profile.skills || [],
+        experience_years: profile.experience_years || '',
+        availability: profile.availability || '',
+        date_of_birth: profile.date_of_birth || '',
+        place_of_birth: profile.place_of_birth || '',
+        nationality: profile.nationality || 'Gabonaise',
+        address: profile.address || '',
+        city: profile.city || '',
+        postal_code: profile.postal_code || '',
+        // Company fields (Gabon specific)
+        legal_representative: profile.legal_representative || '',
+        company_name: profile.company_name || '',
+        nif: profile.nif || '',
+        circuit_file_number: profile.circuit_file_number || '',
+        country: profile.country || 'Gabon',
+        contact_email: profile.contact_email || profile.email || '',
+        industry: profile.industry || '',
+        company_size: profile.company_size || '',
+        website: profile.website || '',
+        description: profile.description || '',
       })
     }
   })
