@@ -1321,6 +1321,13 @@ async def revoke_role_from_user(
         target_id=user_id,
         target_email=user.email,
         resource_type="role",
+        resource_id=role_name,
+        ip_address=get_client_ip(request),
+        user_agent=get_user_agent(request),
+        metadata={"role_name": role_name}
+    )
+    
+    return {"message": f"Role '{role_name}' revoked from user successfully"}
 
 
 
