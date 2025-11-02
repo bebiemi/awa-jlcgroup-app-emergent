@@ -1,0 +1,199 @@
+"""
+FastAPI dependencies for authentication and authorization
+"""
+from typing import Optional
+from fastapi import Depends, HTTPException, status, Request
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
+from ..core.config import auth_config
+from ..core.models import User
+from ..core.exceptions import InvalidTokenError, UserNotFoundError
+from ..session.jwt import JWTManager
+from ..session.storage import SessionStorage
+from ..rbac.manager import RBACManager
+import os
+import logging
+
+logger = logging.getLogger(__name__)
+
+# HTTP Bearer token scheme
+security = HTTPBearer(auto_error=False)
+
+# Global instances (will be initialized)
+_jwt_manager: Optional[JWTManager] = None
+_session_storage: Optional[SessionStorage] = None
+_rbac_manager: Optional[RBACManager] = None
+_db: Optional[AsyncIOMotorDatabase] = None
+
+
+def get_database() -> AsyncIOMotorDatabase:
+    """Get database instance"""
+    global _db
+    
+    if _db is None:
+        mongo_url = os.getenv("MONGO_URL", "mongodb://localhost:27017")
+        database_name = os.getenv("DATABASE_NAME", "awana_prod")
+        
+        client = AsyncIOMotorClient(mongo_url)
+        _db = client[database_name]
+        logger.info(f"Database initialized: {database_name}")
+    
+    return _db
+
+
+def get_jwt_manager() -> JWTManager:
+    """Get JWT manager instance"""
+    global _jwt_manager
+    
+    if _jwt_manager is None:
+        _jwt_manager = JWTManager(auth_config)
+        logger.info("JWT Manager initialized")
+    
+    return _jwt_manager
+
+
+def get_session_storage(db: AsyncIOMotorDatabase = Depends(get_database)) -> SessionStorage:
+    """Get session storage instance"""
+    global _session_storage
+    
+    if _session_storage is None:
+        _session_storage = SessionStorage(db, auth_config)
+        logger.info("Session Storage initialized")
+    
+    return _session_storage
+
+
+def get_rbac_manager(db: AsyncIOMotorDatabase = Depends(get_database)) -> RBACManager:
+    """Get RBAC manager instance"""
+    global _rbac_manager
+    
+    if _rbac_manager is None:
+        _rbac_manager = RBACManager(db)
+        logger.info("RBAC Manager initialized")
+    
+    return _rbac_manager
+
+
+async def get_current_user(
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(security),
+    jwt_manager: JWTManager = Depends(get_jwt_manager),
+    session_storage: SessionStorage = Depends(get_session_storage),
+    db: AsyncIOMotorDatabase = Depends(get_database)
+) -> User:
+    """
+    Get current authenticated user from JWT token
+    
+    Raises:
+        HTTPException: If authentication fails
+    """
+    if not credentials:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not authenticated",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
+    token = credentials.credentials
+    
+    try:
+        # Verify JWT token
+        token_payload = jwt_manager.verify_token(token, token_type="access")
+        
+        # Get session
+        session = await session_storage.get_session(token_payload.session_id)
+        
+        if not session:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Session not found or expired",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+        
+        # Get user from database
+        user_doc = await db.users.find_one({"id": token_payload.sub}, {"_id": 0})
+        
+        if not user_doc:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="User not found"
+            )
+        
+        user = User(**user_doc)
+        
+        # Check if user is active
+        if user.status != "active":
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=f"User account is {user.status}"
+            )
+        
+        return user
+        
+    except InvalidTokenError as e:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=str(e),
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    except Exception as e:
+        logger.error(f"Authentication error: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Authentication failed",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+
+async def get_optional_user(
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(security),
+    jwt_manager: JWTManager = Depends(get_jwt_manager),
+    session_storage: SessionStorage = Depends(get_session_storage),
+    db: AsyncIOMotorDatabase = Depends(get_database)
+) -> Optional[User]:
+    """
+    Get current user if authenticated, None otherwise
+    Useful for endpoints that work with or without authentication
+    """
+    if not credentials:
+        return None
+    
+    try:
+        return await get_current_user(credentials, jwt_manager, session_storage, db)
+    except HTTPException:
+        return None
+
+
+async def require_admin(
+    current_user: User = Depends(get_current_user),
+    rbac_manager: RBACManager = Depends(get_rbac_manager)
+) -> User:
+    """
+    Require user to have admin or super_admin role
+    """
+    has_role = await rbac_manager.has_any_role(current_user.id, ["admin", "super_admin"])
+    
+    if not has_role:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Admin privileges required"
+        )
+    
+    return current_user
+
+
+async def require_super_admin(
+    current_user: User = Depends(get_current_user),
+    rbac_manager: RBACManager = Depends(get_rbac_manager)
+) -> User:
+    """
+    Require user to have super_admin role
+    """
+    has_role = await rbac_manager.has_role(current_user.id, "super_admin")
+    
+    if not has_role:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Super admin privileges required"
+        )
+    
+    return current_user
