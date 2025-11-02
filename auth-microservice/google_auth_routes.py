@@ -429,7 +429,7 @@ async def complete_google_registration(
         updated_user_doc = await users_collection.find_one({"id": user_id})
         
         # Audit log
-        audit_logger = AuditLogger(db)
+        audit_logger = AuditLogger(db, auth_config)
         await audit_logger.log(
             user_id=user_id,
             action=AuditAction.USER_UPDATED,
