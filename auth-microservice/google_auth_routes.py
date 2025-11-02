@@ -274,16 +274,12 @@ async def google_callback(
         
         # Generate JWT tokens with real session_id
         access_token = jwt_manager.create_access_token(
-            user_id=user_id,
-            email=user_obj.email,
-            roles=roles,
+            user=user_obj,
             session_id=session.id
         )
         
         refresh_token = jwt_manager.create_refresh_token(
-            user_id=user_id,
-            email=user_obj.email,
-            roles=roles,
+            user=user_obj,
             session_id=session.id
         )
         
