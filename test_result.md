@@ -11,6 +11,18 @@ backend:
         agent: "testing"
         comment: "✅ All registration test cases passed: Valid interim/company registration (200 OK), invalid role validation (400), duplicate username/email validation (400). JWT tokens generated correctly, roles assigned properly, status set to 'pending'."
 
+  - task: "Système d'Inscription Complet avec Validation Email"
+    implemented: true
+    working: true
+    file: "/app/auth-microservice/awana_auth_routes.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ COMPREHENSIVE TESTING COMPLETED: 1) Auto-validation working (gmail.com → active status), 2) Manual validation working (.ga → pending status), 3) Profile auto-creation in jlc_db with role-specific fields, 4) French error messages for duplicates, 5) Password reset system fully functional, 6) MongoDB verification confirms users in auth_db and profiles in jlc_db. All 10 test cases passed (100% success rate). Fixed minor issues: AuditAction enum and datetime timezone comparison."
+
   - task: "Google OAuth Complete Flow"
     implemented: true
     working: true
