@@ -163,6 +163,8 @@ async def google_callback(
                 detail="Invalid or expired state parameter"
             )
         
+        logger.info(f"State verified successfully for state: {callback_request.state[:20]}...")
+        
         # Get Google provider
         provider = get_google_provider()
         
