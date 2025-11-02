@@ -157,8 +157,11 @@ class GoogleAuthProvider(AbstractAuthProvider):
         try:
             user_info = await self._get_user_info(access_token)
             
+            import secrets
+            user_id = secrets.token_urlsafe(16)
+            
             return User(
-                id=None,
+                id=user_id,
                 username=user_info["email"].split("@")[0],
                 email=user_info["email"],
                 full_name=user_info.get("name"),
