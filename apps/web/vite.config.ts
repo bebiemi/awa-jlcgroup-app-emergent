@@ -14,9 +14,11 @@ export default defineConfig({
     host: '0.0.0.0',
     port: 3000,
     strictPort: true,
-    allowedHosts: 'all', // Allow all hosts to prevent blocking issues on different preview domains
+    // Allow all hosts to prevent blocking on different preview domains (forked apps)
+    allowedHosts: 'all',
     hmr: {
-      port: 443,
+      // Let Vite automatically handle HMR configuration for the environment
+      clientPort: 443,
       protocol: 'wss',
     },
     proxy: {
