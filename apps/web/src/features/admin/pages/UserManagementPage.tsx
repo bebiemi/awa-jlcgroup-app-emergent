@@ -36,6 +36,7 @@ export default function UserManagementPage() {
   const [showEditModal, setShowEditModal] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [showBlockModal, setShowBlockModal] = useState(false)
+  const [showQuickAddModal, setShowQuickAddModal] = useState(false)
 
   // Fetch users with filters
   const { data, isLoading, isFetching } = useGetUsersQuery({
