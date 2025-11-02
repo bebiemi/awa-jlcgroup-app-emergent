@@ -12,7 +12,7 @@
 
 ### Étape 1: Accéder à la Page de Login
 
-**URL**: https://jlc-fastapi-react.preview.emergentagent.com/login
+**URL**: https://jlc-user-portal.preview.emergentagent.com/login
 
 ✅ Vous devriez voir:
 - Logo JLC GROUP ⭐
@@ -67,7 +67,7 @@ This will allow JLC Group - Gestion Intérim to:
 ### Étape 5: Callback et Redirection
 
 **Ce qui se passe automatiquement**:
-1. Google redirige vers: `https://jlc-fastapi-react.preview.emergentagent.com/auth/google/callback?code=...&state=...`
+1. Google redirige vers: `https://jlc-user-portal.preview.emergentagent.com/auth/google/callback?code=...&state=...`
 2. ⏳ Page de chargement: "Connexion en cours..."
 3. 🔄 Appel à l'API: `POST /auth-api/auth/google/callback`
 4. 🎉 Création/mise à jour du compte utilisateur
@@ -257,14 +257,14 @@ INFO:     GET /api/notifications
 ```env
 GOOGLE_CLIENT_ID=166774342464-b9tt2eh4hd7viva770r759b0f7fha67h.apps.googleusercontent.com
 GOOGLE_CLIENT_SECRET=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
-GOOGLE_REDIRECT_URI=https://jlc-fastapi-react.preview.emergentagent.com/auth/google/callback
+GOOGLE_REDIRECT_URI=https://jlc-user-portal.preview.emergentagent.com/auth/google/callback
 ```
 
 ### Google Cloud Console - Configuration Actuelle
 
 **Redirect URIs autorisés**:
 ```
-https://jlc-fastapi-react.preview.emergentagent.com/auth/google/callback
+https://jlc-user-portal.preview.emergentagent.com/auth/google/callback
 http://localhost:3000/auth/google/callback
 ```
 
@@ -383,4 +383,4 @@ Avant de considérer Google OAuth comme "production-ready":
 
 **🎉 STATUS**: Google OAuth est maintenant **PLEINEMENT FONCTIONNEL** sur le preview!
 
-**Test immédiatement**: https://jlc-fastapi-react.preview.emergentagent.com/login
+**Test immédiatement**: https://jlc-user-portal.preview.emergentagent.com/login

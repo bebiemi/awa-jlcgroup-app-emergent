@@ -43,9 +43,9 @@
 - App logo: (optionnel, vous pouvez uploader le logo JLC)
 
 **App domain:**
-- Application home page: `https://jlc-fastapi-react.preview.emergentagent.com`
-- Application privacy policy link: `https://jlc-fastapi-react.preview.emergentagent.com/privacy`
-- Application terms of service link: `https://jlc-fastapi-react.preview.emergentagent.com/terms`
+- Application home page: `https://jlc-user-portal.preview.emergentagent.com`
+- Application privacy policy link: `https://jlc-user-portal.preview.emergentagent.com/privacy`
+- Application terms of service link: `https://jlc-user-portal.preview.emergentagent.com/terms`
 
 **Authorized domains:**
 - Ajoutez: `emergentagent.com`
@@ -89,13 +89,13 @@
 
 **Authorized JavaScript origins:**
 ```
-https://jlc-fastapi-react.preview.emergentagent.com
+https://jlc-user-portal.preview.emergentagent.com
 http://localhost:3000
 ```
 
 **Authorized redirect URIs:**
 ```
-https://jlc-fastapi-react.preview.emergentagent.com/auth/google/callback
+https://jlc-user-portal.preview.emergentagent.com/auth/google/callback
 http://localhost:3000/auth/google/callback
 ```
 
