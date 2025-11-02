@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useLocalLoginMutation } from '../api/authApi'
+import { useAppSelector } from '@/store/hooks'
 import toast from 'react-hot-toast'
 import Button from '@/components/Button'
 
@@ -15,9 +16,24 @@ export default function LoginPage() {
     e.preventDefault()
 
     try {
-      await login({ username, password }).unwrap()
+      const result = await login({ username, password }).unwrap()
       toast.success('Connexion réussie!')
-      navigate('/')
+      
+      // Redirect to appropriate dashboard based on user role
+      const userRoles = result.user?.roles || []
+      let dashboardPath = '/profile'
+      
+      if (userRoles.includes('admin') || userRoles.includes('super_admin')) {
+        dashboardPath = '/admin'
+      } else if (userRoles.includes('interim')) {
+        dashboardPath = '/interimaire'
+      } else if (userRoles.includes('company')) {
+        dashboardPath = '/entreprise'
+      } else if (userRoles.includes('agency')) {
+        dashboardPath = '/agence'
+      }
+      
+      navigate(dashboardPath, { replace: true })
     } catch (error: any) {
       console.error('Login error:', error)
       toast.error(error?.data?.detail || 'Identifiants incorrects')
