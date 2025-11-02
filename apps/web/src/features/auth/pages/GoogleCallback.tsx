@@ -76,8 +76,21 @@ export default function GoogleCallback() {
 
         toast.success(`Bienvenue, ${data.user.full_name || data.user.username}!`)
 
-        // Redirect to appropriate dashboard
-        navigate('/')
+        // Redirect to appropriate dashboard based on user role
+        const userRoles = data.user.roles || []
+        let dashboardPath = '/profile'
+        
+        if (userRoles.includes('admin') || userRoles.includes('super_admin')) {
+          dashboardPath = '/admin'
+        } else if (userRoles.includes('interim')) {
+          dashboardPath = '/interimaire'
+        } else if (userRoles.includes('company')) {
+          dashboardPath = '/entreprise'
+        } else if (userRoles.includes('agency')) {
+          dashboardPath = '/agence'
+        }
+        
+        navigate(dashboardPath, { replace: true })
       } catch (error: any) {
         console.error('Google callback error:', error)
         toast.error(error.message || 'Échec de la connexion Google')
