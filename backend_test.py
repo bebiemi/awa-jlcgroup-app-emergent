@@ -42,6 +42,12 @@ def test_endpoint(method, url, data=None, headers=None, expected_status=200, tes
             response = requests.get(url, headers=headers, timeout=10)
         elif method.upper() == "POST":
             response = requests.post(url, json=data, headers=headers, timeout=10)
+        elif method.upper() == "PATCH":
+            response = requests.patch(url, json=data, headers=headers, timeout=10)
+        elif method.upper() == "PUT":
+            response = requests.put(url, json=data, headers=headers, timeout=10)
+        elif method.upper() == "DELETE":
+            response = requests.delete(url, headers=headers, timeout=10)
         else:
             log_test(test_name, "FAIL", f"Unsupported method: {method}")
             return None
