@@ -63,9 +63,27 @@ def get_google_provider() -> GoogleAuthProvider:
     return GoogleAuthProvider(config)
 
 
-# ===== Temporary State Storage (should use Redis in production) =====
+# ===== Helper: State Storage in MongoDB =====
 
-_state_storage = {}  # In-memory storage for demo
+async def save_state(db: AsyncIOMotorDatabase, state: str, data: dict):
+    """Save OAuth state in MongoDB with TTL"""
+    await db.oauth_states.insert_one({
+        "state": state,
+        "data": data,
+        "created_at": datetime.now(timezone.utc),
+        "expires_at": datetime.now(timezone.utc) + timedelta(minutes=10)
+    })
+    
+    # Create TTL index if not exists
+    await db.oauth_states.create_index("expires_at", expireAfterSeconds=0)
+
+
+async def get_and_delete_state(db: AsyncIOMotorDatabase, state: str) -> dict:
+    """Get and delete OAuth state from MongoDB"""
+    doc = await db.oauth_states.find_one_and_delete({"state": state})
+    if not doc:
+        return None
+    return doc.get("data")
 
 
 # ===== Routes =====
