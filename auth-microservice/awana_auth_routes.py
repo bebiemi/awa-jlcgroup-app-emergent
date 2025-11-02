@@ -1418,6 +1418,7 @@ async def forgot_password(
 @limiter.limit(get_rate_limit("password_reset"))
 async def reset_password(
     request: Request,
+    response: Response,
     reset_data: ResetPasswordRequest,
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
