@@ -1392,12 +1392,12 @@ async def forgot_password(
         # Audit log
         audit_logger = AuditLogger(db, auth_config)
         await audit_logger.log(
-            action=AuditAction.PASSWORD_RESET_REQUESTED,
+            action=AuditAction.PASSWORD_RESET,
             actor_id=user["id"],
             actor_email=user["email"],
             ip_address=get_client_ip(request),
             user_agent=get_user_agent(request),
-            metadata={"email": user["email"]}
+            metadata={"email": user["email"], "action": "reset_requested"}
         )
         
         return {
