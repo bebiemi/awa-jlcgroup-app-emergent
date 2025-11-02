@@ -15,10 +15,14 @@ import {
   NoSymbolIcon,
   CheckCircleIcon,
   FunnelIcon,
+  PlusIcon,
+  UserPlusIcon,
 } from '@heroicons/react/24/outline'
+import { Link } from 'react-router-dom'
 import EditUserModal from '../components/EditUserModal'
 import DeleteUserModal from '../components/DeleteUserModal'
 import BlockUserModal from '../components/BlockUserModal'
+import QuickAddUserModal from '../components/QuickAddUserModal'
 
 export default function UserManagementPage() {
   const [page, setPage] = useState(1)
