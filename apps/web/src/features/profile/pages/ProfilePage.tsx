@@ -318,7 +318,7 @@ export default function ProfilePage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Nom de l'entreprise
+                      Nom de la société *
                     </label>
                     <input
                       type="text"
@@ -327,19 +327,57 @@ export default function ProfilePage() {
                         setFormData({ ...formData, company_name: e.target.value })
                       }
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-jlc-purple-500 focus:border-jlc-purple-500"
+                      required
                     />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      SIRET
+                      Représentant légal *
                     </label>
                     <input
                       type="text"
-                      value={formData.registration_number || ''}
+                      value={formData.legal_representative || ''}
                       onChange={(e) =>
                         setFormData({
                           ...formData,
-                          registration_number: e.target.value,
+                          legal_representative: e.target.value,
+                        })
+                      }
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-jlc-purple-500 focus:border-jlc-purple-500"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      NIF (Numéro d'Identification Fiscale) *
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.nif || ''}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          nif: e.target.value,
+                        })
+                      }
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-jlc-purple-500 focus:border-jlc-purple-500"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Numéro de la fiche circuit
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.circuit_file_number || ''}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          circuit_file_number: e.target.value,
                         })
                       }
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-jlc-purple-500 focus:border-jlc-purple-500"
@@ -349,7 +387,7 @@ export default function ProfilePage() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Adresse
+                    Adresse *
                   </label>
                   <input
                     type="text"
@@ -358,6 +396,54 @@ export default function ProfilePage() {
                       setFormData({ ...formData, address: e.target.value })
                     }
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-jlc-purple-500 focus:border-jlc-purple-500"
+                    required
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Pays *
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.country || 'Gabon'}
+                      onChange={(e) =>
+                        setFormData({ ...formData, country: e.target.value })
+                      }
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-jlc-purple-500 focus:border-jlc-purple-500"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Numéro de téléphone *
+                    </label>
+                    <input
+                      type="tel"
+                      value={formData.phone || ''}
+                      onChange={(e) =>
+                        setFormData({ ...formData, phone: e.target.value })
+                      }
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-jlc-purple-500 focus:border-jlc-purple-500"
+                      placeholder="+241 01 23 45 67"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Email de contact *
+                  </label>
+                  <input
+                    type="email"
+                    value={formData.contact_email || ''}
+                    onChange={(e) =>
+                      setFormData({ ...formData, contact_email: e.target.value })
+                    }
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-jlc-purple-500 focus:border-jlc-purple-500"
+                    required
                   />
                 </div>
 
@@ -407,6 +493,21 @@ export default function ProfilePage() {
                     }
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-jlc-purple-500 focus:border-jlc-purple-500"
                     placeholder="https://"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Description
+                  </label>
+                  <textarea
+                    value={formData.description || ''}
+                    onChange={(e) =>
+                      setFormData({ ...formData, description: e.target.value })
+                    }
+                    rows={4}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-jlc-purple-500 focus:border-jlc-purple-500"
+                    placeholder="Décrivez votre entreprise..."
                   />
                 </div>
               </div>
