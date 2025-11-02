@@ -31,6 +31,7 @@ const authSlice = createSlice({
       state.refreshToken = action.payload.refreshToken || null
       state.isAuthenticated = true
       localStorage.setItem('access_token', action.payload.token)
+      localStorage.setItem('user', JSON.stringify(action.payload.user))
       if (action.payload.refreshToken) {
         localStorage.setItem('refresh_token', action.payload.refreshToken)
       }
@@ -42,6 +43,7 @@ const authSlice = createSlice({
       state.isAuthenticated = false
       localStorage.removeItem('access_token')
       localStorage.removeItem('refresh_token')
+      localStorage.removeItem('user')
     },
   },
   extraReducers: (builder) => {
