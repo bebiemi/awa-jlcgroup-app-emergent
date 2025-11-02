@@ -266,13 +266,14 @@ async def google_callback(
         # Audit log
         audit_logger = AuditLogger(db, auth_config)
         await audit_logger.log(
-            user_id=user_id,
+            actor_id=user_id,
+            actor_email=auth_result.user.email,
             action=AuditAction.LOGIN_SUCCESS,
             resource_type="auth",
             resource_id=user_id,
             ip_address=get_client_ip(request),
             user_agent=get_user_agent(request),
-            details={
+            metadata={
                 "provider": "google",
                 "method": "oauth",
                 "session_id": session_id
