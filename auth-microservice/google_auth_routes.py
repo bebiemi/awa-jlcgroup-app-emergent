@@ -311,13 +311,12 @@ async def google_callback(
         # Audit log failed login
         audit_logger = AuditLogger(db, auth_config)
         await audit_logger.log(
-            user_id=None,
             action=AuditAction.LOGIN_FAILED,
-            resource_type="auth",
-            resource_id=None,
+            actor_id=None,
+            actor_email=None,
             ip_address=get_client_ip(request),
             user_agent=get_user_agent(request),
-            details={
+            metadata={
                 "provider": "google",
                 "error": str(e)
             }
