@@ -213,7 +213,7 @@ async def google_callback(
                 "email": auth_result.user.email,
                 "full_name": auth_result.user.full_name,
                 "provider": "google",
-                "provider_user_id": auth_result.provider_data["google_id"],
+                "provider_user_id": auth_result.metadata["google_id"],
                 "password_hash": None,
                 "is_verified": auth_result.user.is_verified,
                 "status": "pending",  # Requires validation for interim/company
