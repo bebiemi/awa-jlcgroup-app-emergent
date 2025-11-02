@@ -411,17 +411,13 @@ async def complete_google_registration(
         # Grant role in RBAC system
         try:
             # Remove old interim role if it exists
-            default_role = await rbac_manager.get_role_by_name("interim")
-            if default_role:
-                try:
-                    await rbac_manager.revoke_role_from_user(user_id, default_role.id)
-                except:
-                    pass
+            try:
+                await rbac_manager.revoke_role(user_id, "interim")
+            except:
+                pass
             
             # Assign new role
-            new_role = await rbac_manager.get_role_by_name(registration_data.role)
-            if new_role:
-                await rbac_manager.assign_role_to_user(user_id, new_role.id)
+            await rbac_manager.grant_role(user_id, registration_data.role, granted_by="system")
         except Exception as e:
             logger.warning(f"Could not update RBAC role: {e}")
         
