@@ -228,6 +228,78 @@ export default function ProfilePage() {
           {profile?.profile_type === 'interim' && (
             <Card title="Informations professionnelles (Intérimaire)">
               <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Date de naissance
+                    </label>
+                    <input
+                      type="date"
+                      value={formData.date_of_birth || ''}
+                      onChange={(e) =>
+                        setFormData({ ...formData, date_of_birth: e.target.value })
+                      }
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-jlc-purple-500 focus:border-jlc-purple-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Lieu de naissance
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.place_of_birth || ''}
+                      onChange={(e) =>
+                        setFormData({ ...formData, place_of_birth: e.target.value })
+                      }
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-jlc-purple-500 focus:border-jlc-purple-500"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Nationalité
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.nationality || 'Gabonaise'}
+                      onChange={(e) =>
+                        setFormData({ ...formData, nationality: e.target.value })
+                      }
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-jlc-purple-500 focus:border-jlc-purple-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Ville
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.city || ''}
+                      onChange={(e) =>
+                        setFormData({ ...formData, city: e.target.value })
+                      }
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-jlc-purple-500 focus:border-jlc-purple-500"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Adresse complète
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.address || ''}
+                    onChange={(e) =>
+                      setFormData({ ...formData, address: e.target.value })
+                    }
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-jlc-purple-500 focus:border-jlc-purple-500"
+                  />
+                </div>
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Compétences
@@ -285,31 +357,19 @@ export default function ProfilePage() {
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Disponibilité
                     </label>
-                    <input
-                      type="text"
-                      value={formData.availability || ''}
+                    <select
+                      value={formData.availability || 'available'}
                       onChange={(e) =>
                         setFormData({ ...formData, availability: e.target.value })
                       }
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-jlc-purple-500 focus:border-jlc-purple-500"
-                      placeholder="Ex: Disponible immédiatement"
-                    />
+                    >
+                      <option value="available">Disponible immédiatement</option>
+                      <option value="2weeks">Disponible sous 2 semaines</option>
+                      <option value="1month">Disponible sous 1 mois</option>
+                      <option value="unavailable">Non disponible</option>
+                    </select>
                   </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Biographie
-                  </label>
-                  <textarea
-                    value={formData.bio || ''}
-                    onChange={(e) =>
-                      setFormData({ ...formData, bio: e.target.value })
-                    }
-                    rows={4}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-jlc-purple-500 focus:border-jlc-purple-500"
-                    placeholder="Parlez-nous de votre parcours et de vos motivations..."
-                  />
                 </div>
               </div>
             </Card>
