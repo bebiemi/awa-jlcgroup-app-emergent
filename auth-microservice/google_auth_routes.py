@@ -264,7 +264,7 @@ async def google_callback(
         )
         
         # Audit log
-        audit_logger = AuditLogger(db)
+        audit_logger = AuditLogger(db, auth_config)
         await audit_logger.log(
             user_id=user_id,
             action=AuditAction.LOGIN_SUCCESS,
