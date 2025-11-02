@@ -37,7 +37,7 @@ export default function Sidebar() {
   const { user } = useAppSelector((state) => state.auth)
 
   const handleLogout = () => {
-    dispatch(logout())
+    dispatch(logoutAction())
     navigate('/login')
   }
 
