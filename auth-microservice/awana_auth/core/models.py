@@ -1,7 +1,7 @@
 """
 Core data models for the authentication system
 """
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from typing import List, Optional, Dict, Any
 from pydantic import BaseModel, Field, EmailStr
 from enum import Enum
