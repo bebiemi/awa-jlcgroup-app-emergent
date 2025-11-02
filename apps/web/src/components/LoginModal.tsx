@@ -13,7 +13,7 @@ interface LoginModalProps {
 export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
-  const [login, { isLoading }] = useLoginMutation()
+  const [login, { isLoading }] = useLocalLoginMutation()
 
   const [formData, setFormData] = useState({
     username: '',
