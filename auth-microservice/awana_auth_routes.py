@@ -211,6 +211,29 @@ async def create_user_profile_if_not_exists(
     logger.info(f"✅ Auto-created profile for user {user_id} (type: {profile_type})")
 
 
+# ===== Helper: Email Validation =====
+
+def is_valid_email_domain(email: str) -> bool:
+    """
+    Check if email domain is from a known valid provider
+    Returns True for automatic validation, False for manual admin validation
+    """
+    valid_domains = [
+        # Major email providers
+        'gmail.com', 'yahoo.com', 'outlook.com', 'hotmail.com',
+        'icloud.com', 'protonmail.com', 'aol.com',
+        # Business domains
+        'company.com', 'business.ga', 
+        # Add more trusted domains as needed
+    ]
+    
+    try:
+        domain = email.split('@')[1].lower()
+        return domain in valid_domains or domain.endswith('.gov') or domain.endswith('.edu')
+    except:
+        return False
+
+
 # ===== Authentication Endpoints =====
 
 @auth_router.post("/entraid/login", response_model=EntraIDLoginResponse)
