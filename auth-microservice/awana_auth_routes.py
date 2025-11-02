@@ -4,8 +4,9 @@ FastAPI routes for AWANA Auth System
 from fastapi import APIRouter, Depends, HTTPException, status, Request, Response
 from pydantic import BaseModel, EmailStr
 from typing import List, Optional
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from motor.motor_asyncio import AsyncIOMotorDatabase
+import os
 
 from awana_auth.core.models import User, UserStatus, AuthProvider as AuthProviderEnum
 from awana_auth.core.config import auth_config
