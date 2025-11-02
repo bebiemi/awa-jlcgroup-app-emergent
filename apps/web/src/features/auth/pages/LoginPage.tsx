@@ -44,16 +44,16 @@ export default function LoginPage() {
 
   const handleGoogleLogin = async () => {
     setGoogleLoading(true)
+    
     try {
-      const redirectUri = `${window.location.origin}/auth/google/callback`
-      
-      // Call backend to get Google authorization URL
       const response = await fetch('/auth-api/auth/google/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ redirect_uri: redirectUri }),
+        body: JSON.stringify({
+          redirect_uri: `${window.location.origin}/auth/google/callback`,
+        }),
       })
 
       if (!response.ok) {
@@ -62,12 +62,10 @@ export default function LoginPage() {
       }
 
       const data = await response.json()
-
-      // Redirect to Google authorization page
       window.location.href = data.authorization_url
     } catch (error: any) {
       console.error('Google login error:', error)
-      toast.error(error.message || 'Échec de la connexion Google')
+      toast.error(error.message || 'Échec de l\'initialisation Google OAuth')
       setGoogleLoading(false)
     }
   }
