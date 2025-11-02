@@ -170,13 +170,18 @@ async def require_admin(
     """
     Require user to have admin or super_admin role
     """
-    has_role = await rbac_manager.has_any_role(current_user.id, ["admin", "super_admin"])
+    # Check roles directly from the user object (works for both local and OAuth users)
+    user_roles = set(current_user.roles) if current_user.roles else set()
+    admin_roles = {"admin", "super_admin"}
     
-    if not has_role:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Admin privileges required"
-        )
+    if not user_roles.intersection(admin_roles):
+        # Fallback to RBAC manager for legacy users
+        has_role = await rbac_manager.has_any_role(current_user.id, ["admin", "super_admin"])
+        if not has_role:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Admin privileges required"
+            )
     
     return current_user
 
