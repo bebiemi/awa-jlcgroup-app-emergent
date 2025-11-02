@@ -449,62 +449,79 @@ def test_vite_proxy():
         return False
 
 def run_all_tests():
-    """Run all backend tests"""
-    print(f"{Colors.BOLD}JLC Auth System Backend Testing{Colors.ENDC}")
+    """Run all backend tests for Système d'Inscription Complet"""
+    print(f"{Colors.BOLD}Système d'Inscription Complet - Backend Testing{Colors.ENDC}")
     print(f"Timestamp: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    print("=" * 50)
+    print("=" * 60)
     
     # Track results
     test_results = {
         "total_tests": 0,
         "passed_tests": 0,
         "failed_tests": 0,
-        "warnings": 0
+        "warnings": 0,
+        "critical_failures": []
     }
     
     # Test 1: Auth service health
+    print(f"\n{Colors.BLUE}Phase 1: Service Health Check{Colors.ENDC}")
     if test_auth_service_health():
         test_results["passed_tests"] += 1
     else:
         test_results["failed_tests"] += 1
+        test_results["critical_failures"].append("Auth service not running")
         print(f"\n{Colors.RED}❌ Auth service is not running. Cannot proceed with tests.{Colors.ENDC}")
         return test_results
     test_results["total_tests"] += 1
     
-    # Test 2: Google OAuth status
-    google_status = test_google_oauth_status()
-    if google_status is not None:
-        test_results["passed_tests"] += 1
-    else:
-        test_results["failed_tests"] += 1
-    test_results["total_tests"] += 1
+    # Test 2: Registration with Email Validation
+    print(f"\n{Colors.BLUE}Phase 2: Registration System with Email Validation{Colors.ENDC}")
+    registration_results = test_registration_with_email_validation()
     
-    # Test 3: Local registration
-    registration_results = test_local_registration()
+    critical_registration_failures = 0
     for result in registration_results:
         test_results["total_tests"] += 1
         if result["success"]:
             test_results["passed_tests"] += 1
         else:
             test_results["failed_tests"] += 1
+            # Check if it's a critical failure (successful registration tests)
+            if "Inscription" in result["test"] and result["test"].startswith(("1.", "2.")):
+                critical_registration_failures += 1
+                test_results["critical_failures"].append(f"Registration failed: {result['test']}")
     
-    # Test 4: Local login
-    login_result = test_local_login()
-    test_results["total_tests"] += 1
-    if login_result:
+    # Test 3: Password Reset System
+    print(f"\n{Colors.BLUE}Phase 3: Password Reset System{Colors.ENDC}")
+    password_reset_results = test_password_reset()
+    test_results["total_tests"] += 3  # 3 password reset tests
+    
+    if password_reset_results.get("forgot_response"):
+        test_results["passed_tests"] += 1
+    else:
+        test_results["failed_tests"] += 1
+        test_results["critical_failures"].append("Password reset request failed")
+    
+    if password_reset_results.get("reset_response"):
+        test_results["passed_tests"] += 1
+    else:
+        test_results["failed_tests"] += 1
+        if password_reset_results.get("reset_token"):
+            test_results["critical_failures"].append("Password reset with token failed")
+    
+    if password_reset_results.get("invalid_response"):
         test_results["passed_tests"] += 1
     else:
         test_results["failed_tests"] += 1
     
-    # Test 5: Vite proxy (optional)
-    proxy_result = test_vite_proxy()
+    # Test 4: MongoDB Verification
+    print(f"\n{Colors.BLUE}Phase 4: MongoDB Data Verification{Colors.ENDC}")
+    mongodb_result = test_mongodb_verification()
     test_results["total_tests"] += 1
-    if proxy_result:
+    if mongodb_result:
         test_results["passed_tests"] += 1
-    elif proxy_result is False:
-        test_results["warnings"] += 1
     else:
         test_results["failed_tests"] += 1
+        test_results["critical_failures"].append("MongoDB verification failed")
     
     # Summary
     print(f"\n{Colors.BOLD}=== Test Summary ==={Colors.ENDC}")
@@ -513,13 +530,22 @@ def run_all_tests():
     print(f"{Colors.RED}Failed: {test_results['failed_tests']}{Colors.ENDC}")
     print(f"{Colors.YELLOW}Warnings: {test_results['warnings']}{Colors.ENDC}")
     
-    success_rate = (test_results['passed_tests'] / test_results['total_tests']) * 100
-    print(f"Success Rate: {success_rate:.1f}%")
+    if test_results['total_tests'] > 0:
+        success_rate = (test_results['passed_tests'] / test_results['total_tests']) * 100
+        print(f"Success Rate: {success_rate:.1f}%")
+    
+    # Critical failures summary
+    if test_results['critical_failures']:
+        print(f"\n{Colors.RED}❌ Critical Failures:{Colors.ENDC}")
+        for failure in test_results['critical_failures']:
+            print(f"  • {failure}")
     
     if test_results['failed_tests'] == 0:
-        print(f"\n{Colors.GREEN}✅ All critical tests passed!{Colors.ENDC}")
+        print(f"\n{Colors.GREEN}✅ All tests passed! Registration system working correctly.{Colors.ENDC}")
+    elif len(test_results['critical_failures']) == 0:
+        print(f"\n{Colors.YELLOW}⚠️ Some minor issues found, but core functionality working.{Colors.ENDC}")
     else:
-        print(f"\n{Colors.RED}❌ {test_results['failed_tests']} test(s) failed.{Colors.ENDC}")
+        print(f"\n{Colors.RED}❌ Critical issues found in registration system.{Colors.ENDC}")
     
     return test_results
 
