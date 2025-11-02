@@ -65,6 +65,14 @@ function App() {
         }
       />
       <Route
+        path="/admin/groups"
+        element={
+          <ProtectedRoute requiredRoles={['admin', 'super_admin']}>
+            <GroupsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/interimaire"
         element={
           <ProtectedRoute requiredRoles={['interim']}>
