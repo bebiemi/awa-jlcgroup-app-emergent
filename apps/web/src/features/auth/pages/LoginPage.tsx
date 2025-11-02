@@ -1,9 +1,10 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { useLocalLoginMutation } from '../api/authApi'
 import { useAppSelector } from '@/store/hooks'
 import toast from 'react-hot-toast'
 import Button from '@/components/Button'
+import { ArrowPathIcon, ShieldCheckIcon } from '@heroicons/react/24/outline'
 
 export default function LoginPage() {
   const [username, setUsername] = useState('')
