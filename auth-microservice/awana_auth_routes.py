@@ -1606,14 +1606,6 @@ async def update_user(
             detail="Erreur lors de la mise à jour de l'utilisateur"
         )
 
-        resource_id=role_name,
-        ip_address=get_client_ip(request),
-        user_agent=get_user_agent(request),
-        metadata={"role_name": role_name}
-    )
-    
-    return {"message": f"Role '{role_name}' revoked from user successfully"}
-
 
 
 # ===== Password Reset Endpoints =====
