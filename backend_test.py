@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Backend Testing for Système d'Inscription Complet
-Tests complete registration system with email validation, profile auto-creation, and password reset
+Backend Testing for Admin User Management System
+Tests admin user management endpoints with authentication, pagination, and CRUD operations
 """
 
 import requests
