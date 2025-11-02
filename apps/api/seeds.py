@@ -203,13 +203,13 @@ async def seed_database():
     ]
 
     for validation in validations_data:
-        validation_dict = validation.dict()
+        validation_dict = validation.model_dump()
         validation_dict['created_at'] = validation.created_at.isoformat()
         validation_dict['updated_at'] = validation.updated_at.isoformat()
         if validation.reviewed_at:
             validation_dict['reviewed_at'] = validation.reviewed_at.isoformat()
         await db.account_validations.insert_one(validation_dict)
-        print(f"  ✅ Created validation: {validation.user_name} ({validation.validation_type.value} - {validation.status.value})")
+        print(f"  ✅ Created validation: {validation.user_name} ({validation.validation_type} - {validation.status})")
 
     # Seed Notifications
     print("\n🔔 Seeding notifications...")
