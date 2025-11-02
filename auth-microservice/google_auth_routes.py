@@ -234,6 +234,16 @@ async def google_callback(
             roles = ["interim"]
             
             logger.info(f"New Google user registered: {auth_result.user.email}")
+            
+            # Auto-create profile in jlc_db
+            await create_user_profile(
+                db=db,
+                user_id=user_id,
+                email=auth_result.user.email,
+                full_name=auth_result.user.full_name,
+                profile_type=roles[0] if roles else "interim",
+                picture=auth_result.metadata.get("picture")
+            )
         
         # Update last login
         await users_collection.update_one(
