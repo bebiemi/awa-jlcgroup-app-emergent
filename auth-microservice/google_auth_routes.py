@@ -155,15 +155,13 @@ async def google_callback(
     """
     try:
         # Verify state (CSRF protection)
-        state_data = _state_storage.get(callback_request.state)
+        state_data = await get_and_delete_state(db, callback_request.state)
         if not state_data:
+            logger.error(f"Invalid state parameter: {callback_request.state}")
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Invalid or expired state parameter"
             )
-        
-        # Remove used state
-        del _state_storage[callback_request.state]
         
         # Get Google provider
         provider = get_google_provider()
