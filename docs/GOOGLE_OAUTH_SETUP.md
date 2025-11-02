@@ -43,9 +43,9 @@
 - App logo: (optionnel, vous pouvez uploader le logo JLC)
 
 **App domain:**
-- Application home page: `https://staffmanager-5.preview.emergentagent.com`
-- Application privacy policy link: `https://staffmanager-5.preview.emergentagent.com/privacy`
-- Application terms of service link: `https://staffmanager-5.preview.emergentagent.com/terms`
+- Application home page: `https://jlc-fastapi-react.preview.emergentagent.com`
+- Application privacy policy link: `https://jlc-fastapi-react.preview.emergentagent.com/privacy`
+- Application terms of service link: `https://jlc-fastapi-react.preview.emergentagent.com/terms`
 
 **Authorized domains:**
 - Ajoutez: `emergentagent.com`
@@ -89,13 +89,13 @@
 
 **Authorized JavaScript origins:**
 ```
-https://staffmanager-5.preview.emergentagent.com
+https://jlc-fastapi-react.preview.emergentagent.com
 http://localhost:3000
 ```
 
 **Authorized redirect URIs:**
 ```
-https://staffmanager-5.preview.emergentagent.com/auth/google/callback
+https://jlc-fastapi-react.preview.emergentagent.com/auth/google/callback
 http://localhost:3000/auth/google/callback
 ```
 
