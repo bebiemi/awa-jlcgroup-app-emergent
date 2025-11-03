@@ -23,6 +23,7 @@ export const store = configureStore({
     [usersApi.reducerPath]: usersApi.reducer,
     [securityApi.reducerPath]: securityApi.reducer,
     [locationsApi.reducerPath]: locationsApi.reducer,
+    [locationApi.reducerPath]: locationApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
@@ -34,7 +35,8 @@ export const store = configureStore({
       .concat(adminApi.middleware)
       .concat(usersApi.middleware)
       .concat(securityApi.middleware)
-      .concat(locationsApi.middleware),
+      .concat(locationsApi.middleware)
+      .concat(locationApi.middleware),
 })
 
 export type RootState = ReturnType<typeof store.getState>
