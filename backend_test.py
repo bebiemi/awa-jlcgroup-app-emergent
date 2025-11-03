@@ -570,8 +570,7 @@ def test_mfa_complete_flow():
     print(f"\n  Step 2: Test Invalid MFA Session Token")
     
     invalid_session = test_endpoint(
-        "POST", f"{AUTH_BASE_URL}/auth/local/login/complete",
-        data={"mfa_session_token": "invalid_token_123"},
+        "POST", f"{AUTH_BASE_URL}/auth/local/login/complete?mfa_session_token=invalid_token_123",
         expected_status=400,
         test_name="Invalid MFA Session Token"
     )
