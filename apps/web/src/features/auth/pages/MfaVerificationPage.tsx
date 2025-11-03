@@ -203,7 +203,7 @@ export default function MfaVerificationPage({ sessionId, mfaMethod, onBack }: Mf
                 </p>
               )}
 
-              {codeType === 'recovery' && (
+              {codeType === 'backup' && (
                 <p className="text-sm text-gray-600 text-center">
                   Chaque code de secours ne peut être utilisé qu'une seule fois.
                 </p>
