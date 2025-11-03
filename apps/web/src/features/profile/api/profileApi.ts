@@ -1,7 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8001'
-
 export interface InterimProfile {
   user_id: string
   photo_url?: string
@@ -54,7 +52,7 @@ export interface ProfileResponse {
 export const profileApi = createApi({
   reducerPath: 'profileApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: `${API_BASE_URL}/auth-api/profiles`,
+    baseUrl: '/auth-api/profiles',
     prepareHeaders: (headers) => {
       const token = localStorage.getItem('access_token')
       if (token) {
