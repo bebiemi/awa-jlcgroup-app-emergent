@@ -200,9 +200,13 @@ export default function RegisterPage() {
             </Link>
           </div>
           <div className="text-center">
-            <h1 className="text-2xl font-bold mb-2">
-              Rejoignez JLC GROUP ⭐
-            </h1>
+            <div className="flex justify-center mb-3">
+              <img 
+                src="/logo-jlc.png" 
+                alt="JLC GROUP" 
+                className="h-16 w-auto object-contain"
+              />
+            </div>
             <p className="text-purple-100 text-sm">
               Créez votre compte en quelques étapes
             </p>
