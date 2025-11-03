@@ -209,32 +209,32 @@ export default function RegisterPage() {
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-5">
-          {/* Progress indicator */}
-          <div className="flex justify-between items-center mb-8">
+        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          {/* Progress indicator - More compact */}
+          <div className="flex justify-between items-center mb-4">
             <div className={`flex items-center ${formData.role ? 'text-jlc-purple-600' : 'text-gray-400'}`}>
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center ${formData.role ? 'bg-jlc-purple-600 text-white' : 'bg-gray-200'}`}>
+              <div className={`w-7 h-7 rounded-full flex items-center justify-center text-sm ${formData.role ? 'bg-jlc-purple-600 text-white' : 'bg-gray-200'}`}>
                 1
               </div>
-              <span className="ml-2 text-sm font-medium">Type de profil</span>
+              <span className="ml-2 text-xs font-medium hidden sm:inline">Type de profil</span>
             </div>
-            <div className="flex-1 h-1 mx-4 bg-gray-200">
+            <div className="flex-1 h-1 mx-2 bg-gray-200">
               <div className={`h-full ${formData.role ? 'bg-jlc-purple-600' : 'bg-gray-200'} transition-all`} style={{ width: formData.role ? '100%' : '0%' }}></div>
             </div>
             <div className={`flex items-center ${formData.username && formData.email ? 'text-jlc-purple-600' : 'text-gray-400'}`}>
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center ${formData.username && formData.email ? 'bg-jlc-purple-600 text-white' : 'bg-gray-200'}`}>
+              <div className={`w-7 h-7 rounded-full flex items-center justify-center text-sm ${formData.username && formData.email ? 'bg-jlc-purple-600 text-white' : 'bg-gray-200'}`}>
                 2
               </div>
-              <span className="ml-2 text-sm font-medium">Informations</span>
+              <span className="ml-2 text-xs font-medium hidden sm:inline">Informations</span>
             </div>
           </div>
 
           {/* Role Selection */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-4">
+            <label className="block text-sm font-semibold text-gray-700 mb-3">
               Étape 1 : Choisissez votre profil *
             </label>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-3">
               {/* Interim Role */}
               <button
                 type="button"
