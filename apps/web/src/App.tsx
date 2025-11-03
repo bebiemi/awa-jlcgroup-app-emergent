@@ -100,6 +100,38 @@ function App() {
         }
       />
       <Route
+        path="/missions"
+        element={
+          <ProtectedRoute requiredRoles={['interim']}>
+            <Navigate to="/interimaire" replace />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/entreprise"
+        element={
+          <ProtectedRoute requiredRoles={['company']}>
+            <Navigate to="/admin" replace />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/offres"
+        element={
+          <ProtectedRoute requiredRoles={['company']}>
+            <Navigate to="/admin" replace />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/agence"
+        element={
+          <ProtectedRoute requiredRoles={['agency']}>
+            <Navigate to="/admin" replace />
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/profile"
         element={
           <ProtectedRoute>
