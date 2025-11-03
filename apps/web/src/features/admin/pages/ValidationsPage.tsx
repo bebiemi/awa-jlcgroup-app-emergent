@@ -37,10 +37,30 @@ export default function ValidationsPage() {
   })
 
   // Fetch validators (admins and commercials)
-  const { data: usersData } = useGetUsersQuery({ page: 1, page_size: 100 })
-  const validators = usersData?.users?.filter((user: any) => 
-    user.roles?.some((role: string) => ['admin', 'super_admin', 'commercial'].includes(role))
-  ) || []
+  const { data: usersData } = useGetUsersQuery({ page: 1, page_size: 200 })
+  
+  // Filter validators based on validation type
+  const getFilteredValidators = () => {
+    const allUsers = usersData?.users || []
+    
+    if (selectedValidation?.validation_type === 'collaborator') {
+      // For collaborators, only show users in RH or Commerciales groups
+      // Since we don't have group membership in user data yet, filter by roles
+      return allUsers.filter((user: any) => 
+        user.roles?.some((role: string) => ['admin', 'super_admin'].includes(role)) ||
+        user.email?.toLowerCase().includes('rh') ||
+        user.email?.toLowerCase().includes('hr') ||
+        user.email?.toLowerCase().includes('commercial')
+      )
+    }
+    
+    // For interim and company, show all admins and commercials
+    return allUsers.filter((user: any) => 
+      user.roles?.some((role: string) => ['admin', 'super_admin', 'commercial'].includes(role))
+    )
+  }
+  
+  const validators = getFilteredValidators()
 
   const [approveValidation] = useApproveValidationMutation()
   const [rejectValidation] = useRejectValidationMutation()
