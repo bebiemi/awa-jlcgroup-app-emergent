@@ -239,19 +239,19 @@ export default function RegisterPage() {
               <button
                 type="button"
                 onClick={() => handleRoleSelect('interim')}
-                className={`relative p-6 border-2 rounded-xl transition-all transform hover:scale-105 ${
+                className={`relative p-4 border-2 rounded-xl transition-all transform hover:scale-105 ${
                   formData.role === 'interim'
                     ? 'border-jlc-purple-600 bg-jlc-purple-50 shadow-lg'
                     : 'border-gray-300 hover:border-jlc-purple-400 bg-white'
                 }`}
               >
                 {formData.role === 'interim' && (
-                  <CheckCircleIcon className="absolute top-2 right-2 h-6 w-6 text-jlc-purple-600" />
+                  <CheckCircleIcon className="absolute top-2 right-2 h-5 w-5 text-jlc-purple-600" />
                 )}
                 <div className="text-center">
-                  <div className="text-5xl mb-3">👤</div>
-                  <div className="font-bold text-gray-900 text-lg">Intérimaire</div>
-                  <div className="text-sm text-gray-500 mt-2">
+                  <div className="text-4xl mb-2">👤</div>
+                  <div className="font-bold text-gray-900">Intérimaire</div>
+                  <div className="text-xs text-gray-500 mt-1">
                     Je recherche des missions
                   </div>
                 </div>
@@ -261,19 +261,19 @@ export default function RegisterPage() {
               <button
                 type="button"
                 onClick={() => handleRoleSelect('company')}
-                className={`relative p-6 border-2 rounded-xl transition-all transform hover:scale-105 ${
+                className={`relative p-4 border-2 rounded-xl transition-all transform hover:scale-105 ${
                   formData.role === 'company'
                     ? 'border-jlc-purple-600 bg-jlc-purple-50 shadow-lg'
                     : 'border-gray-300 hover:border-jlc-purple-400 bg-white'
                 }`}
               >
                 {formData.role === 'company' && (
-                  <CheckCircleIcon className="absolute top-2 right-2 h-6 w-6 text-jlc-purple-600" />
+                  <CheckCircleIcon className="absolute top-2 right-2 h-5 w-5 text-jlc-purple-600" />
                 )}
                 <div className="text-center">
-                  <div className="text-5xl mb-3">🏢</div>
-                  <div className="font-bold text-gray-900 text-lg">Société</div>
-                  <div className="text-sm text-gray-500 mt-2">
+                  <div className="text-4xl mb-2">🏢</div>
+                  <div className="font-bold text-gray-900">Société</div>
+                  <div className="text-xs text-gray-500 mt-1">
                     Je propose des missions
                   </div>
                 </div>
