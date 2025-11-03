@@ -89,7 +89,18 @@ export default function RegisterPage() {
     }
 
     // Role-specific validation
-    if (formData.role === 'company') {
+    if (formData.isCollaborator) {
+      // Collaborator validation
+      if (!formData.employeeNumber.trim()) {
+        newErrors.employeeNumber = 'Le matricule est requis'
+      }
+      if (!formData.department.trim()) {
+        newErrors.department = 'Le département est requis'
+      }
+      if (!formData.jobTitle.trim()) {
+        newErrors.jobTitle = 'Le poste est requis'
+      }
+    } else if (formData.role === 'company') {
       if (!formData.companyName.trim()) {
         newErrors.companyName = 'Le nom de la société est requis'
       }
@@ -121,10 +132,18 @@ export default function RegisterPage() {
         password: formData.password,
         full_name: formData.fullName,
         role: formData.role,
+        is_collaborator: formData.isCollaborator,
+      }
+
+      // Add collaborator fields
+      if (formData.isCollaborator) {
+        payload.employee_number = formData.employeeNumber
+        payload.department = formData.department
+        payload.job_title = formData.jobTitle
       }
 
       // Add role-specific fields
-      if (formData.role === 'interim') {
+      if (formData.role === 'interim' && !formData.isCollaborator) {
         payload.phone = formData.phone
         payload.date_of_birth = formData.dateOfBirth
       } else if (formData.role === 'company') {
