@@ -211,7 +211,7 @@ export default function RegisterPage() {
 
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           {/* Progress indicator - More compact */}
-          <div className="flex justify-between items-center mb-4">
+          <div className="flex justify-between items-center mb-3">
             <div className={`flex items-center ${formData.role ? 'text-jlc-purple-600' : 'text-gray-400'}`}>
               <div className={`w-7 h-7 rounded-full flex items-center justify-center text-sm ${formData.role ? 'bg-jlc-purple-600 text-white' : 'bg-gray-200'}`}>
                 1
@@ -469,7 +469,7 @@ export default function RegisterPage() {
               {/* Role-specific fields */}
               {formData.role === 'interim' && (
                 <div className="border-t pt-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                  <h3 className="text-base font-semibold text-gray-900 mb-3">
                     Informations personnelles (Intérimaire)
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -506,7 +506,7 @@ export default function RegisterPage() {
 
               {formData.role === 'company' && (
                 <div className="border-t pt-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                  <h3 className="text-base font-semibold text-gray-900 mb-3">
                     Informations entreprise (Société)
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -587,7 +587,7 @@ export default function RegisterPage() {
 
               {/* Location Section */}
               <div className="border-t pt-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Localisation</h3>
+                <h3 className="text-base font-semibold text-gray-900 mb-3">Localisation</h3>
                 <LocationSelector
                   value={formData.location}
                   onChange={(location) => setFormData({ ...formData, location })}
@@ -636,7 +636,7 @@ export default function RegisterPage() {
               <button
                 type="submit"
                 disabled={isLoading || !captchaVerified}
-                className="w-full bg-gradient-to-r from-jlc-purple-600 to-jlc-purple-800 text-white py-4 rounded-xl hover:from-jlc-purple-700 hover:to-jlc-purple-900 transition-all font-semibold text-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center shadow-lg"
+                className="w-full bg-gradient-to-r from-jlc-purple-600 to-jlc-purple-800 text-white py-4 rounded-xl hover:from-jlc-purple-700 hover:to-jlc-purple-900 transition-all font-semibold text-base disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center shadow-lg"
               >
                 {isLoading ? (
                   <>
