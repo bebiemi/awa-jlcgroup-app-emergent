@@ -2,9 +2,11 @@
 
 ## ✅ Configuration Terminée!
 
-**Client ID**: `12345xxxxxxx.apps.googleusercontent.com`  
-**Client Secret**: `xxxxxxxxxxxxxxxxxxxxxxxxxxx` ✅  
+**Client ID**: `VOTRE_CLIENT_ID.apps.googleusercontent.com`  
+**Client Secret**: `VOTRE_CLIENT_SECRET` ✅  
 **Status**: 🟢 **ACTIF ET FONCTIONNEL**
+
+> ⚠️ **Note**: Remplacez les valeurs ci-dessus par vos vraies credentials Google OAuth depuis la Google Console.
 
 ---
 
