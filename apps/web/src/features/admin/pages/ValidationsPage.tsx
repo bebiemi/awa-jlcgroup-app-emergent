@@ -461,9 +461,18 @@ export default function ValidationsPage() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
             <h3 className="text-xl font-bold text-gray-900 mb-4">Assigner un validateur</h3>
-            <p className="text-sm text-gray-600 mb-4">
+            <p className="text-sm text-gray-600 mb-2">
               Sélectionnez un validateur pour <strong>{selectedValidation.user_full_name}</strong>
             </p>
+            
+            {/* Info message for collaborator validation */}
+            {selectedValidation.validation_type === 'collaborator' && (
+              <div className="mb-4 bg-purple-50 border border-purple-200 rounded-lg p-3">
+                <p className="text-xs text-purple-800">
+                  ℹ️ Pour les collaborateurs, seuls les membres des équipes RH et Commerciales peuvent valider.
+                </p>
+              </div>
+            )}
             
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-2">
