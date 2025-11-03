@@ -42,6 +42,16 @@ export default function Sidebar() {
     navigate('/login')
   }
 
+  // Get dashboard path based on user role
+  const getDashboardPath = () => {
+    if (!user) return '/'
+    if (user.roles.includes('admin') || user.roles.includes('super_admin')) return '/admin'
+    if (user.roles.includes('interim')) return '/interimaire'
+    if (user.roles.includes('company')) return '/entreprise'
+    if (user.roles.includes('agency')) return '/agence'
+    return '/profile'
+  }
+
   if (!user) return null
 
   const isAdmin = user.roles.includes('admin') || user.roles.includes('super_admin')
