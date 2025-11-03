@@ -884,8 +884,7 @@ def test_mfa_error_cases():
     
     for token in invalid_tokens:
         response = test_endpoint(
-            "POST", f"{AUTH_BASE_URL}/auth/local/login/complete",
-            data={"mfa_session_token": token},
+            "POST", f"{AUTH_BASE_URL}/auth/local/login/complete?mfa_session_token={token}",
             expected_status=400,
             test_name=f"Invalid MFA Token: {token[:20]}..."
         )
