@@ -99,6 +99,8 @@ async def init_permissions_and_profiles():
                 permission_ids.get("voir_entreprises"),
                 permission_ids.get("voir_rapports"),
                 permission_ids.get("voir_dashboard"),
+                permission_ids.get("voir_missions"),
+                permission_ids.get("voir_statistiques"),
             ],
             "is_system": True
         },
