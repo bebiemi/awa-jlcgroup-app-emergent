@@ -25,9 +25,8 @@ export default function MfaSettings() {
   const [setupTotp] = useSetupTotpMutation()
   const [verifyTotp] = useVerifyTotpMutation()
   const [setupEmailOtp] = useSetupEmailOtpMutation()
-  const [enableMfa] = useEnableMfaMutation()
-  const [disableMfa] = useDisableMfaMutation()
-  const [generateRecoveryCodes] = useGenerateRecoveryCodesMutation()
+  const [disableMfaMethod] = useDisableMfaMethodMutation()
+  const [generateBackupCodes] = useGenerateBackupCodesMutation()
 
   const [showTotpSetup, setShowTotpSetup] = useState(false)
   const [showEmailSetup, setShowEmailSetup] = useState(false)
