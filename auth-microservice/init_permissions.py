@@ -154,7 +154,46 @@ async def init_permissions_and_profiles():
             print(f"  ✓ Created profile '{profile_data['name']}'")
     
     print("\n✅ Initialization complete!")
+    
+    # Initialize Collaborateur group
+    await init_collaborateur_group(db, profiles_collection)
+    
     client.close()
+
+
+async def init_collaborateur_group(db, profiles_collection):
+    """Initialize the Collaborateur group with read-only profile"""
+    groups_collection = db["groups"]
+    
+    print("\n🔧 Initializing Collaborateur group...")
+    
+    # Check if group already exists
+    existing_group = await groups_collection.find_one({"name": "Collaborateur"})
+    if existing_group:
+        print("  ✓ Group 'Collaborateur' already exists")
+        return
+    
+    # Get Lecture Seule profile
+    lecture_seule_profile = await profiles_collection.find_one({"name": "Lecture Seule"})
+    if not lecture_seule_profile:
+        print("  ⚠️ Profile 'Lecture Seule' not found, cannot create Collaborateur group")
+        return
+    
+    # Create Collaborateur group
+    group = {
+        "id": str(uuid.uuid4()),
+        "name": "Collaborateur",
+        "description": "Groupe pour tous les collaborateurs JLC avec accès en lecture seule",
+        "profile_id": lecture_seule_profile["id"],
+        "is_system": True,
+        "created_at": datetime.now(timezone.utc),
+        "updated_at": datetime.now(timezone.utc),
+        "created_by": None,
+        "member_count": 0
+    }
+    
+    await groups_collection.insert_one(group)
+    print("  ✓ Created group 'Collaborateur' with 'Lecture Seule' profile")
 
 
 if __name__ == "__main__":
