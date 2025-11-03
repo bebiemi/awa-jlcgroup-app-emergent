@@ -10,7 +10,7 @@ import {
   ClockIcon
 } from '@heroicons/react/24/outline'
 
-type ActionType = 'edit' | 'delete' | 'view' | 'approve' | 'reject' | 'assign' | 'reset' | 'block' | 'pending'
+type ActionType = 'edit' | 'delete' | 'view' | 'approve' | 'reject' | 'assign' | 'reset' | 'block' | 'pending' | 'custom'
 
 interface ActionButtonProps {
   type: ActionType
@@ -18,6 +18,8 @@ interface ActionButtonProps {
   label?: string
   disabled?: boolean
   size?: 'sm' | 'md' | 'lg'
+  icon?: any  // For custom type
+  color?: string  // For custom type
 }
 
 const actionConfig = {
@@ -37,9 +39,15 @@ export default function ActionButton({
   onClick, 
   label, 
   disabled = false,
-  size = 'md'
+  size = 'md',
+  icon: CustomIcon,
+  color: customColor
 }: ActionButtonProps) {
-  const config = actionConfig[type]
+  // For custom type, use provided icon and color
+  const config = type === 'custom' 
+    ? { icon: CustomIcon, color: customColor || 'text-gray-600 hover:bg-gray-50', label: label || 'Action' }
+    : actionConfig[type]
+    
   const Icon = config.icon
   
   const sizeClasses = {
