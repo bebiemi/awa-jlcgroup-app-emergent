@@ -33,18 +33,17 @@ async def seed_gabon_locations():
         "parent_id": None,
         "is_visible": True,
         "is_required": True,
+        "phone_code": "+241",  # Gabon phone code
         "postal_code": None,
         "gps_latitude": -0.8037,
         "gps_longitude": 11.6094,
         "custom_field_1": "GA",  # ISO Code
-        "custom_field_2": "+241",  # Phone prefix
         "custom_field_1_label": "Code ISO",
-        "custom_field_2_label": "Préfixe téléphonique",
         "created_at": datetime.now(timezone.utc).isoformat(),
         "updated_at": datetime.now(timezone.utc).isoformat(),
     }
     await db.locations.insert_one(gabon)
-    print(f"✅ Created country: Gabon")
+    print(f"✅ Created country: Gabon (+241)")
     
     # Provinces of Gabon
     provinces = [
