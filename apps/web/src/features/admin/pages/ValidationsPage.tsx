@@ -190,6 +190,16 @@ export default function ValidationsPage() {
             </div>
           </div>
 
+          <div className="bg-white rounded-lg shadow p-4 border-l-4 border-purple-500">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600">Collaborateurs</p>
+                <p className="text-2xl font-bold text-gray-900">{stats?.pending_collaborator || 0}</p>
+              </div>
+              <UserIcon className="h-8 w-8 text-purple-500" />
+            </div>
+          </div>
+
           <div className="bg-white rounded-lg shadow p-4 border-l-4 border-orange-500">
             <div className="flex items-center justify-between">
               <div>
