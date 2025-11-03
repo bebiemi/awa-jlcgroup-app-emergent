@@ -44,6 +44,14 @@ class User(BaseModel):
     # Roles (list of role names)
     roles: List[str] = Field(default_factory=list)
     
+    # Collaborator flag
+    is_collaborator: bool = False
+    
+    # Collaborator fields (only for collaborators)
+    employee_number: Optional[str] = None  # Matricule
+    department: Optional[str] = None
+    job_title: Optional[str] = None
+    
     # MFA Settings
     mfa_enabled: bool = False
     mfa_methods: List[str] = Field(default_factory=list)  # ['totp', 'email', 'sms']
