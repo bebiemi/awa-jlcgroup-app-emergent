@@ -5,6 +5,7 @@ import { useAppSelector } from '@/store/hooks'
 import toast from 'react-hot-toast'
 import Button from '@/components/Button'
 import { ArrowPathIcon, ShieldCheckIcon } from '@heroicons/react/24/outline'
+import MfaVerificationPage from './MfaVerificationPage'
 
 export default function LoginPage() {
   const [username, setUsername] = useState('')
@@ -12,6 +13,9 @@ export default function LoginPage() {
   const [login, { isLoading }] = useLocalLoginMutation()
   const [googleLoading, setGoogleLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
+  const [showMfaVerification, setShowMfaVerification] = useState(false)
+  const [mfaSessionId, setMfaSessionId] = useState('')
+  const [mfaMethod, setMfaMethod] = useState<'totp' | 'email'>('totp')
   const navigate = useNavigate()
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -19,27 +23,47 @@ export default function LoginPage() {
 
     try {
       const result = await login({ username, password }).unwrap()
-      toast.success('Connexion réussie!')
-      
-      // Redirect to appropriate dashboard based on user role
-      const userRoles = result.user?.roles || []
-      let dashboardPath = '/profile'
-      
-      if (userRoles.includes('admin') || userRoles.includes('super_admin')) {
-        dashboardPath = '/admin'
-      } else if (userRoles.includes('interim')) {
-        dashboardPath = '/interimaire'
-      } else if (userRoles.includes('company')) {
-        dashboardPath = '/entreprise'
-      } else if (userRoles.includes('agency')) {
-        dashboardPath = '/agence'
+
+      // Check if MFA is required
+      if (result.mfa_required && result.session_id) {
+        // Show MFA verification page
+        setMfaSessionId(result.session_id)
+        setMfaMethod(result.mfa_method || 'totp')
+        setShowMfaVerification(true)
+        toast.success('Veuillez entrer votre code de vérification')
+        return
       }
-      
-      navigate(dashboardPath, { replace: true })
+
+      // Normal login without MFA
+      if (result.success && result.access_token && result.user) {
+        toast.success('Connexion réussie!')
+
+        // Redirect to appropriate dashboard based on user role
+        const userRoles = result.user?.roles || []
+        let dashboardPath = '/profile'
+
+        if (userRoles.includes('admin') || userRoles.includes('super_admin')) {
+          dashboardPath = '/admin'
+        } else if (userRoles.includes('interim')) {
+          dashboardPath = '/interimaire'
+        } else if (userRoles.includes('company')) {
+          dashboardPath = '/entreprise'
+        } else if (userRoles.includes('agency')) {
+          dashboardPath = '/agence'
+        }
+
+        navigate(dashboardPath, { replace: true })
+      }
     } catch (error: any) {
       console.error('Login error:', error)
       toast.error(error?.data?.detail || 'Identifiants incorrects')
     }
+  }
+
+  const handleBackFromMfa = () => {
+    setShowMfaVerification(false)
+    setMfaSessionId('')
+    setPassword('')
   }
 
   const handleGoogleLogin = async () => {
