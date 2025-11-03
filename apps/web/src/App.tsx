@@ -20,6 +20,9 @@ import ProfilePage from './features/profile/pages/ProfilePage'
 import SecuritySettingsPage from './pages/SecuritySettingsPage'
 import MissionsPage from './features/missions/pages/MissionsPage'
 import OffresPage from './features/missions/pages/OffresPage'
+import MissionDetailPage from './features/missions/pages/MissionDetailPage'
+import CreateMissionPage from './features/missions/pages/CreateMissionPage'
+import ApplyMissionPage from './features/missions/pages/ApplyMissionPage'
 import ProtectedRoute from './features/auth/components/ProtectedRoute'
 
 function App() {
