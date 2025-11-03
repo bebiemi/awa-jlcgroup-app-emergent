@@ -766,7 +766,10 @@ def test_mfa_error_cases():
     # Get admin token
     admin_token = test_admin_login()
     if not admin_token:
-        return False
+        # Try creating test admin
+        admin_token, _ = create_test_admin_without_mfa()
+        if not admin_token:
+            return False
     
     headers = {"Authorization": f"Bearer {admin_token}"}
     
