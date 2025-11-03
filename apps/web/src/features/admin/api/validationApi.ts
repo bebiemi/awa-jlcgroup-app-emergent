@@ -125,6 +125,7 @@ export const {
   useGetValidationsQuery,
   useGetValidationStatsQuery,
   useGetValidationQuery,
+  useGetMyValidationQuery,
   useApproveValidationMutation,
   useRejectValidationMutation,
   useAssignValidationMutation,
