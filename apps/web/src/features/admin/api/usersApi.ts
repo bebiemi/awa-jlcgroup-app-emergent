@@ -73,6 +73,13 @@ export const usersApi = createApi({
       }),
       invalidatesTags: ['Users'],
     }),
+    resetUserMfa: builder.mutation<{ success: boolean; message: string; user_id: string }, string>({
+      query: (user_id) => ({
+        url: `/admin/users/${user_id}/mfa/reset`,
+        method: 'POST',
+      }),
+      invalidatesTags: ['Users'],
+    }),
   }),
 })
 
@@ -81,4 +88,5 @@ export const {
   useUpdateUserStatusMutation,
   useUpdateUserMutation,
   useDeleteUserMutation,
+  useResetUserMfaMutation,
 } = usersApi
