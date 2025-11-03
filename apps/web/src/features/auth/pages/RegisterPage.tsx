@@ -370,7 +370,7 @@ export default function RegisterPage() {
                 </div>
 
                 {/* Password with strength indicator */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
                   <div>
                     <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
                       Mot de passe *
@@ -472,7 +472,7 @@ export default function RegisterPage() {
                   <h3 className="text-lg font-semibold text-gray-900 mb-4">
                     Informations personnelles (Intérimaire)
                   </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
                         Téléphone
@@ -509,7 +509,7 @@ export default function RegisterPage() {
                   <h3 className="text-lg font-semibold text-gray-900 mb-4">
                     Informations entreprise (Société)
                   </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label htmlFor="companyName" className="block text-sm font-medium text-gray-700 mb-1">
                         Nom de la société *
