@@ -331,7 +331,7 @@ export default function RegisterPage() {
                       name="fullName"
                       value={formData.fullName}
                       onChange={handleInputChange}
-                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-jlc-purple-500 focus:border-transparent transition ${
+                      className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-jlc-purple-500 focus:border-transparent transition ${
                         errors.fullName ? 'border-red-500' : 'border-gray-300'
                       }`}
                       placeholder="John Doe"
@@ -356,7 +356,7 @@ export default function RegisterPage() {
                     name="email"
                     value={formData.email}
                     onChange={handleInputChange}
-                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-jlc-purple-500 focus:border-transparent transition ${
+                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-jlc-purple-500 focus:border-transparent transition ${
                       errors.email ? 'border-red-500' : 'border-gray-300'
                     }`}
                     placeholder="john@example.com"
@@ -382,7 +382,7 @@ export default function RegisterPage() {
                         name="password"
                         value={formData.password}
                         onChange={handleInputChange}
-                        className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-jlc-purple-500 focus:border-transparent transition ${
+                        className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-jlc-purple-500 focus:border-transparent transition ${
                           errors.password ? 'border-red-500' : 'border-gray-300'
                         }`}
                         placeholder="••••••••"
@@ -434,7 +434,7 @@ export default function RegisterPage() {
                         name="confirmPassword"
                         value={formData.confirmPassword}
                         onChange={handleInputChange}
-                        className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-jlc-purple-500 focus:border-transparent transition ${
+                        className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-jlc-purple-500 focus:border-transparent transition ${
                           passwordMatch === false ? 'border-red-500' : 
                           passwordMatch === true ? 'border-green-500' : 'border-gray-300'
                         }`}
@@ -483,7 +483,7 @@ export default function RegisterPage() {
                         name="phone"
                         value={formData.phone}
                         onChange={handleInputChange}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-jlc-purple-500 focus:border-transparent transition"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-jlc-purple-500 focus:border-transparent transition"
                         placeholder="+241 01 23 45 67"
                       />
                     </div>
@@ -497,7 +497,7 @@ export default function RegisterPage() {
                         name="dateOfBirth"
                         value={formData.dateOfBirth}
                         onChange={handleInputChange}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-jlc-purple-500 focus:border-transparent transition"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-jlc-purple-500 focus:border-transparent transition"
                       />
                     </div>
                   </div>
@@ -520,7 +520,7 @@ export default function RegisterPage() {
                         name="companyName"
                         value={formData.companyName}
                         onChange={handleInputChange}
-                        className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-jlc-purple-500 focus:border-transparent transition ${
+                        className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-jlc-purple-500 focus:border-transparent transition ${
                           errors.companyName ? 'border-red-500' : 'border-gray-300'
                         }`}
                         placeholder="ABC SARL"
@@ -539,7 +539,7 @@ export default function RegisterPage() {
                         name="legalRepresentative"
                         value={formData.legalRepresentative}
                         onChange={handleInputChange}
-                        className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-jlc-purple-500 focus:border-transparent transition ${
+                        className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-jlc-purple-500 focus:border-transparent transition ${
                           errors.legalRepresentative ? 'border-red-500' : 'border-gray-300'
                         }`}
                         placeholder="Jean Dupont"
@@ -558,7 +558,7 @@ export default function RegisterPage() {
                         name="nif"
                         value={formData.nif}
                         onChange={handleInputChange}
-                        className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-jlc-purple-500 focus:border-transparent transition ${
+                        className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-jlc-purple-500 focus:border-transparent transition ${
                           errors.nif ? 'border-red-500' : 'border-gray-300'
                         }`}
                         placeholder="123456789"
@@ -577,7 +577,7 @@ export default function RegisterPage() {
                         name="companyPhone"
                         value={formData.companyPhone}
                         onChange={handleInputChange}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-jlc-purple-500 focus:border-transparent transition"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-jlc-purple-500 focus:border-transparent transition"
                         placeholder="+241 01 23 45 67"
                       />
                     </div>
