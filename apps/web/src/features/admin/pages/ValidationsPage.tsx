@@ -196,24 +196,24 @@ export default function ValidationsPage() {
           </div>
 
           {/* Status Filter */}
-          <div className=\"p-4 border-b border-gray-200\">
+          <div className="p-4 border-b border-gray-200">
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className=\"px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-jlc-purple-500\"
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-jlc-purple-500"
             >
-              <option value=\"pending\">En attente</option>
-              <option value=\"approved\">Approuvées</option>
-              <option value=\"rejected\">Rejetées</option>
-              <option value=\"\">Toutes</option>
+              <option value="pending">En attente</option>
+              <option value="approved">Approuvées</option>
+              <option value="rejected">Rejetées</option>
+              <option value="">Toutes</option>
             </select>
           </div>
 
           {/* Validations List */}
-          <div className=\"divide-y divide-gray-200\">
+          <div className="divide-y divide-gray-200">
             {validations.length === 0 ? (
-              <div className=\"text-center py-12\">
-                <p className=\"text-gray-600\">Aucune validation {statusFilter}</p>
+              <div className="text-center py-12">
+                <p className="text-gray-600">Aucune validation {statusFilter}</p>
               </div>
             ) : (
               validations.map((validation) => (
