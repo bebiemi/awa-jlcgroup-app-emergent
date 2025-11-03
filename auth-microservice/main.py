@@ -67,6 +67,7 @@ app.include_router(google_router, prefix="/api")
 app.include_router(security_router, prefix="/api")
 app.include_router(mfa_router, prefix="/api")
 app.include_router(location_router, prefix="/api")
+app.include_router(validation_router, prefix="/api")
 
 @app.get("/health")
 async def health_check():
