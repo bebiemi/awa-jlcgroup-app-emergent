@@ -130,9 +130,9 @@ export default function Sidebar() {
         ],
       },
       {
-        title: 'Offres',
+        title: 'Processus',
         items: [
-          { label: 'Mes Offres', path: '/offres', icon: BuildingOfficeIcon },
+          { label: 'Mes Missions', path: '/missions', icon: BriefcaseIcon },
         ],
       },
       {
