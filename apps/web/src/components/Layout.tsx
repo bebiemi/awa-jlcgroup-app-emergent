@@ -76,7 +76,28 @@ export default function Layout({ children }: LayoutProps) {
         <footer className="bg-white border-t border-gray-200 mt-auto">
           <div className="px-4 sm:px-6 lg:px-8 py-6">
             <p className="text-center text-sm text-gray-500">
-              © {new Date().getFullYear()} JLC Group - Plateforme de Gestion d'Intérim
+              © {new Date().getFullYear()}{' '}
+              <a 
+                href="https://jlcgroup.org" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="hover:text-jlc-purple-600 transition-colors font-medium"
+              >
+                JLC Group
+              </a>
+              {' '}- Plateforme de Gestion d'Intérim
+              <br />
+              <span className="text-xs">
+                Designé et conçu par{' '}
+                <a 
+                  href="https://awana-group.com" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="hover:text-jlc-purple-600 transition-colors font-medium"
+                >
+                  Awana Group
+                </a>
+              </span>
             </p>
           </div>
         </footer>
