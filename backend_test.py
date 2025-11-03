@@ -87,19 +87,7 @@ def test_auth_service_health():
         return True
     return False
 
-def test_google_oauth_status():
-    """Test Google OAuth configuration status"""
-    print(f"\n{Colors.BOLD}=== Testing Google OAuth Status ==={Colors.ENDC}")
-    
-    # Test through direct URL (auth service)
-    response = test_endpoint("GET", f"{AUTH_BASE_URL}/auth/google/status",
-                           test_name="Google OAuth Status Check")
-    
-    if response:
-        print(f"    Configured: {response.get('configured', False)}")
-        print(f"    Client ID: {response.get('client_id', 'Not set')}")
-        return response
-    return None
+# Removed old test functions - keeping only MFA-specific tests
 
 def test_registration_with_email_validation():
     """Test registration system with automatic email validation"""
