@@ -302,7 +302,7 @@ async def create_user(
     current_user: User = Depends(require_admin)
 ):
     """Create a new user"""
-    from awana_auth.core.password import PasswordHasher
+    from awana_auth.security.password import PasswordHasher
     
     # Check if email already exists
     existing = await db.users.find_one({"email": request.email})
