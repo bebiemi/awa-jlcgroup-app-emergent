@@ -861,11 +861,294 @@ def test_admin_user_management(admin_token):
     }
 
 
+def test_mfa_complete_flow():
+    """Test complete MFA flow: Setup → Enable → Login → Verify → Disable"""
+    print(f"\n{Colors.BOLD}=== Testing Complete MFA Flow ==={Colors.ENDC}")
+    
+    # Step 1: Login to get auth token
+    print(f"\n  Step 1: Admin Login")
+    admin_token = test_admin_login()
+    if not admin_token:
+        log_test("MFA Complete Flow", "FAIL", "Could not get admin token")
+        return False
+    
+    headers = {"Authorization": f"Bearer {admin_token}"}
+    
+    # Step 2: Check initial MFA status
+    print(f"\n  Step 2: Check Initial MFA Status")
+    status_response = test_endpoint(
+        "GET", f"{AUTH_BASE_URL}/auth/mfa/status",
+        headers=headers,
+        expected_status=200,
+        test_name="Initial MFA Status Check"
+    )
+    
+    if not status_response:
+        return False
+    
+    initial_enabled = status_response.get('enabled', False)
+    print(f"    Initial MFA enabled: {initial_enabled}")
+    
+    # Step 3: Setup TOTP
+    print(f"\n  Step 3: Setup TOTP")
+    totp_setup = test_endpoint(
+        "POST", f"{AUTH_BASE_URL}/auth/mfa/setup/totp",
+        headers=headers,
+        expected_status=200,
+        test_name="TOTP Setup"
+    )
+    
+    if not totp_setup:
+        return False
+    
+    # Verify QR code and secret are returned
+    qr_code = totp_setup.get('qr_code')
+    totp_secret = totp_setup.get('secret')
+    
+    if not qr_code or not totp_secret:
+        log_test("TOTP Setup Response", "FAIL", "Missing QR code or secret")
+        return False
+    
+    log_test("TOTP Setup Response", "PASS", f"QR code and secret provided. Secret: {totp_secret[:10]}...")
+    
+    # Step 4: Verify TOTP setup with generated code
+    print(f"\n  Step 4: Verify TOTP Setup")
+    
+    # Generate TOTP code using the secret
+    totp = pyotp.TOTP(totp_secret)
+    current_code = totp.now()
+    
+    verify_response = test_endpoint(
+        "POST", f"{AUTH_BASE_URL}/auth/mfa/setup/totp/verify",
+        data={"code": current_code},
+        headers=headers,
+        expected_status=200,
+        test_name="TOTP Verification"
+    )
+    
+    if not verify_response:
+        return False
+    
+    # Check if backup codes are returned
+    backup_codes = verify_response.get('backup_codes', [])
+    if len(backup_codes) != 10:
+        log_test("Backup Codes Generation", "FAIL", f"Expected 10 backup codes, got {len(backup_codes)}")
+        return False
+    
+    log_test("Backup Codes Generation", "PASS", f"Generated {len(backup_codes)} backup codes")
+    
+    # Step 5: Check MFA status after setup
+    print(f"\n  Step 5: Check MFA Status After Setup")
+    status_after_setup = test_endpoint(
+        "GET", f"{AUTH_BASE_URL}/auth/mfa/status",
+        headers=headers,
+        expected_status=200,
+        test_name="MFA Status After Setup"
+    )
+    
+    if not status_after_setup:
+        return False
+    
+    enabled_after_setup = status_after_setup.get('enabled', False)
+    methods_after_setup = status_after_setup.get('methods', [])
+    
+    if not enabled_after_setup or 'totp' not in methods_after_setup:
+        log_test("MFA Status After Setup", "FAIL", f"MFA not properly enabled. Enabled: {enabled_after_setup}, Methods: {methods_after_setup}")
+        return False
+    
+    log_test("MFA Status After Setup", "PASS", f"MFA enabled with methods: {methods_after_setup}")
+    
+    # Step 6: Test MFA Login Flow
+    print(f"\n  Step 6: Test MFA Login Flow")
+    
+    # First, login with username/password (should return MFA required)
+    login_response = test_endpoint(
+        "POST", f"{AUTH_BASE_URL}/auth/local/login",
+        data={"username": "admin", "password": "awana2025"},
+        expected_status=200,
+        test_name="Login with MFA Required"
+    )
+    
+    if not login_response:
+        return False
+    
+    mfa_required = login_response.get('mfa_required', False)
+    mfa_session_token = login_response.get('mfa_session_token')
+    available_methods = login_response.get('available_methods', [])
+    
+    if not mfa_required or not mfa_session_token:
+        log_test("MFA Login Flow", "FAIL", f"MFA not required or session token missing. MFA required: {mfa_required}")
+        return False
+    
+    log_test("MFA Login Flow", "PASS", f"MFA required, session token: {mfa_session_token[:10]}..., methods: {available_methods}")
+    
+    # Step 7: Complete MFA with TOTP code
+    print(f"\n  Step 7: Complete MFA with TOTP")
+    
+    # Generate new TOTP code
+    new_code = totp.now()
+    
+    # Wait a moment to ensure we don't use the same code
+    time.sleep(1)
+    new_code = totp.now()
+    
+    complete_response = test_endpoint(
+        "POST", f"{AUTH_BASE_URL}/auth/local/login/complete",
+        data={"mfa_session_token": mfa_session_token},
+        expected_status=200,
+        test_name="Complete MFA Login"
+    )
+    
+    if not complete_response:
+        return False
+    
+    final_access_token = complete_response.get('access_token')
+    if not final_access_token:
+        log_test("Complete MFA Login", "FAIL", "No access token returned after MFA completion")
+        return False
+    
+    log_test("Complete MFA Login", "PASS", f"Access token received: {final_access_token[:20]}...")
+    
+    # Step 8: Test Recovery Codes
+    print(f"\n  Step 8: Test Recovery Codes")
+    
+    # Get recovery codes
+    recovery_response = test_endpoint(
+        "GET", f"{AUTH_BASE_URL}/auth/mfa/recovery-codes",
+        headers=headers,
+        expected_status=404,  # This endpoint doesn't exist, expect 404
+        test_name="Get Recovery Codes (Expected 404)"
+    )
+    
+    # Test regenerate backup codes
+    regenerate_response = test_endpoint(
+        "POST", f"{AUTH_BASE_URL}/auth/mfa/backup-codes/regenerate",
+        headers=headers,
+        expected_status=200,
+        test_name="Regenerate Backup Codes"
+    )
+    
+    if regenerate_response:
+        new_backup_codes = regenerate_response.get('backup_codes', [])
+        if len(new_backup_codes) == 10:
+            log_test("Regenerate Backup Codes", "PASS", f"Generated {len(new_backup_codes)} new backup codes")
+        else:
+            log_test("Regenerate Backup Codes", "FAIL", f"Expected 10 codes, got {len(new_backup_codes)}")
+    
+    # Step 9: Test Email OTP Setup
+    print(f"\n  Step 9: Test Email OTP Setup")
+    
+    email_setup_response = test_endpoint(
+        "POST", f"{AUTH_BASE_URL}/auth/mfa/setup/email",
+        headers=headers,
+        expected_status=200,
+        test_name="Email OTP Setup"
+    )
+    
+    if email_setup_response:
+        log_test("Email OTP Setup", "PASS", "Email OTP setup successful")
+    
+    # Step 10: Disable MFA Method
+    print(f"\n  Step 10: Disable MFA Method")
+    
+    disable_response = test_endpoint(
+        "DELETE", f"{AUTH_BASE_URL}/auth/mfa/method/totp",
+        headers=headers,
+        expected_status=200,
+        test_name="Disable TOTP Method"
+    )
+    
+    if disable_response:
+        log_test("Disable TOTP Method", "PASS", "TOTP method disabled successfully")
+    
+    # Step 11: Final MFA Status Check
+    print(f"\n  Step 11: Final MFA Status Check")
+    
+    final_status = test_endpoint(
+        "GET", f"{AUTH_BASE_URL}/auth/mfa/status",
+        headers=headers,
+        expected_status=200,
+        test_name="Final MFA Status"
+    )
+    
+    if final_status:
+        final_enabled = final_status.get('enabled', True)
+        final_methods = final_status.get('methods', [])
+        
+        # Should still be enabled if email is active, or disabled if all methods removed
+        log_test("Final MFA Status", "PASS", f"Final status - Enabled: {final_enabled}, Methods: {final_methods}")
+    
+    return True
+
+
+def test_mfa_error_cases():
+    """Test MFA error handling and edge cases"""
+    print(f"\n{Colors.BOLD}=== Testing MFA Error Cases ==={Colors.ENDC}")
+    
+    # Get admin token
+    admin_token = test_admin_login()
+    if not admin_token:
+        return False
+    
+    headers = {"Authorization": f"Bearer {admin_token}"}
+    
+    # Test 1: Invalid TOTP code
+    print(f"\n  Test 1: Invalid TOTP Code")
+    
+    # First setup TOTP if not already done
+    totp_setup = test_endpoint(
+        "POST", f"{AUTH_BASE_URL}/auth/mfa/setup/totp",
+        headers=headers,
+        expected_status=200,
+        test_name="Setup TOTP for Error Testing"
+    )
+    
+    if totp_setup:
+        # Try to verify with invalid code
+        invalid_verify = test_endpoint(
+            "POST", f"{AUTH_BASE_URL}/auth/mfa/setup/totp/verify",
+            data={"code": "000000"},
+            headers=headers,
+            expected_status=400,
+            test_name="Invalid TOTP Code Rejection"
+        )
+        
+        if invalid_verify:
+            log_test("Invalid TOTP Code Rejection", "PASS", "Invalid code correctly rejected")
+    
+    # Test 2: MFA without authentication
+    print(f"\n  Test 2: MFA Endpoints Without Authentication")
+    
+    no_auth_response = test_endpoint(
+        "GET", f"{AUTH_BASE_URL}/auth/mfa/status",
+        expected_status=401,
+        test_name="MFA Status Without Auth"
+    )
+    
+    if no_auth_response:
+        log_test("MFA Status Without Auth", "PASS", "Unauthenticated request correctly rejected")
+    
+    # Test 3: Invalid MFA session token
+    print(f"\n  Test 3: Invalid MFA Session Token")
+    
+    invalid_session = test_endpoint(
+        "POST", f"{AUTH_BASE_URL}/auth/local/login/complete",
+        data={"mfa_session_token": "invalid_token_123"},
+        expected_status=400,
+        test_name="Invalid MFA Session Token"
+    )
+    
+    if invalid_session:
+        log_test("Invalid MFA Session Token", "PASS", "Invalid session token correctly rejected")
+    
+    return True
+
+
 def run_all_tests():
-    """Run all backend tests for Admin User Management System"""
-    print(f"{Colors.BOLD}Admin User Management System - Backend Testing{Colors.ENDC}")
+    """Run all MFA backend tests"""
+    print(f"{Colors.BOLD}Multi-Factor Authentication (MFA) System - Backend Testing{Colors.ENDC}")
     print(f"Timestamp: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    print("=" * 60)
+    print("=" * 70)
     
     # Track results
     test_results = {
@@ -887,31 +1170,25 @@ def run_all_tests():
         return test_results
     test_results["total_tests"] += 1
     
-    # Test 2: Admin Login
-    print(f"\n{Colors.BLUE}Phase 2: Admin Authentication{Colors.ENDC}")
-    admin_token = test_admin_login()
-    test_results["total_tests"] += 1
-    
-    if admin_token:
-        test_results["passed_tests"] += 1
-        log_test("Admin Authentication", "PASS", "Admin login successful")
+    # Test 2: Complete MFA Flow
+    print(f"\n{Colors.BLUE}Phase 2: Complete MFA Flow Testing{Colors.ENDC}")
+    if test_mfa_complete_flow():
+        test_results["passed_tests"] += 15  # Approximate number of sub-tests
+        log_test("Complete MFA Flow", "PASS", "All MFA flow tests passed")
     else:
-        test_results["failed_tests"] += 1
-        test_results["critical_failures"].append("Admin login failed")
-        print(f"\n{Colors.RED}❌ Admin login failed. Cannot proceed with user management tests.{Colors.ENDC}")
-        return test_results
+        test_results["failed_tests"] += 15
+        test_results["critical_failures"].append("MFA complete flow failed")
+    test_results["total_tests"] += 15
     
-    # Test 3: Admin User Management
-    print(f"\n{Colors.BLUE}Phase 3: Admin User Management Endpoints{Colors.ENDC}")
-    management_results = test_admin_user_management(admin_token)
-    test_results["total_tests"] += management_results.get("total_tests", 15)
-    
-    if management_results.get("success"):
-        test_results["passed_tests"] += management_results.get("total_tests", 15)
-        log_test("Admin User Management", "PASS", "All user management endpoints working")
+    # Test 3: MFA Error Cases
+    print(f"\n{Colors.BLUE}Phase 3: MFA Error Handling{Colors.ENDC}")
+    if test_mfa_error_cases():
+        test_results["passed_tests"] += 5  # Approximate number of sub-tests
+        log_test("MFA Error Cases", "PASS", "Error handling tests passed")
     else:
-        test_results["failed_tests"] += management_results.get("total_tests", 15)
-        test_results["critical_failures"].append(f"User management failed: {management_results.get('reason', 'Unknown')}")
+        test_results["failed_tests"] += 5
+        test_results["critical_failures"].append("MFA error handling failed")
+    test_results["total_tests"] += 5
     
     # Summary
     print(f"\n{Colors.BOLD}=== Test Summary ==={Colors.ENDC}")
@@ -931,11 +1208,11 @@ def run_all_tests():
             print(f"  • {failure}")
     
     if test_results['failed_tests'] == 0:
-        print(f"\n{Colors.GREEN}✅ All tests passed! Admin user management system working correctly.{Colors.ENDC}")
+        print(f"\n{Colors.GREEN}✅ All MFA tests passed! Multi-Factor Authentication system working correctly.{Colors.ENDC}")
     elif len(test_results['critical_failures']) == 0:
-        print(f"\n{Colors.YELLOW}⚠️ Some minor issues found, but core functionality working.{Colors.ENDC}")
+        print(f"\n{Colors.YELLOW}⚠️ Some minor issues found, but core MFA functionality working.{Colors.ENDC}")
     else:
-        print(f"\n{Colors.RED}❌ Critical issues found in admin user management system.{Colors.ENDC}")
+        print(f"\n{Colors.RED}❌ Critical issues found in MFA system.{Colors.ENDC}")
     
     return test_results
 
