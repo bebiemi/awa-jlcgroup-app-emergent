@@ -307,7 +307,7 @@ export default function RegisterPage() {
                       name="username"
                       value={formData.username}
                       onChange={handleInputChange}
-                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-jlc-purple-500 focus:border-transparent transition ${
+                      className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-jlc-purple-500 focus:border-transparent transition ${
                         errors.username ? 'border-red-500' : 'border-gray-300'
                       }`}
                       placeholder="johndoe"
