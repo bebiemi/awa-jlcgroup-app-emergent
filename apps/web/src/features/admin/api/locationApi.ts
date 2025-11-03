@@ -11,7 +11,7 @@ export interface Location {
   custom_fields?: Record<string, any>
   is_visible: boolean
   is_required: boolean
-  dial_code?: string
+  phone_code?: string
   created_at: string
   updated_at: string
   created_by: string
