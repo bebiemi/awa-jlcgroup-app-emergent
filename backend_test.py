@@ -635,10 +635,14 @@ def test_mfa_complete_flow():
     # Step 6: Test MFA Login Flow
     print(f"\n  Step 6: Test MFA Login Flow")
     
+    # Use test admin credentials if we created one, otherwise use default admin
+    login_username = test_admin_data["username"] if test_admin_data else "admin"
+    login_password = test_admin_data["password"] if test_admin_data else "awana2025"
+    
     # First, login with username/password (should return MFA required)
     login_response = test_endpoint(
         "POST", f"{AUTH_BASE_URL}/auth/local/login",
-        data={"username": "admin", "password": "awana2025"},
+        data={"username": login_username, "password": login_password},
         expected_status=200,
         test_name="Login with MFA Required"
     )
