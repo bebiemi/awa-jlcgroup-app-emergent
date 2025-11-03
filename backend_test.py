@@ -607,8 +607,7 @@ def test_mfa_complete_flow():
     
     # Try to complete with the real session token but no MFA verification
     complete_response = test_endpoint(
-        "POST", f"{AUTH_BASE_URL}/auth/local/login/complete",
-        data={"mfa_session_token": mfa_session_token},
+        "POST", f"{AUTH_BASE_URL}/auth/local/login/complete?mfa_session_token={mfa_session_token}",
         expected_status=400,  # Should fail because MFA not verified
         test_name="Complete MFA Without Verification"
     )
