@@ -100,7 +100,7 @@ export default function LocationManagementPage() {
         id: editingLocation.id,
         data: {
           name: formData.name,
-          dial_code: formData.dial_code,
+          phone_code: formData.phone_code,
           is_visible: formData.is_visible,
         },
       }).unwrap()
