@@ -22,7 +22,7 @@ import {
 } from '@heroicons/react/24/outline'
 import toast from 'react-hot-toast'
 
-type TabType = 'interim' | 'company'
+type TabType = 'interim' | 'company' | 'collaborator'
 
 export default function ValidationsPage() {
   const [activeTab, setActiveTab] = useState<TabType>('interim')
