@@ -109,8 +109,8 @@ export default function ValidationsPage() {
   if (isLoading) {
     return (
       <Layout>
-        <div className=\"flex justify-center items-center py-12\">
-          <div className=\"animate-spin rounded-full h-12 w-12 border-b-2 border-jlc-purple-600\"></div>
+        <div className="flex justify-center items-center py-12">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-jlc-purple-600"></div>
         </div>
       </Layout>
     )
@@ -118,11 +118,11 @@ export default function ValidationsPage() {
 
   return (
     <Layout>
-      <div className=\"space-y-6\">
+      <div className="space-y-6">
         {/* Header */}
         <div>
-          <h1 className=\"text-3xl font-bold text-gray-900\">Validations</h1>
-          <p className=\"text-gray-600 mt-2\">Gérez les demandes d'inscription des utilisateurs et entreprises</p>
+          <h1 className="text-3xl font-bold text-gray-900">Validations</h1>
+          <p className="text-gray-600 mt-2">Gérez les demandes d'inscription des utilisateurs et entreprises</p>
         </div>
 
         {/* Stats */}
