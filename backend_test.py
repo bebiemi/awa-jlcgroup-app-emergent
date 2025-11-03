@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Backend Testing for Admin User Management System
-Tests admin user management endpoints with authentication, pagination, and CRUD operations
+Comprehensive MFA Backend Testing
+Tests Multi-Factor Authentication system with TOTP, Email OTP, and Recovery Codes
 """
 
 import requests
@@ -10,6 +10,8 @@ import sys
 import os
 import random
 import string
+import pyotp
+import time
 from datetime import datetime
 import re
 
