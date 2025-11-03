@@ -92,9 +92,7 @@ export default function RegisterPage() {
       if (!formData.legalRepresentative.trim()) {
         newErrors.legalRepresentative = 'Le représentant légal est requis'
       }
-      if (!formData.nif.trim()) {
-        newErrors.nif = 'Le NIF est requis'
-      }
+      // NIF is now optional - no validation required
     }
 
     if (!captchaVerified) {
