@@ -21,6 +21,10 @@ export interface Validation {
   validated_at?: string
   rejection_reason?: string
   notes?: string
+  // Collaborator-specific fields
+  employee_number?: string
+  department?: string
+  job_title?: string
   created_at: string
   updated_at: string
 }
@@ -29,6 +33,7 @@ export interface ValidationStats {
   total_pending: number
   pending_interim: number
   pending_company: number
+  pending_collaborator: number
   with_location_warnings: number
   total_approved: number
   total_rejected: number
