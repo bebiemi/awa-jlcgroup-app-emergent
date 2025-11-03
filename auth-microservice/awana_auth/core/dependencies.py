@@ -41,6 +41,10 @@ def get_database() -> AsyncIOMotorDatabase:
     return _db
 
 
+# Alias for compatibility
+get_db = get_database
+
+
 def get_jwt_manager() -> JWTManager:
     """Get JWT manager instance"""
     global _jwt_manager
