@@ -152,7 +152,7 @@ export default function LocationManagementPage() {
       type: location.type,
       parent_id: location.parent_id,
       is_visible: location.is_visible,
-      dial_code: location.dial_code || '',
+      phone_code: location.phone_code || '',
     })
     setShowEditModal(true)
   }
