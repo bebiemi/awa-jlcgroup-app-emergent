@@ -26,6 +26,15 @@ export default function RegisterPage() {
     legalRepresentative: '',
     nif: '',
     companyPhone: '',
+    // Location fields
+    location: {
+      country_id: '',
+      province_id: '',
+      city_id: '',
+      district_id: '',
+      neighborhood_id: '',
+      custom_country: '',
+    },
   })
 
   const [errors, setErrors] = useState<Record<string, string>>({})
