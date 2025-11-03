@@ -149,9 +149,13 @@ export default function Sidebar() {
       <div className="p-4 border-b border-jlc-purple-700">
         <div className="flex items-center justify-between">
           <Link to={getDashboardPath()} className="flex items-center space-x-3 hover:opacity-80 transition">
+            <img 
+              src="/logo-jlc.png" 
+              alt="JLC Group" 
+              className={`${isCollapsed ? 'h-10 w-10' : 'h-12 w-auto'} object-contain transition-all`}
+            />
             {!isCollapsed && (
               <div>
-                <h2 className="text-xl font-bold">JLC Group</h2>
                 <p className="text-xs text-jlc-purple-300 mt-1">
                   {isAdmin ? 'Administration' : isInterim ? 'Intérimaire' : 'Entreprise'}
                 </p>
