@@ -139,6 +139,14 @@ function App() {
         }
       />
       <Route
+        path="/missions/:id/edit"
+        element={
+          <ProtectedRoute requiredRoles={['admin', 'super_admin', 'commercial', 'company']}>
+            <EditMissionPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/missions/:id/candidatures"
         element={
           <ProtectedRoute requiredRoles={['admin', 'super_admin', 'commercial']}>
