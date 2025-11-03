@@ -60,25 +60,25 @@ export const locationApi = createApi({
       limit?: number
     }>({
       query: (params) => ({
-        url: '',
+        url: '/locations',
         params,
       }),
       providesTags: ['Location'],
     }),
 
     getLocationTree: builder.query<LocationTree[], void>({
-      query: () => '/tree',
+      query: () => '/locations/tree',
       providesTags: ['LocationTree'],
     }),
 
     getLocation: builder.query<Location, string>({
-      query: (id) => `/${id}`,
+      query: (id) => `/locations/${id}`,
       providesTags: (result, error, id) => [{ type: 'Location', id }],
     }),
 
     createLocation: builder.mutation<Location, LocationCreate>({
       query: (data) => ({
-        url: '',
+        url: '/locations',
         method: 'POST',
         body: data,
       }),
@@ -87,7 +87,7 @@ export const locationApi = createApi({
 
     updateLocation: builder.mutation<Location, { id: string; data: LocationUpdate }>({
       query: ({ id, data }) => ({
-        url: `/${id}`,
+        url: `/locations/${id}`,
         method: 'PUT',
         body: data,
       }),
@@ -100,7 +100,7 @@ export const locationApi = createApi({
 
     deleteLocation: builder.mutation<{ success: boolean; message: string }, string>({
       query: (id) => ({
-        url: `/${id}`,
+        url: `/locations/${id}`,
         method: 'DELETE',
       }),
       invalidatesTags: ['Location', 'LocationTree'],
@@ -108,7 +108,7 @@ export const locationApi = createApi({
 
     toggleLocationVisibility: builder.mutation<Location, { id: string; is_visible: boolean }>({
       query: ({ id, is_visible }) => ({
-        url: `/${id}/visibility`,
+        url: `/locations/${id}/visibility`,
         method: 'PATCH',
         params: { is_visible },
       }),
