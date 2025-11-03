@@ -1379,7 +1379,7 @@ async def delete_user(
     return {"message": "User deleted successfully"}
 
 
-@users_router.post("/{user_id}/mfa/reset")
+@auth_router.post("/admin/users/{user_id}/mfa/reset")
 async def reset_user_mfa(
     user_id: str,
     request: Request,
