@@ -75,11 +75,15 @@ class EntraIDTokenRequest(BaseModel):
 
 class LoginResponse(BaseModel):
     """Successful login response"""
-    access_token: str
-    refresh_token: Optional[str]
+    access_token: Optional[str] = None
+    refresh_token: Optional[str] = None
     token_type: str = "bearer"
-    expires_in: int
-    user: User
+    expires_in: Optional[int] = None
+    user: Optional[User] = None
+    # MFA fields
+    mfa_required: bool = False
+    mfa_session_token: Optional[str] = None
+    available_methods: List[str] = Field(default_factory=list)
 
 
 class RefreshTokenRequest(BaseModel):
