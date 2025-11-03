@@ -86,19 +86,22 @@ export default function Layout({ children }: LayoutProps) {
                 JLC Group
               </a>
               {' '}- Plateforme de Gestion d'Intérim
-              <br />
-              <span className="text-xs">
-                Designé et conçu par{' '}
-                <a 
-                  href="https://awana-group.com" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="hover:text-jlc-purple-600 transition-colors font-medium"
-                >
-                  Awana Group
-                </a>
-              </span>
             </p>
+            <div className="mt-2 flex items-center justify-center space-x-2 text-xs text-gray-500">
+              <span>Designé et conçu par</span>
+              <a 
+                href="https://awana-group.com" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="inline-flex items-center hover:opacity-80 transition-opacity"
+              >
+                <img 
+                  src="/logo-awana.png" 
+                  alt="Awana Group" 
+                  className="h-6 w-auto object-contain ml-1"
+                />
+              </a>
+            </div>
           </div>
         </footer>
       </div>
