@@ -257,8 +257,8 @@ INFO:     GET /api/notifications
 ### Variables d'Environnement (`.env`)
 
 ```env
-GOOGLE_CLIENT_ID=12345xxxxxxxxxxxxxxxxxxxxx.apps.googleusercontent.com
-GOOGLE_CLIENT_SECRET=xxxxxxxxxxxxxxxxxxxxxxxx
+GOOGLE_CLIENT_ID=VOTRE_CLIENT_ID.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=VOTRE_CLIENT_SECRET
 GOOGLE_REDIRECT_URI=https://mon-app.com/auth/google/callback
 ```
 
