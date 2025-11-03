@@ -161,15 +161,22 @@ async def create_validation_record(
     """
     Create validation record for new user registration
     Checks location data and creates warnings if necessary
+    Supports interim, company, and collaborator types
     """
     import uuid
+    
+    # Determine validation type
+    if register_data.is_collaborator:
+        validation_type = "collaborator"
+    else:
+        validation_type = register_data.role
     
     validation = {
         "id": str(uuid.uuid4()),
         "user_id": user.id,
         "user_email": user.email,
         "user_full_name": register_data.full_name,
-        "validation_type": register_data.role,
+        "validation_type": validation_type,
         "status": "pending",
         "has_location_warning": False,
         "location_warning_message": None,
@@ -182,6 +189,12 @@ async def create_validation_record(
         "created_at": datetime.now(timezone.utc).isoformat(),
         "updated_at": datetime.now(timezone.utc).isoformat()
     }
+    
+    # Add collaborator-specific fields
+    if register_data.is_collaborator:
+        validation["employee_number"] = register_data.employee_number
+        validation["department"] = register_data.department
+        validation["job_title"] = register_data.job_title
     
     # Process location data if provided
     if register_data.location:
