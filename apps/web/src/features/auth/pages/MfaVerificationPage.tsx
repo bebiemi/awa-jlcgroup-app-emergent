@@ -79,7 +79,7 @@ export default function MfaVerificationPage({ sessionId, mfaMethod, onBack }: Mf
         return 'Code Authenticator'
       case 'email':
         return 'Code Email'
-      case 'recovery':
+      case 'backup':
         return 'Code de Secours'
       default:
         return 'Code de Vérification'
@@ -92,7 +92,7 @@ export default function MfaVerificationPage({ sessionId, mfaMethod, onBack }: Mf
         return "Entrez le code à 6 chiffres de votre application d'authentification"
       case 'email':
         return 'Entrez le code à 6 chiffres envoyé à votre email'
-      case 'recovery':
+      case 'backup':
         return 'Entrez un de vos codes de secours'
       default:
         return 'Entrez votre code de vérification'
