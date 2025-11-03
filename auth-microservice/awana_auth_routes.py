@@ -1150,7 +1150,18 @@ async def local_register(
         if register_data.is_collaborator:
             collaborateur_group = await db.groups.find_one({"name": "Collaborateur"}, {"_id": 0})
             if collaborateur_group:
-                await rbac_manager.add_user_to_group(user.id, collaborateur_group["id"], added_by="system")
+                # Add user to group via user_groups collection
+                import uuid
+                user_group = {
+                    "id": str(uuid.uuid4()),
+                    "user_id": user.id,
+                    "group_id": collaborateur_group["id"],
+                    "added_by": "system",
+                    "added_at": datetime.now(timezone.utc).isoformat()
+                }
+                await db.user_groups.insert_one(user_group)
+                
+                # Update group member count
                 await db.groups.update_one(
                     {"id": collaborateur_group["id"]},
                     {"$inc": {"member_count": 1}}
