@@ -831,6 +831,114 @@ async def local_login(
         )
 
 
+
+
+@auth_router.post("/local/login/complete", response_model=LoginResponse)
+@limiter.limit(get_rate_limit("auth_token"))
+async def complete_login_after_mfa(
+    request: Request,
+    mfa_session_token: str,
+    db: AsyncIOMotorDatabase = Depends(get_database),
+    jwt_manager: JWTManager = Depends(get_jwt_manager),
+    session_storage: SessionStorage = Depends(get_session_storage)
+):
+    """
+    Complete login after successful MFA verification
+    Exchanges MFA session token for JWT access token
+    """
+    from awana_auth.mfa.mfa_service import MFAService
+    
+    try:
+        mfa_service = MFAService(db)
+        
+        # Get and verify MFA session
+        mfa_session = await mfa_service.get_mfa_session(mfa_session_token)
+        
+        if not mfa_session:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Session MFA invalide ou expirée"
+            )
+        
+        if not mfa_session.verified:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="MFA n'a pas été vérifiée"
+            )
+        
+        # Get user
+        user_doc = await db.users.find_one({'id': mfa_session.user_id}, {"_id": 0})
+        if not user_doc:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Utilisateur non trouvé"
+            )
+        
+        user = User(**user_doc)
+        
+        # Create full session
+        session = await session_storage.create_session(
+            user=user,
+            access_token="",
+            refresh_token="",
+            ip_address=get_client_ip(request),
+            user_agent=get_user_agent(request),
+            metadata={"provider": "local", "mfa": True}
+        )
+        
+        # Create JWT tokens
+        access_token = jwt_manager.create_access_token(
+            user=user,
+            session_id=session.id
+        )
+        
+        refresh_token = jwt_manager.create_refresh_token(
+            user=user,
+            session_id=session.id
+        )
+        
+        # Update session with tokens
+        await session_storage.update_session_tokens(
+            session_id=session.id,
+            access_token=access_token,
+            refresh_token=refresh_token
+        )
+        
+        # Delete MFA session
+        await mfa_service.delete_mfa_session(mfa_session_token)
+        
+        # Audit log
+        audit_logger = AuditLogger(db, auth_config)
+        await audit_logger.log(
+            action=AuditAction.LOGIN_SUCCESS,
+            actor_id=user.id,
+            actor_email=user.email,
+            ip_address=get_client_ip(request),
+            user_agent=get_user_agent(request),
+            metadata={"provider": "local", "mfa": True}
+        )
+        
+        logger.info(f"✅ Login completed after MFA for {user.email}")
+        
+        return LoginResponse(
+            access_token=access_token,
+            refresh_token=refresh_token,
+            token_type="bearer",
+            expires_in=auth_config.jwt_access_token_expire_minutes * 60,
+            user=user,
+            mfa_required=False
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Complete login after MFA failed: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Login completion failed: {str(e)}"
+        )
+
+
 @auth_router.post("/local/register", response_model=LoginResponse)
 @limiter.limit(get_rate_limit("auth_register"))
 async def local_register(
