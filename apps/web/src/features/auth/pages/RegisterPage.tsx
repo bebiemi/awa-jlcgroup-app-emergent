@@ -187,18 +187,29 @@ export default function RegisterPage() {
     <div className="min-h-screen bg-gradient-to-br from-jlc-purple-600 via-jlc-purple-700 to-jlc-purple-800 flex items-center justify-center px-4 py-12">
       <div className="max-w-4xl w-full bg-white rounded-2xl shadow-2xl overflow-hidden">
         {/* Header with gradient */}
-        <div className="bg-gradient-to-r from-jlc-purple-600 to-jlc-purple-800 p-8 text-white">
+        <div className="bg-gradient-to-r from-jlc-purple-600 to-jlc-purple-800 p-6 text-white">
+          <div className="flex items-center justify-between mb-3">
+            <Link 
+              to="/" 
+              className="flex items-center text-white hover:text-purple-200 transition-colors"
+            >
+              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
+              Retour à l'accueil
+            </Link>
+          </div>
           <div className="text-center">
-            <h1 className="text-3xl font-bold mb-2">
+            <h1 className="text-2xl font-bold mb-2">
               Rejoignez JLC GROUP ⭐
             </h1>
-            <p className="text-purple-100">
+            <p className="text-purple-100 text-sm">
               Créez votre compte en quelques étapes
             </p>
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-8 space-y-6">
+        <form onSubmit={handleSubmit} className="p-6 space-y-5">
           {/* Progress indicator */}
           <div className="flex justify-between items-center mb-8">
             <div className={`flex items-center ${formData.role ? 'text-jlc-purple-600' : 'text-gray-400'}`}>
