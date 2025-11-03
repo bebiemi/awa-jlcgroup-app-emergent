@@ -302,7 +302,7 @@ async def create_user(
     current_user: User = Depends(require_admin)
 ):
     """Create a new user"""
-    from awana_auth.security.password import PasswordHasher
+    from awana_auth.security.password import PasswordManager
     
     # Check if email already exists
     existing = await db.users.find_one({"email": request.email})
@@ -320,7 +320,7 @@ async def create_user(
     
     # Generate password if not provided
     password = request.password or generate_password()
-    hasher = PasswordHasher()
+    hasher = PasswordManager(auth_config)
     hashed_password = hasher.hash_password(password)
     
     # Create user
