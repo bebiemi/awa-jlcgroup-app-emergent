@@ -60,7 +60,7 @@ function App() {
         path="/admin/validations"
         element={
           <ProtectedRoute requiredRoles={['admin']}>
-            <ValidationsList />
+            <ValidationsPage />
           </ProtectedRoute>
         }
       />
