@@ -550,7 +550,7 @@ export default function RegisterPage() {
                     </div>
                     <div>
                       <label htmlFor="nif" className="block text-sm font-medium text-gray-700 mb-1">
-                        NIF *
+                        NIF <span className="text-gray-400 text-xs">(optionnel)</span>
                       </label>
                       <input
                         type="text"
