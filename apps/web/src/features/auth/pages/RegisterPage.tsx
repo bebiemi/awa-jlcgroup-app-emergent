@@ -290,12 +290,12 @@ export default function RegisterPage() {
           {/* Common Fields */}
           {formData.role && (
             <>
-              <div className="border-t pt-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              <div className="border-t pt-4">
+                <h3 className="text-base font-semibold text-gray-900 mb-3">
                   Étape 2 : Informations de connexion
                 </h3>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {/* Username */}
                   <div>
                     <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">
