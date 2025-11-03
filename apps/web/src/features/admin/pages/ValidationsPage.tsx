@@ -552,6 +552,137 @@ export default function ValidationsPage() {
           </div>
         </div>
       )}
+
+      {/* Bulk Actions Modal */}
+      {showBulkActionsModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full p-6 max-h-[80vh] overflow-y-auto">
+            <h3 className="text-xl font-bold text-gray-900 mb-4">
+              Actions en masse - {bulkActionType === 'all' ? 'Toutes' : 
+                bulkActionType === 'interim' ? 'Intérimaires' : 
+                bulkActionType === 'company' ? 'Entreprises' : 
+                bulkActionType === 'collaborator' ? 'Collaborateurs' : 
+                'Warnings'}
+            </h3>
+            
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+              <p className="text-sm text-blue-800">
+                {selectedValidations.length} validation(s) sélectionnée(s)
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <h4 className="font-semibold text-gray-900 mb-2">Actions disponibles:</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <button
+                    onClick={async () => {
+                      if (!confirm(`Approuver ${selectedValidations.length} validation(s) ?`)) return
+                      
+                      try {
+                        for (const id of selectedValidations) {
+                          await approveValidation({ id }).unwrap()
+                        }
+                        toast.success(`${selectedValidations.length} validation(s) approuvée(s)`)
+                        setShowBulkActionsModal(false)
+                        setSelectedValidations([])
+                        refetch()
+                      } catch (error: any) {
+                        toast.error(error?.data?.detail || 'Erreur lors de l\'approbation en masse')
+                      }
+                    }}
+                    className="flex items-center justify-center px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
+                  >
+                    <CheckCircleIcon className="h-5 w-5 mr-2" />
+                    Tout approuver
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      const reason = prompt('Raison du rejet (obligatoire):')
+                      if (!reason || !reason.trim()) {
+                        toast.error('Raison du rejet requise')
+                        return
+                      }
+                      
+                      if (!confirm(`Rejeter ${selectedValidations.length} validation(s) ?`)) return
+                      
+                      Promise.all(
+                        selectedValidations.map(id => rejectValidation({ id, reason }).unwrap())
+                      ).then(() => {
+                        toast.success(`${selectedValidations.length} validation(s) rejetée(s)`)
+                        setShowBulkActionsModal(false)
+                        setSelectedValidations([])
+                        refetch()
+                      }).catch((error: any) => {
+                        toast.error(error?.data?.detail || 'Erreur lors du rejet en masse')
+                      })
+                    }}
+                    className="flex items-center justify-center px-4 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
+                  >
+                    <XCircleIcon className="h-5 w-5 mr-2" />
+                    Tout rejeter
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      const validatorId = prompt('ID du validateur à assigner:')
+                      if (!validatorId) return
+                      
+                      if (!confirm(`Assigner ${selectedValidations.length} validation(s) ?`)) return
+                      
+                      Promise.all(
+                        selectedValidations.map(id => assignValidation({ id, assigned_to: validatorId }).unwrap())
+                      ).then(() => {
+                        toast.success(`${selectedValidations.length} validation(s) assignée(s)`)
+                        setShowBulkActionsModal(false)
+                        setSelectedValidations([])
+                        refetch()
+                      }).catch((error: any) => {
+                        toast.error(error?.data?.detail || 'Erreur lors de l\'assignation en masse')
+                      })
+                    }}
+                    className="flex items-center justify-center px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                  >
+                    <UserPlusIcon className="h-5 w-5 mr-2" />
+                    Assigner en masse
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      setShowBulkActionsModal(false)
+                      setSelectedValidations([])
+                    }}
+                    className="flex items-center justify-center px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
+                  >
+                    Annuler
+                  </button>
+                </div>
+              </div>
+
+              <div className="border-t pt-4">
+                <h4 className="font-semibold text-gray-900 mb-2">Validations concernées:</h4>
+                <div className="max-h-48 overflow-y-auto space-y-2">
+                  {validations.filter((v: Validation) => selectedValidations.includes(v.id)).map((v: Validation) => (
+                    <div key={v.id} className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-gray-900">{v.user_full_name}</p>
+                        <p className="text-xs text-gray-500">{v.user_email}</p>
+                      </div>
+                      <button
+                        onClick={() => setSelectedValidations(selectedValidations.filter(id => id !== v.id))}
+                        className="text-red-600 hover:text-red-800"
+                      >
+                        <XCircleIcon className="h-5 w-5" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </Layout>
   )
 }
