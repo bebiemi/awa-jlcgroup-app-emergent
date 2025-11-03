@@ -202,8 +202,11 @@ export default function ValidationsPage() {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="bg-white rounded-lg shadow p-4 border-l-4 border-yellow-500">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+          <button
+            onClick={() => handleTileClick('all')}
+            className="bg-white rounded-lg shadow p-4 border-l-4 border-yellow-500 hover:shadow-lg transition-shadow cursor-pointer text-left"
+          >
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">En attente</p>
@@ -211,9 +214,12 @@ export default function ValidationsPage() {
               </div>
               <ClockIcon className="h-8 w-8 text-yellow-500" />
             </div>
-          </div>
+          </button>
 
-          <div className="bg-white rounded-lg shadow p-4 border-l-4 border-blue-500">
+          <button
+            onClick={() => handleTileClick('interim')}
+            className="bg-white rounded-lg shadow p-4 border-l-4 border-blue-500 hover:shadow-lg transition-shadow cursor-pointer text-left"
+          >
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">Intérimaires</p>
@@ -221,9 +227,12 @@ export default function ValidationsPage() {
               </div>
               <UserIcon className="h-8 w-8 text-blue-500" />
             </div>
-          </div>
+          </button>
 
-          <div className="bg-white rounded-lg shadow p-4 border-l-4 border-green-500">
+          <button
+            onClick={() => handleTileClick('company')}
+            className="bg-white rounded-lg shadow p-4 border-l-4 border-green-500 hover:shadow-lg transition-shadow cursor-pointer text-left"
+          >
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">Entreprises</p>
@@ -231,9 +240,12 @@ export default function ValidationsPage() {
               </div>
               <BuildingOfficeIcon className="h-8 w-8 text-green-500" />
             </div>
-          </div>
+          </button>
 
-          <div className="bg-white rounded-lg shadow p-4 border-l-4 border-purple-500">
+          <button
+            onClick={() => handleTileClick('collaborator')}
+            className="bg-white rounded-lg shadow p-4 border-l-4 border-purple-500 hover:shadow-lg transition-shadow cursor-pointer text-left"
+          >
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">Collaborateurs</p>
@@ -241,9 +253,12 @@ export default function ValidationsPage() {
               </div>
               <UserIcon className="h-8 w-8 text-purple-500" />
             </div>
-          </div>
+          </button>
 
-          <div className="bg-white rounded-lg shadow p-4 border-l-4 border-orange-500">
+          <button
+            onClick={() => handleTileClick('warnings')}
+            className="bg-white rounded-lg shadow p-4 border-l-4 border-orange-500 hover:shadow-lg transition-shadow cursor-pointer text-left"
+          >
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">Warnings</p>
@@ -251,7 +266,7 @@ export default function ValidationsPage() {
               </div>
               <ExclamationTriangleIcon className="h-8 w-8 text-orange-500" />
             </div>
-          </div>
+          </button>
         </div>
 
         {/* Tabs */}
