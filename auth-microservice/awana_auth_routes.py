@@ -127,6 +127,9 @@ class LocalRegisterRequest(BaseModel):
     full_name: str
     role: str  # 'interim' or 'company'
     
+    # Collaborator flag
+    is_collaborator: bool = False
+    
     # Optional fields for interim users
     phone: Optional[str] = None
     date_of_birth: Optional[str] = None
@@ -135,6 +138,11 @@ class LocalRegisterRequest(BaseModel):
     company_name: Optional[str] = None
     legal_representative: Optional[str] = None
     nif: Optional[str] = None
+    
+    # Optional fields for collaborators
+    employee_number: Optional[str] = None  # Matricule
+    department: Optional[str] = None
+    job_title: Optional[str] = None
     
     # Location data (hierarchical location selection)
     location: Optional[dict] = None
