@@ -35,10 +35,11 @@ export const mfaApi = createApi({
     // Verify TOTP during setup
     verifyTotp: builder.mutation<{ success: boolean; message: string }, { code: string }>({
       query: (body) => ({
-        url: '/auth/mfa/verify/totp',
+        url: '/auth/mfa/setup/totp/verify',
         method: 'POST',
         body,
       }),
+      invalidatesTags: ['MfaStatus'],
     }),
 
     // Setup Email OTP
@@ -47,37 +48,27 @@ export const mfaApi = createApi({
         url: '/auth/mfa/setup/email',
         method: 'POST',
       }),
+      invalidatesTags: ['MfaStatus'],
     }),
 
-    // Enable MFA
-    enableMfa: builder.mutation<{ success: boolean; message: string; method: string }, { method: 'totp' | 'email' }>({
-      query: (body) => ({
-        url: '/auth/mfa/enable',
-        method: 'POST',
-        body,
+    // Disable MFA method
+    disableMfaMethod: builder.mutation<{ success: boolean; message: string }, { method: string; password: string }>({
+      query: ({ method }) => ({
+        url: `/auth/mfa/method/${method}`,
+        method: 'DELETE',
       }),
       invalidatesTags: ['MfaStatus'],
     }),
 
-    // Disable MFA
-    disableMfa: builder.mutation<{ success: boolean; message: string }, { password: string }>({
-      query: (body) => ({
-        url: '/auth/mfa/disable',
-        method: 'POST',
-        body,
-      }),
-      invalidatesTags: ['MfaStatus'],
+    // Get backup/recovery codes
+    getBackupCodes: builder.query<RecoveryCodesResponse, void>({
+      query: () => '/auth/mfa/backup-codes',
     }),
 
-    // Get recovery codes
-    getRecoveryCodes: builder.query<RecoveryCodesResponse, void>({
-      query: () => '/auth/mfa/recovery-codes',
-    }),
-
-    // Generate new recovery codes
-    generateRecoveryCodes: builder.mutation<RecoveryCodesResponse, { password: string }>({
+    // Generate new backup codes
+    generateBackupCodes: builder.mutation<RecoveryCodesResponse, { password: string }>({
       query: (body) => ({
-        url: '/auth/mfa/recovery-codes/generate',
+        url: '/auth/mfa/backup-codes/regenerate',
         method: 'POST',
         body,
       }),
@@ -87,13 +78,13 @@ export const mfaApi = createApi({
     completeMfaLogin: builder.mutation<
       LoginResponse,
       {
-        session_id: string
+        session_token: string
         code: string
-        code_type: 'totp' | 'email' | 'recovery'
+        method: 'totp' | 'email' | 'backup'
       }
     >({
       query: (body) => ({
-        url: '/auth/local/login/complete-mfa',
+        url: '/auth/local/login/complete',
         method: 'POST',
         body,
       }),
@@ -106,9 +97,8 @@ export const {
   useSetupTotpMutation,
   useVerifyTotpMutation,
   useSetupEmailOtpMutation,
-  useEnableMfaMutation,
-  useDisableMfaMutation,
-  useGetRecoveryCodesQuery,
-  useGenerateRecoveryCodesMutation,
+  useDisableMfaMethodMutation,
+  useGetBackupCodesQuery,
+  useGenerateBackupCodesMutation,
   useCompleteMfaLoginMutation,
 } = mfaApi
