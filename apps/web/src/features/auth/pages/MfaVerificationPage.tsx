@@ -129,9 +129,9 @@ export default function MfaVerificationPage({ sessionId, mfaMethod, onBack }: Mf
                 </button>
                 <button
                   type="button"
-                  onClick={() => setCodeType('recovery')}
+                  onClick={() => setCodeType('backup')}
                   className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition ${
-                    codeType === 'recovery'
+                    codeType === 'backup'
                       ? 'bg-jlc-purple-600 text-white'
                       : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}
