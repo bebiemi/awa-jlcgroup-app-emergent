@@ -1076,9 +1076,9 @@ async def local_register(
         
         # Log validation status
         if user.status == UserStatus.ACTIVE:
-            logger.info(f"✅ Email domain validated automatically - Account active")
+            logger.info("✅ Email domain validated automatically - Account active")
         else:
-            logger.info(f"⚠️ Email domain requires manual validation - Account pending")
+            logger.info("⚠️ Email domain requires manual validation - Account pending")
         
         return LoginResponse(
             access_token=access_token,
