@@ -217,25 +217,25 @@ export default function ValidationsPage() {
               </div>
             ) : (
               validations.map((validation) => (
-                <div key={validation.id} className=\"p-6 hover:bg-gray-50 transition\">
-                  <div className=\"flex justify-between items-start\">
-                    <div className=\"flex-1\">
-                      <div className=\"flex items-center space-x-3 mb-2\">
-                        <h3 className=\"text-lg font-semibold text-gray-900\">{validation.user_full_name}</h3>
+                <div key={validation.id} className="p-6 hover:bg-gray-50 transition">
+                  <div className="flex justify-between items-start">
+                    <div className="flex-1">
+                      <div className="flex items-center space-x-3 mb-2">
+                        <h3 className="text-lg font-semibold text-gray-900">{validation.user_full_name}</h3>
                         {getStatusBadge(validation.status)}
                         {validation.has_location_warning && (
-                          <span className=\"inline-flex items-center px-2 py-1 text-xs font-medium rounded-full bg-orange-100 text-orange-800\">
-                            <ExclamationTriangleIcon className=\"h-4 w-4 mr-1\" />
+                          <span className="inline-flex items-center px-2 py-1 text-xs font-medium rounded-full bg-orange-100 text-orange-800">
+                            <ExclamationTriangleIcon className="h-4 w-4 mr-1" />
                             Pays non-standard
                           </span>
                         )}
                       </div>
 
-                      <p className=\"text-sm text-gray-600 mb-2\">{validation.user_email}</p>
+                      <p className="text-sm text-gray-600 mb-2">{validation.user_email}</p>
 
                       {validation.country_name && (
-                        <div className=\"flex items-center space-x-2 text-sm text-gray-600 mb-2\">
-                          <MapPinIcon className=\"h-4 w-4\" />
+                        <div className="flex items-center space-x-2 text-sm text-gray-600 mb-2">
+                          <MapPinIcon className="h-4 w-4" />
                           <span>
                             {validation.country_name}
                             {validation.province_name && ` → ${validation.province_name}`}
@@ -246,31 +246,31 @@ export default function ValidationsPage() {
                       )}
 
                       {validation.has_location_warning && validation.missing_country && (
-                        <div className=\"bg-orange-50 border border-orange-200 rounded-lg p-3 mt-2\">
-                          <p className=\"text-sm text-orange-800\">
+                        <div className="bg-orange-50 border border-orange-200 rounded-lg p-3 mt-2">
+                          <p className="text-sm text-orange-800">
                             <strong>Pays non disponible :</strong> {validation.missing_country}
                           </p>
                           <button
                             onClick={() => handleAddCountry(validation)}
-                            className=\"mt-2 text-sm text-orange-700 hover:text-orange-900 font-medium underline\"
+                            className="mt-2 text-sm text-orange-700 hover:text-orange-900 font-medium underline"
                           >
                             + Ajouter ce pays à la liste
                           </button>
                         </div>
                       )}
 
-                      <p className=\"text-xs text-gray-500 mt-2\">
+                      <p className="text-xs text-gray-500 mt-2">
                         Demande créée le {new Date(validation.created_at).toLocaleDateString('fr-FR')}
                       </p>
                     </div>
 
                     {validation.status === 'pending' && (
-                      <div className=\"flex space-x-2 ml-4\">
+                      <div className="flex space-x-2 ml-4">
                         <button
                           onClick={() => handleApprove(validation)}
-                          className=\"inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition\"
+                          className="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
                         >
-                          <CheckCircleIcon className=\"h-5 w-5 mr-2\" />
+                          <CheckCircleIcon className="h-5 w-5 mr-2" />
                           Approuver
                         </button>
                         <button
@@ -278,9 +278,9 @@ export default function ValidationsPage() {
                             setSelectedValidation(validation)
                             setShowRejectModal(true)
                           }}
-                          className=\"inline-flex items-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition\"
+                          className="inline-flex items-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
                         >
-                          <XCircleIcon className=\"h-5 w-5 mr-2\" />
+                          <XCircleIcon className="h-5 w-5 mr-2" />
                           Rejeter
                         </button>
                       </div>
