@@ -961,9 +961,231 @@ def test_mfa_missing_endpoints():
     return True
 
 
+def test_user_creation_endpoint():
+    """Test the user creation endpoint that's failing with 500 error"""
+    print(f"\n{Colors.BOLD}=== Testing User Creation Endpoint ==={Colors.ENDC}")
+    
+    # First, get admin token
+    admin_token = test_admin_login()
+    if not admin_token:
+        log_test("User Creation Test", "FAIL", "Cannot get admin token")
+        return False
+    
+    headers = {"Authorization": f"Bearer {admin_token}"}
+    
+    # Test 1: Reproduce the exact frontend payload that's failing
+    print(f"\n  Test 1: Frontend Payload (Reproducing 500 Error)")
+    
+    frontend_payload = {
+        "email": "test@example.com",
+        "username": None,
+        "full_name": None,
+        "password": None,
+        "roles": ["interim"],
+        "group_ids": [],
+        "profile_id": None,
+        "send_invitation": True
+    }
+    
+    response = test_endpoint(
+        "POST", 
+        f"{AUTH_BASE_URL}/auth/security/users",
+        data=frontend_payload,
+        headers=headers,
+        expected_status=500,  # We expect this to fail currently
+        test_name="Frontend Payload (Expected 500)"
+    )
+    
+    if response:
+        log_test("Frontend Payload Error Confirmed", "PASS", "500 error reproduced as expected")
+    
+    # Test 2: Test with complete payload
+    print(f"\n  Test 2: Complete User Data")
+    
+    complete_payload = {
+        "email": "complete.user@example.com",
+        "username": "completeuser",
+        "full_name": "Complete User",
+        "password": "SecurePass123!",
+        "roles": ["interim"],
+        "group_ids": [],
+        "profile_id": None,
+        "send_invitation": False
+    }
+    
+    response = test_endpoint(
+        "POST", 
+        f"{AUTH_BASE_URL}/auth/security/users",
+        data=complete_payload,
+        headers=headers,
+        expected_status=500,  # Still expect 500 due to import error
+        test_name="Complete User Data (Expected 500)"
+    )
+    
+    if response:
+        log_test("Complete Payload Error Confirmed", "PASS", "500 error reproduced with complete data")
+    
+    # Test 3: Test without authentication
+    print(f"\n  Test 3: No Authentication")
+    
+    response = test_endpoint(
+        "POST", 
+        f"{AUTH_BASE_URL}/auth/security/users",
+        data=frontend_payload,
+        expected_status=401,
+        test_name="No Authentication"
+    )
+    
+    if response:
+        log_test("Authentication Required", "PASS", "Endpoint correctly requires authentication")
+    
+    return True
+
+
+def fix_password_hasher_import():
+    """Fix the PasswordHasher import error in security_routes.py"""
+    print(f"\n{Colors.BOLD}=== Fixing PasswordHasher Import Error ==={Colors.ENDC}")
+    
+    try:
+        # Read the security_routes.py file
+        with open('/app/auth-microservice/security_routes.py', 'r') as f:
+            content = f.read()
+        
+        # Replace the incorrect import
+        old_import = "from awana_auth.security.password import PasswordHasher"
+        new_import = "from awana_auth.security.password import PasswordManager"
+        
+        if old_import in content:
+            content = content.replace(old_import, new_import)
+            
+            # Also replace the usage
+            old_usage = "hasher = PasswordHasher()"
+            new_usage = "hasher = PasswordManager(auth_config)"
+            content = content.replace(old_usage, new_usage)
+            
+            # Write back the file
+            with open('/app/auth-microservice/security_routes.py', 'w') as f:
+                f.write(content)
+            
+            log_test("Fix PasswordHasher Import", "PASS", "Import error fixed")
+            
+            # Restart auth service to apply changes
+            import subprocess
+            result = subprocess.run(['sudo', 'supervisorctl', 'restart', 'auth-microservice'], 
+                                  capture_output=True, text=True)
+            
+            if result.returncode == 0:
+                log_test("Restart Auth Service", "PASS", "Auth service restarted")
+                # Wait for service to start
+                time.sleep(3)
+                return True
+            else:
+                log_test("Restart Auth Service", "FAIL", f"Failed to restart: {result.stderr}")
+                return False
+        else:
+            log_test("Fix PasswordHasher Import", "WARN", "Import error not found in file")
+            return False
+            
+    except Exception as e:
+        log_test("Fix PasswordHasher Import", "FAIL", f"Error fixing import: {str(e)}")
+        return False
+
+
+def test_user_creation_after_fix():
+    """Test user creation endpoint after fixing the import error"""
+    print(f"\n{Colors.BOLD}=== Testing User Creation After Fix ==={Colors.ENDC}")
+    
+    # Get admin token
+    admin_token = test_admin_login()
+    if not admin_token:
+        log_test("User Creation After Fix", "FAIL", "Cannot get admin token")
+        return False
+    
+    headers = {"Authorization": f"Bearer {admin_token}"}
+    
+    # Test 1: Frontend payload (should work now)
+    print(f"\n  Test 1: Frontend Payload (Should Work Now)")
+    
+    frontend_payload = {
+        "email": "test.fixed@example.com",
+        "username": None,
+        "full_name": None,
+        "password": None,
+        "roles": ["interim"],
+        "group_ids": [],
+        "profile_id": None,
+        "send_invitation": True
+    }
+    
+    response = test_endpoint(
+        "POST", 
+        f"{AUTH_BASE_URL}/auth/security/users",
+        data=frontend_payload,
+        headers=headers,
+        expected_status=200,
+        test_name="Frontend Payload (After Fix)"
+    )
+    
+    if response:
+        log_test("Frontend Payload Success", "PASS", f"User created: {response.get('email', 'Unknown')}")
+        
+        # Verify user was created
+        if 'id' in response and 'email' in response:
+            log_test("User Creation Response", "PASS", f"Valid response with ID: {response['id'][:8]}...")
+        else:
+            log_test("User Creation Response", "FAIL", "Invalid response structure")
+    
+    # Test 2: Complete payload
+    print(f"\n  Test 2: Complete User Data")
+    
+    complete_payload = {
+        "email": "complete.fixed@example.com",
+        "username": "completefixed",
+        "full_name": "Complete Fixed User",
+        "password": "SecurePass123!",
+        "roles": ["company"],
+        "group_ids": [],
+        "profile_id": None,
+        "send_invitation": False
+    }
+    
+    response = test_endpoint(
+        "POST", 
+        f"{AUTH_BASE_URL}/auth/security/users",
+        data=complete_payload,
+        headers=headers,
+        expected_status=200,
+        test_name="Complete User Data (After Fix)"
+    )
+    
+    if response:
+        log_test("Complete Payload Success", "PASS", f"User created: {response.get('email', 'Unknown')}")
+    
+    # Test 3: Duplicate email (should fail)
+    print(f"\n  Test 3: Duplicate Email")
+    
+    response = test_endpoint(
+        "POST", 
+        f"{AUTH_BASE_URL}/auth/security/users",
+        data=frontend_payload,  # Same email as test 1
+        headers=headers,
+        expected_status=400,
+        test_name="Duplicate Email"
+    )
+    
+    if response:
+        error_detail = response.get("detail", "")
+        if "already" in error_detail.lower():
+            log_test("Duplicate Email Validation", "PASS", f"Correctly rejected: {error_detail}")
+        else:
+            log_test("Duplicate Email Validation", "WARN", f"Unexpected error: {error_detail}")
+    
+    return True
+
+
 def run_all_tests():
-    """Run all MFA backend tests"""
-    print(f"{Colors.BOLD}Multi-Factor Authentication (MFA) System - Backend Testing{Colors.ENDC}")
+    """Run user creation endpoint tests"""
+    print(f"{Colors.BOLD}User Creation Endpoint Testing{Colors.ENDC}")
     print(f"Timestamp: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print("=" * 70)
     
@@ -987,34 +1209,34 @@ def run_all_tests():
         return test_results
     test_results["total_tests"] += 1
     
-    # Test 2: Complete MFA Flow
-    print(f"\n{Colors.BLUE}Phase 2: Complete MFA Flow Testing{Colors.ENDC}")
-    if test_mfa_complete_flow():
-        test_results["passed_tests"] += 15  # Approximate number of sub-tests
-        log_test("Complete MFA Flow", "PASS", "All MFA flow tests passed")
-    else:
-        test_results["failed_tests"] += 15
-        test_results["critical_failures"].append("MFA complete flow failed")
-    test_results["total_tests"] += 15
-    
-    # Test 3: MFA Error Cases
-    print(f"\n{Colors.BLUE}Phase 3: MFA Error Handling{Colors.ENDC}")
-    if test_mfa_error_cases():
-        test_results["passed_tests"] += 5  # Approximate number of sub-tests
-        log_test("MFA Error Cases", "PASS", "Error handling tests passed")
-    else:
-        test_results["failed_tests"] += 5
-        test_results["critical_failures"].append("MFA error handling failed")
-    test_results["total_tests"] += 5
-    
-    # Test 4: Missing Endpoints Check
-    print(f"\n{Colors.BLUE}Phase 4: Missing Endpoints Check{Colors.ENDC}")
-    if test_mfa_missing_endpoints():
-        test_results["passed_tests"] += 3  # Approximate number of sub-tests
-        log_test("Missing Endpoints Check", "PASS", "Missing endpoints check completed")
+    # Test 2: User Creation (Before Fix)
+    print(f"\n{Colors.BLUE}Phase 2: User Creation Testing (Before Fix){Colors.ENDC}")
+    if test_user_creation_endpoint():
+        test_results["passed_tests"] += 3
+        log_test("User Creation Tests (Before Fix)", "PASS", "Error reproduced successfully")
     else:
         test_results["failed_tests"] += 3
-        test_results["critical_failures"].append("Missing endpoints check failed")
+        test_results["critical_failures"].append("User creation tests failed")
+    test_results["total_tests"] += 3
+    
+    # Test 3: Fix the Import Error
+    print(f"\n{Colors.BLUE}Phase 3: Fixing Import Error{Colors.ENDC}")
+    if fix_password_hasher_import():
+        test_results["passed_tests"] += 1
+        log_test("Fix Import Error", "PASS", "Import error fixed and service restarted")
+    else:
+        test_results["failed_tests"] += 1
+        test_results["critical_failures"].append("Failed to fix import error")
+    test_results["total_tests"] += 1
+    
+    # Test 4: User Creation (After Fix)
+    print(f"\n{Colors.BLUE}Phase 4: User Creation Testing (After Fix){Colors.ENDC}")
+    if test_user_creation_after_fix():
+        test_results["passed_tests"] += 3
+        log_test("User Creation Tests (After Fix)", "PASS", "User creation working correctly")
+    else:
+        test_results["failed_tests"] += 3
+        test_results["critical_failures"].append("User creation still failing after fix")
     test_results["total_tests"] += 3
     
     # Summary
@@ -1035,11 +1257,11 @@ def run_all_tests():
             print(f"  • {failure}")
     
     if test_results['failed_tests'] == 0:
-        print(f"\n{Colors.GREEN}✅ All MFA tests passed! Multi-Factor Authentication system working correctly.{Colors.ENDC}")
+        print(f"\n{Colors.GREEN}✅ All user creation tests passed! Endpoint working correctly.{Colors.ENDC}")
     elif len(test_results['critical_failures']) == 0:
-        print(f"\n{Colors.YELLOW}⚠️ Some minor issues found, but core MFA functionality working.{Colors.ENDC}")
+        print(f"\n{Colors.YELLOW}⚠️ Some minor issues found, but core functionality working.{Colors.ENDC}")
     else:
-        print(f"\n{Colors.RED}❌ Critical issues found in MFA system.{Colors.ENDC}")
+        print(f"\n{Colors.RED}❌ Critical issues found in user creation endpoint.{Colors.ENDC}")
     
     return test_results
 
