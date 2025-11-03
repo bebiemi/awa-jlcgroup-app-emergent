@@ -40,6 +40,12 @@ DEFAULT_PERMISSIONS = [
     # Dashboard module
     {"name": "voir_dashboard", "label": "Voir le tableau de bord", "description": "Accès au tableau de bord", "module": "dashboard"},
     {"name": "voir_statistiques", "label": "Voir les statistiques", "description": "Consulter les statistiques détaillées", "module": "dashboard"},
+    
+    # Missions module
+    {"name": "voir_missions", "label": "Voir les missions", "description": "Consulter les missions disponibles", "module": "missions"},
+    {"name": "creer_missions", "label": "Créer des missions", "description": "Créer de nouvelles missions", "module": "missions"},
+    {"name": "modifier_missions", "label": "Modifier les missions", "description": "Modifier les missions existantes", "module": "missions"},
+    {"name": "supprimer_missions", "label": "Supprimer les missions", "description": "Supprimer des missions", "module": "missions"},
 ]
 
 
