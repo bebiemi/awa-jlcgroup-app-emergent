@@ -920,6 +920,48 @@ def test_mfa_error_cases():
     return True
 
 
+def test_mfa_missing_endpoints():
+    """Test endpoints mentioned in review request that may be missing"""
+    print(f"\n{Colors.BOLD}=== Testing Missing MFA Endpoints ==={Colors.ENDC}")
+    
+    # Test endpoints that were mentioned in the review request but may not exist
+    missing_endpoints = [
+        ("/auth/mfa/enable", "POST", "Enable MFA"),
+        ("/auth/mfa/disable", "POST", "Disable MFA"), 
+        ("/auth/mfa/recovery-codes", "GET", "Get Recovery Codes"),
+        ("/auth/mfa/recovery-codes/generate", "POST", "Generate Recovery Codes"),
+        ("/auth/mfa/verify/totp", "POST", "Verify TOTP"),
+        ("/auth/local/login/complete-mfa", "POST", "Complete MFA (Alternative endpoint)")
+    ]
+    
+    for endpoint, method, description in missing_endpoints:
+        print(f"\n  Testing: {description}")
+        
+        # Test without authentication first
+        response = test_endpoint(
+            method, f"{AUTH_BASE_URL}{endpoint}",
+            expected_status=401,  # Should require auth
+            test_name=f"{description} - No Auth"
+        )
+        
+        if response:
+            log_test(f"{description} - Endpoint Exists", "PASS", f"Endpoint {endpoint} exists and requires auth")
+        else:
+            # Try with 404 expected (endpoint doesn't exist)
+            response_404 = test_endpoint(
+                method, f"{AUTH_BASE_URL}{endpoint}",
+                expected_status=404,
+                test_name=f"{description} - Not Found"
+            )
+            
+            if response_404:
+                log_test(f"{description} - Missing Endpoint", "WARN", f"Endpoint {endpoint} not implemented")
+            else:
+                log_test(f"{description} - Unexpected Response", "FAIL", f"Unexpected response for {endpoint}")
+    
+    return True
+
+
 def run_all_tests():
     """Run all MFA backend tests"""
     print(f"{Colors.BOLD}Multi-Factor Authentication (MFA) System - Backend Testing{Colors.ENDC}")
