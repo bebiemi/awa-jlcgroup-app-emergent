@@ -141,8 +141,6 @@ async def create_user_profile_if_not_exists(
     Auto-create user profile in jlc_db if it doesn't exist
     This ensures all registered users have a profile in the main application
     """
-    from datetime import datetime, timezone
-    
     # Get jlc_db database (main application database)
     jlc_db = db.client['jlc_db']
     profiles_collection = jlc_db.profiles
