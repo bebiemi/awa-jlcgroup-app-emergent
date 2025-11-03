@@ -184,8 +184,8 @@ export default function RegisterPage() {
   const passwordStrength = getPasswordStrength(formData.password)
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-jlc-purple-600 via-jlc-purple-700 to-jlc-purple-800 flex items-center justify-center px-4 py-12">
-      <div className="max-w-4xl w-full bg-white rounded-2xl shadow-2xl overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-jlc-purple-600 via-jlc-purple-700 to-jlc-purple-800 flex items-center justify-center px-4 py-6">
+      <div className="max-w-3xl w-full bg-white rounded-2xl shadow-2xl overflow-hidden my-4">
         {/* Header with gradient */}
         <div className="bg-gradient-to-r from-jlc-purple-600 to-jlc-purple-800 p-6 text-white">
           <div className="flex items-center justify-between mb-3">
