@@ -390,17 +390,21 @@ export default function LandingPage() {
               </a>
               . Tous droits réservés.
             </p>
-            <p className="mt-2 text-xs text-gray-400">
-              Designé et conçu par{' '}
+            <div className="mt-4 flex items-center justify-center space-x-2 text-xs text-gray-400">
+              <span>Designé et conçu par</span>
               <a 
                 href="https://awana-group.com" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="hover:text-white transition-colors font-medium"
+                className="inline-flex items-center hover:opacity-80 transition-opacity"
               >
-                Awana Group
+                <img 
+                  src="/logo-awana.png" 
+                  alt="Awana Group" 
+                  className="h-8 w-auto object-contain ml-2"
+                />
               </a>
-            </p>
+            </div>
           </div>
         </div>
       </footer>
