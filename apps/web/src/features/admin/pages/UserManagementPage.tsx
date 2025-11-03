@@ -491,6 +491,14 @@ export default function UserManagementPage() {
               setSelectedUser(null)
             }}
           />
+          <ResetMfaModal
+            user={selectedUser}
+            isOpen={showResetMfaModal}
+            onClose={() => {
+              setShowResetMfaModal(false)
+              setSelectedUser(null)
+            }}
+          />
         </>
       )}
       <QuickAddUserModal isOpen={showQuickAddModal} onClose={() => setShowQuickAddModal(false)} />
