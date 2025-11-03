@@ -298,12 +298,12 @@ export default function ValidationsPage() {
                     </div>
 
                     {validation.status === 'pending' && (
-                      <div className="flex space-x-2 ml-4">
+                      <div className="flex flex-wrap gap-2 ml-4">
                         <button
                           onClick={() => handleApprove(validation)}
-                          className="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
+                          className="inline-flex items-center px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition text-sm"
                         >
-                          <CheckCircleIcon className="h-5 w-5 mr-2" />
+                          <CheckCircleIcon className="h-4 w-4 mr-1" />
                           Approuver
                         </button>
                         <button
@@ -311,11 +311,27 @@ export default function ValidationsPage() {
                             setSelectedValidation(validation)
                             setShowRejectModal(true)
                           }}
-                          className="inline-flex items-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
+                          className="inline-flex items-center px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition text-sm"
                         >
-                          <XCircleIcon className="h-5 w-5 mr-2" />
+                          <XCircleIcon className="h-4 w-4 mr-1" />
                           Rejeter
                         </button>
+                        <button
+                          onClick={() => {
+                            setSelectedValidation(validation)
+                            setShowAssignModal(true)
+                          }}
+                          className="inline-flex items-center px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm"
+                        >
+                          <UserPlusIcon className="h-4 w-4 mr-1" />
+                          {validation.assigned_to ? 'Réassigner' : 'Assigner'}
+                        </button>
+                      </div>
+                    )}
+                    
+                    {validation.assigned_to && (
+                      <div className="mt-2 text-xs text-gray-600">
+                        <span className="font-medium">Assigné à:</span> {validation.assigned_to}
                       </div>
                     )}
                   </div>
