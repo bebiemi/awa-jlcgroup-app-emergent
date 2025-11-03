@@ -62,7 +62,7 @@ export default function LocationManagementPage() {
     type: 'country',
     parent_id: null,
     is_visible: true,
-    dial_code: '',
+    phone_code: '',
   })
 
   const resetForm = () => {
@@ -71,7 +71,7 @@ export default function LocationManagementPage() {
       type: 'country',
       parent_id: null,
       is_visible: true,
-      dial_code: '',
+      phone_code: '',
     })
   }
 
