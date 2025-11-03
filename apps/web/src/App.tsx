@@ -97,6 +97,14 @@ function App() {
         }
       />
       <Route
+        path="/admin/locations"
+        element={
+          <ProtectedRoute requiredRoles={['admin', 'super_admin']}>
+            <LocationsManagementPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/interimaire"
         element={
           <ProtectedRoute requiredRoles={['interim']}>
