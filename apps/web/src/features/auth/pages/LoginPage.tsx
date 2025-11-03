@@ -25,17 +25,19 @@ export default function LoginPage() {
       const result = await login({ username, password }).unwrap()
 
       // Check if MFA is required
-      if (result.mfa_required && result.session_id) {
+      if (result.mfa_required && result.mfa_session_token) {
         // Show MFA verification page
-        setMfaSessionId(result.session_id)
-        setMfaMethod(result.mfa_method || 'totp')
+        setMfaSessionId(result.mfa_session_token)
+        // Use first available method or default to totp
+        const firstMethod = result.available_methods?.[0] || 'totp'
+        setMfaMethod(firstMethod === 'backup' ? 'totp' : firstMethod as 'totp' | 'email')
         setShowMfaVerification(true)
         toast.success('Veuillez entrer votre code de vérification')
         return
       }
 
       // Normal login without MFA
-      if (result.success && result.access_token && result.user) {
+      if (result.access_token && result.user) {
         toast.success('Connexion réussie!')
 
         // Redirect to appropriate dashboard based on user role
