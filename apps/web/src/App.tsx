@@ -100,7 +100,7 @@ function App() {
         path="/admin/locations"
         element={
           <ProtectedRoute requiredRoles={['admin', 'super_admin']}>
-            <LocationsManagementPage />
+            <LocationManagementPage />
           </ProtectedRoute>
         }
       />
