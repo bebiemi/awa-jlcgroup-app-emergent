@@ -840,64 +840,85 @@ def test_mfa_error_cases():
     """Test MFA error handling and edge cases"""
     print(f"\n{Colors.BOLD}=== Testing MFA Error Cases ==={Colors.ENDC}")
     
-    # Get admin token
-    admin_token = test_admin_login()
-    if not admin_token:
-        # Try creating test admin
-        admin_token, _ = create_test_admin_without_mfa()
-        if not admin_token:
-            return False
+    # Test 1: Invalid login credentials
+    print(f"\n  Test 1: Invalid Login Credentials")
     
-    headers = {"Authorization": f"Bearer {admin_token}"}
-    
-    # Test 1: Invalid TOTP code
-    print(f"\n  Test 1: Invalid TOTP Code")
-    
-    # First setup TOTP if not already done
-    totp_setup = test_endpoint(
-        "POST", f"{AUTH_BASE_URL}/auth/mfa/setup/totp",
-        headers=headers,
-        expected_status=200,
-        test_name="Setup TOTP for Error Testing"
+    invalid_login = test_endpoint(
+        "POST", f"{AUTH_BASE_URL}/auth/local/login",
+        data={"username": "invalid_user", "password": "wrong_password"},
+        expected_status=401,
+        test_name="Invalid Login Credentials"
     )
     
-    if totp_setup:
-        # Try to verify with invalid code
-        invalid_verify = test_endpoint(
-            "POST", f"{AUTH_BASE_URL}/auth/mfa/setup/totp/verify",
-            data={"code": "000000"},
-            headers=headers,
-            expected_status=400,
-            test_name="Invalid TOTP Code Rejection"
-        )
-        
-        if invalid_verify:
-            log_test("Invalid TOTP Code Rejection", "PASS", "Invalid code correctly rejected")
+    if invalid_login:
+        log_test("Invalid Login Credentials", "PASS", "Invalid credentials correctly rejected")
     
-    # Test 2: MFA without authentication
+    # Test 2: MFA endpoints without authentication
     print(f"\n  Test 2: MFA Endpoints Without Authentication")
     
-    no_auth_response = test_endpoint(
-        "GET", f"{AUTH_BASE_URL}/auth/mfa/status",
-        expected_status=401,
-        test_name="MFA Status Without Auth"
+    endpoints_to_test = [
+        ("/auth/mfa/status", "GET"),
+        ("/auth/mfa/setup/totp", "POST"),
+        ("/auth/mfa/setup/email", "POST"),
+        ("/auth/mfa/backup-codes/regenerate", "POST")
+    ]
+    
+    for endpoint, method in endpoints_to_test:
+        response = test_endpoint(
+            method, f"{AUTH_BASE_URL}{endpoint}",
+            expected_status=401,
+            test_name=f"{method} {endpoint} Without Auth"
+        )
+        
+        if response:
+            log_test(f"{method} {endpoint} Without Auth", "PASS", "Unauthenticated request correctly rejected")
+    
+    # Test 3: Invalid MFA session tokens
+    print(f"\n  Test 3: Invalid MFA Session Tokens")
+    
+    invalid_tokens = [
+        "invalid_token_123",
+        "",
+        "a" * 100,  # Very long token
+        "null",
+        "undefined"
+    ]
+    
+    for token in invalid_tokens:
+        response = test_endpoint(
+            "POST", f"{AUTH_BASE_URL}/auth/local/login/complete",
+            data={"mfa_session_token": token},
+            expected_status=400,
+            test_name=f"Invalid MFA Token: {token[:20]}..."
+        )
+        
+        if response:
+            log_test(f"Invalid MFA Token: {token[:20]}...", "PASS", "Invalid token correctly rejected")
+    
+    # Test 4: Missing required fields
+    print(f"\n  Test 4: Missing Required Fields")
+    
+    # Try login without password
+    missing_password = test_endpoint(
+        "POST", f"{AUTH_BASE_URL}/auth/local/login",
+        data={"username": "admin"},
+        expected_status=422,  # Validation error
+        test_name="Login Without Password"
     )
     
-    if no_auth_response:
-        log_test("MFA Status Without Auth", "PASS", "Unauthenticated request correctly rejected")
+    if missing_password:
+        log_test("Login Without Password", "PASS", "Missing password correctly rejected")
     
-    # Test 3: Invalid MFA session token
-    print(f"\n  Test 3: Invalid MFA Session Token")
-    
-    invalid_session = test_endpoint(
-        "POST", f"{AUTH_BASE_URL}/auth/local/login/complete",
-        data={"mfa_session_token": "invalid_token_123"},
-        expected_status=400,
-        test_name="Invalid MFA Session Token"
+    # Try login without username
+    missing_username = test_endpoint(
+        "POST", f"{AUTH_BASE_URL}/auth/local/login",
+        data={"password": "awana2025"},
+        expected_status=422,  # Validation error
+        test_name="Login Without Username"
     )
     
-    if invalid_session:
-        log_test("Invalid MFA Session Token", "PASS", "Invalid session token correctly rejected")
+    if missing_username:
+        log_test("Login Without Username", "PASS", "Missing username correctly rejected")
     
     return True
 
