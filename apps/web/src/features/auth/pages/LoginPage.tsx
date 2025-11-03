@@ -94,6 +94,17 @@ export default function LoginPage() {
     }
   }
 
+  // Show MFA verification page if needed
+  if (showMfaVerification) {
+    return (
+      <MfaVerificationPage
+        sessionId={mfaSessionId}
+        mfaMethod={mfaMethod}
+        onBack={handleBackFromMfa}
+      />
+    )
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-jlc-purple-600 via-jlc-purple-700 to-jlc-purple-800 flex items-center justify-center px-4">
       <div className="max-w-md w-full">
