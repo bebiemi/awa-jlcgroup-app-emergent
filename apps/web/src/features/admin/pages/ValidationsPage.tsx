@@ -505,99 +505,59 @@ export default function ValidationsPage() {
         setSelectedValidation(null)
       }}>
         <div className="p-6">
-            <h3 className="text-xl font-bold text-gray-900 mb-4">Rejeter la validation</h3>
-            <p className="text-sm text-gray-600 mb-4">
-              Vous êtes sur le point de rejeter l'inscription de <strong>{selectedValidation.user_full_name}</strong>.
-            </p>
-            <textarea
-              value={rejectionReason}
-              onChange={(e) => setRejectionReason(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 mb-4"
-              rows={4}
-              placeholder="Raison du rejet (obligatoire)"
-              required
-            />
-            <div className="flex space-x-3">
-              <button
-                onClick={() => {
-                  setShowRejectModal(false)
-                  setRejectionReason('')
-                  setSelectedValidation(null)
-                }}
-                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
-              >
-                Annuler
-              </button>
-              <button
-                onClick={handleReject}
-                disabled={!rejectionReason.trim()}
-                className="flex-1 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition disabled:opacity-50"
-              >
-                Rejeter
-              </button>
+          <h3 className="text-xl font-bold text-gray-900 mb-4">Assigner un validateur</h3>
+          <p className="text-sm text-gray-600 mb-2">
+            Sélectionnez un validateur pour <strong>{selectedValidation?.user_full_name}</strong>
+          </p>
+          
+          {/* Info message for collaborator validation */}
+          {selectedValidation?.validation_type === 'collaborator' && (
+            <div className="mb-4 bg-purple-50 border border-purple-200 rounded-lg p-3">
+              <p className="text-xs text-purple-800">
+                ℹ️ Pour les collaborateurs, seuls les membres des équipes RH et Commerciales peuvent valider.
+              </p>
             </div>
+          )}
+          
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Validateur
+            </label>
+            <select
+              value={selectedValidator}
+              onChange={(e) => setSelectedValidator(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">-- Sélectionner un validateur --</option>
+              {validators.map((validator: any) => (
+                <option key={validator.id} value={validator.id}>
+                  {validator.full_name} ({validator.email}) - {validator.roles?.join(', ')}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex space-x-3">
+            <button
+              onClick={() => {
+                setShowAssignModal(false)
+                setSelectedValidator('')
+                setSelectedValidation(null)
+              }}
+              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
+            >
+              Annuler
+            </button>
+            <button
+              onClick={handleAssign}
+              disabled={!selectedValidator}
+              className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
+            >
+              Assigner
+            </button>
           </div>
         </div>
-      )}
-
-      {/* Assign Validator Modal */}
-      {showAssignModal && selectedValidation && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
-            <h3 className="text-xl font-bold text-gray-900 mb-4">Assigner un validateur</h3>
-            <p className="text-sm text-gray-600 mb-2">
-              Sélectionnez un validateur pour <strong>{selectedValidation.user_full_name}</strong>
-            </p>
-            
-            {/* Info message for collaborator validation */}
-            {selectedValidation.validation_type === 'collaborator' && (
-              <div className="mb-4 bg-purple-50 border border-purple-200 rounded-lg p-3">
-                <p className="text-xs text-purple-800">
-                  ℹ️ Pour les collaborateurs, seuls les membres des équipes RH et Commerciales peuvent valider.
-                </p>
-              </div>
-            )}
-            
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Validateur
-              </label>
-              <select
-                value={selectedValidator}
-                onChange={(e) => setSelectedValidator(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="">-- Sélectionner un validateur --</option>
-                {validators.map((validator: any) => (
-                  <option key={validator.id} value={validator.id}>
-                    {validator.full_name} ({validator.email}) - {validator.roles?.join(', ')}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="flex space-x-3">
-              <button
-                onClick={() => {
-                  setShowAssignModal(false)
-                  setSelectedValidator('')
-                  setSelectedValidation(null)
-                }}
-                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
-              >
-                Annuler
-              </button>
-              <button
-                onClick={handleAssign}
-                disabled={!selectedValidator}
-                className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
-              >
-                Assigner
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      </Modal>
 
       {/* Bulk Actions Modal */}
       <Modal isOpen={showBulkActionsModal} onClose={() => {
