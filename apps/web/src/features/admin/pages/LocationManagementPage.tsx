@@ -394,8 +394,8 @@ export default function LocationManagementPage() {
                 </label>
                 <input
                   type="text"
-                  value={formData.dial_code}
-                  onChange={(e) => setFormData({ ...formData, dial_code: e.target.value })}
+                  value={formData.phone_code}
+                  onChange={(e) => setFormData({ ...formData, phone_code: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-jlc-purple-500"
                   placeholder="Ex: +241"
                 />
@@ -473,8 +473,8 @@ export default function LocationManagementPage() {
                 </label>
                 <input
                   type="text"
-                  value={formData.dial_code}
-                  onChange={(e) => setFormData({ ...formData, dial_code: e.target.value })}
+                  value={formData.phone_code}
+                  onChange={(e) => setFormData({ ...formData, phone_code: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-jlc-purple-500"
                   placeholder="Ex: +241"
                 />
