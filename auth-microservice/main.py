@@ -9,7 +9,7 @@ from contextlib import asynccontextmanager
 
 load_dotenv()
 
-from awana_auth_routes import auth_router
+from awana_auth_routes import auth_router, users_router, roles_router
 from google_auth_routes import google_router
 from security_routes import security_router
 from mfa_routes import mfa_router
