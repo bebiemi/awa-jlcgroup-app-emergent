@@ -106,19 +106,24 @@ export interface LoginResponse {
 
 export interface MfaStatus {
   enabled: boolean
-  method: 'totp' | 'email' | null
-  has_recovery_codes: boolean
-  recovery_codes_count: number
+  required: boolean
+  methods: string[]
+  phone_number?: string
+  method?: string
+  has_recovery_codes?: boolean
+  recovery_codes_count?: number
 }
 
 export interface TOTPSetupResponse {
   secret: string
   qr_code: string
   manual_entry_key: string
+  backup_codes?: string[]
 }
 
 export interface RecoveryCodesResponse {
   codes: string[]
+  backup_codes?: string[]
   message?: string
 }
 
