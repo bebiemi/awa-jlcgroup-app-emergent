@@ -1146,13 +1146,26 @@ async def local_register(
         
         await db.users.insert_one(user_dict)
         
-        # Grant role in RBAC system
-        try:
-            await rbac_manager.grant_role(user.id, register_data.role, granted_by="system")
-        except ValueError as e:
-            logger.warning(f"Could not grant role {register_data.role}: {e}")
+        # Handle collaborators: assign to Collaborateur group
+        if register_data.is_collaborator:
+            collaborateur_group = await db.groups.find_one({"name": "Collaborateur"}, {"_id": 0})
+            if collaborateur_group:
+                await rbac_manager.add_user_to_group(user.id, collaborateur_group["id"], added_by="system")
+                await db.groups.update_one(
+                    {"id": collaborateur_group["id"]},
+                    {"$inc": {"member_count": 1}}
+                )
+                logger.info(f"✅ Collaborator {user.email} assigned to 'Collaborateur' group")
+            else:
+                logger.warning("⚠️ Collaborateur group not found!")
+        else:
+            # Grant role in RBAC system for non-collaborators
+            try:
+                await rbac_manager.grant_role(user.id, register_data.role, granted_by="system")
+            except ValueError as e:
+                logger.warning(f"Could not grant role {register_data.role}: {e}")
         
-        logger.info(f"New user registered: {user.email} with role {register_data.role}")
+        logger.info(f"New user registered: {user.email} {'as collaborator' if register_data.is_collaborator else f'with role {register_data.role}'}")
         
         # Create session
         session = await session_storage.create_session(
