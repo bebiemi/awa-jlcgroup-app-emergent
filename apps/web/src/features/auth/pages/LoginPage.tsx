@@ -114,9 +114,13 @@ export default function LoginPage() {
         <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
           {/* Header with gradient */}
           <div className="bg-gradient-to-r from-jlc-purple-600 to-jlc-purple-800 p-8 text-white text-center">
-            <h1 className="text-3xl font-bold mb-2">
-              JLC GROUP ⭐
-            </h1>
+            <div className="flex justify-center mb-4">
+              <img 
+                src="/logo-jlc.png" 
+                alt="JLC GROUP" 
+                className="h-20 w-auto object-contain"
+              />
+            </div>
             <p className="text-purple-100">
               Connectez-vous à votre espace
             </p>
