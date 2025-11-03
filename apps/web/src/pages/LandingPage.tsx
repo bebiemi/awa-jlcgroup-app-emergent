@@ -90,18 +90,35 @@ export default function LandingPage() {
               </span>
             </div>
             <div className="flex items-center space-x-4">
-              <button
-                onClick={() => setShowLoginModal(true)}
-                className="text-gray-700 hover:text-jlc-purple-600 px-3 py-2 rounded-md text-sm font-medium"
-              >
-                Connexion
-              </button>
-              <Link
-                to="/register"
-                className="bg-jlc-purple-600 text-white hover:bg-jlc-purple-700 px-4 py-2 rounded-md text-sm font-medium"
-              >
-                S'inscrire
-              </Link>
+              {isAuthenticated ? (
+                <>
+                  <span className="text-gray-700 text-sm">
+                    Bonjour, <span className="font-semibold">{user?.full_name || user?.username}</span>
+                  </span>
+                  <button
+                    onClick={() => navigate(getDashboardPath())}
+                    className="bg-jlc-purple-600 text-white hover:bg-jlc-purple-700 px-4 py-2 rounded-md text-sm font-medium inline-flex items-center"
+                  >
+                    Accéder à mon espace
+                    <ArrowRightOnRectangleIcon className="ml-2 h-4 w-4" />
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    onClick={() => setShowLoginModal(true)}
+                    className="text-gray-700 hover:text-jlc-purple-600 px-3 py-2 rounded-md text-sm font-medium"
+                  >
+                    Connexion
+                  </button>
+                  <Link
+                    to="/register"
+                    className="bg-jlc-purple-600 text-white hover:bg-jlc-purple-700 px-4 py-2 rounded-md text-sm font-medium"
+                  >
+                    S'inscrire
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>
