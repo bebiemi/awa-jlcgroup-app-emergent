@@ -62,14 +62,14 @@ export default function Sidebar() {
       {
         title: 'Gestion',
         items: [
+          { label: 'Utilisateurs', path: '/admin/users', icon: UserGroupIcon },
+          { label: 'Groupes', path: '/admin/groups', icon: UserGroupIcon },
           { label: 'Validations', path: '/admin/validations', icon: ClipboardDocumentCheckIcon },
         ],
       },
       {
         title: 'Sécurité',
         items: [
-          { label: 'Utilisateurs', path: '/admin/users', icon: UserGroupIcon },
-          { label: 'Groupes', path: '/admin/groups', icon: UserGroupIcon },
           { label: 'Profils & Permissions', path: '/admin/profiles', icon: Cog6ToothIcon },
         ],
       },
