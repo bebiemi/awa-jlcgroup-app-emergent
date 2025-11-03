@@ -214,7 +214,7 @@ export default function ValidationsPage() {
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">En attente</p>
+                <p className="text-sm text-gray-600">Total en attente</p>
                 <p className="text-2xl font-bold text-gray-900">{stats?.total_pending || 0}</p>
               </div>
               <ClockIcon className="h-8 w-8 text-yellow-500" />
