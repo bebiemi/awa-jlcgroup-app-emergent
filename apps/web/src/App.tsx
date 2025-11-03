@@ -15,6 +15,7 @@ import GroupsPage from './features/admin/pages/GroupsPage'
 import ProfilesPage from './features/admin/pages/ProfilesPage'
 import InterimDashboard from './features/interim/pages/InterimDashboard'
 import ProfilePage from './features/profile/pages/ProfilePage'
+import SecuritySettingsPage from './pages/SecuritySettingsPage'
 import ProtectedRoute from './features/auth/components/ProtectedRoute'
 
 function App() {
