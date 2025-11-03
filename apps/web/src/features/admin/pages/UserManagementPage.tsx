@@ -17,12 +17,14 @@ import {
   FunnelIcon,
   PlusIcon,
   UserPlusIcon,
+  ShieldExclamationIcon,
 } from '@heroicons/react/24/outline'
 import { Link } from 'react-router-dom'
 import EditUserModal from '../components/EditUserModal'
 import DeleteUserModal from '../components/DeleteUserModal'
 import BlockUserModal from '../components/BlockUserModal'
 import QuickAddUserModal from '../components/QuickAddUserModal'
+import ResetMfaModal from '../components/ResetMfaModal'
 
 export default function UserManagementPage() {
   const [page, setPage] = useState(1)
@@ -37,6 +39,7 @@ export default function UserManagementPage() {
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [showBlockModal, setShowBlockModal] = useState(false)
   const [showQuickAddModal, setShowQuickAddModal] = useState(false)
+  const [showResetMfaModal, setShowResetMfaModal] = useState(false)
 
   // Fetch users with filters
   const { data, isLoading, isFetching } = useGetUsersQuery({
