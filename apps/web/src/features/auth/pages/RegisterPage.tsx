@@ -616,14 +616,12 @@ export default function RegisterPage() {
                       <label htmlFor="companyPhone" className="block text-sm font-medium text-gray-700 mb-1">
                         Téléphone de contact *
                       </label>
-                      <input
-                        type="tel"
-                        id="companyPhone"
-                        name="companyPhone"
+                      <PhoneInput
                         value={formData.companyPhone}
-                        onChange={handleInputChange}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-jlc-purple-500 focus:border-transparent transition"
-                        placeholder="+241 01 23 45 67"
+                        onChange={(value) => setFormData({ ...formData, companyPhone: value })}
+                        placeholder="Numéro de téléphone"
+                        error={errors.companyPhone}
+                        required
                       />
                     </div>
                   </div>
