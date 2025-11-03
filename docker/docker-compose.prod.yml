@@ -1,0 +1,130 @@
+version: '3.8'
+
+services:
+  # MongoDB avec authentification
+  mongodb:
+    image: mongo:7
+    container_name: jlc-mongodb-prod
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+      - ./mongo-init:/docker-entrypoint-initdb.d
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ROOT_PASSWORD}
+      - MONGO_INITDB_DATABASE=jlc_db
+    networks:
+      - jlc-network
+    command: mongod --auth
+
+  # JLC API (FastAPI)
+  jlc-api:
+    build:
+      context: ../apps/api
+      dockerfile: Dockerfile.prod
+    container_name: jlc-api-prod
+    restart: unless-stopped
+    ports:
+      - "8001:8001"
+    volumes:
+      - uploads:/app/uploads
+      - logs:/app/logs
+    environment:
+      - MONGO_URL=mongodb://${MONGO_ROOT_USERNAME}:${MONGO_ROOT_PASSWORD}@mongodb:27017
+      - DATABASE_NAME=jlc_db
+      - AUTH_SERVICE_URL=http://auth-microservice:8000
+      - CORS_ORIGINS=${CORS_ORIGINS}
+      - UPLOAD_DIR=/app/uploads
+      - BASE_URL=${API_BASE_URL}
+      - SMTP_HOST=${SMTP_HOST}
+      - SMTP_PORT=${SMTP_PORT}
+      - SMTP_USERNAME=${SMTP_USERNAME}
+      - SMTP_PASSWORD=${SMTP_PASSWORD}
+      - ENVIRONMENT=production
+    depends_on:
+      - mongodb
+      - auth-microservice
+    networks:
+      - jlc-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Auth Microservice
+  auth-microservice:
+    build:
+      context: ../auth-microservice
+      dockerfile: Dockerfile.prod
+    container_name: jlc-auth-prod
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    volumes:
+      - logs:/app/logs
+    environment:
+      - MONGO_URL=mongodb://${MONGO_ROOT_USERNAME}:${MONGO_ROOT_PASSWORD}@mongodb:27017
+      - DATABASE_NAME=auth_db
+      - CORS_ORIGINS=${CORS_ORIGINS}
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_ACCESS_TOKEN_EXPIRE_MINUTES=${JWT_ACCESS_TOKEN_EXPIRE_MINUTES}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - ENVIRONMENT=production
+    depends_on:
+      - mongodb
+    networks:
+      - jlc-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Frontend (React) - Build de production
+  jlc-web:
+    build:
+      context: ../apps/web
+      dockerfile: Dockerfile.prod
+    container_name: jlc-web-prod
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    environment:
+      - VITE_API_BASE_URL=${API_BASE_URL}
+      - VITE_AUTH_SERVICE_URL=${AUTH_SERVICE_URL}
+    depends_on:
+      - jlc-api
+    networks:
+      - jlc-network
+
+  # Nginx Reverse Proxy
+  nginx:
+    image: nginx:alpine
+    container_name: jlc-nginx
+    restart: unless-stopped
+    ports:
+      - "443:443"
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/ssl:/etc/nginx/ssl
+      - logs:/var/log/nginx
+    depends_on:
+      - jlc-web
+      - jlc-api
+      - auth-microservice
+    networks:
+      - jlc-network
+
+volumes:
+  mongodb_data:
+  uploads:
+  logs:
+
+networks:
+  jlc-network:
+    driver: bridge
