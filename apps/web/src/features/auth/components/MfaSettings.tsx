@@ -94,13 +94,12 @@ export default function MfaSettings() {
     setSetupLoading(true)
     try {
       const result = await setupEmailOtp().unwrap()
-      await enableMfa({ method: 'email' }).unwrap()
 
       toast.success(`Email OTP activé pour ${result.email}`)
 
-      // Get recovery codes
-      const codesResult = await generateRecoveryCodes({ password: '' }).unwrap()
-      setRecoveryCodes(codesResult.codes)
+      // Get backup codes
+      const codesResult = await generateBackupCodes({ password: '' }).unwrap()
+      setRecoveryCodes(codesResult.codes || [])
       setShowRecoveryCodes(true)
 
       refetchStatus()
