@@ -9,6 +9,7 @@ from datetime import datetime, timezone
 import uuid
 
 from awana_auth.core.dependencies import get_current_user, get_db
+from awana_auth.core.models import User
 from awana_auth.core.mission_models import (
     Mission, MissionCreate, MissionUpdate, MissionStatus,
     Application, ApplicationCreate, ApplicationUpdate, ApplicationStatus,
@@ -17,6 +18,16 @@ from awana_auth.core.mission_models import (
 )
 
 router = APIRouter(prefix="/api/missions", tags=["missions"])
+
+
+# Helper function to convert User object to dict
+def user_to_dict(user: User) -> dict:
+    """Convert User object to dict for easier access"""
+    return {
+        "sub": user.id,
+        "email": user.email,
+        "roles": user.roles or []
+    }
 
 
 # ==================== MISSION ROUTES ====================
