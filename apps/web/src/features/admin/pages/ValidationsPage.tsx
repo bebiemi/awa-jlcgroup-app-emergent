@@ -380,6 +380,73 @@ export default function ValidationsPage() {
           </div>
         </div>
       )}
+
+      {/* Assign Validator Modal */}
+      {showAssignModal && selectedValidation && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+            <h3 className="text-xl font-bold text-gray-900 mb-4">Assigner un validateur</h3>
+            <p className="text-sm text-gray-600 mb-4">
+              Sélectionnez un validateur pour <strong>{selectedValidation.user_full_name}</strong>
+            </p>
+            
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Validateur
+              </label>
+              <select
+                value={selectedValidator}
+                onChange={(e) => setSelectedValidator(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">-- Sélectionner un validateur --</option>
+                {validators.map((validator: any) => (
+                  <option key={validator.id} value={validator.id}>
+                    {validator.full_name} ({validator.email}) - {validator.roles?.join(', ')}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="flex space-x-3">
+              <button
+                onClick={() => {
+                  setShowAssignModal(false)
+                  setSelectedValidator('')
+                  setSelectedValidation(null)
+                }}
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
+              >
+                Annuler
+              </button>
+              <button
+                onClick={handleAssign}
+                disabled={!selectedValidator}
+                className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
+              >
+                Assigner
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+                  setSelectedValidation(null)
+                }}
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
+              >
+                Annuler
+              </button>
+              <button
+                onClick={handleReject}
+                disabled={!rejectionReason.trim()}
+                className="flex-1 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition disabled:opacity-50"
+              >
+                Rejeter
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </Layout>
   )
 }
