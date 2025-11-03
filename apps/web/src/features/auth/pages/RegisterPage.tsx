@@ -314,6 +314,26 @@ export default function RegisterPage() {
             )}
           </div>
 
+          {/* Collaborator Checkbox */}
+          {formData.role && (
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <label className="flex items-start space-x-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={formData.isCollaborator}
+                  onChange={(e) => setFormData({ ...formData, isCollaborator: e.target.checked })}
+                  className="mt-1 rounded border-gray-300 text-jlc-purple-600 focus:ring-jlc-purple-500"
+                />
+                <div className="flex-1">
+                  <span className="font-medium text-gray-900">Je suis collaborateur JLC Group</span>
+                  <p className="text-sm text-gray-600 mt-1">
+                    Les collaborateurs bénéficient d'un accès en lecture seule et nécessitent une validation manuelle par les équipes RH ou Commerciales.
+                  </p>
+                </div>
+              </label>
+            </div>
+          )}
+
           {/* Common Fields */}
           {formData.role && (
             <>
