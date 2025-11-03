@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { useAppSelector } from './store/hooks'
+import { useInactivityLogout } from './hooks/useInactivityLogout'
 import LandingPage from './pages/LandingPage'
 import LoginPage from './features/auth/pages/LoginPage'
 import RegisterPage from './features/auth/pages/RegisterPage'
@@ -20,6 +21,9 @@ import ProtectedRoute from './features/auth/components/ProtectedRoute'
 
 function App() {
   const { isAuthenticated, user } = useAppSelector((state) => state.auth)
+  
+  // Auto-logout after 10 minutes of inactivity
+  useInactivityLogout()
 
   // Redirect to role-specific dashboard
   const getDashboardPath = () => {
