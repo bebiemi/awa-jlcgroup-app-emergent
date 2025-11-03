@@ -7,18 +7,10 @@ from motor.motor_asyncio import AsyncIOMotorDatabase
 from awana_auth.core.dependencies import get_current_user, get_database
 from awana_auth.core.models import User
 from awana_auth.core.profile_models import (
-    InterimProfile,
-    CompanyManagerProfile,
-    CollaboratorProfile,
-    UpdateInterimProfileRequest,
-    UpdateCompanyManagerProfileRequest,
-    Document,
     DocumentUploadResponse
 )
-from typing import List, Optional
 import uuid
 import os
-import shutil
 from datetime import datetime, timezone
 import mimetypes
 
@@ -151,7 +143,7 @@ async def update_my_profile(
         profile_type = "collaborator"
     
     # Update profile
-    result = await collection.update_one(
+    await collection.update_one(
         {"user_id": current_user.id},
         {"$set": update_data},
         upsert=True
