@@ -573,6 +573,16 @@ export default function RegisterPage() {
                 </div>
               )}
 
+              {/* Location Section */}
+              <div className="border-t pt-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Localisation</h3>
+                <LocationSelector
+                  value={formData.location}
+                  onChange={(location) => setFormData({ ...formData, location })}
+                  showCustomCountry={true}
+                />
+              </div>
+
               {/* Captcha Section */}
               <div className="border-t pt-6">
                 <div className={`p-6 border-2 rounded-xl ${captchaVerified ? 'border-green-500 bg-green-50' : 'border-gray-300 bg-gray-50'}`}>
