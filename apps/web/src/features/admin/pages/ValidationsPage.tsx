@@ -37,8 +37,6 @@ export default function ValidationsPage() {
   const [selectedValidations, setSelectedValidations] = useState<string[]>([])
 
   const handleTileClick = (type: 'all' | 'interim' | 'company' | 'collaborator' | 'warnings') => {
-    setBulkActionType(type)
-    
     // Filter validations based on tile clicked
     let filtered = validations
     if (type === 'interim') {
@@ -53,6 +51,13 @@ export default function ValidationsPage() {
       filtered = validations.filter((v: Validation) => v.status === 'pending')
     }
     
+    // Don't open modal if no validations
+    if (filtered.length === 0) {
+      toast.info('Aucune validation disponible pour cette catégorie')
+      return
+    }
+    
+    setBulkActionType(type)
     setSelectedValidations(filtered.map((v: Validation) => v.id))
     setShowBulkActionsModal(true)
   }
