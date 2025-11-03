@@ -12,13 +12,13 @@ export default function RegisterPage() {
   const [register, { isLoading }] = useRegisterMutation()
   
   const [formData, setFormData] = useState({
+    role: '' as UserRole | '',
+    isCollaborator: false,
     username: '',
     email: '',
     password: '',
     confirmPassword: '',
     fullName: '',
-    role: '' as UserRole | '',
-    // Interim fields
     phone: '',
     dateOfBirth: '',
     // Company fields
@@ -26,6 +26,10 @@ export default function RegisterPage() {
     legalRepresentative: '',
     nif: '',
     companyPhone: '',
+    // Collaborator fields
+    employeeNumber: '',
+    department: '',
+    jobTitle: '',
     // Location fields
     location: {
       country_id: '',
