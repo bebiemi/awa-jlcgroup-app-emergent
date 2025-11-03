@@ -132,6 +132,9 @@ export default function RegisterPage() {
         payload.phone = formData.companyPhone
       }
 
+      // Add location data
+      payload.location = formData.location
+
       await register(payload).unwrap()
 
       toast.success('Inscription réussie ! Vérifiez votre email pour activer votre compte.')
