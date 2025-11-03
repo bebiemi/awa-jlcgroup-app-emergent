@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useRegisterMutation } from '../api/authApi'
 import LocationSelector from '@/components/LocationSelector'
+import PhoneInput from '@/components/PhoneInput'
 import toast from 'react-hot-toast'
 import { ArrowPathIcon, CheckCircleIcon, XCircleIcon, ShieldCheckIcon } from '@heroicons/react/24/outline'
 
