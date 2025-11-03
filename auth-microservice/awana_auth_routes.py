@@ -145,6 +145,105 @@ class LocalRegisterRequest(BaseModel):
 
 # ===== Helper: Auto-create Profile in JLC DB =====
 
+async def create_validation_record(
+    db: AsyncIOMotorDatabase,
+    user: User,
+    register_data: LocalRegisterRequest
+):
+    """
+    Create validation record for new user registration
+    Checks location data and creates warnings if necessary
+    """
+    import uuid
+    
+    validation = {
+        "id": str(uuid.uuid4()),
+        "user_id": user.id,
+        "user_email": user.email,
+        "user_full_name": register_data.full_name,
+        "validation_type": register_data.role,
+        "status": "pending",
+        "has_location_warning": False,
+        "location_warning_message": None,
+        "missing_country": None,
+        "country_name": None,
+        "province_name": None,
+        "city_name": None,
+        "district_name": None,
+        "neighborhood_name": None,
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "updated_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    # Process location data if provided
+    if register_data.location:
+        location_data = register_data.location
+        
+        # Extract location names from the location object
+        country_id = location_data.get("country_id")
+        province_id = location_data.get("province_id")
+        city_id = location_data.get("city_id")
+        district_id = location_data.get("district_id")
+        neighborhood_id = location_data.get("neighborhood_id")
+        
+        # Check if country exists in database
+        if country_id:
+            country = await db.locations.find_one({"id": country_id, "type": "country"}, {"_id": 0})
+            if country:
+                validation["country_name"] = country["name"]
+            else:
+                # Country ID provided but not found - this is unusual
+                validation["has_location_warning"] = True
+                validation["location_warning_message"] = "Selected country not found in database"
+        
+        # If custom country is provided (user typed in a country name)
+        custom_country = location_data.get("custom_country")
+        if custom_country:
+            # Check if this country exists in database
+            existing_country = await db.locations.find_one({
+                "type": "country",
+                "name": custom_country
+            }, {"_id": 0})
+            
+            if not existing_country:
+                validation["has_location_warning"] = True
+                validation["missing_country"] = custom_country
+                validation["location_warning_message"] = f"Country '{custom_country}' is not in the standard list"
+            
+            validation["country_name"] = custom_country
+        
+        # Get province name if provided
+        if province_id:
+            province = await db.locations.find_one({"id": province_id, "type": "province"}, {"_id": 0})
+            if province:
+                validation["province_name"] = province["name"]
+        
+        # Get city name if provided
+        if city_id:
+            city = await db.locations.find_one({"id": city_id, "type": "city"}, {"_id": 0})
+            if city:
+                validation["city_name"] = city["name"]
+        
+        # Get district name if provided
+        if district_id:
+            district = await db.locations.find_one({"id": district_id, "type": "district"}, {"_id": 0})
+            if district:
+                validation["district_name"] = district["name"]
+        
+        # Get neighborhood name if provided
+        if neighborhood_id:
+            neighborhood = await db.locations.find_one({"id": neighborhood_id, "type": "neighborhood"}, {"_id": 0})
+            if neighborhood:
+                validation["neighborhood_name"] = neighborhood["name"]
+    
+    # Insert validation record
+    await db.validations.insert_one(validation)
+    logger.info(f"✅ Validation record created for user {user.email}")
+    
+    if validation["has_location_warning"]:
+        logger.warning(f"⚠️ Location warning for {user.email}: {validation['location_warning_message']}")
+
+
 async def create_user_profile_if_not_exists(
     db: AsyncIOMotorDatabase,
     user_id: str,
