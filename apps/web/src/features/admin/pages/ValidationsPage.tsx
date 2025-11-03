@@ -1,0 +1,336 @@
+import { useState } from 'react'
+import Layout from '@/components/Layout'
+import {
+  useGetValidationsQuery,
+  useGetValidationStatsQuery,
+  useApproveValidationMutation,
+  useRejectValidationMutation,
+  useAddCountryFromValidationMutation,
+  type Validation,
+} from '../api/validationApi'
+import {
+  CheckCircleIcon,
+  XCircleIcon,
+  ExclamationTriangleIcon,
+  ClockIcon,
+  MapPinIcon,
+  UserIcon,
+  BuildingOfficeIcon,
+} from '@heroicons/react/24/outline'
+import toast from 'react-hot-toast'
+
+type TabType = 'interim' | 'company'
+
+export default function ValidationsPage() {
+  const [activeTab, setActiveTab] = useState<TabType>('interim')
+  const [statusFilter, setStatusFilter] = useState<string>('pending')
+
+  const { data: stats } = useGetValidationStatsQuery()
+  const { data: validations = [], isLoading, refetch } = useGetValidationsQuery({
+    validation_type: activeTab,
+    status: statusFilter,
+    page: 1,
+    page_size: 50,
+  })
+
+  const [approveValidation] = useApproveValidationMutation()
+  const [rejectValidation] = useRejectValidationMutation()
+  const [addCountry] = useAddCountryFromValidationMutation()
+
+  const [selectedValidation, setSelectedValidation] = useState<Validation | null>(null)
+  const [showRejectModal, setShowRejectModal] = useState(false)
+  const [rejectionReason, setRejectionReason] = useState('')
+
+  const handleApprove = async (validation: Validation) => {
+    if (!confirm(`Approuver l'inscription de ${validation.user_full_name} ?`)) return
+
+    try {
+      await approveValidation({ id: validation.id }).unwrap()
+      toast.success('Validation approuvée')
+      refetch()
+    } catch (error: any) {
+      toast.error(error?.data?.detail || 'Erreur lors de l\'approbation')
+    }
+  }
+
+  const handleReject = async () => {
+    if (!selectedValidation || !rejectionReason.trim()) {
+      toast.error('Veuillez entrer une raison de rejet')
+      return
+    }
+
+    try {
+      await rejectValidation({
+        id: selectedValidation.id,
+        rejection_reason: rejectionReason,
+      }).unwrap()
+      toast.success('Validation rejetée')
+      setShowRejectModal(false)
+      setRejectionReason('')
+      setSelectedValidation(null)
+      refetch()
+    } catch (error: any) {
+      toast.error(error?.data?.detail || 'Erreur lors du rejet')
+    }
+  }
+
+  const handleAddCountry = async (validation: Validation) => {
+    if (!validation.missing_country) return
+
+    if (!confirm(`Ajouter "${validation.missing_country}" à la liste des pays ?`)) return
+
+    try {
+      await addCountry(validation.id).unwrap()
+      toast.success(`Pays "${validation.missing_country}" ajouté`)
+      refetch()
+    } catch (error: any) {
+      toast.error(error?.data?.detail || 'Erreur lors de l\'ajout du pays')
+    }
+  }
+
+  const getStatusBadge = (status: string) => {
+    const badges = {
+      pending: 'bg-yellow-100 text-yellow-800',
+      approved: 'bg-green-100 text-green-800',
+      rejected: 'bg-red-100 text-red-800',
+    }
+    const labels = {
+      pending: 'En attente',
+      approved: 'Approuvé',
+      rejected: 'Rejeté',
+    }
+    return (
+      <span className={`px-2 py-1 text-xs font-medium rounded-full ${badges[status as keyof typeof badges]}`}>
+        {labels[status as keyof typeof labels]}
+      </span>
+    )
+  }
+
+  if (isLoading) {
+    return (
+      <Layout>
+        <div className=\"flex justify-center items-center py-12\">
+          <div className=\"animate-spin rounded-full h-12 w-12 border-b-2 border-jlc-purple-600\"></div>
+        </div>
+      </Layout>
+    )
+  }
+
+  return (
+    <Layout>
+      <div className=\"space-y-6\">
+        {/* Header */}
+        <div>
+          <h1 className=\"text-3xl font-bold text-gray-900\">Validations</h1>
+          <p className=\"text-gray-600 mt-2\">Gérez les demandes d'inscription des utilisateurs et entreprises</p>
+        </div>
+
+        {/* Stats */}
+        <div className=\"grid grid-cols-1 md:grid-cols-4 gap-4\">
+          <div className=\"bg-white rounded-lg shadow p-4 border-l-4 border-yellow-500\">
+            <div className=\"flex items-center justify-between\">
+              <div>
+                <p className=\"text-sm text-gray-600\">En attente</p>
+                <p className=\"text-2xl font-bold text-gray-900\">{stats?.total_pending || 0}</p>
+              </div>
+              <ClockIcon className=\"h-8 w-8 text-yellow-500\" />
+            </div>
+          </div>
+
+          <div className=\"bg-white rounded-lg shadow p-4 border-l-4 border-blue-500\">
+            <div className=\"flex items-center justify-between\">
+              <div>
+                <p className=\"text-sm text-gray-600\">Intérimaires</p>
+                <p className=\"text-2xl font-bold text-gray-900\">{stats?.pending_interim || 0}</p>
+              </div>
+              <UserIcon className=\"h-8 w-8 text-blue-500\" />
+            </div>
+          </div>
+
+          <div className=\"bg-white rounded-lg shadow p-4 border-l-4 border-green-500\">
+            <div className=\"flex items-center justify-between\">
+              <div>
+                <p className=\"text-sm text-gray-600\">Entreprises</p>
+                <p className=\"text-2xl font-bold text-gray-900\">{stats?.pending_company || 0}</p>
+              </div>
+              <BuildingOfficeIcon className=\"h-8 w-8 text-green-500\" />
+            </div>
+          </div>
+
+          <div className=\"bg-white rounded-lg shadow p-4 border-l-4 border-orange-500\">
+            <div className=\"flex items-center justify-between\">
+              <div>
+                <p className=\"text-sm text-gray-600\">Warnings</p>
+                <p className=\"text-2xl font-bold text-gray-900\">{stats?.with_location_warnings || 0}</p>
+              </div>
+              <ExclamationTriangleIcon className=\"h-8 w-8 text-orange-500\" />
+            </div>
+          </div>
+        </div>
+
+        {/* Tabs */}
+        <div className=\"bg-white rounded-lg shadow\">
+          <div className=\"border-b border-gray-200\">
+            <nav className=\"-mb-px flex space-x-8 px-6\" aria-label=\"Tabs\">
+              <button
+                onClick={() => setActiveTab('interim')}
+                className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                  activeTab === 'interim'
+                    ? 'border-jlc-purple-600 text-jlc-purple-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
+              >
+                Intérimaires ({stats?.pending_interim || 0})
+              </button>
+              <button
+                onClick={() => setActiveTab('company')}
+                className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                  activeTab === 'company'
+                    ? 'border-jlc-purple-600 text-jlc-purple-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
+              >
+                Entreprises ({stats?.pending_company || 0})
+              </button>
+            </nav>
+          </div>
+
+          {/* Status Filter */}
+          <div className=\"p-4 border-b border-gray-200\">
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className=\"px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-jlc-purple-500\"
+            >
+              <option value=\"pending\">En attente</option>
+              <option value=\"approved\">Approuvées</option>
+              <option value=\"rejected\">Rejetées</option>
+              <option value=\"\">Toutes</option>
+            </select>
+          </div>
+
+          {/* Validations List */}
+          <div className=\"divide-y divide-gray-200\">
+            {validations.length === 0 ? (
+              <div className=\"text-center py-12\">
+                <p className=\"text-gray-600\">Aucune validation {statusFilter}</p>
+              </div>
+            ) : (
+              validations.map((validation) => (
+                <div key={validation.id} className=\"p-6 hover:bg-gray-50 transition\">
+                  <div className=\"flex justify-between items-start\">
+                    <div className=\"flex-1\">
+                      <div className=\"flex items-center space-x-3 mb-2\">
+                        <h3 className=\"text-lg font-semibold text-gray-900\">{validation.user_full_name}</h3>
+                        {getStatusBadge(validation.status)}
+                        {validation.has_location_warning && (
+                          <span className=\"inline-flex items-center px-2 py-1 text-xs font-medium rounded-full bg-orange-100 text-orange-800\">
+                            <ExclamationTriangleIcon className=\"h-4 w-4 mr-1\" />
+                            Pays non-standard
+                          </span>
+                        )}
+                      </div>
+
+                      <p className=\"text-sm text-gray-600 mb-2\">{validation.user_email}</p>
+
+                      {validation.country_name && (
+                        <div className=\"flex items-center space-x-2 text-sm text-gray-600 mb-2\">
+                          <MapPinIcon className=\"h-4 w-4\" />
+                          <span>
+                            {validation.country_name}
+                            {validation.province_name && ` → ${validation.province_name}`}
+                            {validation.city_name && ` → ${validation.city_name}`}
+                            {validation.neighborhood_name && ` → ${validation.neighborhood_name}`}
+                          </span>
+                        </div>
+                      )}
+
+                      {validation.has_location_warning && validation.missing_country && (
+                        <div className=\"bg-orange-50 border border-orange-200 rounded-lg p-3 mt-2\">
+                          <p className=\"text-sm text-orange-800\">
+                            <strong>Pays non disponible :</strong> {validation.missing_country}
+                          </p>
+                          <button
+                            onClick={() => handleAddCountry(validation)}
+                            className=\"mt-2 text-sm text-orange-700 hover:text-orange-900 font-medium underline\"
+                          >
+                            + Ajouter ce pays à la liste
+                          </button>
+                        </div>
+                      )}
+
+                      <p className=\"text-xs text-gray-500 mt-2\">
+                        Demande créée le {new Date(validation.created_at).toLocaleDateString('fr-FR')}
+                      </p>
+                    </div>
+
+                    {validation.status === 'pending' && (
+                      <div className=\"flex space-x-2 ml-4\">
+                        <button
+                          onClick={() => handleApprove(validation)}
+                          className=\"inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition\"
+                        >
+                          <CheckCircleIcon className=\"h-5 w-5 mr-2\" />
+                          Approuver
+                        </button>
+                        <button
+                          onClick={() => {
+                            setSelectedValidation(validation)
+                            setShowRejectModal(true)
+                          }}
+                          className=\"inline-flex items-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition\"
+                        >
+                          <XCircleIcon className=\"h-5 w-5 mr-2\" />
+                          Rejeter
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Reject Modal */}
+      {showRejectModal && selectedValidation && (
+        <div className=\"fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4\">
+          <div className=\"bg-white rounded-lg shadow-xl max-w-md w-full p-6\">
+            <h3 className=\"text-xl font-bold text-gray-900 mb-4\">Rejeter la validation</h3>
+            <p className=\"text-sm text-gray-600 mb-4\">
+              Vous êtes sur le point de rejeter l'inscription de <strong>{selectedValidation.user_full_name}</strong>.
+            </p>
+            <textarea
+              value={rejectionReason}
+              onChange={(e) => setRejectionReason(e.target.value)}
+              className=\"w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 mb-4\"
+              rows={4}
+              placeholder=\"Raison du rejet (obligatoire)\"
+              required
+            />
+            <div className=\"flex space-x-3\">
+              <button
+                onClick={() => {
+                  setShowRejectModal(false)
+                  setRejectionReason('')
+                  setSelectedValidation(null)
+                }}
+                className=\"flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition\"
+              >
+                Annuler
+              </button>
+              <button
+                onClick={handleReject}
+                disabled={!rejectionReason.trim()}
+                className=\"flex-1 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition disabled:opacity-50\"
+              >
+                Rejeter
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </Layout>
+  )
+}
