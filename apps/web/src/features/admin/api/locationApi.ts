@@ -1,6 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8001'
+import type { RootState } from '@/store/store'
 
 export type LocationType = 'country' | 'province' | 'city' | 'district' | 'neighborhood'
 
@@ -41,11 +40,11 @@ export interface LocationUpdate {
 export const locationApi = createApi({
   reducerPath: 'locationApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: `${API_BASE_URL}/api/locations`,
-    prepareHeaders: (headers) => {
-      const token = localStorage.getItem('access_token')
+    baseUrl: '/auth-api',
+    prepareHeaders: (headers, { getState }) => {
+      const token = (getState() as RootState).auth.token
       if (token) {
-        headers.set('Authorization', `Bearer ${token}`)
+        headers.set('authorization', `Bearer ${token}`)
       }
       return headers
     },
