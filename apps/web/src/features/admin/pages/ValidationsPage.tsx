@@ -126,52 +126,52 @@ export default function ValidationsPage() {
         </div>
 
         {/* Stats */}
-        <div className=\"grid grid-cols-1 md:grid-cols-4 gap-4\">
-          <div className=\"bg-white rounded-lg shadow p-4 border-l-4 border-yellow-500\">
-            <div className=\"flex items-center justify-between\">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="bg-white rounded-lg shadow p-4 border-l-4 border-yellow-500">
+            <div className="flex items-center justify-between">
               <div>
-                <p className=\"text-sm text-gray-600\">En attente</p>
-                <p className=\"text-2xl font-bold text-gray-900\">{stats?.total_pending || 0}</p>
+                <p className="text-sm text-gray-600">En attente</p>
+                <p className="text-2xl font-bold text-gray-900">{stats?.total_pending || 0}</p>
               </div>
-              <ClockIcon className=\"h-8 w-8 text-yellow-500\" />
+              <ClockIcon className="h-8 w-8 text-yellow-500" />
             </div>
           </div>
 
-          <div className=\"bg-white rounded-lg shadow p-4 border-l-4 border-blue-500\">
-            <div className=\"flex items-center justify-between\">
+          <div className="bg-white rounded-lg shadow p-4 border-l-4 border-blue-500">
+            <div className="flex items-center justify-between">
               <div>
-                <p className=\"text-sm text-gray-600\">Intérimaires</p>
-                <p className=\"text-2xl font-bold text-gray-900\">{stats?.pending_interim || 0}</p>
+                <p className="text-sm text-gray-600">Intérimaires</p>
+                <p className="text-2xl font-bold text-gray-900">{stats?.pending_interim || 0}</p>
               </div>
-              <UserIcon className=\"h-8 w-8 text-blue-500\" />
+              <UserIcon className="h-8 w-8 text-blue-500" />
             </div>
           </div>
 
-          <div className=\"bg-white rounded-lg shadow p-4 border-l-4 border-green-500\">
-            <div className=\"flex items-center justify-between\">
+          <div className="bg-white rounded-lg shadow p-4 border-l-4 border-green-500">
+            <div className="flex items-center justify-between">
               <div>
-                <p className=\"text-sm text-gray-600\">Entreprises</p>
-                <p className=\"text-2xl font-bold text-gray-900\">{stats?.pending_company || 0}</p>
+                <p className="text-sm text-gray-600">Entreprises</p>
+                <p className="text-2xl font-bold text-gray-900">{stats?.pending_company || 0}</p>
               </div>
-              <BuildingOfficeIcon className=\"h-8 w-8 text-green-500\" />
+              <BuildingOfficeIcon className="h-8 w-8 text-green-500" />
             </div>
           </div>
 
-          <div className=\"bg-white rounded-lg shadow p-4 border-l-4 border-orange-500\">
-            <div className=\"flex items-center justify-between\">
+          <div className="bg-white rounded-lg shadow p-4 border-l-4 border-orange-500">
+            <div className="flex items-center justify-between">
               <div>
-                <p className=\"text-sm text-gray-600\">Warnings</p>
-                <p className=\"text-2xl font-bold text-gray-900\">{stats?.with_location_warnings || 0}</p>
+                <p className="text-sm text-gray-600">Warnings</p>
+                <p className="text-2xl font-bold text-gray-900">{stats?.with_location_warnings || 0}</p>
               </div>
-              <ExclamationTriangleIcon className=\"h-8 w-8 text-orange-500\" />
+              <ExclamationTriangleIcon className="h-8 w-8 text-orange-500" />
             </div>
           </div>
         </div>
 
         {/* Tabs */}
-        <div className=\"bg-white rounded-lg shadow\">
-          <div className=\"border-b border-gray-200\">
-            <nav className=\"-mb-px flex space-x-8 px-6\" aria-label=\"Tabs\">
+        <div className="bg-white rounded-lg shadow">
+          <div className="border-b border-gray-200">
+            <nav className="-mb-px flex space-x-8 px-6" aria-label="Tabs">
               <button
                 onClick={() => setActiveTab('interim')}
                 className={`py-4 px-1 border-b-2 font-medium text-sm ${
