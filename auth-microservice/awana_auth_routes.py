@@ -1087,6 +1087,13 @@ async def local_register(
         
         logger.info(f"✅ Registration successful for {user.email}")
         
+        # Create validation record
+        await create_validation_record(
+            db=db,
+            user=user,
+            register_data=register_data
+        )
+        
         # Log validation status
         if user.status == UserStatus.ACTIVE:
             logger.info("✅ Email domain validated automatically - Account active")
