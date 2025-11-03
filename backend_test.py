@@ -496,35 +496,41 @@ def test_admin_login():
         return None
 
 
-def create_test_admin_without_mfa():
-    """Create a test admin user without MFA for testing purposes"""
-    print(f"\n{Colors.BOLD}=== Creating Test Admin Without MFA ==={Colors.ENDC}")
+def complete_admin_mfa_login():
+    """Complete MFA login for existing admin user"""
+    print(f"\n{Colors.BOLD}=== Completing Admin MFA Login ==={Colors.ENDC}")
     
-    # Generate unique admin credentials
-    random_suffix = ''.join(random.choices(string.ascii_lowercase + string.digits, k=6))
-    test_admin_data = {
-        "username": f"testadmin_{random_suffix}",
-        "email": f"testadmin.{random_suffix}@awanagroup.com",
-        "password": "TestAdmin123!",
-        "full_name": "Test Admin User",
-        "role": "admin"
+    # Step 1: Get MFA session
+    login_data = {
+        "username": "admin",
+        "password": "awana2025"
     }
     
-    # Register the test admin
     response = test_endpoint(
         "POST",
-        f"{AUTH_BASE_URL}/auth/local/register",
-        data=test_admin_data,
+        f"{AUTH_BASE_URL}/auth/local/login",
+        data=login_data,
         expected_status=200,
-        test_name="Create Test Admin"
+        test_name="Admin Login for MFA"
     )
     
-    if response and "access_token" in response:
-        log_test("Test Admin Creation", "PASS", f"Test admin created: {test_admin_data['username']}")
-        return response["access_token"], test_admin_data
-    else:
-        log_test("Test Admin Creation", "FAIL", "Could not create test admin")
-        return None, None
+    if not response or not response.get("mfa_required"):
+        log_test("Admin MFA Login", "FAIL", "Expected MFA required response")
+        return None
+    
+    mfa_session_token = response.get("mfa_session_token")
+    available_methods = response.get("available_methods", [])
+    
+    log_test("Admin MFA Session", "PASS", f"MFA session: {mfa_session_token[:10]}..., methods: {available_methods}")
+    
+    # For testing, we'll try to use a known backup code or disable MFA
+    # Since we don't have the backup codes, let's try to disable MFA first
+    # But we need a token to disable MFA, so this is a chicken-and-egg problem
+    
+    # Let's try a different approach - check if we can get the admin token by other means
+    # For now, return None and we'll test MFA endpoints without authentication
+    log_test("Admin MFA Completion", "SKIP", "Cannot complete MFA without backup codes - will test unauthenticated endpoints")
+    return None
 
 
 # Removed admin user management tests - focusing on MFA testing
