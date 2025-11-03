@@ -296,6 +296,15 @@ export default function ValidationsPage() {
                       <div className="flex items-center space-x-3 mb-2">
                         <h3 className="text-lg font-semibold text-gray-900">{validation.user_full_name}</h3>
                         {getStatusBadge(validation.status)}
+                        
+                        {/* Collaborator Badge */}
+                        {validation.validation_type === 'collaborator' && (
+                          <span className="inline-flex items-center px-3 py-1 text-xs font-semibold rounded-full bg-purple-100 text-purple-800 border border-purple-300">
+                            <UserIcon className="h-4 w-4 mr-1" />
+                            Collaborateur JLC
+                          </span>
+                        )}
+                        
                         {validation.has_location_warning && (
                           <span className="inline-flex items-center px-2 py-1 text-xs font-medium rounded-full bg-orange-100 text-orange-800">
                             <ExclamationTriangleIcon className="h-4 w-4 mr-1" />
@@ -305,6 +314,32 @@ export default function ValidationsPage() {
                       </div>
 
                       <p className="text-sm text-gray-600 mb-2">{validation.user_email}</p>
+                      
+                      {/* Collaborator-specific info */}
+                      {validation.validation_type === 'collaborator' && (
+                        <div className="bg-purple-50 border border-purple-200 rounded-lg p-3 mb-2">
+                          <div className="grid grid-cols-3 gap-4 text-sm">
+                            {validation.employee_number && (
+                              <div>
+                                <span className="font-medium text-gray-700">Matricule:</span>
+                                <span className="ml-1 text-gray-900">{validation.employee_number}</span>
+                              </div>
+                            )}
+                            {validation.department && (
+                              <div>
+                                <span className="font-medium text-gray-700">Département:</span>
+                                <span className="ml-1 text-gray-900">{validation.department}</span>
+                              </div>
+                            )}
+                            {validation.job_title && (
+                              <div>
+                                <span className="font-medium text-gray-700">Poste:</span>
+                                <span className="ml-1 text-gray-900">{validation.job_title}</span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
 
                       {validation.country_name && (
                         <div className="flex items-center space-x-2 text-sm text-gray-600 mb-2">
