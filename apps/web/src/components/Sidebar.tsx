@@ -15,6 +15,7 @@ import {
   ChevronRightIcon,
   Bars3Icon,
   ShieldCheckIcon,
+  MapPinIcon,
 } from '@heroicons/react/24/outline'
 
 interface NavSection {
