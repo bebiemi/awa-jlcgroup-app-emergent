@@ -152,8 +152,8 @@ export default function MfaVerificationPage({ sessionId, mfaMethod, onBack }: Mf
                     value={code}
                     onChange={(e) => setCode(e.target.value.replace(/[^0-9A-Za-z-]/g, ''))}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-jlc-purple-500 focus:border-transparent transition font-mono text-center text-lg tracking-wider"
-                    placeholder={codeType === 'recovery' ? 'XXXX-XXXX-XXXX' : '123456'}
-                    maxLength={codeType === 'recovery' ? 14 : 6}
+                    placeholder={codeType === 'backup' ? 'XXXX-XXXX-XXXX' : '123456'}
+                    maxLength={codeType === 'backup' ? 14 : 6}
                     required
                     autoComplete="off"
                     autoFocus
