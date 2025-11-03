@@ -135,20 +135,32 @@ export default function LandingPage() {
               Connectez talents et opportunités pour construire l'avenir du travail
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link
-                to="/register"
-                className="bg-white text-jlc-purple-700 hover:bg-gray-100 px-8 py-3 rounded-lg text-lg font-semibold inline-flex items-center justify-center"
-              >
-                Trouver une mission
-                <ArrowRightIcon className="ml-2 h-5 w-5" />
-              </Link>
-              <Link
-                to="/register"
-                className="bg-jlc-purple-800 hover:bg-jlc-purple-900 text-white px-8 py-3 rounded-lg text-lg font-semibold inline-flex items-center justify-center"
-              >
-                Recruter des talents
-                <ArrowRightIcon className="ml-2 h-5 w-5" />
-              </Link>
+              {isAuthenticated ? (
+                <button
+                  onClick={() => navigate(getDashboardPath())}
+                  className="bg-white text-jlc-purple-700 hover:bg-gray-100 px-8 py-3 rounded-lg text-lg font-semibold inline-flex items-center justify-center"
+                >
+                  Accéder à mon espace
+                  <ArrowRightIcon className="ml-2 h-5 w-5" />
+                </button>
+              ) : (
+                <>
+                  <Link
+                    to="/register"
+                    className="bg-white text-jlc-purple-700 hover:bg-gray-100 px-8 py-3 rounded-lg text-lg font-semibold inline-flex items-center justify-center"
+                  >
+                    Trouver une mission
+                    <ArrowRightIcon className="ml-2 h-5 w-5" />
+                  </Link>
+                  <Link
+                    to="/register"
+                    className="bg-jlc-purple-800 hover:bg-jlc-purple-900 text-white px-8 py-3 rounded-lg text-lg font-semibold inline-flex items-center justify-center"
+                  >
+                    Recruter des talents
+                    <ArrowRightIcon className="ml-2 h-5 w-5" />
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>
