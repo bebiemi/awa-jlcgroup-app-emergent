@@ -119,6 +119,22 @@ function App() {
           </ProtectedRoute>
         }
       />
+      <Route
+        path="/missions/create"
+        element={
+          <ProtectedRoute requiredRoles={['admin', 'super_admin', 'commercial', 'company']}>
+            <CreateMissionPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/missions/:id"
+        element={
+          <ProtectedRoute requiredRoles={['admin', 'super_admin', 'commercial', 'company']}>
+            <MissionDetailPage />
+          </ProtectedRoute>
+        }
+      />
       
       {/* Routes Offres - Intérimaires */}
       <Route
@@ -126,6 +142,22 @@ function App() {
         element={
           <ProtectedRoute requiredRoles={['interim']}>
             <OffresPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/offres/:id"
+        element={
+          <ProtectedRoute requiredRoles={['interim']}>
+            <MissionDetailPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/offres/:id/postuler"
+        element={
+          <ProtectedRoute requiredRoles={['interim']}>
+            <ApplyMissionPage />
           </ProtectedRoute>
         }
       />
