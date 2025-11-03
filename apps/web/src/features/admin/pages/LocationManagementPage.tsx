@@ -271,9 +271,9 @@ export default function LocationManagementPage() {
                       <h3 className="text-lg font-semibold text-gray-900">
                         {location.name}
                       </h3>
-                      {location.dial_code && (
+                      {location.phone_code && (
                         <span className="text-sm text-gray-500">
-                          ({location.dial_code})
+                          ({location.phone_code})
                         </span>
                       )}
                       {!location.is_visible && (
