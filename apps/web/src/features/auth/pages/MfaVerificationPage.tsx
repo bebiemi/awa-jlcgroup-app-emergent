@@ -13,7 +13,7 @@ interface MfaVerificationPageProps {
 
 export default function MfaVerificationPage({ sessionId, mfaMethod, onBack }: MfaVerificationPageProps) {
   const [code, setCode] = useState('')
-  const [codeType, setCodeType] = useState<'totp' | 'email' | 'recovery'>(mfaMethod)
+  const [codeType, setCodeType] = useState<'totp' | 'email' | 'backup'>(mfaMethod)
   const [completeMfaLogin, { isLoading }] = useCompleteMfaLoginMutation()
   const [attemptsRemaining, setAttemptsRemaining] = useState(3)
   const navigate = useNavigate()
