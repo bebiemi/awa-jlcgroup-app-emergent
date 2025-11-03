@@ -92,11 +92,34 @@ export interface Notification {
 
 // API Response types
 export interface LoginResponse {
-  access_token: string
+  success: boolean
+  mfa_required?: boolean
+  mfa_method?: 'totp' | 'email'
+  session_id?: string
+  message?: string
+  access_token?: string
   refresh_token?: string
-  token_type: string
-  expires_in: number
-  user: User
+  token_type?: string
+  expires_in?: number
+  user?: User
+}
+
+export interface MfaStatus {
+  enabled: boolean
+  method: 'totp' | 'email' | null
+  has_recovery_codes: boolean
+  recovery_codes_count: number
+}
+
+export interface TOTPSetupResponse {
+  secret: string
+  qr_code: string
+  manual_entry_key: string
+}
+
+export interface RecoveryCodesResponse {
+  codes: string[]
+  message?: string
 }
 
 export interface ValidationListResponse {
