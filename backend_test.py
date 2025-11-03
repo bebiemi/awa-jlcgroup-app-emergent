@@ -534,12 +534,17 @@ def test_mfa_complete_flow():
     """Test complete MFA flow: Setup → Enable → Login → Verify → Disable"""
     print(f"\n{Colors.BOLD}=== Testing Complete MFA Flow ==={Colors.ENDC}")
     
-    # Step 1: Login to get auth token
-    print(f"\n  Step 1: Admin Login")
+    # Step 1: Get admin token (try existing admin, if MFA required, create test admin)
+    print(f"\n  Step 1: Get Admin Token")
     admin_token = test_admin_login()
+    test_admin_data = None
+    
     if not admin_token:
-        log_test("MFA Complete Flow", "FAIL", "Could not get admin token")
-        return False
+        print(f"\n  Step 1b: Creating Test Admin (existing admin has MFA)")
+        admin_token, test_admin_data = create_test_admin_without_mfa()
+        if not admin_token:
+            log_test("MFA Complete Flow", "FAIL", "Could not get admin token")
+            return False
     
     headers = {"Authorization": f"Bearer {admin_token}"}
     
