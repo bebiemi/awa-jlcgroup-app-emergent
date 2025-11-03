@@ -68,17 +68,14 @@ export default function MfaSettings() {
 
     setSetupLoading(true)
     try {
-      // Verify TOTP
+      // Verify TOTP (this also enables MFA automatically in the backend)
       await verifyTotp({ code: verificationCode }).unwrap()
-
-      // Enable MFA
-      await enableMfa({ method: 'totp' }).unwrap()
 
       toast.success('TOTP activé avec succès!')
 
-      // Get recovery codes
-      const codesResult = await generateRecoveryCodes({ password: '' }).unwrap()
-      setRecoveryCodes(codesResult.codes)
+      // Get backup codes
+      const codesResult = await generateBackupCodes({ password: '' }).unwrap()
+      setRecoveryCodes(codesResult.codes || [])
       setShowRecoveryCodes(true)
       setShowTotpSetup(false)
       setVerificationCode('')
