@@ -95,6 +95,23 @@ async def get_validation_stats(
     }
 
 
+@validation_router.get("/my-validation", response_model=Optional[Validation])
+async def get_my_validation(
+    current_user: User = Depends(get_current_user),
+    db: AsyncIOMotorDatabase = Depends(get_database)
+):
+    """Get validation for current user"""
+    validation = await db.validations.find_one(
+        {"user_id": current_user.id},
+        {"_id": 0}
+    )
+    
+    if not validation:
+        return None
+    
+    return Validation(**validation)
+
+
 @validation_router.get("/{validation_id}", response_model=Validation)
 async def get_validation(
     validation_id: str,
