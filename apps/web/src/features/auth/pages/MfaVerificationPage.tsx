@@ -28,9 +28,9 @@ export default function MfaVerificationPage({ sessionId, mfaMethod, onBack }: Mf
 
     try {
       const result = await completeMfaLogin({
-        session_id: sessionId,
+        session_token: sessionId,
         code: code.trim(),
-        code_type: codeType,
+        method: codeType,
       }).unwrap()
 
       if (result.success && result.access_token && result.user) {
