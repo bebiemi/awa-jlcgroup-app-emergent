@@ -4,10 +4,9 @@ import {
   useSetupTotpMutation,
   useVerifyTotpMutation,
   useSetupEmailOtpMutation,
-  useEnableMfaMutation,
-  useDisableMfaMutation,
-  useGetRecoveryCodesQuery,
-  useGenerateRecoveryCodesMutation,
+  useDisableMfaMethodMutation,
+  useGetBackupCodesQuery,
+  useGenerateBackupCodesMutation,
 } from '../api/mfaApi'
 import toast from 'react-hot-toast'
 import {
