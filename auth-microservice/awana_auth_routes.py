@@ -1379,6 +1379,86 @@ async def delete_user(
     return {"message": "User deleted successfully"}
 
 
+@users_router.post("/{user_id}/mfa/reset")
+async def reset_user_mfa(
+    user_id: str,
+    request: Request,
+    current_user: User = Depends(require_super_admin),
+    db: AsyncIOMotorDatabase = Depends(get_database)
+):
+    """
+    Reset MFA for a user (super admin only)
+    Disables all MFA methods and clears MFA secrets
+    """
+    # Get user
+    user_doc = await db.users.find_one({"id": user_id}, {"_id": 0})
+    
+    if not user_doc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found"
+        )
+    
+    user = User(**user_doc)
+    
+    # Cannot reset your own MFA through this endpoint (security measure)
+    if user_id == current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Cannot reset your own MFA through admin endpoint. Use the profile settings."
+        )
+    
+    # Check if user has MFA enabled
+    if not user.mfa_enabled:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="User does not have MFA enabled"
+        )
+    
+    # Reset MFA in user document
+    await db.users.update_one(
+        {"id": user_id},
+        {
+            "$set": {
+                "mfa_enabled": False,
+                "mfa_required": False,
+                "mfa_methods": [],
+                "updated_at": datetime.now(timezone.utc).isoformat()
+            }
+        }
+    )
+    
+    # Delete all MFA-related data
+    await db.mfa_secrets.delete_many({"user_id": user_id})
+    await db.mfa_backup_codes.delete_many({"user_id": user_id})
+    await db.mfa_sessions.delete_many({"user_id": user_id})
+    
+    # Audit log
+    audit_logger = AuditLogger(db, auth_config)
+    await audit_logger.log(
+        action=AuditAction.MFA_DISABLED,
+        actor_id=current_user.id,
+        actor_email=current_user.email,
+        target_id=user_id,
+        target_email=user.email,
+        resource_type="mfa",
+        resource_id=user_id,
+        ip_address=get_client_ip(request),
+        user_agent=get_user_agent(request),
+        metadata={
+            "reason": "Admin reset",
+            "admin_user": current_user.email
+        }
+    )
+    
+    return {
+        "success": True,
+        "message": f"MFA reset successfully for user {user.email}",
+        "user_id": user_id
+    }
+
+
+
 # ===== Role Management Endpoints =====
 
 @roles_router.get("", response_model=List[Role])
