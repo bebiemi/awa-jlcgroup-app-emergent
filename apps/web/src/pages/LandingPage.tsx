@@ -345,16 +345,24 @@ export default function LandingPage() {
               <h4 className="text-white font-semibold mb-4">Contact</h4>
               <ul className="space-y-2 text-sm">
                 <li className="flex items-center">
-                  <PhoneIcon className="h-4 w-4 mr-2" />
-                  +241 01 23 45 67
+                  <PhoneIcon className="h-4 w-4 mr-2 flex-shrink-0" />
+                  <a href="tel:+241117259474" className="hover:text-white">
+                    +241 (0)11 72 59 74
+                  </a>
                 </li>
                 <li className="flex items-center">
-                  <EnvelopeIcon className="h-4 w-4 mr-2" />
-                  contact@jlcgroup.ga
+                  <EnvelopeIcon className="h-4 w-4 mr-2 flex-shrink-0" />
+                  <a href="mailto:info@jlcgroup.org" className="hover:text-white">
+                    info@jlcgroup.org
+                  </a>
                 </li>
                 <li className="flex items-start">
-                  <MapPinIcon className="h-4 w-4 mr-2 mt-1" />
-                  <span>Libreville, Gabon</span>
+                  <MapPinIcon className="h-4 w-4 mr-2 mt-1 flex-shrink-0" />
+                  <span>
+                    Immeuble Alfred Marche centre-ville,<br />
+                    3ème et 5ème étage, derrière la poste<br />
+                    BP: 6278 LBV - Gabon
+                  </span>
                 </li>
               </ul>
             </div>
