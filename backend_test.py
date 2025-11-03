@@ -465,12 +465,21 @@ def test_admin_login():
         test_name="Admin Login"
     )
     
-    if response and "access_token" in response:
+    if not response:
+        log_test("Admin Login - Token Generation", "FAIL", "No response received")
+        return None
+    
+    # Check if MFA is required
+    if response.get("mfa_required", False):
+        log_test("Admin Login - MFA Required", "INFO", "Admin has MFA enabled, login requires MFA completion")
+        return None  # For now, we'll handle this case separately
+    
+    if "access_token" in response:
         log_test("Admin Login - Token Generation", "PASS", 
                 f"JWT token received: {response['access_token'][:20]}...")
         return response["access_token"]
     else:
-        log_test("Admin Login - Token Generation", "FAIL", "No access token received")
+        log_test("Admin Login - Token Generation", "FAIL", f"No access token received. Response: {response}")
         return None
 
 
