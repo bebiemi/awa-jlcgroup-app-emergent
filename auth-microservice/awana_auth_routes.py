@@ -637,9 +637,11 @@ async def local_login(
     """
     Handle local username/password authentication
     Validates credentials and creates JWT session
+    If MFA is enabled, returns MFA session token instead of access token
     """
     import os
     import secrets
+    from awana_auth.mfa.mfa_service import MFAService
     
     try:
         # Get admin credentials from environment
@@ -724,6 +726,51 @@ async def local_login(
             
             logger.info(f"New local admin user created: {user.email}")
         
+        # ===== MFA Check =====
+        # Check if user has MFA enabled or required
+        mfa_enabled = user.mfa_enabled if hasattr(user, 'mfa_enabled') else False
+        mfa_required = user.mfa_required if hasattr(user, 'mfa_required') else False
+        
+        if mfa_enabled or mfa_required:
+            # User has MFA - create MFA session instead of full login
+            mfa_service = MFAService(db)
+            
+            # Get available MFA methods
+            available_methods = user.mfa_methods if hasattr(user, 'mfa_methods') else []
+            
+            # Add backup as always available if TOTP is enabled
+            if 'totp' in available_methods and 'backup' not in available_methods:
+                available_methods.append('backup')
+            
+            # Create MFA session
+            mfa_session = await mfa_service.create_mfa_session(
+                user_id=user.id,
+                available_methods=available_methods
+            )
+            
+            # If Email OTP is enabled, send OTP now
+            if 'email' in available_methods:
+                otp = mfa_service.generate_email_otp()
+                await mfa_service.store_email_otp(user.id, otp)
+                # TODO: Send email with OTP
+                print(f"[MFA] Email OTP for {user.email}: {otp}")
+            
+            # If SMS OTP is enabled, send OTP now
+            if 'sms' in available_methods and user.phone_number:
+                otp = mfa_service.generate_sms_otp()
+                await mfa_service.store_sms_otp(user.id, otp)
+                await mfa_service.send_sms_otp(user.phone_number, otp)
+            
+            logger.info(f"MFA required for {user.email}, session created")
+            
+            return LoginResponse(
+                mfa_required=True,
+                mfa_session_token=mfa_session.session_token,
+                available_methods=available_methods,
+                user=user
+            )
+        
+        # ===== No MFA - Standard Login =====
         # Create session first (without tokens)
         session = await session_storage.create_session(
             user=user,
@@ -760,7 +807,7 @@ async def local_login(
             actor_email=user.email,
             ip_address=get_client_ip(request),
             user_agent=get_user_agent(request),
-            metadata={"provider": "local"}
+            metadata={"provider": "local", "mfa": False}
         )
         
         logger.info(f"✅ Local login successful for {user.email}")
@@ -770,7 +817,8 @@ async def local_login(
             refresh_token=refresh_token,
             token_type="bearer",
             expires_in=auth_config.jwt_access_token_expire_minutes * 60,
-            user=user
+            user=user,
+            mfa_required=False
         )
         
     except HTTPException:
