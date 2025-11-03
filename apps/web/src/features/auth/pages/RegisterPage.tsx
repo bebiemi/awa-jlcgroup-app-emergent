@@ -632,6 +632,82 @@ export default function RegisterPage() {
                 </div>
               )}
 
+              {/* Collaborator-specific fields */}
+              {formData.isCollaborator && (
+                <div className="border-t pt-6">
+                  <h3 className="text-base font-semibold text-gray-900 mb-3">
+                    Informations Collaborateur
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label htmlFor="employeeNumber" className="block text-sm font-medium text-gray-700 mb-1">
+                        Matricule *
+                      </label>
+                      <input
+                        type="text"
+                        id="employeeNumber"
+                        name="employeeNumber"
+                        value={formData.employeeNumber}
+                        onChange={handleInputChange}
+                        className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-jlc-purple-500 focus:border-transparent transition ${
+                          errors.employeeNumber ? 'border-red-500' : 'border-gray-300'
+                        }`}
+                        placeholder="Ex: EMP2024001"
+                      />
+                      {errors.employeeNumber && (
+                        <p className="text-red-500 text-sm mt-1">{errors.employeeNumber}</p>
+                      )}
+                    </div>
+
+                    <div>
+                      <label htmlFor="department" className="block text-sm font-medium text-gray-700 mb-1">
+                        Département *
+                      </label>
+                      <input
+                        type="text"
+                        id="department"
+                        name="department"
+                        value={formData.department}
+                        onChange={handleInputChange}
+                        className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-jlc-purple-500 focus:border-transparent transition ${
+                          errors.department ? 'border-red-500' : 'border-gray-300'
+                        }`}
+                        placeholder="Ex: Ressources Humaines"
+                      />
+                      {errors.department && (
+                        <p className="text-red-500 text-sm mt-1">{errors.department}</p>
+                      )}
+                    </div>
+
+                    <div className="md:col-span-2">
+                      <label htmlFor="jobTitle" className="block text-sm font-medium text-gray-700 mb-1">
+                        Poste / Fonction *
+                      </label>
+                      <input
+                        type="text"
+                        id="jobTitle"
+                        name="jobTitle"
+                        value={formData.jobTitle}
+                        onChange={handleInputChange}
+                        className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-jlc-purple-500 focus:border-transparent transition ${
+                          errors.jobTitle ? 'border-red-500' : 'border-gray-300'
+                        }`}
+                        placeholder="Ex: Responsable RH"
+                      />
+                      {errors.jobTitle && (
+                        <p className="text-red-500 text-sm mt-1">{errors.jobTitle}</p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="mt-4 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                    <p className="text-sm text-yellow-800">
+                      ⚠️ <strong>Validation manuelle requise:</strong> Votre compte sera vérifié par les équipes RH ou Commerciales avant activation.
+                    </p>
+                  </div>
+                </div>
+              )}
+
               {/* Location Section */}
               <div className="border-t pt-6">
                 <h3 className="text-base font-semibold text-gray-900 mb-3">Localisation</h3>
