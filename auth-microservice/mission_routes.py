@@ -35,15 +35,17 @@ def user_to_dict(user: User) -> dict:
 @router.post("", response_model=Mission, status_code=status.HTTP_201_CREATED)
 async def create_mission(
     mission: MissionCreate,
-    current_user: dict = Depends(get_current_user),
+    current_user: User = Depends(get_current_user),
     db = Depends(get_db)
 ):
     """
     Créer une nouvelle mission (Étape 1)
     Accessible par: Entreprises, Admin, Commerciaux
     """
+    user_dict = user_to_dict(current_user)
+    
     # Vérifier les permissions
-    user_roles = current_user.get("roles", [])
+    user_roles = user_dict.get("roles", [])
     if not any(role in user_roles for role in ["admin", "super_admin", "company", "commercial"]):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
