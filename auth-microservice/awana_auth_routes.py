@@ -1113,8 +1113,14 @@ async def local_register(
             bcrypt.gensalt()
         ).decode('utf-8')
         
-        # Determine user status based on email domain
-        user_status = UserStatus.ACTIVE if is_valid_email_domain(register_data.email) else UserStatus.PENDING
+        # Determine user status based on collaborator flag or email domain
+        if register_data.is_collaborator:
+            # Collaborators ALWAYS need manual validation
+            user_status = UserStatus.PENDING
+            logger.info(f"Collaborator registration - manual validation required for {register_data.email}")
+        else:
+            # Regular users: check email domain
+            user_status = UserStatus.ACTIVE if is_valid_email_domain(register_data.email) else UserStatus.PENDING
         
         # Create new user
         user = User(
@@ -1124,8 +1130,12 @@ async def local_register(
             provider=AuthProviderEnum.LOCAL,
             provider_user_id=f"local_{register_data.username}",
             password_hash=password_hash,
-            status=user_status,  # Auto-validate for known email domains
-            roles=[register_data.role]
+            status=user_status,
+            roles=[register_data.role] if not register_data.is_collaborator else [],
+            is_collaborator=register_data.is_collaborator,
+            employee_number=register_data.employee_number if register_data.is_collaborator else None,
+            department=register_data.department if register_data.is_collaborator else None,
+            job_title=register_data.job_title if register_data.is_collaborator else None,
         )
         
         # Save user to database
