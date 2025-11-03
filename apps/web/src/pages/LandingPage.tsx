@@ -264,6 +264,32 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Partners Section */}
+      <section className="py-16 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
+            Nos Partenaires
+          </h2>
+          <p className="text-gray-600 mb-8">
+            JLC GROUP, une solution développée en collaboration avec
+          </p>
+          <div className="flex justify-center items-center">
+            <a 
+              href="https://awana-group.com" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="hover:opacity-80 transition-opacity"
+            >
+              <img 
+                src="/logo-awana.png" 
+                alt="Awana Group" 
+                className="h-20 w-auto object-contain"
+              />
+            </a>
+          </div>
+        </div>
+      </section>
+
       {/* About Section */}
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
