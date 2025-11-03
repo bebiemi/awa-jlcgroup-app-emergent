@@ -100,6 +100,27 @@ export default function ValidationsPage() {
     }
   }
 
+  const handleAssign = async () => {
+    if (!selectedValidation || !selectedValidator) {
+      toast.error('Veuillez sélectionner un validateur')
+      return
+    }
+
+    try {
+      await assignValidation({
+        id: selectedValidation.id,
+        assigned_to: selectedValidator,
+      }).unwrap()
+      toast.success('Validation assignée avec succès')
+      setShowAssignModal(false)
+      setSelectedValidator('')
+      setSelectedValidation(null)
+      refetch()
+    } catch (error: any) {
+      toast.error(error?.data?.detail || 'Erreur lors de l\'assignation')
+    }
+  }
+
   const getStatusBadge = (status: string) => {
     const badges = {
       pending: 'bg-yellow-100 text-yellow-800',
