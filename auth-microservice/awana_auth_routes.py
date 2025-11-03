@@ -125,6 +125,21 @@ class LocalRegisterRequest(BaseModel):
     password: str
     full_name: str
     role: str  # 'interim' or 'company'
+    
+    # Optional fields for interim users
+    phone: Optional[str] = None
+    date_of_birth: Optional[str] = None
+    
+    # Optional fields for company users
+    company_name: Optional[str] = None
+    legal_representative: Optional[str] = None
+    nif: Optional[str] = None
+    
+    # Location data (hierarchical location selection)
+    location: Optional[dict] = None
+    
+    class Config:
+        extra = "ignore"  # Ignore extra fields not in the model
 
 
 # ===== Helper: Auto-create Profile in JLC DB =====
