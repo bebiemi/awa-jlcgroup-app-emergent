@@ -418,35 +418,30 @@ export default function ValidationsPage() {
                     </div>
 
                     {validation.status === 'pending' && (
-                      <div className="flex flex-wrap gap-2 ml-4">
-                        <button
+                      <ActionButtonGroup className="ml-4">
+                        <ActionButton 
+                          type="approve" 
                           onClick={() => handleApprove(validation)}
-                          className="inline-flex items-center px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition text-sm"
-                        >
-                          <CheckCircleIcon className="h-4 w-4 mr-1" />
-                          Approuver
-                        </button>
-                        <button
+                          size="lg"
+                        />
+                        <ActionButton 
+                          type="reject" 
                           onClick={() => {
                             setSelectedValidation(validation)
                             setShowRejectModal(true)
                           }}
-                          className="inline-flex items-center px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition text-sm"
-                        >
-                          <XCircleIcon className="h-4 w-4 mr-1" />
-                          Rejeter
-                        </button>
-                        <button
+                          size="lg"
+                        />
+                        <ActionButton 
+                          type="assign" 
                           onClick={() => {
                             setSelectedValidation(validation)
                             setShowAssignModal(true)
                           }}
-                          className="inline-flex items-center px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm"
-                        >
-                          <UserPlusIcon className="h-4 w-4 mr-1" />
-                          {validation.assigned_to ? 'Réassigner' : 'Assigner'}
-                        </button>
-                      </div>
+                          size="lg"
+                          label={validation.assigned_to ? 'Réassigner' : 'Assigner'}
+                        />
+                      </ActionButtonGroup>
                     )}
                     
                     {validation.assigned_to && (
