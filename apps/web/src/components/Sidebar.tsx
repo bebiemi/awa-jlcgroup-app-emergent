@@ -80,6 +80,12 @@ export default function Sidebar() {
         ],
       },
       {
+        title: 'Processus',
+        items: [
+          { label: 'Missions', path: '/missions', icon: BriefcaseIcon },
+        ],
+      },
+      {
         title: 'Sécurité',
         items: [
           { label: 'Profils & Permissions', path: '/admin/profiles', icon: Cog6ToothIcon },
