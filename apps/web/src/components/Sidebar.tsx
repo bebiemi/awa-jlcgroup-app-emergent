@@ -77,7 +77,7 @@ export default function Sidebar() {
         title: 'Compte',
         items: [
           { label: 'Mon Profil', path: '/profile', icon: UserCircleIcon },
-          { label: 'Paramètres', path: '/settings', icon: Cog6ToothIcon },
+          { label: 'Sécurité', path: '/security', icon: ShieldCheckIcon },
         ],
       }
     )
@@ -99,7 +99,7 @@ export default function Sidebar() {
         title: 'Compte',
         items: [
           { label: 'Mon Profil', path: '/profile', icon: UserCircleIcon },
-          { label: 'Paramètres', path: '/settings', icon: Cog6ToothIcon },
+          { label: 'Sécurité', path: '/security', icon: ShieldCheckIcon },
         ],
       }
     )
@@ -121,7 +121,7 @@ export default function Sidebar() {
         title: 'Compte',
         items: [
           { label: 'Mon Profil', path: '/profile', icon: UserCircleIcon },
-          { label: 'Paramètres', path: '/settings', icon: Cog6ToothIcon },
+          { label: 'Sécurité', path: '/security', icon: ShieldCheckIcon },
         ],
       }
     )
