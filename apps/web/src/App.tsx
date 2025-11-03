@@ -23,6 +23,8 @@ import OffresPage from './features/missions/pages/OffresPage'
 import MissionDetailPage from './features/missions/pages/MissionDetailPage'
 import CreateMissionPage from './features/missions/pages/CreateMissionPage'
 import ApplyMissionPage from './features/missions/pages/ApplyMissionPage'
+import ApplicationsManagementPage from './features/missions/pages/ApplicationsManagementPage'
+import MyApplicationsPage from './features/missions/pages/MyApplicationsPage'
 import ProtectedRoute from './features/auth/components/ProtectedRoute'
 
 function App() {
