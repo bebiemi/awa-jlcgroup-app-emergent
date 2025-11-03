@@ -146,14 +146,16 @@ export default function Sidebar() {
       {/* Header */}
       <div className="p-4 border-b border-jlc-purple-700">
         <div className="flex items-center justify-between">
-          {!isCollapsed && (
-            <div>
-              <h2 className="text-xl font-bold">JLC Group</h2>
-              <p className="text-xs text-jlc-purple-300 mt-1">
-                {isAdmin ? 'Administration' : isInterim ? 'Intérimaire' : 'Entreprise'}
-              </p>
-            </div>
-          )}
+          <Link to={getDashboardPath()} className="flex items-center space-x-3 hover:opacity-80 transition">
+            {!isCollapsed && (
+              <div>
+                <h2 className="text-xl font-bold">JLC Group</h2>
+                <p className="text-xs text-jlc-purple-300 mt-1">
+                  {isAdmin ? 'Administration' : isInterim ? 'Intérimaire' : 'Entreprise'}
+                </p>
+              </div>
+            )}
+          </Link>
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
             className="p-2 rounded-lg hover:bg-jlc-purple-700 transition-colors hidden lg:block"
