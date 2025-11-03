@@ -92,10 +92,10 @@ export interface Notification {
 
 // API Response types
 export interface LoginResponse {
-  success: boolean
+  success?: boolean
   mfa_required?: boolean
-  mfa_method?: 'totp' | 'email'
-  session_id?: string
+  mfa_session_token?: string
+  available_methods?: string[]
   message?: string
   access_token?: string
   refresh_token?: string
