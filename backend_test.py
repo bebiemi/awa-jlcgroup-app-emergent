@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Comprehensive MFA Backend Testing
-Tests Multi-Factor Authentication system with TOTP, Email OTP, and Recovery Codes
+User Creation Endpoint Testing
+Tests the POST /api/auth/security/users endpoint that's failing with 500 error
 """
 
 import requests
@@ -10,7 +10,6 @@ import sys
 import os
 import random
 import string
-import pyotp
 import time
 from datetime import datetime
 import re
