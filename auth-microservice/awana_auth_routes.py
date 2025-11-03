@@ -1218,6 +1218,83 @@ async def get_current_user_info(
     return current_user
 
 
+
+# ===== Admin Dashboard Stats =====
+
+@auth_router.get("/admin/stats")
+async def get_admin_stats(
+    current_user: User = Depends(require_admin),
+    db: AsyncIOMotorDatabase = Depends(get_database)
+):
+    """Get dashboard statistics for admin"""
+    try:
+        # Total users by status
+        total_users = await db.users.count_documents({})
+        active_users = await db.users.count_documents({"status": "active"})
+        pending_users = await db.users.count_documents({"status": "pending"})
+        suspended_users = await db.users.count_documents({"status": "suspended"})
+        
+        # Users by role
+        admin_users = await db.users.count_documents({"roles": "admin"})
+        super_admin_users = await db.users.count_documents({"roles": "super_admin"})
+        interim_users = await db.users.count_documents({"roles": "interim"})
+        company_users = await db.users.count_documents({"roles": "company"})
+        agency_users = await db.users.count_documents({"roles": "agency"})
+        
+        # Users by provider
+        local_users = await db.users.count_documents({"provider": "local"})
+        google_users = await db.users.count_documents({"provider": "google"})
+        
+        # MFA statistics
+        mfa_enabled_users = await db.users.count_documents({"mfa_enabled": True})
+        
+        # Recent users (last 7 days)
+        seven_days_ago = (datetime.now(timezone.utc) - timedelta(days=7)).isoformat()
+        recent_users = await db.users.count_documents({"created_at": {"$gte": seven_days_ago}})
+        
+        # Recent logins (last 24 hours)
+        one_day_ago = (datetime.now(timezone.utc) - timedelta(days=1)).isoformat()
+        recent_logins = await db.users.count_documents({"last_login_at": {"$gte": one_day_ago}})
+        
+        # Groups count
+        groups_count = await db.groups.count_documents({})
+        
+        # Profiles count
+        profiles_count = await db.profiles.count_documents({})
+        
+        return {
+            "total_users": total_users,
+            "users_by_status": {
+                "active": active_users,
+                "pending": pending_users,
+                "suspended": suspended_users
+            },
+            "users_by_role": {
+                "admin": admin_users,
+                "super_admin": super_admin_users,
+                "interim": interim_users,
+                "company": company_users,
+                "agency": agency_users
+            },
+            "users_by_provider": {
+                "local": local_users,
+                "google": google_users
+            },
+            "mfa_enabled": mfa_enabled_users,
+            "recent_users_7d": recent_users,
+            "recent_logins_24h": recent_logins,
+            "groups_count": groups_count,
+            "profiles_count": profiles_count,
+            "last_updated": datetime.now(timezone.utc).isoformat()
+        }
+    except Exception as e:
+        logger.error(f"Error getting admin stats: {e}", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Error retrieving statistics"
+        )
+
+
 # ===== User Management Endpoints =====
 
 @users_router.get("", response_model=List[User])
