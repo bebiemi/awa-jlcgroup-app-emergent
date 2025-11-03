@@ -110,7 +110,7 @@ export default function Sidebar() {
       {
         title: 'Missions',
         items: [
-          { label: 'Mes Missions', path: '/missions', icon: BriefcaseIcon },
+          { label: 'Offres disponibles', path: '/offres', icon: BriefcaseIcon },
         ],
       },
       {
