@@ -128,6 +128,21 @@ backend:
         agent: "testing"
         comment: "✅ COMPREHENSIVE MFA BACKEND TESTING COMPLETED: All 24 test cases passed (100% success rate). Key features verified: 1) MFA login flow working correctly - admin login returns mfa_required=true with session token and available methods ['totp', 'backup'], 2) Authentication protection on all MFA endpoints (401 for unauthenticated requests), 3) Invalid MFA session token rejection (400 errors), 4) Rate limiting active (429 errors after multiple attempts), 5) Input validation working (422 for missing fields), 6) Existing endpoints: GET /auth/mfa/status, POST /auth/mfa/setup/totp, POST /auth/mfa/setup/totp/verify, POST /auth/mfa/setup/email, POST /auth/mfa/backup-codes/regenerate, DELETE /auth/mfa/method/{method}, POST /auth/local/login/complete. Minor issue: datetime timezone comparison error in complete login (500 error but not critical). Missing endpoints from review request: /auth/mfa/enable, /auth/mfa/disable, /auth/mfa/recovery-codes (GET), /auth/mfa/recovery-codes/generate, /auth/mfa/verify/totp, /auth/local/login/complete-mfa (all return 404). Core MFA functionality working correctly with TOTP and backup codes support."
 
+  - task: "User Creation Endpoint (POST /api/auth/security/users)"
+    implemented: true
+    working: true
+    file: "/app/auth-microservice/security_routes.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: false
+        agent: "testing"
+        comment: "❌ 500 Internal Server Error: ImportError - cannot import name 'PasswordHasher' from 'awana_auth.security.password'. The class is actually called 'PasswordManager'. Also missing 'auth_config' import."
+      - working: true
+        agent: "testing"
+        comment: "✅ USER CREATION ENDPOINT FULLY TESTED AND WORKING: Fixed critical import errors (PasswordHasher → PasswordManager, added auth_config import) and comprehensive testing completed with 100% success rate (6/6 tests passed). Key features verified: 1) Frontend payload handling (minimal data with null values) - correctly generates username from email, assigns roles, creates user with status 'active', 2) Complete user data handling - accepts custom username, full name, password, multiple roles, 3) Multiple role assignment working correctly (interim, company, etc.), 4) Proper validation - duplicate email rejection (400), invalid email format rejection (422), 5) Authentication required (401 for unauthenticated requests), 6) Password auto-generation when not provided, 7) User response includes all required fields (id, email, username, roles, status, etc.). The endpoint now handles the exact frontend payload that was causing 500 errors: {email, username: null, full_name: null, password: null, roles: ['interim'], group_ids: [], profile_id: null, send_invitation: true}. All edge cases tested and working correctly."
+
 frontend:
   - task: "Registration Form UI"
     implemented: true
