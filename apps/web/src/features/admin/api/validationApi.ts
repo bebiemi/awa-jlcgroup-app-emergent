@@ -79,6 +79,11 @@ export const validationApi = createApi({
       providesTags: ['Validation'],
     }),
     
+    getMyValidation: builder.query<Validation | null, void>({
+      query: () => '/validations/my-validation',
+      providesTags: ['Validation'],
+    }),
+    
     approveValidation: builder.mutation<{ success: boolean; message: string }, { id: string; notes?: string }>({
       query: ({ id, notes }) => ({
         url: `/validations/${id}/approve`,
