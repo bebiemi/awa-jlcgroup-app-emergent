@@ -18,6 +18,8 @@ import LocationManagementPage from './features/admin/pages/LocationManagementPag
 import InterimDashboard from './features/interim/pages/InterimDashboard'
 import ProfilePage from './features/profile/pages/ProfilePage'
 import SecuritySettingsPage from './pages/SecuritySettingsPage'
+import MissionsPage from './features/missions/pages/MissionsPage'
+import OffresPage from './features/missions/pages/OffresPage'
 import ProtectedRoute from './features/auth/components/ProtectedRoute'
 
 function App() {
