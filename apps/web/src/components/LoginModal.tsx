@@ -100,7 +100,14 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
 
           {/* Header */}
           <div className="text-center mb-6">
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">Connexion</h2>
+            <div className="flex justify-center mb-3">
+              <img 
+                src="/logo-jlc.png" 
+                alt="JLC GROUP" 
+                className="h-16 w-auto object-contain"
+              />
+            </div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">Connexion</h2>
             <p className="text-gray-600">Accédez à votre espace JLC Group</p>
           </div>
 
