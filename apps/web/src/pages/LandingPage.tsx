@@ -1,5 +1,6 @@
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { useAppSelector } from '@/store/hooks'
 import { 
   BriefcaseIcon, 
   BuildingOfficeIcon, 
@@ -8,12 +9,25 @@ import {
   ArrowRightIcon,
   PhoneIcon,
   EnvelopeIcon,
-  MapPinIcon
+  MapPinIcon,
+  ArrowRightOnRectangleIcon
 } from '@heroicons/react/24/outline'
 import LoginModal from '@/components/LoginModal'
 
 export default function LandingPage() {
   const [showLoginModal, setShowLoginModal] = useState(false)
+  const { isAuthenticated, user } = useAppSelector((state) => state.auth)
+  const navigate = useNavigate()
+
+  // Get dashboard path based on user role
+  const getDashboardPath = () => {
+    if (!user) return '/profile'
+    if (user.roles.includes('admin') || user.roles.includes('super_admin')) return '/admin'
+    if (user.roles.includes('interim')) return '/interimaire'
+    if (user.roles.includes('company')) return '/entreprise'
+    if (user.roles.includes('agency')) return '/agence'
+    return '/profile'
+  }
   
   const stats = [
     { label: 'Offres actives', value: '150+' },
