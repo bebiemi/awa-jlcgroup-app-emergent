@@ -326,6 +326,16 @@ export default function UserManagementPage() {
                             <NoSymbolIcon className="h-5 w-5" />
                           </button>
                           <button
+                            onClick={() => {
+                              setSelectedUser(user)
+                              setShowResetMfaModal(true)
+                            }}
+                            className="p-2 text-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
+                            title="Réinitialiser MFA"
+                          >
+                            <ShieldExclamationIcon className="h-5 w-5" />
+                          </button>
+                          <button
                             onClick={() => handleDelete(user)}
                             className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                             title="Supprimer"
