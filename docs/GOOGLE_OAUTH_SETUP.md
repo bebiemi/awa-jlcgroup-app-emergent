@@ -43,9 +43,9 @@
 - App logo: (optionnel, vous pouvez uploader le logo JLC)
 
 **App domain:**
-- Application home page: `https://jlc-user-portal.preview.emergentagent.com`
-- Application privacy policy link: `https://jlc-user-portal.preview.emergentagent.com/privacy`
-- Application terms of service link: `https://jlc-user-portal.preview.emergentagent.com/terms`
+- Application home page: `https://mon-app.com`
+- Application privacy policy link: `https://mon-app.com/privacy`
+- Application terms of service link: `https://mon-app.com/terms`
 
 **Authorized domains:**
 - Ajoutez: `emergentagent.com`
@@ -89,13 +89,13 @@
 
 **Authorized JavaScript origins:**
 ```
-https://jlc-user-portal.preview.emergentagent.com
+https://https://mon-app.com
 http://localhost:3000
 ```
 
 **Authorized redirect URIs:**
 ```
-https://jlc-user-portal.preview.emergentagent.com/auth/google/callback
+https://https://mon-app.com/auth/google/callback
 http://localhost:3000/auth/google/callback
 ```
 
@@ -106,7 +106,7 @@ http://localhost:3000/auth/google/callback
 ## Étape 6: Copier les Credentials
 
 Une popup s'affiche avec:
-- ✅ **Client ID**: `123456789-xxxxx.apps.googleusercontent.com`
+- ✅ **Client ID**: `xxxxx-xxxxx.apps.googleusercontent.com`
 - ✅ **Client Secret**: `GOCSPX-xxxxxxxxxxxxx`
 
 **⚠️ IMPORTANT**: 
@@ -122,12 +122,6 @@ Une fois que vous avez:
 1. ✅ Client ID
 2. ✅ Client Secret
 
-**Fournissez-les moi dans ce format:**
-
-```
-Client ID: 123456789-xxxxx.apps.googleusercontent.com
-Client Secret: GOCSPX-xxxxxxxxxxxxx
-```
 
 ---
 

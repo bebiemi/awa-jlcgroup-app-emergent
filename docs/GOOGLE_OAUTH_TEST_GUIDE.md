@@ -2,8 +2,8 @@
 
 ## ✅ Configuration Terminée!
 
-**Client ID**: `166774342464-b9tt2eh4hd7viva770r759b0f7fha67h.apps.googleusercontent.com`  
-**Client Secret**: `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` ✅  
+**Client ID**: `12345xxxxxxx.apps.googleusercontent.com`  
+**Client Secret**: `xxxxxxxxxxxxxxxxxxxxxxxxxxx` ✅  
 **Status**: 🟢 **ACTIF ET FONCTIONNEL**
 
 ---
@@ -12,7 +12,7 @@
 
 ### Étape 1: Accéder à la Page de Login
 
-**URL**: https://jlc-user-portal.preview.emergentagent.com/login
+**URL**: https://mon-app.com/login
 
 ✅ Vous devriez voir:
 - Logo JLC GROUP ⭐
@@ -67,7 +67,7 @@ This will allow JLC Group - Gestion Intérim to:
 ### Étape 5: Callback et Redirection
 
 **Ce qui se passe automatiquement**:
-1. Google redirige vers: `https://jlc-user-portal.preview.emergentagent.com/auth/google/callback?code=...&state=...`
+1. Google redirige vers: `https://mon-app.com/auth/google/callback?code=...&state=...`
 2. ⏳ Page de chargement: "Connexion en cours..."
 3. 🔄 Appel à l'API: `POST /auth-api/auth/google/callback`
 4. 🎉 Création/mise à jour du compte utilisateur
@@ -255,16 +255,16 @@ INFO:     GET /api/notifications
 ### Variables d'Environnement (`.env`)
 
 ```env
-GOOGLE_CLIENT_ID=166774342464-b9tt2eh4hd7viva770r759b0f7fha67h.apps.googleusercontent.com
-GOOGLE_CLIENT_SECRET=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
-GOOGLE_REDIRECT_URI=https://jlc-user-portal.preview.emergentagent.com/auth/google/callback
+GOOGLE_CLIENT_ID=12345xxxxxxxxxxxxxxxxxxxxx.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=xxxxxxxxxxxxxxxxxxxxxxxx
+GOOGLE_REDIRECT_URI=https://mon-app.com/auth/google/callback
 ```
 
 ### Google Cloud Console - Configuration Actuelle
 
 **Redirect URIs autorisés**:
 ```
-https://jlc-user-portal.preview.emergentagent.com/auth/google/callback
+https://mon-app.com/auth/google/callback
 http://localhost:3000/auth/google/callback
 ```
 
@@ -383,4 +383,4 @@ Avant de considérer Google OAuth comme "production-ready":
 
 **🎉 STATUS**: Google OAuth est maintenant **PLEINEMENT FONCTIONNEL** sur le preview!
 
-**Test immédiatement**: https://jlc-user-portal.preview.emergentagent.com/login
+**Test immédiatement**: https://mon-app.com/login
