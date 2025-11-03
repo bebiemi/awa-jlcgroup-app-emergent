@@ -430,23 +430,8 @@ export default function ValidationsPage() {
           </div>
         </div>
       )}
-                  setSelectedValidation(null)
-                }}
-                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
-              >
-                Annuler
-              </button>
-              <button
-                onClick={handleReject}
-                disabled={!rejectionReason.trim()}
-                className="flex-1 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition disabled:opacity-50"
-              >
-                Rejeter
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </Layout>
+  )
+}
   )
 }
