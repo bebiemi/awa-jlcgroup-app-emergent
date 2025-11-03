@@ -137,6 +137,14 @@ function App() {
           </ProtectedRoute>
         }
       />
+      <Route
+        path="/missions/:id/candidatures"
+        element={
+          <ProtectedRoute requiredRoles={['admin', 'super_admin', 'commercial']}>
+            <ApplicationsManagementPage />
+          </ProtectedRoute>
+        }
+      />
       
       {/* Routes Offres - Intérimaires */}
       <Route
@@ -160,6 +168,14 @@ function App() {
         element={
           <ProtectedRoute requiredRoles={['interim']}>
             <ApplyMissionPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/mes-candidatures"
+        element={
+          <ProtectedRoute requiredRoles={['interim']}>
+            <MyApplicationsPage />
           </ProtectedRoute>
         }
       />
