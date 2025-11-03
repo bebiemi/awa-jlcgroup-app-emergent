@@ -118,9 +118,14 @@ export default function MfaSettings() {
       return
     }
 
+    if (!mfaStatus?.method) {
+      toast.error('Aucune méthode MFA active')
+      return
+    }
+
     setSetupLoading(true)
     try {
-      await disableMfa({ password: disablePassword }).unwrap()
+      await disableMfaMethod({ method: mfaStatus.method, password: disablePassword }).unwrap()
       toast.success('MFA désactivé')
       setShowDisableConfirm(false)
       setDisablePassword('')
