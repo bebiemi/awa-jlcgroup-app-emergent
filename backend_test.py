@@ -1008,6 +1008,16 @@ def run_all_tests():
         test_results["critical_failures"].append("MFA error handling failed")
     test_results["total_tests"] += 5
     
+    # Test 4: Missing Endpoints Check
+    print(f"\n{Colors.BLUE}Phase 4: Missing Endpoints Check{Colors.ENDC}")
+    if test_mfa_missing_endpoints():
+        test_results["passed_tests"] += 3  # Approximate number of sub-tests
+        log_test("Missing Endpoints Check", "PASS", "Missing endpoints check completed")
+    else:
+        test_results["failed_tests"] += 3
+        test_results["critical_failures"].append("Missing endpoints check failed")
+    test_results["total_tests"] += 3
+    
     # Summary
     print(f"\n{Colors.BOLD}=== Test Summary ==={Colors.ENDC}")
     print(f"Total Tests: {test_results['total_tests']}")
