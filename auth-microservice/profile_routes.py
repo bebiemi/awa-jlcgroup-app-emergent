@@ -189,7 +189,7 @@ async def upload_document(
     file_size = len(file_content)
     
     if file_size > MAX_FILE_SIZE:
-        raise HTTPException(status_code=400, detail=f"File too large. Maximum size: 5MB")
+        raise HTTPException(status_code=400, detail="File too large. Maximum size: 5MB")
     
     # Validate MIME type
     mime_type = file.content_type or mimetypes.guess_type(file.filename)[0]
