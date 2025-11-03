@@ -27,14 +27,14 @@ export interface LocationCreate {
   parent_id?: string | null
   custom_fields?: Record<string, any>
   is_visible?: boolean
-  dial_code?: string
+  phone_code?: string
 }
 
 export interface LocationUpdate {
   name?: string
   custom_fields?: Record<string, any>
   is_visible?: boolean
-  dial_code?: string
+  phone_code?: string
 }
 
 export const locationApi = createApi({
