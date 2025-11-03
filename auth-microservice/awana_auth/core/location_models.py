@@ -27,6 +27,9 @@ class Location(BaseModel):
     is_visible: bool = True
     is_required: bool = False  # Only true for country, city, neighborhood
     
+    # Phone code (for countries)
+    phone_code: Optional[str] = None  # e.g., "+241" for Gabon, "+33" for France
+    
     # Standard custom fields
     postal_code: Optional[str] = None
     gps_latitude: Optional[float] = None
