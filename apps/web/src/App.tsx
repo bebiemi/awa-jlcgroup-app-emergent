@@ -107,6 +107,14 @@ function App() {
           </ProtectedRoute>
         }
       />
+      <Route
+        path="/security"
+        element={
+          <ProtectedRoute>
+            <SecuritySettingsPage />
+          </ProtectedRoute>
+        }
+      />
 
       {/* Dashboard redirect for authenticated users */}
       <Route
