@@ -1,5 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit'
 import { authApi } from '@/features/auth/api/authApi'
+import { mfaApi } from '@/features/auth/api/mfaApi'
 import { profileApi } from '@/features/profile/api/profileApi'
 import { validationApi } from '@/features/admin/api/validationApi'
 import { notificationApi } from '@/features/notifications/api/notificationApi'
@@ -12,6 +13,7 @@ export const store = configureStore({
   reducer: {
     auth: authReducer,
     [authApi.reducerPath]: authApi.reducer,
+    [mfaApi.reducerPath]: mfaApi.reducer,
     [profileApi.reducerPath]: profileApi.reducer,
     [validationApi.reducerPath]: validationApi.reducer,
     [notificationApi.reducerPath]: notificationApi.reducer,
@@ -22,6 +24,7 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
       .concat(authApi.middleware)
+      .concat(mfaApi.middleware)
       .concat(profileApi.middleware)
       .concat(validationApi.middleware)
       .concat(notificationApi.middleware)
