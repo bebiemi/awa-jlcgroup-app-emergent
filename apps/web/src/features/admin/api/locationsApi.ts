@@ -72,7 +72,7 @@ export interface LocationUpdate {
 export const locationsApi = createApi({
   reducerPath: 'locationsApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: '/auth-api',
+    baseUrl: '/auth-api/api',
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as RootState).auth.token
       if (token) {
@@ -89,29 +89,29 @@ export const locationsApi = createApi({
         if (params.type) searchParams.append('type', params.type)
         if (params.parent_id !== undefined) searchParams.append('parent_id', params.parent_id || '')
         if (params.search) searchParams.append('search', params.search)
-        return `/api/locations?${searchParams.toString()}`
+        return `/locations?${searchParams.toString()}`
       },
       providesTags: ['Locations'],
     }),
 
     getLocationTree: builder.query<LocationTree[], void>({
-      query: () => '/api/locations/tree',
+      query: () => '/locations/tree',
       providesTags: ['LocationTree'],
     }),
 
     getLocation: builder.query<Location, string>({
-      query: (id) => `/api/locations/${id}`,
+      query: (id) => `/locations/${id}`,
       providesTags: ['Locations'],
     }),
 
     getLocationChildren: builder.query<Location[], string>({
-      query: (parentId) => `/api/locations/children/${parentId}`,
+      query: (parentId) => `/locations/children/${parentId}`,
       providesTags: ['Locations'],
     }),
 
     createLocation: builder.mutation<Location, LocationCreate>({
       query: (body) => ({
-        url: '/api/locations',
+        url: '/locations',
         method: 'POST',
         body,
       }),
@@ -120,7 +120,7 @@ export const locationsApi = createApi({
 
     updateLocation: builder.mutation<Location, { id: string; data: LocationUpdate }>({
       query: ({ id, data }) => ({
-        url: `/api/locations/${id}`,
+        url: `/locations/${id}`,
         method: 'PUT',
         body: data,
       }),
@@ -129,7 +129,7 @@ export const locationsApi = createApi({
 
     deleteLocation: builder.mutation<{ success: boolean; message: string }, string>({
       query: (id) => ({
-        url: `/api/locations/${id}`,
+        url: `/locations/${id}`,
         method: 'DELETE',
       }),
       invalidatesTags: ['Locations', 'LocationTree'],
@@ -137,7 +137,7 @@ export const locationsApi = createApi({
 
     toggleLocationVisibility: builder.mutation<{ success: boolean; message: string }, { id: string; is_visible: boolean }>({
       query: ({ id, is_visible }) => ({
-        url: `/api/locations/${id}/visibility?is_visible=${is_visible}`,
+        url: `/locations/${id}/visibility?is_visible=${is_visible}`,
         method: 'PATCH',
       }),
       invalidatesTags: ['Locations', 'LocationTree'],
