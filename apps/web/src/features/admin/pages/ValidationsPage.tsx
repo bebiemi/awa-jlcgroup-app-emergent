@@ -27,6 +27,11 @@ type TabType = 'interim' | 'company' | 'collaborator'
 export default function ValidationsPage() {
   const [activeTab, setActiveTab] = useState<TabType>('interim')
   const [statusFilter, setStatusFilter] = useState<string>('pending')
+  const [selectedValidation, setSelectedValidation] = useState<Validation | null>(null)
+  const [showRejectModal, setShowRejectModal] = useState(false)
+  const [showAssignModal, setShowAssignModal] = useState(false)
+  const [rejectionReason, setRejectionReason] = useState('')
+  const [selectedValidator, setSelectedValidator] = useState('')
 
   const { data: stats } = useGetValidationStatsQuery()
   const { data: validations = [], isLoading, refetch } = useGetValidationsQuery({
@@ -66,12 +71,6 @@ export default function ValidationsPage() {
   const [rejectValidation] = useRejectValidationMutation()
   const [addCountry] = useAddCountryFromValidationMutation()
   const [assignValidation] = useAssignValidationMutation()
-
-  const [selectedValidation, setSelectedValidation] = useState<Validation | null>(null)
-  const [showRejectModal, setShowRejectModal] = useState(false)
-  const [showAssignModal, setShowAssignModal] = useState(false)
-  const [rejectionReason, setRejectionReason] = useState('')
-  const [selectedValidator, setSelectedValidator] = useState('')
 
   const handleApprove = async (validation: Validation) => {
     if (!confirm(`Approuver l'inscription de ${validation.user_full_name} ?`)) return
