@@ -9,6 +9,7 @@ from motor.motor_asyncio import AsyncIOMotorDatabase
 import os
 
 from awana_auth.core.models import User, UserStatus, AuthProvider as AuthProviderEnum
+from awana_auth.core.location_models import Validation, ValidationStatus
 from awana_auth.core.config import auth_config
 from awana_auth.core.dependencies import (
     get_current_user,
