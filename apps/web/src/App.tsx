@@ -106,6 +106,27 @@ function App() {
           </ProtectedRoute>
         }
       />
+      
+      {/* Routes Missions - Admin & Commercial */}
+      <Route
+        path="/missions"
+        element={
+          <ProtectedRoute requiredRoles={['admin', 'super_admin', 'commercial', 'company']}>
+            <MissionsPage />
+          </ProtectedRoute>
+        }
+      />
+      
+      {/* Routes Offres - Intérimaires */}
+      <Route
+        path="/offres"
+        element={
+          <ProtectedRoute requiredRoles={['interim']}>
+            <OffresPage />
+          </ProtectedRoute>
+        }
+      />
+      
       <Route
         path="/interimaire"
         element={
@@ -115,10 +136,10 @@ function App() {
         }
       />
       <Route
-        path="/missions"
+        path="/missions-interim"
         element={
           <ProtectedRoute requiredRoles={['interim']}>
-            <Navigate to="/interimaire" replace />
+            <Navigate to="/offres" replace />
           </ProtectedRoute>
         }
       />
