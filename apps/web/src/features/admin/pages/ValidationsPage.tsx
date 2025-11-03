@@ -30,8 +30,32 @@ export default function ValidationsPage() {
   const [selectedValidation, setSelectedValidation] = useState<Validation | null>(null)
   const [showRejectModal, setShowRejectModal] = useState(false)
   const [showAssignModal, setShowAssignModal] = useState(false)
+  const [showBulkActionsModal, setShowBulkActionsModal] = useState(false)
+  const [bulkActionType, setBulkActionType] = useState<'all' | 'interim' | 'company' | 'collaborator' | 'warnings'>('all')
   const [rejectionReason, setRejectionReason] = useState('')
   const [selectedValidator, setSelectedValidator] = useState('')
+  const [selectedValidations, setSelectedValidations] = useState<string[]>([])
+
+  const handleTileClick = (type: 'all' | 'interim' | 'company' | 'collaborator' | 'warnings') => {
+    setBulkActionType(type)
+    
+    // Filter validations based on tile clicked
+    let filtered = validations
+    if (type === 'interim') {
+      filtered = validations.filter((v: Validation) => v.validation_type === 'interim' && v.status === 'pending')
+    } else if (type === 'company') {
+      filtered = validations.filter((v: Validation) => v.validation_type === 'company' && v.status === 'pending')
+    } else if (type === 'collaborator') {
+      filtered = validations.filter((v: Validation) => v.validation_type === 'collaborator' && v.status === 'pending')
+    } else if (type === 'warnings') {
+      filtered = validations.filter((v: Validation) => v.has_location_warning && v.status === 'pending')
+    } else {
+      filtered = validations.filter((v: Validation) => v.status === 'pending')
+    }
+    
+    setSelectedValidations(filtered.map((v: Validation) => v.id))
+    setShowBulkActionsModal(true)
+  }
 
   const { data: stats } = useGetValidationStatsQuery()
   const { data: validations = [], isLoading, refetch } = useGetValidationsQuery({
