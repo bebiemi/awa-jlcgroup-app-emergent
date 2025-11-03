@@ -471,8 +471,21 @@ def test_admin_login():
     
     # Check if MFA is required
     if response.get("mfa_required", False):
-        log_test("Admin Login - MFA Required", "INFO", "Admin has MFA enabled, login requires MFA completion")
-        return None  # For now, we'll handle this case separately
+        log_test("Admin Login - MFA Required", "INFO", "Admin has MFA enabled, attempting MFA completion")
+        
+        # Get MFA session token and available methods
+        mfa_session_token = response.get("mfa_session_token")
+        available_methods = response.get("available_methods", [])
+        
+        if not mfa_session_token:
+            log_test("Admin Login - MFA Session", "FAIL", "No MFA session token received")
+            return None
+        
+        log_test("Admin Login - MFA Session", "PASS", f"MFA session created, methods: {available_methods}")
+        
+        # Try to complete MFA using backup code or disable MFA first
+        # For testing purposes, let's try to disable MFA first by creating a new admin without MFA
+        return None  # We'll handle this differently
     
     if "access_token" in response:
         log_test("Admin Login - Token Generation", "PASS", 
@@ -481,6 +494,37 @@ def test_admin_login():
     else:
         log_test("Admin Login - Token Generation", "FAIL", f"No access token received. Response: {response}")
         return None
+
+
+def create_test_admin_without_mfa():
+    """Create a test admin user without MFA for testing purposes"""
+    print(f"\n{Colors.BOLD}=== Creating Test Admin Without MFA ==={Colors.ENDC}")
+    
+    # Generate unique admin credentials
+    random_suffix = ''.join(random.choices(string.ascii_lowercase + string.digits, k=6))
+    test_admin_data = {
+        "username": f"testadmin_{random_suffix}",
+        "email": f"testadmin.{random_suffix}@awanagroup.com",
+        "password": "TestAdmin123!",
+        "full_name": "Test Admin User",
+        "role": "admin"
+    }
+    
+    # Register the test admin
+    response = test_endpoint(
+        "POST",
+        f"{AUTH_BASE_URL}/auth/local/register",
+        data=test_admin_data,
+        expected_status=200,
+        test_name="Create Test Admin"
+    )
+    
+    if response and "access_token" in response:
+        log_test("Test Admin Creation", "PASS", f"Test admin created: {test_admin_data['username']}")
+        return response["access_token"], test_admin_data
+    else:
+        log_test("Test Admin Creation", "FAIL", "Could not create test admin")
+        return None, None
 
 
 # Removed admin user management tests - focusing on MFA testing
