@@ -111,6 +111,7 @@ export default function Sidebar() {
         title: 'Missions',
         items: [
           { label: 'Offres disponibles', path: '/offres', icon: BriefcaseIcon },
+          { label: 'Mes Candidatures', path: '/mes-candidatures', icon: ClipboardDocumentCheckIcon },
         ],
       },
       {
