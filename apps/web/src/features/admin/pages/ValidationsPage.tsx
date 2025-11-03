@@ -689,7 +689,6 @@ export default function ValidationsPage() {
               </div>
             </div>
           </div>
-        </div>
       </Modal>
     </Layout>
   )
