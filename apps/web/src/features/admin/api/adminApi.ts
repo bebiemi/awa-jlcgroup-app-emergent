@@ -1,11 +1,36 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import type { DashboardKPIs } from '@/types'
 import type { RootState } from '@/store/store'
+
+export interface AdminStats {
+  total_users: number
+  users_by_status: {
+    active: number
+    pending: number
+    suspended: number
+  }
+  users_by_role: {
+    admin: number
+    super_admin: number
+    interim: number
+    company: number
+    agency: number
+  }
+  users_by_provider: {
+    local: number
+    google: number
+  }
+  mfa_enabled: number
+  recent_users_7d: number
+  recent_logins_24h: number
+  groups_count: number
+  profiles_count: number
+  last_updated: string
+}
 
 export const adminApi = createApi({
   reducerPath: 'adminApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: '/api',
+    baseUrl: '/auth-api/auth',
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as RootState).auth.token
       if (token) {
@@ -14,14 +39,13 @@ export const adminApi = createApi({
       return headers
     },
   }),
+  tagTypes: ['AdminStats'],
   endpoints: (builder) => ({
-    getDashboardKPIs: builder.query<DashboardKPIs, void>({
-      query: () => '/admin/dashboard/kpis',
-    }),
-    getUserAudit: builder.query<any, string>({
-      query: (userId) => `/admin/users/${userId}/audit`,
+    getAdminStats: builder.query<AdminStats, void>({
+      query: () => '/admin/stats',
+      providesTags: ['AdminStats'],
     }),
   }),
 })
 
-export const { useGetDashboardKPIsQuery, useGetUserAuditQuery } = adminApi
+export const { useGetAdminStatsQuery } = adminApi
