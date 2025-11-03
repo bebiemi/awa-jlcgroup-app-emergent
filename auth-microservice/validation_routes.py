@@ -76,6 +76,7 @@ async def get_validation_stats(
     total_pending = await db.validations.count_documents({"status": "pending"})
     pending_interim = await db.validations.count_documents({"status": "pending", "validation_type": "interim"})
     pending_company = await db.validations.count_documents({"status": "pending", "validation_type": "company"})
+    pending_collaborator = await db.validations.count_documents({"status": "pending", "validation_type": "collaborator"})
     
     with_warnings = await db.validations.count_documents({
         "status": "pending",
@@ -89,6 +90,7 @@ async def get_validation_stats(
         "total_pending": total_pending,
         "pending_interim": pending_interim,
         "pending_company": pending_company,
+        "pending_collaborator": pending_collaborator,
         "with_location_warnings": with_warnings,
         "total_approved": total_approved,
         "total_rejected": total_rejected,
