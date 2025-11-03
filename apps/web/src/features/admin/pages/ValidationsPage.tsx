@@ -6,8 +6,10 @@ import {
   useApproveValidationMutation,
   useRejectValidationMutation,
   useAddCountryFromValidationMutation,
+  useAssignValidationMutation,
   type Validation,
 } from '../api/validationApi'
+import { useGetUsersQuery } from '../api/usersApi'
 import {
   CheckCircleIcon,
   XCircleIcon,
@@ -16,6 +18,7 @@ import {
   MapPinIcon,
   UserIcon,
   BuildingOfficeIcon,
+  UserPlusIcon,
 } from '@heroicons/react/24/outline'
 import toast from 'react-hot-toast'
 
@@ -33,13 +36,22 @@ export default function ValidationsPage() {
     page_size: 50,
   })
 
+  // Fetch validators (admins and commercials)
+  const { data: usersData } = useGetUsersQuery({ page: 1, page_size: 100 })
+  const validators = usersData?.users?.filter((user: any) => 
+    user.roles?.some((role: string) => ['admin', 'super_admin', 'commercial'].includes(role))
+  ) || []
+
   const [approveValidation] = useApproveValidationMutation()
   const [rejectValidation] = useRejectValidationMutation()
   const [addCountry] = useAddCountryFromValidationMutation()
+  const [assignValidation] = useAssignValidationMutation()
 
   const [selectedValidation, setSelectedValidation] = useState<Validation | null>(null)
   const [showRejectModal, setShowRejectModal] = useState(false)
+  const [showAssignModal, setShowAssignModal] = useState(false)
   const [rejectionReason, setRejectionReason] = useState('')
+  const [selectedValidator, setSelectedValidator] = useState('')
 
   const handleApprove = async (validation: Validation) => {
     if (!confirm(`Approuver l'inscription de ${validation.user_full_name} ?`)) return
