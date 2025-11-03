@@ -368,7 +368,29 @@ export default function LandingPage() {
             </div>
           </div>
           <div className="border-t border-gray-800 mt-8 pt-8 text-sm text-center">
-            <p>&copy; 2024 JLC GROUP. Tous droits réservés.</p>
+            <p>
+              &copy; {new Date().getFullYear()}{' '}
+              <a 
+                href="https://jlcgroup.org" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="hover:text-white transition-colors font-medium"
+              >
+                JLC GROUP
+              </a>
+              . Tous droits réservés.
+            </p>
+            <p className="mt-2 text-xs text-gray-400">
+              Designé et conçu par{' '}
+              <a 
+                href="https://awana-group.com" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="hover:text-white transition-colors font-medium"
+              >
+                Awana Group
+              </a>
+            </p>
           </div>
         </div>
       </footer>
