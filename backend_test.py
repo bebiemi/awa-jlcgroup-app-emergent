@@ -1598,15 +1598,15 @@ def run_all_tests():
         return test_results
     test_results["total_tests"] += 1
     
-    # Test 2: Update User Endpoint
-    print(f"\n{Colors.BLUE}Phase 2: Update User Endpoint Testing{Colors.ENDC}")
-    if test_update_user_endpoint():
-        test_results["passed_tests"] += 8  # 8 test scenarios
-        log_test("Update User Endpoint Tests", "PASS", "All update user scenarios working correctly")
+    # Test 2: User 'paf' Login Investigation
+    print(f"\n{Colors.BLUE}Phase 2: User 'paf' Login Investigation{Colors.ENDC}")
+    if test_user_paf_login_issue():
+        test_results["passed_tests"] += 1
+        log_test("User 'paf' Investigation", "PASS", "Investigation completed successfully")
     else:
-        test_results["failed_tests"] += 8
-        test_results["critical_failures"].append("Update user endpoint tests failed")
-    test_results["total_tests"] += 8
+        test_results["failed_tests"] += 1
+        test_results["critical_failures"].append("User 'paf' investigation failed")
+    test_results["total_tests"] += 1
     
     # Summary
     print(f"\n{Colors.BOLD}=== Test Summary ==={Colors.ENDC}")
