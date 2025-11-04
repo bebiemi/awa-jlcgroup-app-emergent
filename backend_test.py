@@ -1450,35 +1450,15 @@ def run_all_tests():
         return test_results
     test_results["total_tests"] += 1
     
-    # Test 2: User Creation (Before Fix)
-    print(f"\n{Colors.BLUE}Phase 2: User Creation Testing (Before Fix){Colors.ENDC}")
-    if test_user_creation_endpoint():
-        test_results["passed_tests"] += 3
-        log_test("User Creation Tests (Before Fix)", "PASS", "Error reproduced successfully")
+    # Test 2: Update User Endpoint
+    print(f"\n{Colors.BLUE}Phase 2: Update User Endpoint Testing{Colors.ENDC}")
+    if test_update_user_endpoint():
+        test_results["passed_tests"] += 8  # 8 test scenarios
+        log_test("Update User Endpoint Tests", "PASS", "All update user scenarios working correctly")
     else:
-        test_results["failed_tests"] += 3
-        test_results["critical_failures"].append("User creation tests failed")
-    test_results["total_tests"] += 3
-    
-    # Test 3: Fix the Import Error
-    print(f"\n{Colors.BLUE}Phase 3: Fixing Import Error{Colors.ENDC}")
-    if fix_password_hasher_import():
-        test_results["passed_tests"] += 1
-        log_test("Fix Import Error", "PASS", "Import error fixed and service restarted")
-    else:
-        test_results["failed_tests"] += 1
-        test_results["critical_failures"].append("Failed to fix import error")
-    test_results["total_tests"] += 1
-    
-    # Test 4: User Creation (After Fix)
-    print(f"\n{Colors.BLUE}Phase 4: User Creation Testing (After Fix){Colors.ENDC}")
-    if test_user_creation_after_fix():
-        test_results["passed_tests"] += 3
-        log_test("User Creation Tests (After Fix)", "PASS", "User creation working correctly")
-    else:
-        test_results["failed_tests"] += 3
-        test_results["critical_failures"].append("User creation still failing after fix")
-    test_results["total_tests"] += 3
+        test_results["failed_tests"] += 8
+        test_results["critical_failures"].append("Update user endpoint tests failed")
+    test_results["total_tests"] += 8
     
     # Summary
     print(f"\n{Colors.BOLD}=== Test Summary ==={Colors.ENDC}")
