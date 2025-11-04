@@ -46,6 +46,8 @@ export default function LoginPage() {
 
         if (userRoles.includes('admin') || userRoles.includes('super_admin')) {
           dashboardPath = '/admin'
+        } else if (userRoles.includes('commercial')) {
+          dashboardPath = '/commercial'
         } else if (userRoles.includes('interim')) {
           dashboardPath = '/interimaire'
         } else if (userRoles.includes('company')) {
