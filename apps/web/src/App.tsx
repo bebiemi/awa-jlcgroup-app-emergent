@@ -233,6 +233,14 @@ function App() {
         }
       />
       <Route
+        path="/commercial"
+        element={
+          <ProtectedRoute requiredRoles={['commercial']}>
+            <CommercialDashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/profile"
         element={
           <ProtectedRoute>
