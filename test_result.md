@@ -226,8 +226,7 @@ metadata:
   run_ui: false
 
 test_plan:
-  current_focus:
-    - "Update User Endpoint (PATCH /api/auth/users/{user_id})"
+  current_focus: []
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
