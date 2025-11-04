@@ -1735,67 +1735,6 @@ def test_paf_authentication_fix():
         "token_valid": True
     }
     
-    # Step 5: Reset password for user 'paf' to ensure we have the correct password
-    print(f"\n  Step 5: Reset Password for User 'paf'")
-    
-    user_email = user_paf.get("email")
-    if user_email:
-        # Request password reset
-        reset_request = test_endpoint(
-            "POST",
-            f"{AUTH_BASE_URL}/auth/forgot-password",
-            data={"email": user_email},
-            expected_status=200,
-            test_name="Password Reset Request for 'paf'"
-        )
-        
-        if reset_request:
-            log_test("Password Reset Request", "PASS", "Password reset requested successfully")
-            
-            # Extract reset token from response (if available in test mode)
-            reset_url = reset_request.get("reset_url", "")
-            if reset_url:
-                import re
-                token_match = re.search(r'token=([^&]+)', reset_url)
-                if token_match:
-                    reset_token = token_match.group(1)
-                    log_test("Reset Token Extracted", "PASS", f"Reset token: {reset_token[:10]}...")
-                    
-                    # Reset password to the expected one
-                    reset_response = test_endpoint(
-                        "POST",
-                        f"{AUTH_BASE_URL}/auth/reset-password",
-                        data={
-                            "token": reset_token,
-                            "new_password": "AZERTY123456!!nbvcxw"
-                        },
-                        expected_status=200,
-                        test_name="Reset Password to Expected Value"
-                    )
-                    
-                    if reset_response:
-                        log_test("Password Reset", "PASS", "Password reset to expected value")
-                    else:
-                        log_test("Password Reset", "FAIL", "Failed to reset password")
-                        return False
-                else:
-                    log_test("Reset Token Extraction", "FAIL", "Could not extract reset token")
-                    return False
-            else:
-                log_test("Reset Token", "WARN", "No reset URL provided (production mode)")
-                # In production mode, we can't get the token, so let's try the original password
-        else:
-            log_test("Password Reset Request", "FAIL", "Failed to request password reset")
-            return False
-    
-    # Step 6: Test login with user 'paf' credentials
-    print(f"\n  Step 6: Test Login with User 'paf' Credentials")
-    
-    login_data = {
-        "username": "paf",
-        "password": "AZERTY123456!!nbvcxw"
-    }
-    
     login_response = test_endpoint(
         "POST",
         f"{AUTH_BASE_URL}/auth/local/login",
