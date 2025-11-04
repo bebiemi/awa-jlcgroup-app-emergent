@@ -336,7 +336,7 @@ async def create_user(
     )
     
     user_data = new_user.model_dump()
-    user_data["hashed_password"] = hashed_password
+    user_data["password_hash"] = hashed_password
     user_data["group_ids"] = request.group_ids
     user_data["profile_id"] = request.profile_id
     
