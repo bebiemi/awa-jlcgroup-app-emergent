@@ -1959,6 +1959,108 @@ async def update_user_status(
         )
 
 
+@auth_router.patch("/users/{user_id}")
+async def update_user(
+    user_id: str,
+    user_update: dict,
+    request: Request,
+    current_user: User = Depends(require_admin),
+    db: AsyncIOMotorDatabase = Depends(get_database)
+):
+    """
+    Update user information (Admin only)
+    Allowed fields: full_name, email, roles
+    """
+    try:
+        users_collection = db.users
+        user = await users_collection.find_one({"id": user_id})
+        
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Utilisateur non trouvé"
+            )
+        
+        # Build update dictionary with only allowed fields
+        update_data = {}
+        
+        if "full_name" in user_update:
+            update_data["full_name"] = user_update["full_name"]
+        
+        if "email" in user_update:
+            # Check if email already exists for another user
+            new_email = user_update["email"]
+            if new_email != user["email"]:
+                existing = await users_collection.find_one({
+                    "email": new_email,
+                    "id": {"$ne": user_id}
+                })
+                if existing:
+                    raise HTTPException(
+                        status_code=status.HTTP_400_BAD_REQUEST,
+                        detail="Cet email est déjà utilisé par un autre utilisateur"
+                    )
+            update_data["email"] = new_email
+        
+        if "roles" in user_update:
+            # Validate roles
+            valid_roles = ["admin", "super_admin", "interim", "company", "agency", "commercial", "validator"]
+            roles = user_update["roles"]
+            if not isinstance(roles, list):
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Les rôles doivent être une liste"
+                )
+            for role in roles:
+                if role not in valid_roles:
+                    raise HTTPException(
+                        status_code=status.HTTP_400_BAD_REQUEST,
+                        detail=f"Rôle invalide: {role}. Valeurs autorisées: {', '.join(valid_roles)}"
+                    )
+            update_data["roles"] = roles
+        
+        if not update_data:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Aucune donnée à mettre à jour"
+            )
+        
+        # Add updated_at timestamp
+        update_data["updated_at"] = datetime.now(timezone.utc)
+        
+        # Update user
+        await users_collection.update_one(
+            {"id": user_id},
+            {"$set": update_data}
+        )
+        
+        # Audit log
+        audit_logger = AuditLogger(db, auth_config)
+        await audit_logger.log(
+            action=AuditAction.USER_UPDATED,
+            actor_id=current_user.id,
+            actor_email=current_user.email,
+            ip_address=get_client_ip(request),
+            user_agent=get_user_agent(request),
+            metadata={
+                "target_user_id": user_id,
+                "target_email": user["email"],
+                "updated_fields": list(update_data.keys())
+            }
+        )
+        
+        logger.info(f"User {user_id} updated by admin {current_user.id}")
+        
+        return {"message": "Utilisateur mis à jour avec succès"}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Update user error: {e}", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Erreur lors de la mise à jour de l'utilisateur"
+        )
 
 
 
