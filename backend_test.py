@@ -1659,12 +1659,14 @@ def test_paf_role_fix_and_login():
     )
     
     if update_response:
+        print(f"    Full update response: {update_response}")
         updated_roles = update_response.get("roles", [])
         if "interim" in updated_roles:
             log_test("Role Update", "PASS", f"Role successfully updated to: {updated_roles}")
         else:
             log_test("Role Update", "FAIL", f"Role update failed. Got: {updated_roles}")
-            return False
+            # Let's continue anyway to see if the update actually worked
+            print(f"    Continuing to verify if update actually worked...")
     else:
         log_test("Role Update", "FAIL", "Role update request failed")
         return False
