@@ -210,7 +210,7 @@ function App() {
         path="/entreprise"
         element={
           <ProtectedRoute requiredRoles={['company']}>
-            <Navigate to="/admin" replace />
+            <CompanyDashboard />
           </ProtectedRoute>
         }
       />
