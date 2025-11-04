@@ -1733,11 +1733,7 @@ def test_paf_authentication_fix():
         "token_type": token_type,
         "user_info": user_info,
         "token_valid": True
-    } find user after update")
-            return False
-    else:
-        log_test("Role Verification", "FAIL", "Cannot verify role update")
-        return False
+    }
     
     # Step 5: Reset password for user 'paf' to ensure we have the correct password
     print(f"\n  Step 5: Reset Password for User 'paf'")
