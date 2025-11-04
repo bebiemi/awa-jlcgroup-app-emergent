@@ -227,7 +227,7 @@ function App() {
         path="/agence"
         element={
           <ProtectedRoute requiredRoles={['agency']}>
-            <Navigate to="/admin" replace />
+            <AgencyDashboard />
           </ProtectedRoute>
         }
       />
