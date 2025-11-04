@@ -155,6 +155,21 @@ backend:
         agent: "testing"
         comment: "✅ UPDATE USER ENDPOINT FULLY TESTED AND WORKING: Comprehensive testing completed with 100% success rate (8/8 test scenarios passed). Key features verified: 1) Update full_name only - correctly updates user's display name, 2) Update email only with duplicate validation - accepts unique emails, rejects duplicates with proper French error message 'Cet email est déjà utilisé par un autre utilisateur', 3) Update roles only with validation - accepts valid roles (admin, super_admin, interim, company, agency, commercial, validator), rejects invalid roles with detailed error message, 4) Update multiple fields simultaneously (full_name, email, roles) - all fields updated correctly in single request, 5) Invalid user ID handling - returns 404 'Utilisateur non trouvé' for non-existent users, 6) Authentication required - returns 401 for unauthenticated requests, 7) Empty update validation - returns 400 'Aucune donnée à mettre à jour' for empty payloads, 8) Audit logging working correctly for all update operations. All validation rules working as expected, endpoint ready for production use."
 
+  - task: "User 'paf' Role Fix and Login Issue"
+    implemented: true
+    working: true
+    file: "/app/auth-microservice/awana_auth_routes.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: false
+        agent: "testing"
+        comment: "❌ CRITICAL AUTHENTICATION BUG IDENTIFIED: User 'paf' login failing due to authentication system only checking hardcoded admin credentials. The local_login function (lines 787-805) only validates admin username/password and immediately fails for any other credentials, never checking database users created through registration. This prevents all registered users (interim, company roles) from logging in."
+      - working: true
+        agent: "testing"
+        comment: "✅ AUTHENTICATION BUG FIXED AND USER 'PAF' LOGIN WORKING: Fixed critical authentication issue in local_login function. Root cause: login function only checked hardcoded admin credentials and never validated database users. Applied fix: Modified login logic to first check admin credentials, then check database users with bcrypt password verification if admin check fails. Testing results: 1) User 'paf' role correctly set to 'interim' (was 'company'), 2) Password reset system working, 3) Login with username 'paf' and password 'AZERTY123456!!nbvcxw' now successful, 4) Access token generated correctly, 5) User receives proper 'interim' role in login response. All authentication flows now working for both admin and registered users."
+
 frontend:
   - task: "Registration Form UI"
     implemented: true
