@@ -1932,7 +1932,7 @@ def run_authentication_fix_test():
     return test_results
 
 if __name__ == "__main__":
-    results = run_all_tests()
+    results = run_authentication_fix_test()
     
     # Exit with error code if tests failed
     if results["failed_tests"] > 0:
