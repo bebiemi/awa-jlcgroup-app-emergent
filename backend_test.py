@@ -1183,9 +1183,250 @@ def test_user_creation_after_fix():
     return True
 
 
+def test_update_user_endpoint():
+    """Test the Update User endpoint PATCH /api/auth/users/{user_id}"""
+    print(f"\n{Colors.BOLD}=== Testing Update User Endpoint ==={Colors.ENDC}")
+    
+    # Get admin token
+    admin_token = test_admin_login()
+    if not admin_token:
+        log_test("Update User Test", "FAIL", "Cannot get admin token")
+        return False
+    
+    headers = {"Authorization": f"Bearer {admin_token}"}
+    
+    # Step 1: Get list of users to find a test user ID
+    print(f"\n  Step 1: Get List of Users")
+    
+    users_response = test_endpoint(
+        "GET", 
+        f"{AUTH_BASE_URL}/auth/users",
+        headers=headers,
+        expected_status=200,
+        test_name="Get Users List"
+    )
+    
+    if not users_response:
+        log_test("Get Users List", "FAIL", "Cannot get users list")
+        return False
+    
+    users = users_response.get("users", [])
+    if not users:
+        log_test("Get Users List", "FAIL", "No users found in system")
+        return False
+    
+    # Find a non-admin user to test with
+    test_user = None
+    for user in users:
+        if "admin" not in user.get("roles", []) and "super_admin" not in user.get("roles", []):
+            test_user = user
+            break
+    
+    if not test_user:
+        # Create a test user first
+        print(f"\n  Creating test user for update testing...")
+        create_payload = {
+            "email": "updatetest@example.com",
+            "username": "updatetest",
+            "full_name": "Update Test User",
+            "password": "TestPass123!",
+            "roles": ["interim"],
+            "group_ids": [],
+            "profile_id": None,
+            "send_invitation": False
+        }
+        
+        create_response = test_endpoint(
+            "POST", 
+            f"{AUTH_BASE_URL}/auth/security/users",
+            data=create_payload,
+            headers=headers,
+            expected_status=200,
+            test_name="Create Test User for Update"
+        )
+        
+        if not create_response:
+            log_test("Create Test User", "FAIL", "Cannot create test user")
+            return False
+        
+        test_user = {
+            "id": create_response.get("id"),
+            "email": create_response.get("email"),
+            "full_name": create_response.get("full_name"),
+            "roles": create_response.get("roles", [])
+        }
+    
+    test_user_id = test_user["id"]
+    original_email = test_user["email"]
+    original_name = test_user.get("full_name", "")
+    original_roles = test_user.get("roles", [])
+    
+    log_test("Test User Selected", "PASS", f"Using user: {original_email} (ID: {test_user_id[:8]}...)")
+    
+    # Step 2: Test updating full_name only
+    print(f"\n  Step 2: Test Updating Full Name Only")
+    
+    new_name = "Updated Full Name"
+    update_response = test_endpoint(
+        "PATCH", 
+        f"{AUTH_BASE_URL}/auth/users/{test_user_id}",
+        data={"full_name": new_name},
+        headers=headers,
+        expected_status=200,
+        test_name="Update Full Name Only"
+    )
+    
+    if update_response:
+        log_test("Update Full Name", "PASS", f"Full name updated to: {new_name}")
+    
+    # Step 3: Test updating email only (with duplicate validation)
+    print(f"\n  Step 3: Test Updating Email Only")
+    
+    # First, try with a unique email
+    new_email = f"updated_{random.randint(1000, 9999)}@example.com"
+    update_response = test_endpoint(
+        "PATCH", 
+        f"{AUTH_BASE_URL}/auth/users/{test_user_id}",
+        data={"email": new_email},
+        headers=headers,
+        expected_status=200,
+        test_name="Update Email (Unique)"
+    )
+    
+    if update_response:
+        log_test("Update Email (Unique)", "PASS", f"Email updated to: {new_email}")
+    
+    # Test duplicate email validation
+    print(f"\n  Step 3b: Test Duplicate Email Validation")
+    
+    # Try to use admin's email (should fail)
+    duplicate_response = test_endpoint(
+        "PATCH", 
+        f"{AUTH_BASE_URL}/auth/users/{test_user_id}",
+        data={"email": "admin@awana.ga"},  # Admin's email
+        headers=headers,
+        expected_status=400,
+        test_name="Update Email (Duplicate)"
+    )
+    
+    if duplicate_response:
+        error_detail = duplicate_response.get("detail", "")
+        if "déjà utilisé" in error_detail or "already" in error_detail.lower():
+            log_test("Duplicate Email Validation", "PASS", f"Correctly rejected: {error_detail}")
+        else:
+            log_test("Duplicate Email Validation", "WARN", f"Unexpected error: {error_detail}")
+    
+    # Step 4: Test updating roles only
+    print(f"\n  Step 4: Test Updating Roles Only")
+    
+    # Add/remove roles
+    new_roles = ["interim", "company"]  # Add company role
+    update_response = test_endpoint(
+        "PATCH", 
+        f"{AUTH_BASE_URL}/auth/users/{test_user_id}",
+        data={"roles": new_roles},
+        headers=headers,
+        expected_status=200,
+        test_name="Update Roles (Add Company)"
+    )
+    
+    if update_response:
+        log_test("Update Roles", "PASS", f"Roles updated to: {new_roles}")
+    
+    # Test invalid role
+    print(f"\n  Step 4b: Test Invalid Role")
+    
+    invalid_role_response = test_endpoint(
+        "PATCH", 
+        f"{AUTH_BASE_URL}/auth/users/{test_user_id}",
+        data={"roles": ["invalid_role"]},
+        headers=headers,
+        expected_status=400,
+        test_name="Update Roles (Invalid)"
+    )
+    
+    if invalid_role_response:
+        error_detail = invalid_role_response.get("detail", "")
+        if "invalide" in error_detail or "invalid" in error_detail.lower():
+            log_test("Invalid Role Validation", "PASS", f"Correctly rejected: {error_detail}")
+        else:
+            log_test("Invalid Role Validation", "WARN", f"Unexpected error: {error_detail}")
+    
+    # Step 5: Test updating multiple fields at once
+    print(f"\n  Step 5: Test Updating Multiple Fields")
+    
+    multi_update = {
+        "full_name": "Multi Update Test",
+        "email": f"multiupdate_{random.randint(1000, 9999)}@example.com",
+        "roles": ["company"]
+    }
+    
+    multi_response = test_endpoint(
+        "PATCH", 
+        f"{AUTH_BASE_URL}/auth/users/{test_user_id}",
+        data=multi_update,
+        headers=headers,
+        expected_status=200,
+        test_name="Update Multiple Fields"
+    )
+    
+    if multi_response:
+        log_test("Update Multiple Fields", "PASS", "Multiple fields updated successfully")
+    
+    # Step 6: Test with invalid user ID
+    print(f"\n  Step 6: Test Invalid User ID")
+    
+    invalid_id_response = test_endpoint(
+        "PATCH", 
+        f"{AUTH_BASE_URL}/auth/users/invalid_user_id_123",
+        data={"full_name": "Should Fail"},
+        headers=headers,
+        expected_status=404,
+        test_name="Update Invalid User ID"
+    )
+    
+    if invalid_id_response:
+        log_test("Invalid User ID", "PASS", "Invalid user ID correctly rejected with 404")
+    
+    # Step 7: Test without authentication
+    print(f"\n  Step 7: Test Without Authentication")
+    
+    no_auth_response = test_endpoint(
+        "PATCH", 
+        f"{AUTH_BASE_URL}/auth/users/{test_user_id}",
+        data={"full_name": "Should Fail"},
+        expected_status=401,
+        test_name="Update Without Auth"
+    )
+    
+    if no_auth_response:
+        log_test("Authentication Required", "PASS", "Unauthenticated request correctly rejected")
+    
+    # Step 8: Test empty update (should fail)
+    print(f"\n  Step 8: Test Empty Update")
+    
+    empty_response = test_endpoint(
+        "PATCH", 
+        f"{AUTH_BASE_URL}/auth/users/{test_user_id}",
+        data={},
+        headers=headers,
+        expected_status=400,
+        test_name="Empty Update"
+    )
+    
+    if empty_response:
+        error_detail = empty_response.get("detail", "")
+        if "Aucune donnée" in error_detail or "no data" in error_detail.lower():
+            log_test("Empty Update Validation", "PASS", f"Correctly rejected: {error_detail}")
+        else:
+            log_test("Empty Update Validation", "WARN", f"Unexpected error: {error_detail}")
+    
+    return True
+
+
 def run_all_tests():
-    """Run user creation endpoint tests"""
-    print(f"{Colors.BOLD}User Creation Endpoint Testing{Colors.ENDC}")
+    """Run Update User endpoint tests"""
+    print(f"{Colors.BOLD}Update User Endpoint Testing{Colors.ENDC}")
     print(f"Timestamp: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print("=" * 70)
     
