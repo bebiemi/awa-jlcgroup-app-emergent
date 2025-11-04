@@ -783,26 +783,88 @@ async def local_login(
         admin_password = os.environ.get('ADMIN_PASSWORD', 'awana2025')
         admin_emails = auth_config.admin_emails
         
-        # Verify credentials
+        # Verify admin credentials first
         username_match = secrets.compare_digest(login_data.username, admin_username)
         password_match = secrets.compare_digest(login_data.password, admin_password)
         
-        if not (username_match and password_match):
-            logger.warning(f"Failed login attempt for username: {login_data.username}")
-            # Audit log for failed attempt
-            audit_logger = AuditLogger(db, auth_config)
-            await audit_logger.log(
-                action=AuditAction.LOGIN_FAILED,
-                actor_email=login_data.username,
-                ip_address=get_client_ip(request),
-                user_agent=get_user_agent(request),
-                metadata={"reason": "invalid_credentials", "provider": "local"}
-            )
+        is_admin_login = username_match and password_match
+        user = None
+        
+        if is_admin_login:
+            # Admin login - continue with existing admin logic
+            pass
+        else:
+            # Check database for regular user
+            import bcrypt
             
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Incorrect username or password"
-            )
+            # Try to find user by username or email
+            user_doc = await db.users.find_one({
+                "$or": [
+                    {"username": login_data.username},
+                    {"email": login_data.username}
+                ],
+                "provider": AuthProviderEnum.LOCAL.value
+            }, {"_id": 0})
+            
+            if user_doc and user_doc.get("password_hash"):
+                # Verify password
+                password_valid = bcrypt.checkpw(
+                    login_data.password.encode('utf-8'),
+                    user_doc["password_hash"].encode('utf-8')
+                )
+                
+                if password_valid:
+                    # Check if user is active
+                    if user_doc.get("status") != UserStatus.ACTIVE.value:
+                        logger.warning(f"Login attempt for inactive user: {login_data.username}")
+                        audit_logger = AuditLogger(db, auth_config)
+                        await audit_logger.log(
+                            action=AuditAction.LOGIN_FAILED,
+                            actor_email=user_doc.get("email", login_data.username),
+                            ip_address=get_client_ip(request),
+                            user_agent=get_user_agent(request),
+                            metadata={"reason": "account_inactive", "provider": "local"}
+                        )
+                        raise HTTPException(
+                            status_code=status.HTTP_401_UNAUTHORIZED,
+                            detail="Account is not active"
+                        )
+                    
+                    # Valid database user login
+                    user = User(**user_doc)
+                    user.last_login_at = datetime.now(timezone.utc)
+                    user.updated_at = datetime.now(timezone.utc)
+                    
+                    # Update last login time
+                    await db.users.update_one(
+                        {"id": user.id},
+                        {"$set": {
+                            "last_login_at": user.last_login_at.isoformat(),
+                            "updated_at": user.updated_at.isoformat()
+                        }}
+                    )
+                    
+                    logger.info(f"Local user {user.email} logged in (database user)")
+            
+            if not user:
+                # Neither admin nor valid database user
+                logger.warning(f"Failed login attempt for username: {login_data.username}")
+                audit_logger = AuditLogger(db, auth_config)
+                await audit_logger.log(
+                    action=AuditAction.LOGIN_FAILED,
+                    actor_email=login_data.username,
+                    ip_address=get_client_ip(request),
+                    user_agent=get_user_agent(request),
+                    metadata={"reason": "invalid_credentials", "provider": "local"}
+                )
+                
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail="Incorrect username or password"
+                )
+        
+        # Handle admin login if it's admin
+        if is_admin_login:
         
         # Get admin email (first in list or use a valid email format)
         admin_email = admin_emails[0] if admin_emails else f"{login_data.username}@awanagroup.com"
