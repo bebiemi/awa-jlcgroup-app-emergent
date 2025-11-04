@@ -27,6 +27,7 @@ import ApplyMissionPage from './features/missions/pages/ApplyMissionPage'
 import ApplicationsManagementPage from './features/missions/pages/ApplicationsManagementPage'
 import MyApplicationsPage from './features/missions/pages/MyApplicationsPage'
 import CompanyDashboard from './features/company/pages/CompanyDashboard'
+import AgencyDashboard from './features/agency/pages/AgencyDashboard'
 import ProtectedRoute from './features/auth/components/ProtectedRoute'
 
 function App() {
