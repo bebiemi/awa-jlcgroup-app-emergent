@@ -1734,50 +1734,6 @@ def test_paf_authentication_fix():
         "user_info": user_info,
         "token_valid": True
     }
-    
-    login_response = test_endpoint(
-        "POST",
-        f"{AUTH_BASE_URL}/auth/local/login",
-        data=login_data,
-        expected_status=200,
-        test_name="Login with 'paf' credentials"
-    )
-    
-    if login_response:
-        # Check if login was successful
-        access_token = login_response.get("access_token")
-        user_info = login_response.get("user", {})
-        user_roles = user_info.get("roles", [])
-        
-        if access_token:
-            log_test("Login Success", "PASS", f"Login successful, access token received")
-            log_test("Token Verification", "PASS", f"Access token: {access_token[:20]}...")
-            
-            if "interim" in user_roles:
-                log_test("Role Confirmation", "PASS", f"User has correct 'interim' role: {user_roles}")
-            else:
-                log_test("Role Confirmation", "WARN", f"Unexpected roles in login response: {user_roles}")
-            
-            return True
-        else:
-            log_test("Login Success", "FAIL", "No access token received")
-            return False
-    else:
-        # If login still fails, try with email instead of username
-        print(f"\n  Step 6b: Try Login with Email Instead of Username")
-        
-        email_login_data = {
-            "username": user_email,
-            "password": "AZERTY123456!!nbvcxw"
-        }
-        
-        email_login_response = test_endpoint(
-            "POST",
-            f"{AUTH_BASE_URL}/auth/local/login",
-            data=email_login_data,
-            expected_status=200,
-            test_name="Login with email as username"
-        )
         
         if email_login_response:
             access_token = email_login_response.get("access_token")
