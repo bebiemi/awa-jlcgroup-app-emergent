@@ -1867,9 +1867,9 @@ def test_paf_authentication_fix():
             return False
 
 
-def run_all_tests():
-    """Run User 'paf' Role Fix and Login Test"""
-    print(f"{Colors.BOLD}User 'paf' Role Fix and Login Test{Colors.ENDC}")
+def run_authentication_fix_test():
+    """Run Authentication Fix Verification Test for User 'paf'"""
+    print(f"{Colors.BOLD}Authentication Fix Verification Test - User 'paf'{Colors.ENDC}")
     print(f"Timestamp: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print("=" * 70)
     
@@ -1893,14 +1893,15 @@ def run_all_tests():
         return test_results
     test_results["total_tests"] += 1
     
-    # Test 2: User 'paf' Role Fix and Login
-    print(f"\n{Colors.BLUE}Phase 2: User 'paf' Role Fix and Login Test{Colors.ENDC}")
-    if test_paf_role_fix_and_login():
+    # Test 2: User 'paf' Authentication Fix Verification
+    print(f"\n{Colors.BLUE}Phase 2: User 'paf' Authentication Fix Verification{Colors.ENDC}")
+    auth_result = test_paf_authentication_fix()
+    if auth_result and auth_result.get("login_successful"):
         test_results["passed_tests"] += 1
-        log_test("User 'paf' Role Fix and Login", "PASS", "All steps completed successfully")
+        log_test("Authentication Fix Verification", "PASS", "User 'paf' login working correctly")
     else:
         test_results["failed_tests"] += 1
-        test_results["critical_failures"].append("User 'paf' role fix or login failed")
+        test_results["critical_failures"].append("User 'paf' authentication still failing")
     test_results["total_tests"] += 1
     
     # Summary
@@ -1921,12 +1922,12 @@ def run_all_tests():
             print(f"  • {failure}")
     
     if test_results['failed_tests'] == 0:
-        print(f"\n{Colors.GREEN}✅ User 'paf' role fix and login test completed successfully.{Colors.ENDC}")
-        print(f"\n{Colors.GREEN}✅ ISSUE RESOLVED: User 'paf' can now login with 'interim' role.{Colors.ENDC}")
+        print(f"\n{Colors.GREEN}✅ Authentication fix verification completed successfully.{Colors.ENDC}")
+        print(f"\n{Colors.GREEN}✅ CONFIRMED: User 'paf' can login with correct 'interim' role and valid token.{Colors.ENDC}")
     elif len(test_results['critical_failures']) == 0:
-        print(f"\n{Colors.YELLOW}⚠️ Some issues found during testing.{Colors.ENDC}")
+        print(f"\n{Colors.YELLOW}⚠️ Some issues found during authentication testing.{Colors.ENDC}")
     else:
-        print(f"\n{Colors.RED}❌ Critical issues found during user 'paf' testing.{Colors.ENDC}")
+        print(f"\n{Colors.RED}❌ Critical authentication issues found.{Colors.ENDC}")
     
     return test_results
 
