@@ -100,6 +100,35 @@ export default function Sidebar() {
         ],
       }
     )
+  } else if (isCommercial) {
+    navigationSections.push(
+      {
+        title: 'Tableau de bord',
+        items: [
+          { label: 'Vue d\'ensemble', path: '/commercial', icon: HomeIcon },
+        ],
+      },
+      {
+        title: 'Gestion',
+        items: [
+          { label: 'Utilisateurs', path: '/admin/users', icon: UserGroupIcon },
+          { label: 'Localisations', path: '/admin/locations', icon: MapPinIcon },
+        ],
+      },
+      {
+        title: 'Processus',
+        items: [
+          { label: 'Missions', path: '/missions', icon: BriefcaseIcon },
+        ],
+      },
+      {
+        title: 'Compte',
+        items: [
+          { label: 'Mon Profil', path: '/profile', icon: UserCircleIcon },
+          { label: 'Sécurité', path: '/security', icon: ShieldCheckIcon },
+        ],
+      }
+    )
   } else if (isInterim) {
     navigationSections.push(
       {
