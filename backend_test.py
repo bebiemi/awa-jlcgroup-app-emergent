@@ -1734,28 +1734,6 @@ def test_paf_authentication_fix():
         "user_info": user_info,
         "token_valid": True
     }
-        
-        if email_login_response:
-            access_token = email_login_response.get("access_token")
-            user_info = email_login_response.get("user", {})
-            user_roles = user_info.get("roles", [])
-            
-            if access_token:
-                log_test("Email Login Success", "PASS", f"Login successful with email, access token received")
-                log_test("Token Verification", "PASS", f"Access token: {access_token[:20]}...")
-                
-                if "interim" in user_roles:
-                    log_test("Role Confirmation", "PASS", f"User has correct 'interim' role: {user_roles}")
-                else:
-                    log_test("Role Confirmation", "WARN", f"Unexpected roles in login response: {user_roles}")
-                
-                return True
-            else:
-                log_test("Email Login Success", "FAIL", "No access token received")
-                return False
-        else:
-            log_test("Login Failed", "FAIL", "Login request failed with both username and email")
-            return False
 
 
 def run_authentication_fix_test():
