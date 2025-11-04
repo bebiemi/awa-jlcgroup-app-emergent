@@ -58,6 +58,7 @@ export default function Sidebar() {
   const isAdmin = user.roles.includes('admin') || user.roles.includes('super_admin')
   const isInterim = user.roles.includes('interim')
   const isCompany = user.roles.includes('company')
+  const isCommercial = user.roles.includes('commercial')
 
   // Navigation sections based on user role
   const navigationSections: NavSection[] = []
