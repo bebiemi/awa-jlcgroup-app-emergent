@@ -1593,9 +1593,158 @@ def test_user_paf_login_issue():
     return True
 
 
+def test_paf_role_fix_and_login():
+    """Test fixing user 'paf' role and verifying login"""
+    print(f"\n{Colors.BOLD}=== Testing User 'paf' Role Fix and Login ==={Colors.ENDC}")
+    
+    # Step 1: Admin login
+    print(f"\n  Step 1: Admin Login")
+    admin_token = test_admin_login()
+    if not admin_token:
+        log_test("Admin Login", "FAIL", "Cannot get admin token")
+        return False
+    
+    headers = {"Authorization": f"Bearer {admin_token}"}
+    log_test("Admin Login", "PASS", "Admin authenticated successfully")
+    
+    # Step 2: Get user 'paf' current info
+    print(f"\n  Step 2: Get User 'paf' Current Info")
+    user_id = "98a7f995-35a2-4fa6-97c6-73ce05549c5e"
+    
+    user_response = test_endpoint(
+        "GET", 
+        f"{AUTH_BASE_URL}/auth/users?search=paf",
+        headers=headers,
+        expected_status=200,
+        test_name="Get User 'paf' Info"
+    )
+    
+    user_paf = None
+    if user_response:
+        users = user_response.get("users", [])
+        for user in users:
+            if user.get("id") == user_id or user.get("username") == "paf":
+                user_paf = user
+                break
+        
+        if user_paf:
+            current_roles = user_paf.get("roles", [])
+            log_test("User 'paf' Found", "PASS", f"Current roles: {current_roles}")
+            print(f"    User ID: {user_paf.get('id')}")
+            print(f"    Username: {user_paf.get('username')}")
+            print(f"    Email: {user_paf.get('email')}")
+            print(f"    Status: {user_paf.get('status')}")
+            print(f"    Current Roles: {current_roles}")
+        else:
+            log_test("User 'paf' Not Found", "FAIL", "User 'paf' not found in system")
+            return False
+    else:
+        log_test("Get User Info", "FAIL", "Cannot retrieve user information")
+        return False
+    
+    # Step 3: Update user role from 'company' to 'interim'
+    print(f"\n  Step 3: Update User Role to 'interim'")
+    
+    update_payload = {
+        "roles": ["interim"]
+    }
+    
+    update_response = test_endpoint(
+        "PATCH", 
+        f"{AUTH_BASE_URL}/auth/users/{user_id}",
+        data=update_payload,
+        headers=headers,
+        expected_status=200,
+        test_name="Update User 'paf' Role"
+    )
+    
+    if update_response:
+        updated_roles = update_response.get("roles", [])
+        if "interim" in updated_roles:
+            log_test("Role Update", "PASS", f"Role successfully updated to: {updated_roles}")
+        else:
+            log_test("Role Update", "FAIL", f"Role update failed. Got: {updated_roles}")
+            return False
+    else:
+        log_test("Role Update", "FAIL", "Role update request failed")
+        return False
+    
+    # Step 4: Verify the role update by getting user info again
+    print(f"\n  Step 4: Verify Role Update")
+    
+    verify_response = test_endpoint(
+        "GET", 
+        f"{AUTH_BASE_URL}/auth/users?search=paf",
+        headers=headers,
+        expected_status=200,
+        test_name="Verify Role Update"
+    )
+    
+    if verify_response:
+        users = verify_response.get("users", [])
+        updated_user = None
+        for user in users:
+            if user.get("id") == user_id or user.get("username") == "paf":
+                updated_user = user
+                break
+        
+        if updated_user:
+            verified_roles = updated_user.get("roles", [])
+            if "interim" in verified_roles and "company" not in verified_roles:
+                log_test("Role Verification", "PASS", f"Role correctly updated to: {verified_roles}")
+            else:
+                log_test("Role Verification", "FAIL", f"Role not properly updated. Current: {verified_roles}")
+                return False
+        else:
+            log_test("Role Verification", "FAIL", "Cannot find user after update")
+            return False
+    else:
+        log_test("Role Verification", "FAIL", "Cannot verify role update")
+        return False
+    
+    # Step 5: Test login with user 'paf' credentials
+    print(f"\n  Step 5: Test Login with User 'paf' Credentials")
+    
+    login_data = {
+        "username": "paf",
+        "password": "AZERTY123456!!nbvcxw"
+    }
+    
+    login_response = test_endpoint(
+        "POST",
+        f"{AUTH_BASE_URL}/auth/local/login",
+        data=login_data,
+        expected_status=200,
+        test_name="Login with 'paf' credentials"
+    )
+    
+    if login_response:
+        # Check if login was successful
+        access_token = login_response.get("access_token")
+        user_info = login_response.get("user", {})
+        user_roles = user_info.get("roles", [])
+        
+        if access_token:
+            log_test("Login Success", "PASS", f"Login successful, access token received")
+            log_test("Token Verification", "PASS", f"Access token: {access_token[:20]}...")
+            
+            if "interim" in user_roles:
+                log_test("Role Confirmation", "PASS", f"User has correct 'interim' role: {user_roles}")
+            else:
+                log_test("Role Confirmation", "WARN", f"Unexpected roles in login response: {user_roles}")
+            
+            return True
+        else:
+            log_test("Login Success", "FAIL", "No access token received")
+            return False
+    else:
+        log_test("Login Failed", "FAIL", "Login request failed")
+        return False
+
+
 def run_all_tests():
-    """Run User 'paf' Login Investigation"""
-    print(f"{Colors.BOLD}User 'paf' Login Issue Investigation{Colors.ENDC}")
+    """Run User 'paf' Role Fix and Login Test"""
+    print(f"{Colors.BOLD}User 'paf' Role Fix and Login Test{Colors.ENDC}")
     print(f"Timestamp: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print("=" * 70)
     
@@ -1619,14 +1768,14 @@ def run_all_tests():
         return test_results
     test_results["total_tests"] += 1
     
-    # Test 2: User 'paf' Login Investigation
-    print(f"\n{Colors.BLUE}Phase 2: User 'paf' Login Investigation{Colors.ENDC}")
-    if test_user_paf_login_issue():
+    # Test 2: User 'paf' Role Fix and Login
+    print(f"\n{Colors.BLUE}Phase 2: User 'paf' Role Fix and Login Test{Colors.ENDC}")
+    if test_paf_role_fix_and_login():
         test_results["passed_tests"] += 1
-        log_test("User 'paf' Investigation", "PASS", "Investigation completed successfully")
+        log_test("User 'paf' Role Fix and Login", "PASS", "All steps completed successfully")
     else:
         test_results["failed_tests"] += 1
-        test_results["critical_failures"].append("User 'paf' investigation failed")
+        test_results["critical_failures"].append("User 'paf' role fix or login failed")
     test_results["total_tests"] += 1
     
     # Summary
@@ -1647,11 +1796,12 @@ def run_all_tests():
             print(f"  • {failure}")
     
     if test_results['failed_tests'] == 0:
-        print(f"\n{Colors.GREEN}✅ User 'paf' login investigation completed successfully.{Colors.ENDC}")
+        print(f"\n{Colors.GREEN}✅ User 'paf' role fix and login test completed successfully.{Colors.ENDC}")
+        print(f"\n{Colors.GREEN}✅ ISSUE RESOLVED: User 'paf' can now login with 'interim' role.{Colors.ENDC}")
     elif len(test_results['critical_failures']) == 0:
-        print(f"\n{Colors.YELLOW}⚠️ Some issues found during investigation.{Colors.ENDC}")
+        print(f"\n{Colors.YELLOW}⚠️ Some issues found during testing.{Colors.ENDC}")
     else:
-        print(f"\n{Colors.RED}❌ Critical issues found during user 'paf' investigation.{Colors.ENDC}")
+        print(f"\n{Colors.RED}❌ Critical issues found during user 'paf' testing.{Colors.ENDC}")
     
     return test_results
 
