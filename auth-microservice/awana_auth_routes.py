@@ -917,7 +917,7 @@ async def local_login(
                 try:
                     await rbac_manager.grant_role(user.id, "admin", granted_by="system")
                 except ValueError as e:
-                logger.warning(f"Could not grant admin role: {e}")
+                    logger.warning(f"Could not grant admin role: {e}")
             
             logger.info(f"New local admin user created: {user.email}")
         
