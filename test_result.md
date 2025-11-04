@@ -212,7 +212,7 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Système d'Inscription Complet avec Validation Email"
+    - "Update User Endpoint (PATCH /api/auth/users/{user_id})"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
