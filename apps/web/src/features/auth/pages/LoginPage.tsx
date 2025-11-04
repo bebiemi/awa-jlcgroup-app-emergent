@@ -44,10 +44,11 @@ export default function LoginPage() {
         const userRoles = result.user?.roles || []
         let dashboardPath = '/profile'
 
-        if (userRoles.includes('admin') || userRoles.includes('super_admin')) {
-          dashboardPath = '/admin'
-        } else if (userRoles.includes('commercial')) {
+        // Priority order: commercial > admin > interim > company > agency
+        if (userRoles.includes('commercial')) {
           dashboardPath = '/commercial'
+        } else if (userRoles.includes('admin') || userRoles.includes('super_admin')) {
+          dashboardPath = '/admin'
         } else if (userRoles.includes('interim')) {
           dashboardPath = '/interimaire'
         } else if (userRoles.includes('company')) {
