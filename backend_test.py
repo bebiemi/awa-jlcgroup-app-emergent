@@ -1303,7 +1303,7 @@ def test_update_user_endpoint():
     duplicate_response = test_endpoint(
         "PATCH", 
         f"{AUTH_BASE_URL}/auth/users/{test_user_id}",
-        data={"email": "admin@awana.ga"},  # Admin's email
+        data={"email": "brown.ebiemi@gmail.com"},  # Admin's email
         headers=headers,
         expected_status=400,
         test_name="Update Email (Duplicate)"
