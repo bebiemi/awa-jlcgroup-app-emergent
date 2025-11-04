@@ -1478,11 +1478,11 @@ def run_all_tests():
             print(f"  • {failure}")
     
     if test_results['failed_tests'] == 0:
-        print(f"\n{Colors.GREEN}✅ All user creation tests passed! Endpoint working correctly.{Colors.ENDC}")
+        print(f"\n{Colors.GREEN}✅ All update user tests passed! Endpoint working correctly.{Colors.ENDC}")
     elif len(test_results['critical_failures']) == 0:
         print(f"\n{Colors.YELLOW}⚠️ Some minor issues found, but core functionality working.{Colors.ENDC}")
     else:
-        print(f"\n{Colors.RED}❌ Critical issues found in user creation endpoint.{Colors.ENDC}")
+        print(f"\n{Colors.RED}❌ Critical issues found in update user endpoint.{Colors.ENDC}")
     
     return test_results
 
