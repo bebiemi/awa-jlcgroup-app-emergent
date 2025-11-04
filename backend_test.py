@@ -1424,9 +1424,157 @@ def test_update_user_endpoint():
     return True
 
 
+def test_user_paf_login_issue():
+    """Test login issue for newly created interim user 'paf'"""
+    print(f"\n{Colors.BOLD}=== Testing User 'paf' Login Issue ==={Colors.ENDC}")
+    
+    # Step 1: Get admin token first
+    print(f"\n  Step 1: Admin Login to Get Token")
+    admin_token = test_admin_login()
+    if not admin_token:
+        log_test("Admin Login for Investigation", "FAIL", "Cannot get admin token")
+        return False
+    
+    headers = {"Authorization": f"Bearer {admin_token}"}
+    
+    # Step 2: Search for user 'paf' in the database
+    print(f"\n  Step 2: Search for User 'paf'")
+    
+    search_response = test_endpoint(
+        "GET", 
+        f"{AUTH_BASE_URL}/auth/users?search=paf",
+        headers=headers,
+        expected_status=200,
+        test_name="Search for User 'paf'"
+    )
+    
+    user_paf = None
+    if search_response:
+        users = search_response.get("users", [])
+        log_test("User Search Results", "PASS", f"Found {len(users)} users matching 'paf'")
+        
+        # Look for exact username match
+        for user in users:
+            if user.get("username") == "paf":
+                user_paf = user
+                break
+        
+        if user_paf:
+            log_test("User 'paf' Found", "PASS", f"User exists with ID: {user_paf.get('id', 'Unknown')[:8]}...")
+            print(f"    Username: {user_paf.get('username')}")
+            print(f"    Email: {user_paf.get('email')}")
+            print(f"    Status: {user_paf.get('status')}")
+            print(f"    Roles: {user_paf.get('roles', [])}")
+            print(f"    Is Verified: {user_paf.get('is_verified')}")
+            print(f"    Created At: {user_paf.get('created_at')}")
+        else:
+            log_test("User 'paf' Not Found", "FAIL", "User 'paf' does not exist in the database")
+            return False
+    else:
+        log_test("User Search Failed", "FAIL", "Cannot search for users")
+        return False
+    
+    # Step 3: Test login with the provided credentials
+    print(f"\n  Step 3: Test Login with Credentials")
+    
+    login_data = {
+        "username": "paf",
+        "password": "AZERTY123456!!nbvcxw"
+    }
+    
+    login_response = test_endpoint(
+        "POST",
+        f"{AUTH_BASE_URL}/auth/local/login",
+        data=login_data,
+        expected_status=401,  # We expect this to fail based on the issue
+        test_name="Login with 'paf' credentials"
+    )
+    
+    if login_response:
+        error_detail = login_response.get("detail", "No error message")
+        log_test("Login Error Captured", "PASS", f"Error: {error_detail}")
+        
+        # Analyze the error
+        if "invalid" in error_detail.lower() or "incorrect" in error_detail.lower():
+            log_test("Error Analysis", "INFO", "Likely password or username issue")
+        elif "pending" in error_detail.lower() or "not verified" in error_detail.lower():
+            log_test("Error Analysis", "INFO", "Likely account status issue")
+        elif "suspended" in error_detail.lower() or "blocked" in error_detail.lower():
+            log_test("Error Analysis", "INFO", "Account may be suspended/blocked")
+        else:
+            log_test("Error Analysis", "INFO", f"Unknown error type: {error_detail}")
+    
+    # Step 4: Analyze potential issues based on user data
+    print(f"\n  Step 4: Issue Analysis")
+    
+    if user_paf:
+        status = user_paf.get("status", "unknown")
+        is_verified = user_paf.get("is_verified", False)
+        roles = user_paf.get("roles", [])
+        
+        issues_found = []
+        
+        # Check status
+        if status != "active":
+            issues_found.append(f"User status is '{status}' (should be 'active')")
+            log_test("Status Issue", "FAIL", f"User status is '{status}', not 'active'")
+        else:
+            log_test("Status Check", "PASS", "User status is 'active'")
+        
+        # Check verification
+        if not is_verified:
+            issues_found.append("User is not verified (is_verified = false)")
+            log_test("Verification Issue", "FAIL", "User is not verified")
+        else:
+            log_test("Verification Check", "PASS", "User is verified")
+        
+        # Check roles
+        if "interim" not in roles:
+            issues_found.append(f"User doesn't have 'interim' role (roles: {roles})")
+            log_test("Role Issue", "FAIL", f"User doesn't have 'interim' role: {roles}")
+        else:
+            log_test("Role Check", "PASS", "User has 'interim' role")
+        
+        # Summary of issues
+        if issues_found:
+            print(f"\n  {Colors.RED}Issues Found:{Colors.ENDC}")
+            for i, issue in enumerate(issues_found, 1):
+                print(f"    {i}. {issue}")
+            
+            log_test("Issue Summary", "FAIL", f"Found {len(issues_found)} issues preventing login")
+        else:
+            log_test("Issue Summary", "WARN", "No obvious issues found - may be password related")
+    
+    # Step 5: Test with different scenarios if user exists
+    if user_paf and user_paf.get("status") == "active" and user_paf.get("is_verified"):
+        print(f"\n  Step 5: Additional Login Tests")
+        
+        # Test with email instead of username
+        user_email = user_paf.get("email")
+        if user_email:
+            email_login_data = {
+                "username": user_email,  # Try email as username
+                "password": "AZERTY123456!!nbvcxw"
+            }
+            
+            email_login_response = test_endpoint(
+                "POST",
+                f"{AUTH_BASE_URL}/auth/local/login",
+                data=email_login_data,
+                expected_status=401,  # Still expect failure
+                test_name="Login with email as username"
+            )
+            
+            if email_login_response:
+                email_error = email_login_response.get("detail", "")
+                log_test("Email Login Test", "INFO", f"Email login error: {email_error}")
+    
+    return True
+
+
 def run_all_tests():
-    """Run Update User endpoint tests"""
-    print(f"{Colors.BOLD}Update User Endpoint Testing{Colors.ENDC}")
+    """Run User 'paf' Login Investigation"""
+    print(f"{Colors.BOLD}User 'paf' Login Issue Investigation{Colors.ENDC}")
     print(f"Timestamp: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print("=" * 70)
     
