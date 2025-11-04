@@ -1569,6 +1569,27 @@ def test_user_paf_login_issue():
                 email_error = email_login_response.get("detail", "")
                 log_test("Email Login Test", "INFO", f"Email login error: {email_error}")
     
+    # Step 6: Test password reset to verify if password is the issue
+    if user_paf and user_paf.get("status") == "active" and user_paf.get("is_verified"):
+        print(f"\n  Step 6: Test Password Reset for User 'paf'")
+        
+        user_email = user_paf.get("email")
+        if user_email:
+            # Request password reset
+            reset_request = test_endpoint(
+                "POST",
+                f"{AUTH_BASE_URL}/auth/forgot-password",
+                data={"email": user_email},
+                expected_status=200,
+                test_name="Password Reset Request for 'paf'"
+            )
+            
+            if reset_request:
+                log_test("Password Reset Available", "PASS", "Password reset system is working")
+                print(f"    Reset can be requested for: {user_email}")
+            else:
+                log_test("Password Reset Failed", "FAIL", "Cannot request password reset")
+    
     return True
 
 
