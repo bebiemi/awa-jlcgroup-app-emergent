@@ -4,8 +4,8 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import { logoutAction } from '@/features/auth/slices/authSlice'
 import toast from 'react-hot-toast'
 
-const INACTIVITY_TIMEOUT = 10 * 60 * 1000 // 10 minutes in milliseconds
-const WARNING_TIME = 1 * 60 * 1000 // Show warning 1 minute before logout
+const INACTIVITY_TIMEOUT = 60 * 60 * 1000 // 60 minutes (1 hour) in milliseconds
+const WARNING_TIME = 5 * 60 * 1000 // Show warning 5 minutes before logout
 
 export function useInactivityLogout() {
   const navigate = useNavigate()
