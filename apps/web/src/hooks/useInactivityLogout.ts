@@ -38,10 +38,10 @@ export function useInactivityLogout() {
 
     // Only set timers if user is authenticated
     if (isAuthenticated) {
-      // Set warning timer (9 minutes)
+      // Set warning timer (55 minutes)
       warningTimeoutRef.current = setTimeout(showWarning, INACTIVITY_TIMEOUT - WARNING_TIME)
 
-      // Set logout timer (10 minutes)
+      // Set logout timer (60 minutes)
       timeoutRef.current = setTimeout(logout, INACTIVITY_TIMEOUT)
     }
   }, [isAuthenticated, logout, showWarning])
