@@ -865,59 +865,58 @@ async def local_login(
         
         # Handle admin login if it's admin
         if is_admin_login:
-        
-        # Get admin email (first in list or use a valid email format)
-        admin_email = admin_emails[0] if admin_emails else f"{login_data.username}@awanagroup.com"
-        
-        # Check if user exists in database
-        existing_user_doc = await db.users.find_one({
-            "provider": AuthProviderEnum.LOCAL.value,
-            "email": admin_email
-        }, {"_id": 0})
-        
-        if existing_user_doc:
-            # Update existing user
-            user = User(**existing_user_doc)
-            user.last_login_at = datetime.now(timezone.utc)
-            user.updated_at = datetime.now(timezone.utc)
+            # Get admin email (first in list or use a valid email format)
+            admin_email = admin_emails[0] if admin_emails else f"{login_data.username}@awanagroup.com"
             
-            # Ensure admin role
-            if "admin" not in user.roles:
-                user.roles.append("admin")
+            # Check if user exists in database
+            existing_user_doc = await db.users.find_one({
+                "provider": AuthProviderEnum.LOCAL.value,
+                "email": admin_email
+            }, {"_id": 0})
             
-            await db.users.update_one(
-                {"id": user.id},
-                {"$set": {
-                    "last_login_at": user.last_login_at.isoformat(),
-                    "updated_at": user.updated_at.isoformat(),
-                    "roles": user.roles
-                }}
-            )
-            
-            logger.info(f"Local user {user.email} logged in (existing)")
-        else:
-            # Create new local admin user
-            user = User(
-                username=login_data.username,
-                email=admin_email,
-                full_name="Admin",
-                provider=AuthProviderEnum.LOCAL,
-                provider_user_id=f"local_{login_data.username}",
-                status=UserStatus.ACTIVE,
-                roles=["admin"]
-            )
-            
-            user_dict = user.dict()
-            user_dict['created_at'] = user.created_at.isoformat()
-            user_dict['updated_at'] = user.updated_at.isoformat()
-            user_dict['last_login_at'] = user.last_login_at.isoformat() if user.last_login_at else None
-            
-            await db.users.insert_one(user_dict)
-            
-            # Grant admin role in RBAC system
-            try:
-                await rbac_manager.grant_role(user.id, "admin", granted_by="system")
-            except ValueError as e:
+            if existing_user_doc:
+                # Update existing user
+                user = User(**existing_user_doc)
+                user.last_login_at = datetime.now(timezone.utc)
+                user.updated_at = datetime.now(timezone.utc)
+                
+                # Ensure admin role
+                if "admin" not in user.roles:
+                    user.roles.append("admin")
+                
+                await db.users.update_one(
+                    {"id": user.id},
+                    {"$set": {
+                        "last_login_at": user.last_login_at.isoformat(),
+                        "updated_at": user.updated_at.isoformat(),
+                        "roles": user.roles
+                    }}
+                )
+                
+                logger.info(f"Local user {user.email} logged in (existing)")
+            else:
+                # Create new local admin user
+                user = User(
+                    username=login_data.username,
+                    email=admin_email,
+                    full_name="Admin",
+                    provider=AuthProviderEnum.LOCAL,
+                    provider_user_id=f"local_{login_data.username}",
+                    status=UserStatus.ACTIVE,
+                    roles=["admin"]
+                )
+                
+                user_dict = user.dict()
+                user_dict['created_at'] = user.created_at.isoformat()
+                user_dict['updated_at'] = user.updated_at.isoformat()
+                user_dict['last_login_at'] = user.last_login_at.isoformat() if user.last_login_at else None
+                
+                await db.users.insert_one(user_dict)
+                
+                # Grant admin role in RBAC system
+                try:
+                    await rbac_manager.grant_role(user.id, "admin", granted_by="system")
+                except ValueError as e:
                 logger.warning(f"Could not grant admin role: {e}")
             
             logger.info(f"New local admin user created: {user.email}")
