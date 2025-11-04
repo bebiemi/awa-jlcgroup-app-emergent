@@ -21,7 +21,7 @@ export function useInactivityLogout() {
   }, [dispatch, navigate])
 
   const showWarning = useCallback(() => {
-    toast('Vous serez déconnecté dans 1 minute pour inactivité', {
+    toast('Vous serez déconnecté dans 5 minutes pour inactivité', {
       icon: '⏰',
       duration: 5000,
     })
