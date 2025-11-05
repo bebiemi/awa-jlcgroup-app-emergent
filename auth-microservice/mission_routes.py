@@ -95,6 +95,14 @@ async def create_mission(
             detail="Vous n'avez pas la permission de créer une mission"
         )
     
+    # Valider le type de contrat contre les référentiels
+    if not await validate_status(db, "contract_types", mission.contract_type):
+        valid_types = await get_valid_statuses(db, "contract_types")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Type de contrat invalide '{mission.contract_type}'. Valeurs autorisées: {valid_types}"
+        )
+    
     mission_id = str(uuid.uuid4())
     now = datetime.now(timezone.utc)
     
