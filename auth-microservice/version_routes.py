@@ -210,6 +210,11 @@ async def rollback_to_version(
                 })
     
     # Logger le rollback
+    current_version_snapshot = await db.configuration_history.find_one(
+        {"snapshot_type": {"$ne": "rollback"}},
+        sort=[("created_at", -1)]
+    )
+    
     await db.configuration_history.insert_one({
         "id": str(uuid.uuid4()),
         "version": f"rollback-{datetime.now(timezone.utc).strftime('%Y%m%d.%H%M%S')}",
@@ -223,10 +228,48 @@ async def rollback_to_version(
         "tags": ["rollback"]
     })
     
+    # Envoyer notification email en arrière-plan
+    email_service = get_email_service()
+    if email_service.is_configured():
+        # Calculer les changements si possible
+        changes_summary = None
+        if current_version_snapshot:
+            try:
+                # Compter les changements basiques
+                current_refs = set()
+                target_refs = set()
+                
+                for cat, refs in current_version_snapshot.get("config_data", {}).get("references", {}).items():
+                    for ref in refs:
+                        current_refs.add(f"{cat}.{ref.get('code')}")
+                
+                for cat, refs in config_data.get("references", {}).items():
+                    for ref in refs:
+                        target_refs.add(f"{cat}.{ref.get('code')}")
+                
+                changes_summary = {
+                    "added": len(target_refs - current_refs),
+                    "removed": len(current_refs - target_refs),
+                    "modified": 0  # Simplification
+                }
+            except:
+                pass
+        
+        background_tasks.add_task(
+            email_service.send_rollback_notification,
+            actor_name=current_user.full_name or current_user.username,
+            version_from=current_version_snapshot.get("version", "current") if current_version_snapshot else "current",
+            version_to=target_version["version"],
+            reason=rollback.reason,
+            rollback_time=datetime.now(timezone.utc),
+            changes_summary=changes_summary
+        )
+    
     return {
         "message": "Rollback effectué avec succès",
         "version": target_version["version"],
-        "reason": rollback.reason
+        "reason": rollback.reason,
+        "email_notification": "sent" if email_service.is_configured() else "disabled"
     }
 
 
