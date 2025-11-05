@@ -9,6 +9,7 @@ from awana_auth.core.models import User
 from awana_auth.core.config_manager import get_config
 from datetime import datetime, timezone
 import uuid
+from awana_auth.services.email_service import get_email_service
 
 router = APIRouter(prefix="/api/versions", tags=["versioning"])
 
