@@ -156,6 +156,30 @@ function App() {
           </ProtectedRoute>
         }
       />
+      <Route
+        path="/admin/email-settings"
+        element={
+          <ProtectedRoute requiredRoles={[roles.admin, roles.super_admin]}>
+            <EmailSettingsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/email-history"
+        element={
+          <ProtectedRoute requiredRoles={[roles.admin, roles.super_admin]}>
+            <EmailHistoryPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/email-templates"
+        element={
+          <ProtectedRoute requiredRoles={[roles.super_admin]}>
+            <EmailTemplatesPage />
+          </ProtectedRoute>
+        }
+      />
       
       {/* Routes Missions - Admin & Commercial */}
       <Route
