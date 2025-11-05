@@ -302,7 +302,7 @@ export default function InterimDashboard() {
                 </dl>
               </div>
 
-              {profile.interim_data && (
+              {profile.profile && (
                 <div>
                   <h4 className="text-sm font-medium text-gray-500">Compétences</h4>
                   <div className="mt-3">
