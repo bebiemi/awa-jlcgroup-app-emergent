@@ -1,35 +1,35 @@
 # 🔍 Audit des Valeurs en Dur - Rapport Complet
 
-**Date**: 2025-11-05 02:49:42
+**Date**: 2025-11-05 03:02:10
 
 ---
 
 ## 📊 Résumé Exécutif
 
-**Total de valeurs en dur trouvées**: 753
+**Total de valeurs en dur trouvées**: 672
 
 ### Par Sévérité
 
 | Sévérité | Nombre | Pourcentage |
 |----------|--------|-------------|
-| 🔴 CRITICAL | 403 | 53.5% |
-| 🟠 HIGH | 76 | 10.1% |
-| 🟡 MEDIUM | 90 | 12.0% |
-| 🟢 LOW | 184 | 24.4% |
+| 🔴 CRITICAL | 329 | 49.0% |
+| 🟠 HIGH | 81 | 12.1% |
+| 🟡 MEDIUM | 78 | 11.6% |
+| 🟢 LOW | 184 | 27.4% |
 
 ### Par Catégorie
 
 | Catégorie | Nombre |
 |-----------|--------|
-| roles | 223 |
 | messages | 168 |
-| validation_types | 129 |
-| contract_types | 62 |
+| roles | 164 |
+| validation_types | 102 |
+| application_status | 63 |
 | user_status | 60 |
-| application_status | 51 |
+| contract_types | 50 |
+| mission_status | 21 |
 | delays_days | 17 |
 | numeric_limits | 16 |
-| mission_status | 16 |
 | document_types | 11 |
 
 ### Top 15 Fichiers
@@ -37,11 +37,10 @@
 | Fichier | Nombre de valeurs en dur |
 |---------|--------------------------|
 | `auth-microservice/awana_auth_routes.py` | 77 |
-| `apps/web/src/features/admin/pages/ValidationsPage.tsx` | 76 |
-| `apps/web/src/App.tsx` | 70 |
+| `apps/web/src/features/admin/pages/ValidationsPage.tsx` | 75 |
+| `apps/web/src/hooks/useAppConfig.ts` | 36 |
 | `auth-microservice/google_auth_routes.py` | 32 |
 | `auth-microservice/scripts/seed_mission_references.py` | 32 |
-| `apps/web/src/features/auth/pages/RegisterPage.tsx` | 32 |
 | `auth-microservice/mission_routes.py` | 26 |
 | `apps/web/src/features/auth/pages/RoleSelectionPage.tsx` | 20 |
 | `auth-microservice/mfa_routes.py` | 19 |
@@ -50,520 +49,14 @@
 | `auth-microservice/validation_routes.py` | 17 |
 | `apps/web/src/types/index.ts` | 17 |
 | `auth-microservice/security_routes.py` | 16 |
-| `apps/web/src/components/Sidebar.tsx` | 16 |
+| `auth-microservice/awana_auth/core/dependencies.py` | 14 |
+| `apps/web/src/features/admin/pages/UserManagementPage.tsx` | 14 |
 
 ---
 
 ## 🔴 Sévérité: CRITICAL
 
-**Total**: 403 occurrences
-
-### 📄 `apps/web/src/App.tsx`
-
-**1. Ligne 45** | Catégorie: `roles`
-
-```
-if (user.roles.includes('admin')) return '/admin'
-```
-
-**Valeur en dur**: `'admin'`
-
-**2. Ligne 46** | Catégorie: `roles`
-
-```
-if (user.roles.includes('interim')) return '/interimaire'
-```
-
-**Valeur en dur**: `'interim'`
-
-**3. Ligne 46** | Catégorie: `validation_types`
-
-```
-if (user.roles.includes('interim')) return '/interimaire'
-```
-
-**Valeur en dur**: `'interim'`
-
-**4. Ligne 47** | Catégorie: `roles`
-
-```
-if (user.roles.includes('company')) return '/entreprise'
-```
-
-**Valeur en dur**: `'company'`
-
-**5. Ligne 47** | Catégorie: `validation_types`
-
-```
-if (user.roles.includes('company')) return '/entreprise'
-```
-
-**Valeur en dur**: `'company'`
-
-**6. Ligne 48** | Catégorie: `roles`
-
-```
-if (user.roles.includes('agency')) return '/agence'
-```
-
-**Valeur en dur**: `'agency'`
-
-**7. Ligne 67** | Catégorie: `roles`
-
-```
-<ProtectedRoute requiredRoles={['admin']}>
-```
-
-**Valeur en dur**: `'admin'`
-
-**8. Ligne 75** | Catégorie: `roles`
-
-```
-<ProtectedRoute requiredRoles={['admin']}>
-```
-
-**Valeur en dur**: `'admin'`
-
-**9. Ligne 83** | Catégorie: `roles`
-
-```
-<ProtectedRoute requiredRoles={['admin', 'super_admin']}>
-```
-
-**Valeur en dur**: `'admin'`
-
-**10. Ligne 83** | Catégorie: `roles`
-
-```
-<ProtectedRoute requiredRoles={['admin', 'super_admin']}>
-```
-
-**Valeur en dur**: `'super_admin'`
-
-**11. Ligne 91** | Catégorie: `roles`
-
-```
-<ProtectedRoute requiredRoles={['admin', 'super_admin']}>
-```
-
-**Valeur en dur**: `'admin'`
-
-**12. Ligne 91** | Catégorie: `roles`
-
-```
-<ProtectedRoute requiredRoles={['admin', 'super_admin']}>
-```
-
-**Valeur en dur**: `'super_admin'`
-
-**13. Ligne 99** | Catégorie: `roles`
-
-```
-<ProtectedRoute requiredRoles={['admin', 'super_admin']}>
-```
-
-**Valeur en dur**: `'admin'`
-
-**14. Ligne 99** | Catégorie: `roles`
-
-```
-<ProtectedRoute requiredRoles={['admin', 'super_admin']}>
-```
-
-**Valeur en dur**: `'super_admin'`
-
-**15. Ligne 107** | Catégorie: `roles`
-
-```
-<ProtectedRoute requiredRoles={['admin', 'super_admin']}>
-```
-
-**Valeur en dur**: `'admin'`
-
-**16. Ligne 107** | Catégorie: `roles`
-
-```
-<ProtectedRoute requiredRoles={['admin', 'super_admin']}>
-```
-
-**Valeur en dur**: `'super_admin'`
-
-**17. Ligne 115** | Catégorie: `roles`
-
-```
-<ProtectedRoute requiredRoles={['admin', 'super_admin']}>
-```
-
-**Valeur en dur**: `'admin'`
-
-**18. Ligne 115** | Catégorie: `roles`
-
-```
-<ProtectedRoute requiredRoles={['admin', 'super_admin']}>
-```
-
-**Valeur en dur**: `'super_admin'`
-
-**19. Ligne 123** | Catégorie: `roles`
-
-```
-<ProtectedRoute requiredRoles={['admin', 'super_admin']}>
-```
-
-**Valeur en dur**: `'admin'`
-
-**20. Ligne 123** | Catégorie: `roles`
-
-```
-<ProtectedRoute requiredRoles={['admin', 'super_admin']}>
-```
-
-**Valeur en dur**: `'super_admin'`
-
-**21. Ligne 131** | Catégorie: `roles`
-
-```
-<ProtectedRoute requiredRoles={['admin', 'super_admin']}>
-```
-
-**Valeur en dur**: `'admin'`
-
-**22. Ligne 131** | Catégorie: `roles`
-
-```
-<ProtectedRoute requiredRoles={['admin', 'super_admin']}>
-```
-
-**Valeur en dur**: `'super_admin'`
-
-**23. Ligne 141** | Catégorie: `roles`
-
-```
-<ProtectedRoute requiredRoles={['admin', 'super_admin', 'commercial', 'company']}>
-```
-
-**Valeur en dur**: `'admin'`
-
-**24. Ligne 141** | Catégorie: `roles`
-
-```
-<ProtectedRoute requiredRoles={['admin', 'super_admin', 'commercial', 'company']}>
-```
-
-**Valeur en dur**: `'super_admin'`
-
-**25. Ligne 141** | Catégorie: `roles`
-
-```
-<ProtectedRoute requiredRoles={['admin', 'super_admin', 'commercial', 'company']}>
-```
-
-**Valeur en dur**: `'company'`
-
-**26. Ligne 141** | Catégorie: `roles`
-
-```
-<ProtectedRoute requiredRoles={['admin', 'super_admin', 'commercial', 'company']}>
-```
-
-**Valeur en dur**: `'commercial'`
-
-**27. Ligne 141** | Catégorie: `validation_types`
-
-```
-<ProtectedRoute requiredRoles={['admin', 'super_admin', 'commercial', 'company']}>
-```
-
-**Valeur en dur**: `'company'`
-
-**28. Ligne 149** | Catégorie: `roles`
-
-```
-<ProtectedRoute requiredRoles={['admin', 'super_admin', 'commercial', 'company']}>
-```
-
-**Valeur en dur**: `'admin'`
-
-**29. Ligne 149** | Catégorie: `roles`
-
-```
-<ProtectedRoute requiredRoles={['admin', 'super_admin', 'commercial', 'company']}>
-```
-
-**Valeur en dur**: `'super_admin'`
-
-**30. Ligne 149** | Catégorie: `roles`
-
-```
-<ProtectedRoute requiredRoles={['admin', 'super_admin', 'commercial', 'company']}>
-```
-
-**Valeur en dur**: `'company'`
-
-**31. Ligne 149** | Catégorie: `roles`
-
-```
-<ProtectedRoute requiredRoles={['admin', 'super_admin', 'commercial', 'company']}>
-```
-
-**Valeur en dur**: `'commercial'`
-
-**32. Ligne 149** | Catégorie: `validation_types`
-
-```
-<ProtectedRoute requiredRoles={['admin', 'super_admin', 'commercial', 'company']}>
-```
-
-**Valeur en dur**: `'company'`
-
-**33. Ligne 157** | Catégorie: `roles`
-
-```
-<ProtectedRoute requiredRoles={['admin', 'super_admin', 'commercial', 'company']}>
-```
-
-**Valeur en dur**: `'admin'`
-
-**34. Ligne 157** | Catégorie: `roles`
-
-```
-<ProtectedRoute requiredRoles={['admin', 'super_admin', 'commercial', 'company']}>
-```
-
-**Valeur en dur**: `'super_admin'`
-
-**35. Ligne 157** | Catégorie: `roles`
-
-```
-<ProtectedRoute requiredRoles={['admin', 'super_admin', 'commercial', 'company']}>
-```
-
-**Valeur en dur**: `'company'`
-
-**36. Ligne 157** | Catégorie: `roles`
-
-```
-<ProtectedRoute requiredRoles={['admin', 'super_admin', 'commercial', 'company']}>
-```
-
-**Valeur en dur**: `'commercial'`
-
-**37. Ligne 157** | Catégorie: `validation_types`
-
-```
-<ProtectedRoute requiredRoles={['admin', 'super_admin', 'commercial', 'company']}>
-```
-
-**Valeur en dur**: `'company'`
-
-**38. Ligne 165** | Catégorie: `roles`
-
-```
-<ProtectedRoute requiredRoles={['admin', 'super_admin', 'commercial', 'company']}>
-```
-
-**Valeur en dur**: `'admin'`
-
-**39. Ligne 165** | Catégorie: `roles`
-
-```
-<ProtectedRoute requiredRoles={['admin', 'super_admin', 'commercial', 'company']}>
-```
-
-**Valeur en dur**: `'super_admin'`
-
-**40. Ligne 165** | Catégorie: `roles`
-
-```
-<ProtectedRoute requiredRoles={['admin', 'super_admin', 'commercial', 'company']}>
-```
-
-**Valeur en dur**: `'company'`
-
-**41. Ligne 165** | Catégorie: `roles`
-
-```
-<ProtectedRoute requiredRoles={['admin', 'super_admin', 'commercial', 'company']}>
-```
-
-**Valeur en dur**: `'commercial'`
-
-**42. Ligne 165** | Catégorie: `validation_types`
-
-```
-<ProtectedRoute requiredRoles={['admin', 'super_admin', 'commercial', 'company']}>
-```
-
-**Valeur en dur**: `'company'`
-
-**43. Ligne 173** | Catégorie: `roles`
-
-```
-<ProtectedRoute requiredRoles={['admin', 'super_admin', 'commercial']}>
-```
-
-**Valeur en dur**: `'admin'`
-
-**44. Ligne 173** | Catégorie: `roles`
-
-```
-<ProtectedRoute requiredRoles={['admin', 'super_admin', 'commercial']}>
-```
-
-**Valeur en dur**: `'super_admin'`
-
-**45. Ligne 173** | Catégorie: `roles`
-
-```
-<ProtectedRoute requiredRoles={['admin', 'super_admin', 'commercial']}>
-```
-
-**Valeur en dur**: `'commercial'`
-
-**46. Ligne 183** | Catégorie: `roles`
-
-```
-<ProtectedRoute requiredRoles={['interim']}>
-```
-
-**Valeur en dur**: `'interim'`
-
-**47. Ligne 183** | Catégorie: `validation_types`
-
-```
-<ProtectedRoute requiredRoles={['interim']}>
-```
-
-**Valeur en dur**: `'interim'`
-
-**48. Ligne 191** | Catégorie: `roles`
-
-```
-<ProtectedRoute requiredRoles={['interim']}>
-```
-
-**Valeur en dur**: `'interim'`
-
-**49. Ligne 191** | Catégorie: `validation_types`
-
-```
-<ProtectedRoute requiredRoles={['interim']}>
-```
-
-**Valeur en dur**: `'interim'`
-
-**50. Ligne 199** | Catégorie: `roles`
-
-```
-<ProtectedRoute requiredRoles={['interim']}>
-```
-
-**Valeur en dur**: `'interim'`
-
-**51. Ligne 199** | Catégorie: `validation_types`
-
-```
-<ProtectedRoute requiredRoles={['interim']}>
-```
-
-**Valeur en dur**: `'interim'`
-
-**52. Ligne 207** | Catégorie: `roles`
-
-```
-<ProtectedRoute requiredRoles={['interim']}>
-```
-
-**Valeur en dur**: `'interim'`
-
-**53. Ligne 207** | Catégorie: `validation_types`
-
-```
-<ProtectedRoute requiredRoles={['interim']}>
-```
-
-**Valeur en dur**: `'interim'`
-
-**54. Ligne 216** | Catégorie: `roles`
-
-```
-<ProtectedRoute requiredRoles={['interim']}>
-```
-
-**Valeur en dur**: `'interim'`
-
-**55. Ligne 216** | Catégorie: `validation_types`
-
-```
-<ProtectedRoute requiredRoles={['interim']}>
-```
-
-**Valeur en dur**: `'interim'`
-
-**56. Ligne 224** | Catégorie: `roles`
-
-```
-<ProtectedRoute requiredRoles={['interim']}>
-```
-
-**Valeur en dur**: `'interim'`
-
-**57. Ligne 224** | Catégorie: `validation_types`
-
-```
-<ProtectedRoute requiredRoles={['interim']}>
-```
-
-**Valeur en dur**: `'interim'`
-
-**58. Ligne 232** | Catégorie: `roles`
-
-```
-<ProtectedRoute requiredRoles={['company']}>
-```
-
-**Valeur en dur**: `'company'`
-
-**59. Ligne 232** | Catégorie: `validation_types`
-
-```
-<ProtectedRoute requiredRoles={['company']}>
-```
-
-**Valeur en dur**: `'company'`
-
-**60. Ligne 240** | Catégorie: `roles`
-
-```
-<ProtectedRoute requiredRoles={['company']}>
-```
-
-**Valeur en dur**: `'company'`
-
-**61. Ligne 240** | Catégorie: `validation_types`
-
-```
-<ProtectedRoute requiredRoles={['company']}>
-```
-
-**Valeur en dur**: `'company'`
-
-**62. Ligne 248** | Catégorie: `roles`
-
-```
-<ProtectedRoute requiredRoles={['agency']}>
-```
-
-**Valeur en dur**: `'agency'`
-
-**63. Ligne 256** | Catégorie: `roles`
-
-```
-<ProtectedRoute requiredRoles={['commercial']}>
-```
-
-**Valeur en dur**: `'commercial'`
-
+**Total**: 329 occurrences
 
 ### 📄 `apps/web/src/components/Breadcrumb.tsx`
 
@@ -629,55 +122,7 @@ if (result.user.roles.includes('admin') || result.user.roles.includes('super_adm
 
 ### 📄 `apps/web/src/components/Sidebar.tsx`
 
-**1. Ligne 49** | Catégorie: `roles`
-
-```
-if (user.roles.includes('admin') || user.roles.includes('super_admin')) return '/admin'
-```
-
-**Valeur en dur**: `'admin'`
-
-**2. Ligne 49** | Catégorie: `roles`
-
-```
-if (user.roles.includes('admin') || user.roles.includes('super_admin')) return '/admin'
-```
-
-**Valeur en dur**: `'super_admin'`
-
-**3. Ligne 50** | Catégorie: `roles`
-
-```
-if (user.roles.includes('interim')) return '/interimaire'
-```
-
-**Valeur en dur**: `'interim'`
-
-**4. Ligne 50** | Catégorie: `validation_types`
-
-```
-if (user.roles.includes('interim')) return '/interimaire'
-```
-
-**Valeur en dur**: `'interim'`
-
-**5. Ligne 51** | Catégorie: `roles`
-
-```
-if (user.roles.includes('company')) return '/entreprise'
-```
-
-**Valeur en dur**: `'company'`
-
-**6. Ligne 51** | Catégorie: `validation_types`
-
-```
-if (user.roles.includes('company')) return '/entreprise'
-```
-
-**Valeur en dur**: `'company'`
-
-**7. Ligne 52** | Catégorie: `roles`
+**1. Ligne 55** | Catégorie: `roles`
 
 ```
 if (user.roles.includes('agency')) return '/agence'
@@ -685,55 +130,7 @@ if (user.roles.includes('agency')) return '/agence'
 
 **Valeur en dur**: `'agency'`
 
-**8. Ligne 58** | Catégorie: `roles`
-
-```
-const isAdmin = user.roles.includes('admin') || user.roles.includes('super_admin')
-```
-
-**Valeur en dur**: `'admin'`
-
-**9. Ligne 58** | Catégorie: `roles`
-
-```
-const isAdmin = user.roles.includes('admin') || user.roles.includes('super_admin')
-```
-
-**Valeur en dur**: `'super_admin'`
-
-**10. Ligne 59** | Catégorie: `roles`
-
-```
-const isInterim = user.roles.includes('interim')
-```
-
-**Valeur en dur**: `'interim'`
-
-**11. Ligne 59** | Catégorie: `validation_types`
-
-```
-const isInterim = user.roles.includes('interim')
-```
-
-**Valeur en dur**: `'interim'`
-
-**12. Ligne 60** | Catégorie: `roles`
-
-```
-const isCompany = user.roles.includes('company')
-```
-
-**Valeur en dur**: `'company'`
-
-**13. Ligne 60** | Catégorie: `validation_types`
-
-```
-const isCompany = user.roles.includes('company')
-```
-
-**Valeur en dur**: `'company'`
-
-**14. Ligne 61** | Catégorie: `roles`
+**2. Ligne 64** | Catégorie: `roles`
 
 ```
 const isCommercial = user.roles.includes('commercial')
@@ -999,7 +396,7 @@ validation.status === 'rejected' && 'bg-red-100 text-red-800'
 
 ### 📄 `apps/web/src/features/admin/pages/ValidationsPage.tsx`
 
-**1. Ligne 27** | Catégorie: `roles`
+**1. Ligne 28** | Catégorie: `roles`
 
 ```
 type TabType = 'interim' | 'company' | 'collaborator'
@@ -1007,7 +404,7 @@ type TabType = 'interim' | 'company' | 'collaborator'
 
 **Valeur en dur**: `'company'`
 
-**2. Ligne 27** | Catégorie: `roles`
+**2. Ligne 28** | Catégorie: `roles`
 
 ```
 type TabType = 'interim' | 'company' | 'collaborator'
@@ -1015,7 +412,7 @@ type TabType = 'interim' | 'company' | 'collaborator'
 
 **Valeur en dur**: `'interim'`
 
-**3. Ligne 27** | Catégorie: `validation_types`
+**3. Ligne 28** | Catégorie: `validation_types`
 
 ```
 type TabType = 'interim' | 'company' | 'collaborator'
@@ -1023,7 +420,7 @@ type TabType = 'interim' | 'company' | 'collaborator'
 
 **Valeur en dur**: `'interim'`
 
-**4. Ligne 27** | Catégorie: `validation_types`
+**4. Ligne 28** | Catégorie: `validation_types`
 
 ```
 type TabType = 'interim' | 'company' | 'collaborator'
@@ -1031,7 +428,7 @@ type TabType = 'interim' | 'company' | 'collaborator'
 
 **Valeur en dur**: `'company'`
 
-**5. Ligne 27** | Catégorie: `validation_types`
+**5. Ligne 28** | Catégorie: `validation_types`
 
 ```
 type TabType = 'interim' | 'company' | 'collaborator'
@@ -1039,7 +436,103 @@ type TabType = 'interim' | 'company' | 'collaborator'
 
 **Valeur en dur**: `'collaborator'`
 
-**6. Ligne 30** | Catégorie: `roles`
+**6. Ligne 36** | Catégorie: `roles`
+
+```
+interim: validationTypes.find(vt => vt.code === 'interim')?.code || 'interim',
+```
+
+**Valeur en dur**: `'interim'`
+
+**7. Ligne 36** | Catégorie: `roles`
+
+```
+interim: validationTypes.find(vt => vt.code === 'interim')?.code || 'interim',
+```
+
+**Valeur en dur**: `'interim'`
+
+**8. Ligne 36** | Catégorie: `validation_types`
+
+```
+interim: validationTypes.find(vt => vt.code === 'interim')?.code || 'interim',
+```
+
+**Valeur en dur**: `'interim'`
+
+**9. Ligne 36** | Catégorie: `validation_types`
+
+```
+interim: validationTypes.find(vt => vt.code === 'interim')?.code || 'interim',
+```
+
+**Valeur en dur**: `'interim'`
+
+**10. Ligne 37** | Catégorie: `roles`
+
+```
+company: validationTypes.find(vt => vt.code === 'company')?.code || 'company',
+```
+
+**Valeur en dur**: `'company'`
+
+**11. Ligne 37** | Catégorie: `roles`
+
+```
+company: validationTypes.find(vt => vt.code === 'company')?.code || 'company',
+```
+
+**Valeur en dur**: `'company'`
+
+**12. Ligne 37** | Catégorie: `validation_types`
+
+```
+company: validationTypes.find(vt => vt.code === 'company')?.code || 'company',
+```
+
+**Valeur en dur**: `'company'`
+
+**13. Ligne 37** | Catégorie: `validation_types`
+
+```
+company: validationTypes.find(vt => vt.code === 'company')?.code || 'company',
+```
+
+**Valeur en dur**: `'company'`
+
+**14. Ligne 38** | Catégorie: `validation_types`
+
+```
+collaborator: validationTypes.find(vt => vt.code === 'collaborator')?.code || 'collaborator'
+```
+
+**Valeur en dur**: `'collaborator'`
+
+**15. Ligne 38** | Catégorie: `validation_types`
+
+```
+collaborator: validationTypes.find(vt => vt.code === 'collaborator')?.code || 'collaborator'
+```
+
+**Valeur en dur**: `'collaborator'`
+
+**16. Ligne 44** | Catégorie: `application_status`
+
+```
+rejected: validationStatuses.find(vs => vs.code === 'rejected')?.code || 'rejected'
+```
+
+**Valeur en dur**: `'rejected'`
+
+**17. Ligne 44** | Catégorie: `application_status`
+
+```
+rejected: validationStatuses.find(vs => vs.code === 'rejected')?.code || 'rejected'
+```
+
+**Valeur en dur**: `'rejected'`
+
+**18. Ligne 47** | Catégorie: `roles`
 
 ```
 const [activeTab, setActiveTab] = useState<TabType>('interim')
@@ -1047,7 +540,7 @@ const [activeTab, setActiveTab] = useState<TabType>('interim')
 
 **Valeur en dur**: `'interim'`
 
-**7. Ligne 30** | Catégorie: `validation_types`
+**19. Ligne 47** | Catégorie: `validation_types`
 
 ```
 const [activeTab, setActiveTab] = useState<TabType>('interim')
@@ -1055,7 +548,7 @@ const [activeTab, setActiveTab] = useState<TabType>('interim')
 
 **Valeur en dur**: `'interim'`
 
-**8. Ligne 36** | Catégorie: `roles`
+**20. Ligne 53** | Catégorie: `roles`
 
 ```
 const [bulkActionType, setBulkActionType] = useState<'all' | 'interim' | 'company' | 'collaborator' | 'warnings'>('all')
@@ -1063,7 +556,7 @@ const [bulkActionType, setBulkActionType] = useState<'all' | 'interim' | 'compan
 
 **Valeur en dur**: `'company'`
 
-**9. Ligne 36** | Catégorie: `roles`
+**21. Ligne 53** | Catégorie: `roles`
 
 ```
 const [bulkActionType, setBulkActionType] = useState<'all' | 'interim' | 'company' | 'collaborator' | 'warnings'>('all')
@@ -1071,7 +564,7 @@ const [bulkActionType, setBulkActionType] = useState<'all' | 'interim' | 'compan
 
 **Valeur en dur**: `'interim'`
 
-**10. Ligne 36** | Catégorie: `validation_types`
+**22. Ligne 53** | Catégorie: `validation_types`
 
 ```
 const [bulkActionType, setBulkActionType] = useState<'all' | 'interim' | 'company' | 'collaborator' | 'warnings'>('all')
@@ -1079,7 +572,7 @@ const [bulkActionType, setBulkActionType] = useState<'all' | 'interim' | 'compan
 
 **Valeur en dur**: `'interim'`
 
-**11. Ligne 36** | Catégorie: `validation_types`
+**23. Ligne 53** | Catégorie: `validation_types`
 
 ```
 const [bulkActionType, setBulkActionType] = useState<'all' | 'interim' | 'company' | 'collaborator' | 'warnings'>('all')
@@ -1087,7 +580,7 @@ const [bulkActionType, setBulkActionType] = useState<'all' | 'interim' | 'compan
 
 **Valeur en dur**: `'company'`
 
-**12. Ligne 36** | Catégorie: `validation_types`
+**24. Ligne 53** | Catégorie: `validation_types`
 
 ```
 const [bulkActionType, setBulkActionType] = useState<'all' | 'interim' | 'company' | 'collaborator' | 'warnings'>('all')
@@ -1095,7 +588,7 @@ const [bulkActionType, setBulkActionType] = useState<'all' | 'interim' | 'compan
 
 **Valeur en dur**: `'collaborator'`
 
-**13. Ligne 41** | Catégorie: `roles`
+**25. Ligne 58** | Catégorie: `roles`
 
 ```
 const handleTileClick = (type: 'all' | 'interim' | 'company' | 'collaborator' | 'warnings') => {
@@ -1103,7 +596,7 @@ const handleTileClick = (type: 'all' | 'interim' | 'company' | 'collaborator' | 
 
 **Valeur en dur**: `'company'`
 
-**14. Ligne 41** | Catégorie: `roles`
+**26. Ligne 58** | Catégorie: `roles`
 
 ```
 const handleTileClick = (type: 'all' | 'interim' | 'company' | 'collaborator' | 'warnings') => {
@@ -1111,7 +604,7 @@ const handleTileClick = (type: 'all' | 'interim' | 'company' | 'collaborator' | 
 
 **Valeur en dur**: `'interim'`
 
-**15. Ligne 41** | Catégorie: `validation_types`
+**27. Ligne 58** | Catégorie: `validation_types`
 
 ```
 const handleTileClick = (type: 'all' | 'interim' | 'company' | 'collaborator' | 'warnings') => {
@@ -1119,7 +612,7 @@ const handleTileClick = (type: 'all' | 'interim' | 'company' | 'collaborator' | 
 
 **Valeur en dur**: `'interim'`
 
-**16. Ligne 41** | Catégorie: `validation_types`
+**28. Ligne 58** | Catégorie: `validation_types`
 
 ```
 const handleTileClick = (type: 'all' | 'interim' | 'company' | 'collaborator' | 'warnings') => {
@@ -1127,7 +620,7 @@ const handleTileClick = (type: 'all' | 'interim' | 'company' | 'collaborator' | 
 
 **Valeur en dur**: `'company'`
 
-**17. Ligne 41** | Catégorie: `validation_types`
+**29. Ligne 58** | Catégorie: `validation_types`
 
 ```
 const handleTileClick = (type: 'all' | 'interim' | 'company' | 'collaborator' | 'warnings') => {
@@ -1135,7 +628,7 @@ const handleTileClick = (type: 'all' | 'interim' | 'company' | 'collaborator' | 
 
 **Valeur en dur**: `'collaborator'`
 
-**18. Ligne 44** | Catégorie: `roles`
+**30. Ligne 61** | Catégorie: `roles`
 
 ```
 if (type === 'interim') {
@@ -1143,7 +636,7 @@ if (type === 'interim') {
 
 **Valeur en dur**: `'interim'`
 
-**19. Ligne 44** | Catégorie: `validation_types`
+**31. Ligne 61** | Catégorie: `validation_types`
 
 ```
 if (type === 'interim') {
@@ -1151,23 +644,7 @@ if (type === 'interim') {
 
 **Valeur en dur**: `'interim'`
 
-**20. Ligne 45** | Catégorie: `roles`
-
-```
-filtered = validations.filter((v: Validation) => v.validation_type === 'interim' && v.status === 'pending')
-```
-
-**Valeur en dur**: `'interim'`
-
-**21. Ligne 45** | Catégorie: `validation_types`
-
-```
-filtered = validations.filter((v: Validation) => v.validation_type === 'interim' && v.status === 'pending')
-```
-
-**Valeur en dur**: `'interim'`
-
-**22. Ligne 46** | Catégorie: `roles`
+**32. Ligne 63** | Catégorie: `roles`
 
 ```
 } else if (type === 'company') {
@@ -1175,7 +652,7 @@ filtered = validations.filter((v: Validation) => v.validation_type === 'interim'
 
 **Valeur en dur**: `'company'`
 
-**23. Ligne 46** | Catégorie: `validation_types`
+**33. Ligne 63** | Catégorie: `validation_types`
 
 ```
 } else if (type === 'company') {
@@ -1183,23 +660,7 @@ filtered = validations.filter((v: Validation) => v.validation_type === 'interim'
 
 **Valeur en dur**: `'company'`
 
-**24. Ligne 47** | Catégorie: `roles`
-
-```
-filtered = validations.filter((v: Validation) => v.validation_type === 'company' && v.status === 'pending')
-```
-
-**Valeur en dur**: `'company'`
-
-**25. Ligne 47** | Catégorie: `validation_types`
-
-```
-filtered = validations.filter((v: Validation) => v.validation_type === 'company' && v.status === 'pending')
-```
-
-**Valeur en dur**: `'company'`
-
-**26. Ligne 48** | Catégorie: `validation_types`
+**34. Ligne 65** | Catégorie: `validation_types`
 
 ```
 } else if (type === 'collaborator') {
@@ -1207,23 +668,7 @@ filtered = validations.filter((v: Validation) => v.validation_type === 'company'
 
 **Valeur en dur**: `'collaborator'`
 
-**27. Ligne 49** | Catégorie: `validation_types`
-
-```
-filtered = validations.filter((v: Validation) => v.validation_type === 'collaborator' && v.status === 'pending')
-```
-
-**Valeur en dur**: `'collaborator'`
-
-**28. Ligne 82** | Catégorie: `validation_types`
-
-```
-if (selectedValidation?.validation_type === 'collaborator') {
-```
-
-**Valeur en dur**: `'collaborator'`
-
-**29. Ligne 86** | Catégorie: `roles`
+**35. Ligne 103** | Catégorie: `roles`
 
 ```
 user.roles?.some((role: string) => ['admin', 'super_admin'].includes(role)) ||
@@ -1231,7 +676,7 @@ user.roles?.some((role: string) => ['admin', 'super_admin'].includes(role)) ||
 
 **Valeur en dur**: `'admin'`
 
-**30. Ligne 86** | Catégorie: `roles`
+**36. Ligne 103** | Catégorie: `roles`
 
 ```
 user.roles?.some((role: string) => ['admin', 'super_admin'].includes(role)) ||
@@ -1239,7 +684,7 @@ user.roles?.some((role: string) => ['admin', 'super_admin'].includes(role)) ||
 
 **Valeur en dur**: `'super_admin'`
 
-**31. Ligne 89** | Catégorie: `roles`
+**37. Ligne 106** | Catégorie: `roles`
 
 ```
 user.email?.toLowerCase().includes('commercial')
@@ -1247,7 +692,7 @@ user.email?.toLowerCase().includes('commercial')
 
 **Valeur en dur**: `'commercial'`
 
-**32. Ligne 95** | Catégorie: `roles`
+**38. Ligne 112** | Catégorie: `roles`
 
 ```
 user.roles?.some((role: string) => ['admin', 'super_admin', 'commercial'].includes(role))
@@ -1255,7 +700,7 @@ user.roles?.some((role: string) => ['admin', 'super_admin', 'commercial'].includ
 
 **Valeur en dur**: `'admin'`
 
-**33. Ligne 95** | Catégorie: `roles`
+**39. Ligne 112** | Catégorie: `roles`
 
 ```
 user.roles?.some((role: string) => ['admin', 'super_admin', 'commercial'].includes(role))
@@ -1263,7 +708,7 @@ user.roles?.some((role: string) => ['admin', 'super_admin', 'commercial'].includ
 
 **Valeur en dur**: `'super_admin'`
 
-**34. Ligne 95** | Catégorie: `roles`
+**40. Ligne 112** | Catégorie: `roles`
 
 ```
 user.roles?.some((role: string) => ['admin', 'super_admin', 'commercial'].includes(role))
@@ -1271,7 +716,7 @@ user.roles?.some((role: string) => ['admin', 'super_admin', 'commercial'].includ
 
 **Valeur en dur**: `'commercial'`
 
-**35. Ligne 227** | Catégorie: `roles`
+**41. Ligne 244** | Catégorie: `roles`
 
 ```
 onClick={() => handleTileClick('interim')}
@@ -1279,7 +724,7 @@ onClick={() => handleTileClick('interim')}
 
 **Valeur en dur**: `'interim'`
 
-**36. Ligne 227** | Catégorie: `validation_types`
+**42. Ligne 244** | Catégorie: `validation_types`
 
 ```
 onClick={() => handleTileClick('interim')}
@@ -1287,7 +732,7 @@ onClick={() => handleTileClick('interim')}
 
 **Valeur en dur**: `'interim'`
 
-**37. Ligne 240** | Catégorie: `roles`
+**43. Ligne 257** | Catégorie: `roles`
 
 ```
 onClick={() => handleTileClick('company')}
@@ -1295,7 +740,7 @@ onClick={() => handleTileClick('company')}
 
 **Valeur en dur**: `'company'`
 
-**38. Ligne 240** | Catégorie: `validation_types`
+**44. Ligne 257** | Catégorie: `validation_types`
 
 ```
 onClick={() => handleTileClick('company')}
@@ -1303,7 +748,7 @@ onClick={() => handleTileClick('company')}
 
 **Valeur en dur**: `'company'`
 
-**39. Ligne 253** | Catégorie: `validation_types`
+**45. Ligne 270** | Catégorie: `validation_types`
 
 ```
 onClick={() => handleTileClick('collaborator')}
@@ -1311,7 +756,7 @@ onClick={() => handleTileClick('collaborator')}
 
 **Valeur en dur**: `'collaborator'`
 
-**40. Ligne 284** | Catégorie: `roles`
+**46. Ligne 301** | Catégorie: `roles`
 
 ```
 onClick={() => setActiveTab('interim')}
@@ -1319,7 +764,7 @@ onClick={() => setActiveTab('interim')}
 
 **Valeur en dur**: `'interim'`
 
-**41. Ligne 284** | Catégorie: `validation_types`
+**47. Ligne 301** | Catégorie: `validation_types`
 
 ```
 onClick={() => setActiveTab('interim')}
@@ -1327,7 +772,7 @@ onClick={() => setActiveTab('interim')}
 
 **Valeur en dur**: `'interim'`
 
-**42. Ligne 286** | Catégorie: `roles`
+**48. Ligne 303** | Catégorie: `roles`
 
 ```
 activeTab === 'interim'
@@ -1335,7 +780,7 @@ activeTab === 'interim'
 
 **Valeur en dur**: `'interim'`
 
-**43. Ligne 286** | Catégorie: `validation_types`
+**49. Ligne 303** | Catégorie: `validation_types`
 
 ```
 activeTab === 'interim'
@@ -1343,7 +788,7 @@ activeTab === 'interim'
 
 **Valeur en dur**: `'interim'`
 
-**44. Ligne 294** | Catégorie: `roles`
+**50. Ligne 311** | Catégorie: `roles`
 
 ```
 onClick={() => setActiveTab('company')}
@@ -1351,7 +796,7 @@ onClick={() => setActiveTab('company')}
 
 **Valeur en dur**: `'company'`
 
-**45. Ligne 294** | Catégorie: `validation_types`
+**51. Ligne 311** | Catégorie: `validation_types`
 
 ```
 onClick={() => setActiveTab('company')}
@@ -1359,7 +804,7 @@ onClick={() => setActiveTab('company')}
 
 **Valeur en dur**: `'company'`
 
-**46. Ligne 296** | Catégorie: `roles`
+**52. Ligne 313** | Catégorie: `roles`
 
 ```
 activeTab === 'company'
@@ -1367,7 +812,7 @@ activeTab === 'company'
 
 **Valeur en dur**: `'company'`
 
-**47. Ligne 296** | Catégorie: `validation_types`
+**53. Ligne 313** | Catégorie: `validation_types`
 
 ```
 activeTab === 'company'
@@ -1375,7 +820,7 @@ activeTab === 'company'
 
 **Valeur en dur**: `'company'`
 
-**48. Ligne 304** | Catégorie: `validation_types`
+**54. Ligne 321** | Catégorie: `validation_types`
 
 ```
 onClick={() => setActiveTab('collaborator')}
@@ -1383,7 +828,7 @@ onClick={() => setActiveTab('collaborator')}
 
 **Valeur en dur**: `'collaborator'`
 
-**49. Ligne 306** | Catégorie: `validation_types`
+**55. Ligne 323** | Catégorie: `validation_types`
 
 ```
 activeTab === 'collaborator'
@@ -1391,7 +836,7 @@ activeTab === 'collaborator'
 
 **Valeur en dur**: `'collaborator'`
 
-**50. Ligne 325** | Catégorie: `application_status`
+**56. Ligne 342** | Catégorie: `application_status`
 
 ```
 <option value="rejected">Rejetées</option>
@@ -1399,31 +844,7 @@ activeTab === 'collaborator'
 
 **Valeur en dur**: `"rejected"`
 
-**51. Ligne 346** | Catégorie: `validation_types`
-
-```
-{validation.validation_type === 'collaborator' && (
-```
-
-**Valeur en dur**: `'collaborator'`
-
-**52. Ligne 364** | Catégorie: `validation_types`
-
-```
-{validation.validation_type === 'collaborator' && (
-```
-
-**Valeur en dur**: `'collaborator'`
-
-**53. Ligne 514** | Catégorie: `validation_types`
-
-```
-{selectedValidation?.validation_type === 'collaborator' && (
-```
-
-**Valeur en dur**: `'collaborator'`
-
-**54. Ligne 570** | Catégorie: `roles`
+**57. Ligne 587** | Catégorie: `roles`
 
 ```
 bulkActionType === 'interim' ? 'Intérimaires' :
@@ -1431,7 +852,7 @@ bulkActionType === 'interim' ? 'Intérimaires' :
 
 **Valeur en dur**: `'interim'`
 
-**55. Ligne 570** | Catégorie: `validation_types`
+**58. Ligne 587** | Catégorie: `validation_types`
 
 ```
 bulkActionType === 'interim' ? 'Intérimaires' :
@@ -1439,7 +860,7 @@ bulkActionType === 'interim' ? 'Intérimaires' :
 
 **Valeur en dur**: `'interim'`
 
-**56. Ligne 571** | Catégorie: `roles`
+**59. Ligne 588** | Catégorie: `roles`
 
 ```
 bulkActionType === 'company' ? 'Entreprises' :
@@ -1447,7 +868,7 @@ bulkActionType === 'company' ? 'Entreprises' :
 
 **Valeur en dur**: `'company'`
 
-**57. Ligne 571** | Catégorie: `validation_types`
+**60. Ligne 588** | Catégorie: `validation_types`
 
 ```
 bulkActionType === 'company' ? 'Entreprises' :
@@ -1455,7 +876,7 @@ bulkActionType === 'company' ? 'Entreprises' :
 
 **Valeur en dur**: `'company'`
 
-**58. Ligne 572** | Catégorie: `validation_types`
+**61. Ligne 589** | Catégorie: `validation_types`
 
 ```
 bulkActionType === 'collaborator' ? 'Collaborateurs' :
@@ -1698,217 +1119,6 @@ if (userRoles.includes('admin') || userRoles.includes('super_admin')) {
 ```
 
 **Valeur en dur**: `'agency'`
-
-
-### 📄 `apps/web/src/features/auth/pages/RegisterPage.tsx`
-
-**1. Ligne 9** | Catégorie: `roles`
-
-```
-type UserRole = 'interim' | 'company'
-```
-
-**Valeur en dur**: `'company'`
-
-**2. Ligne 9** | Catégorie: `roles`
-
-```
-type UserRole = 'interim' | 'company'
-```
-
-**Valeur en dur**: `'interim'`
-
-**3. Ligne 9** | Catégorie: `validation_types`
-
-```
-type UserRole = 'interim' | 'company'
-```
-
-**Valeur en dur**: `'interim'`
-
-**4. Ligne 9** | Catégorie: `validation_types`
-
-```
-type UserRole = 'interim' | 'company'
-```
-
-**Valeur en dur**: `'company'`
-
-**5. Ligne 104** | Catégorie: `roles`
-
-```
-} else if (formData.role === 'company') {
-```
-
-**Valeur en dur**: `'company'`
-
-**6. Ligne 104** | Catégorie: `validation_types`
-
-```
-} else if (formData.role === 'company') {
-```
-
-**Valeur en dur**: `'company'`
-
-**7. Ligne 147** | Catégorie: `roles`
-
-```
-if (formData.role === 'interim' && !formData.isCollaborator) {
-```
-
-**Valeur en dur**: `'interim'`
-
-**8. Ligne 147** | Catégorie: `validation_types`
-
-```
-if (formData.role === 'interim' && !formData.isCollaborator) {
-```
-
-**Valeur en dur**: `'interim'`
-
-**9. Ligne 150** | Catégorie: `roles`
-
-```
-} else if (formData.role === 'company') {
-```
-
-**Valeur en dur**: `'company'`
-
-**10. Ligne 150** | Catégorie: `validation_types`
-
-```
-} else if (formData.role === 'company') {
-```
-
-**Valeur en dur**: `'company'`
-
-**11. Ligne 269** | Catégorie: `roles`
-
-```
-onClick={() => handleRoleSelect('interim')}
-```
-
-**Valeur en dur**: `'interim'`
-
-**12. Ligne 269** | Catégorie: `validation_types`
-
-```
-onClick={() => handleRoleSelect('interim')}
-```
-
-**Valeur en dur**: `'interim'`
-
-**13. Ligne 271** | Catégorie: `roles`
-
-```
-formData.role === 'interim'
-```
-
-**Valeur en dur**: `'interim'`
-
-**14. Ligne 271** | Catégorie: `validation_types`
-
-```
-formData.role === 'interim'
-```
-
-**Valeur en dur**: `'interim'`
-
-**15. Ligne 276** | Catégorie: `roles`
-
-```
-{formData.role === 'interim' && (
-```
-
-**Valeur en dur**: `'interim'`
-
-**16. Ligne 276** | Catégorie: `validation_types`
-
-```
-{formData.role === 'interim' && (
-```
-
-**Valeur en dur**: `'interim'`
-
-**17. Ligne 291** | Catégorie: `roles`
-
-```
-onClick={() => handleRoleSelect('company')}
-```
-
-**Valeur en dur**: `'company'`
-
-**18. Ligne 291** | Catégorie: `validation_types`
-
-```
-onClick={() => handleRoleSelect('company')}
-```
-
-**Valeur en dur**: `'company'`
-
-**19. Ligne 293** | Catégorie: `roles`
-
-```
-formData.role === 'company'
-```
-
-**Valeur en dur**: `'company'`
-
-**20. Ligne 293** | Catégorie: `validation_types`
-
-```
-formData.role === 'company'
-```
-
-**Valeur en dur**: `'company'`
-
-**21. Ligne 298** | Catégorie: `roles`
-
-```
-{formData.role === 'company' && (
-```
-
-**Valeur en dur**: `'company'`
-
-**22. Ligne 298** | Catégorie: `validation_types`
-
-```
-{formData.role === 'company' && (
-```
-
-**Valeur en dur**: `'company'`
-
-**23. Ligne 518** | Catégorie: `roles`
-
-```
-{formData.role === 'interim' && (
-```
-
-**Valeur en dur**: `'interim'`
-
-**24. Ligne 518** | Catégorie: `validation_types`
-
-```
-{formData.role === 'interim' && (
-```
-
-**Valeur en dur**: `'interim'`
-
-**25. Ligne 552** | Catégorie: `roles`
-
-```
-{formData.role === 'company' && (
-```
-
-**Valeur en dur**: `'company'`
-
-**26. Ligne 552** | Catégorie: `validation_types`
-
-```
-{formData.role === 'company' && (
-```
-
-**Valeur en dur**: `'company'`
 
 
 ### 📄 `apps/web/src/features/auth/pages/RoleSelectionPage.tsx`
@@ -2362,6 +1572,201 @@ profile_type: 'interim' | 'company' | 'collaborator'
 
 ```
 {profileType === 'collaborator' && (
+```
+
+**Valeur en dur**: `'collaborator'`
+
+
+### 📄 `apps/web/src/hooks/useAppConfig.ts`
+
+**1. Ligne 47** | Catégorie: `roles`
+
+```
+admin: 'admin',
+```
+
+**Valeur en dur**: `'admin'`
+
+**2. Ligne 48** | Catégorie: `roles`
+
+```
+super_admin: 'super_admin',
+```
+
+**Valeur en dur**: `'super_admin'`
+
+**3. Ligne 49** | Catégorie: `roles`
+
+```
+company: 'company',
+```
+
+**Valeur en dur**: `'company'`
+
+**4. Ligne 49** | Catégorie: `validation_types`
+
+```
+company: 'company',
+```
+
+**Valeur en dur**: `'company'`
+
+**5. Ligne 50** | Catégorie: `roles`
+
+```
+interim: 'interim',
+```
+
+**Valeur en dur**: `'interim'`
+
+**6. Ligne 50** | Catégorie: `validation_types`
+
+```
+interim: 'interim',
+```
+
+**Valeur en dur**: `'interim'`
+
+**7. Ligne 51** | Catégorie: `roles`
+
+```
+agency: 'agency',
+```
+
+**Valeur en dur**: `'agency'`
+
+**8. Ligne 52** | Catégorie: `roles`
+
+```
+commercial: 'commercial',
+```
+
+**Valeur en dur**: `'commercial'`
+
+**9. Ligne 53** | Catégorie: `roles`
+
+```
+validator: 'validator'
+```
+
+**Valeur en dur**: `'validator'`
+
+**10. Ligne 109** | Catégorie: `application_status`
+
+```
+submitted: 'submitted',
+```
+
+**Valeur en dur**: `'submitted'`
+
+**11. Ligne 110** | Catégorie: `application_status`
+
+```
+review: 'review',
+```
+
+**Valeur en dur**: `'review'`
+
+**12. Ligne 111** | Catégorie: `application_status`
+
+```
+interview_scheduled: 'interview_scheduled',
+```
+
+**Valeur en dur**: `'interview_scheduled'`
+
+**13. Ligne 112** | Catégorie: `application_status`
+
+```
+interviewed: 'interviewed',
+```
+
+**Valeur en dur**: `'interviewed'`
+
+**14. Ligne 113** | Catégorie: `application_status`
+
+```
+selected: 'selected',
+```
+
+**Valeur en dur**: `'selected'`
+
+**15. Ligne 114** | Catégorie: `application_status`
+
+```
+rejected: 'rejected',
+```
+
+**Valeur en dur**: `'rejected'`
+
+**16. Ligne 115** | Catégorie: `application_status`
+
+```
+medical_pending: 'medical_pending',
+```
+
+**Valeur en dur**: `'medical_pending'`
+
+**17. Ligne 116** | Catégorie: `application_status`
+
+```
+medical_completed: 'medical_completed',
+```
+
+**Valeur en dur**: `'medical_completed'`
+
+**18. Ligne 117** | Catégorie: `application_status`
+
+```
+contract_pending: 'contract_pending',
+```
+
+**Valeur en dur**: `'contract_pending'`
+
+**19. Ligne 118** | Catégorie: `application_status`
+
+```
+contract_signed: 'contract_signed'
+```
+
+**Valeur en dur**: `'contract_signed'`
+
+**20. Ligne 134** | Catégorie: `roles`
+
+```
+interim: 'interim',
+```
+
+**Valeur en dur**: `'interim'`
+
+**21. Ligne 134** | Catégorie: `validation_types`
+
+```
+interim: 'interim',
+```
+
+**Valeur en dur**: `'interim'`
+
+**22. Ligne 135** | Catégorie: `roles`
+
+```
+company: 'company',
+```
+
+**Valeur en dur**: `'company'`
+
+**23. Ligne 135** | Catégorie: `validation_types`
+
+```
+company: 'company',
+```
+
+**Valeur en dur**: `'company'`
+
+**24. Ligne 136** | Catégorie: `validation_types`
+
+```
+collaborator: 'collaborator'
 ```
 
 **Valeur en dur**: `'collaborator'`
@@ -3407,7 +2812,7 @@ total_rejected = await db.validations.count_documents({"status": "rejected"})
 
 ## 🟠 Sévérité: HIGH
 
-**Total**: 76 occurrences
+**Total**: 81 occurrences
 
 ### 📄 `apps/web/src/components/ActionButton.tsx`
 
@@ -3624,69 +3029,29 @@ validation.status === 'pending' && 'bg-yellow-100 text-yellow-800',
 
 ### 📄 `apps/web/src/features/admin/pages/ValidationsPage.tsx`
 
-**1. Ligne 31** | Catégorie: `user_status`
+**1. Ligne 42** | Catégorie: `user_status`
 
 ```
-const [statusFilter, setStatusFilter] = useState<string>('pending')
-```
-
-**Valeur en dur**: `'pending'`
-
-**2. Ligne 45** | Catégorie: `user_status`
-
-```
-filtered = validations.filter((v: Validation) => v.validation_type === 'interim' && v.status === 'pending')
+pending: validationStatuses.find(vs => vs.code === 'pending')?.code || 'pending',
 ```
 
 **Valeur en dur**: `'pending'`
 
-**3. Ligne 47** | Catégorie: `user_status`
+**2. Ligne 42** | Catégorie: `user_status`
 
 ```
-filtered = validations.filter((v: Validation) => v.validation_type === 'company' && v.status === 'pending')
-```
-
-**Valeur en dur**: `'pending'`
-
-**4. Ligne 49** | Catégorie: `user_status`
-
-```
-filtered = validations.filter((v: Validation) => v.validation_type === 'collaborator' && v.status === 'pending')
+pending: validationStatuses.find(vs => vs.code === 'pending')?.code || 'pending',
 ```
 
 **Valeur en dur**: `'pending'`
 
-**5. Ligne 51** | Catégorie: `user_status`
-
-```
-filtered = validations.filter((v: Validation) => v.has_location_warning && v.status === 'pending')
-```
-
-**Valeur en dur**: `'pending'`
-
-**6. Ligne 53** | Catégorie: `user_status`
-
-```
-filtered = validations.filter((v: Validation) => v.status === 'pending')
-```
-
-**Valeur en dur**: `'pending'`
-
-**7. Ligne 323** | Catégorie: `user_status`
+**3. Ligne 340** | Catégorie: `user_status`
 
 ```
 <option value="pending">En attente</option>
 ```
 
 **Valeur en dur**: `"pending"`
-
-**8. Ligne 420** | Catégorie: `user_status`
-
-```
-{validation.status === 'pending' && (
-```
-
-**Valeur en dur**: `'pending'`
 
 
 ### 📄 `apps/web/src/features/auth/pages/GoogleCallback.tsx`
@@ -3865,6 +3230,89 @@ export type ContractStatus = 'not_generated' | 'draft' | 'sent' | 'signed_by_int
 ```
 
 **Valeur en dur**: `'cancelled'`
+
+
+### 📄 `apps/web/src/hooks/useAppConfig.ts`
+
+**1. Ligne 69** | Catégorie: `user_status`
+
+```
+active: 'active',
+```
+
+**Valeur en dur**: `'active'`
+
+**2. Ligne 70** | Catégorie: `user_status`
+
+```
+pending: 'pending',
+```
+
+**Valeur en dur**: `'pending'`
+
+**3. Ligne 71** | Catégorie: `user_status`
+
+```
+suspended: 'suspended',
+```
+
+**Valeur en dur**: `'suspended'`
+
+**4. Ligne 72** | Catégorie: `user_status`
+
+```
+deleted: 'deleted',
+```
+
+**Valeur en dur**: `'deleted'`
+
+**5. Ligne 73** | Catégorie: `user_status`
+
+```
+blocked: 'blocked'
+```
+
+**Valeur en dur**: `'blocked'`
+
+**6. Ligne 89** | Catégorie: `mission_status`
+
+```
+draft: 'draft',
+```
+
+**Valeur en dur**: `'draft'`
+
+**7. Ligne 90** | Catégorie: `mission_status`
+
+```
+published: 'published',
+```
+
+**Valeur en dur**: `'published'`
+
+**8. Ligne 91** | Catégorie: `mission_status`
+
+```
+closed: 'closed',
+```
+
+**Valeur en dur**: `'closed'`
+
+**9. Ligne 92** | Catégorie: `mission_status`
+
+```
+cancelled: 'cancelled',
+```
+
+**Valeur en dur**: `'cancelled'`
+
+**10. Ligne 93** | Catégorie: `mission_status`
+
+```
+archived: 'archived'
+```
+
+**Valeur en dur**: `'archived'`
 
 
 ### 📄 `apps/web/src/types/index.ts`
@@ -4091,66 +3539,7 @@ status=updated_user_doc.get("status", "pending"),
 
 ## 🟡 Sévérité: MEDIUM
 
-**Total**: 90 occurrences
-
-### 📄 `apps/web/src/App.tsx`
-
-**1. Ligne 46** | Catégorie: `contract_types`
-
-```
-if (user.roles.includes('interim')) return '/interimaire'
-```
-
-**Valeur en dur**: `'interim'`
-
-**2. Ligne 183** | Catégorie: `contract_types`
-
-```
-<ProtectedRoute requiredRoles={['interim']}>
-```
-
-**Valeur en dur**: `'interim'`
-
-**3. Ligne 191** | Catégorie: `contract_types`
-
-```
-<ProtectedRoute requiredRoles={['interim']}>
-```
-
-**Valeur en dur**: `'interim'`
-
-**4. Ligne 199** | Catégorie: `contract_types`
-
-```
-<ProtectedRoute requiredRoles={['interim']}>
-```
-
-**Valeur en dur**: `'interim'`
-
-**5. Ligne 207** | Catégorie: `contract_types`
-
-```
-<ProtectedRoute requiredRoles={['interim']}>
-```
-
-**Valeur en dur**: `'interim'`
-
-**6. Ligne 216** | Catégorie: `contract_types`
-
-```
-<ProtectedRoute requiredRoles={['interim']}>
-```
-
-**Valeur en dur**: `'interim'`
-
-**7. Ligne 224** | Catégorie: `contract_types`
-
-```
-<ProtectedRoute requiredRoles={['interim']}>
-```
-
-**Valeur en dur**: `'interim'`
-
+**Total**: 78 occurrences
 
 ### 📄 `apps/web/src/components/LoginModal.tsx`
 
@@ -4158,25 +3547,6 @@ if (user.roles.includes('interim')) return '/interimaire'
 
 ```
 } else if (result.user.roles.includes('interim')) {
-```
-
-**Valeur en dur**: `'interim'`
-
-
-### 📄 `apps/web/src/components/Sidebar.tsx`
-
-**1. Ligne 50** | Catégorie: `contract_types`
-
-```
-if (user.roles.includes('interim')) return '/interimaire'
-```
-
-**Valeur en dur**: `'interim'`
-
-**2. Ligne 59** | Catégorie: `contract_types`
-
-```
-const isInterim = user.roles.includes('interim')
 ```
 
 **Valeur en dur**: `'interim'`
@@ -4236,7 +3606,7 @@ validation.validation_type === 'interim'
 
 ### 📄 `apps/web/src/features/admin/pages/ValidationsPage.tsx`
 
-**1. Ligne 27** | Catégorie: `contract_types`
+**1. Ligne 28** | Catégorie: `contract_types`
 
 ```
 type TabType = 'interim' | 'company' | 'collaborator'
@@ -4244,10 +3614,10 @@ type TabType = 'interim' | 'company' | 'collaborator'
 
 **Valeur en dur**: `'interim'`
 
-**2. Ligne 30** | Catégorie: `contract_types`
+**2. Ligne 36** | Catégorie: `contract_types`
 
 ```
-const [activeTab, setActiveTab] = useState<TabType>('interim')
+interim: validationTypes.find(vt => vt.code === 'interim')?.code || 'interim',
 ```
 
 **Valeur en dur**: `'interim'`
@@ -4255,12 +3625,28 @@ const [activeTab, setActiveTab] = useState<TabType>('interim')
 **3. Ligne 36** | Catégorie: `contract_types`
 
 ```
+interim: validationTypes.find(vt => vt.code === 'interim')?.code || 'interim',
+```
+
+**Valeur en dur**: `'interim'`
+
+**4. Ligne 47** | Catégorie: `contract_types`
+
+```
+const [activeTab, setActiveTab] = useState<TabType>('interim')
+```
+
+**Valeur en dur**: `'interim'`
+
+**5. Ligne 53** | Catégorie: `contract_types`
+
+```
 const [bulkActionType, setBulkActionType] = useState<'all' | 'interim' | 'company' | 'collaborator' | 'warnings'>('all')
 ```
 
 **Valeur en dur**: `'interim'`
 
-**4. Ligne 41** | Catégorie: `contract_types`
+**6. Ligne 58** | Catégorie: `contract_types`
 
 ```
 const handleTileClick = (type: 'all' | 'interim' | 'company' | 'collaborator' | 'warnings') => {
@@ -4268,7 +3654,7 @@ const handleTileClick = (type: 'all' | 'interim' | 'company' | 'collaborator' | 
 
 **Valeur en dur**: `'interim'`
 
-**5. Ligne 44** | Catégorie: `contract_types`
+**7. Ligne 61** | Catégorie: `contract_types`
 
 ```
 if (type === 'interim') {
@@ -4276,15 +3662,7 @@ if (type === 'interim') {
 
 **Valeur en dur**: `'interim'`
 
-**6. Ligne 45** | Catégorie: `contract_types`
-
-```
-filtered = validations.filter((v: Validation) => v.validation_type === 'interim' && v.status === 'pending')
-```
-
-**Valeur en dur**: `'interim'`
-
-**7. Ligne 227** | Catégorie: `contract_types`
+**8. Ligne 244** | Catégorie: `contract_types`
 
 ```
 onClick={() => handleTileClick('interim')}
@@ -4292,7 +3670,7 @@ onClick={() => handleTileClick('interim')}
 
 **Valeur en dur**: `'interim'`
 
-**8. Ligne 284** | Catégorie: `contract_types`
+**9. Ligne 301** | Catégorie: `contract_types`
 
 ```
 onClick={() => setActiveTab('interim')}
@@ -4300,7 +3678,7 @@ onClick={() => setActiveTab('interim')}
 
 **Valeur en dur**: `'interim'`
 
-**9. Ligne 286** | Catégorie: `contract_types`
+**10. Ligne 303** | Catégorie: `contract_types`
 
 ```
 activeTab === 'interim'
@@ -4308,7 +3686,7 @@ activeTab === 'interim'
 
 **Valeur en dur**: `'interim'`
 
-**10. Ligne 570** | Catégorie: `contract_types`
+**11. Ligne 587** | Catégorie: `contract_types`
 
 ```
 bulkActionType === 'interim' ? 'Intérimaires' :
@@ -4364,57 +3742,6 @@ if (data.user.status === 'pending' && data.user.roles.length === 1 && data.user.
 
 ```
 } else if (userRoles.includes('interim')) {
-```
-
-**Valeur en dur**: `'interim'`
-
-
-### 📄 `apps/web/src/features/auth/pages/RegisterPage.tsx`
-
-**1. Ligne 9** | Catégorie: `contract_types`
-
-```
-type UserRole = 'interim' | 'company'
-```
-
-**Valeur en dur**: `'interim'`
-
-**2. Ligne 147** | Catégorie: `contract_types`
-
-```
-if (formData.role === 'interim' && !formData.isCollaborator) {
-```
-
-**Valeur en dur**: `'interim'`
-
-**3. Ligne 269** | Catégorie: `contract_types`
-
-```
-onClick={() => handleRoleSelect('interim')}
-```
-
-**Valeur en dur**: `'interim'`
-
-**4. Ligne 271** | Catégorie: `contract_types`
-
-```
-formData.role === 'interim'
-```
-
-**Valeur en dur**: `'interim'`
-
-**5. Ligne 276** | Catégorie: `contract_types`
-
-```
-{formData.role === 'interim' && (
-```
-
-**Valeur en dur**: `'interim'`
-
-**6. Ligne 518** | Catégorie: `contract_types`
-
-```
-{formData.role === 'interim' && (
 ```
 
 **Valeur en dur**: `'interim'`
@@ -4502,6 +3829,25 @@ const [selectedDocType, setSelectedDocType] = useState('cv')
 
 ```
 {profileType === 'interim' && <InterimProfileForm profile={profile} />}
+```
+
+**Valeur en dur**: `'interim'`
+
+
+### 📄 `apps/web/src/hooks/useAppConfig.ts`
+
+**1. Ligne 50** | Catégorie: `contract_types`
+
+```
+interim: 'interim',
+```
+
+**Valeur en dur**: `'interim'`
+
+**2. Ligne 134** | Catégorie: `contract_types`
+
+```
+interim: 'interim',
 ```
 
 **Valeur en dur**: `'interim'`
