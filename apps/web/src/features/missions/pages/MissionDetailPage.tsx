@@ -70,6 +70,7 @@ export default function MissionDetailPage() {
   )
   const { data: stats } = useGetMissionStatsQuery(id!, { skip: !id })
   
+  const { getLabel: getContractTypeLabel } = useContractTypes()
   const [publishMission] = usePublishMissionMutation()
 
   const isAdmin = user?.roles.includes('admin') || user?.roles.includes('super_admin')
