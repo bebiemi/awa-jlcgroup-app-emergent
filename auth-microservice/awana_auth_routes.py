@@ -28,6 +28,7 @@ from awana_auth.rbac.models import Role, Permission, UserRole
 from awana_auth.audit.logger import AuditLogger
 from awana_auth.audit.models import AuditAction
 from awana_auth.utils.helpers import get_client_ip, get_user_agent
+from awana_auth.utils.config_helpers import cfg
 from awana_auth.security.tokens import generate_state_token
 import logging
 import jwt as pyjwt  # For decoding Microsoft ID tokens
