@@ -39,7 +39,8 @@ export default function InterimDashboard() {
 
   const completeness = profile?.profile?.profile_completion_percentage || 0
   const getMissingFields = () => {
-    if (!profile) return []
+    if (!profile?.profile) return []
+    const p = profile.profile
     const missing = []
     if (!profile.first_name) missing.push('Prénom')
     if (!profile.last_name) missing.push('Nom')
