@@ -36,6 +36,7 @@ import ProtectedRoute from './features/auth/components/ProtectedRoute'
 
 function App() {
   const { isAuthenticated, user } = useAppSelector((state) => state.auth)
+  const roles = useRoles()
   
   // Auto-logout after 10 minutes of inactivity
   useInactivityLogout()
@@ -43,10 +44,10 @@ function App() {
   // Redirect to role-specific dashboard
   const getDashboardPath = () => {
     if (!user) return '/login'
-    if (user.roles.includes('admin')) return '/admin'
-    if (user.roles.includes('interim')) return '/interimaire'
-    if (user.roles.includes('company')) return '/entreprise'
-    if (user.roles.includes('agency')) return '/agence'
+    if (user.roles.includes(roles.admin)) return '/admin'
+    if (user.roles.includes(roles.interim)) return '/interimaire'
+    if (user.roles.includes(roles.company)) return '/entreprise'
+    if (user.roles.includes(roles.agency)) return '/agence'
     return '/profile'
   }
 
