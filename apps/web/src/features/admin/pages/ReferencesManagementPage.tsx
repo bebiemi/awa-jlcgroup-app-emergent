@@ -11,15 +11,22 @@ import {
 import { PlusIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline'
 
 const categories = [
-  { value: 'roles', label: 'Rôles Utilisateurs' },
-  { value: 'statuses', label: 'Statuts' },
-  { value: 'contract_types', label: 'Types de Contrat' },
-  { value: 'countries', label: 'Pays' },
-  { value: 'skills', label: 'Compétences' },
-  { value: 'document_types', label: 'Types de Documents' },
-  { value: 'mission_statuses', label: 'Statuts de Mission' },
-  { value: 'application_statuses', label: 'Statuts de Candidature' },
-  { value: 'medical_aptitudes', label: 'Aptitudes Médicales' },
+  { value: 'roles', label: 'Rôles Utilisateurs', icon: '👥' },
+  { value: 'user_statuses', label: 'Statuts Utilisateurs', icon: '👤' },
+  { value: 'mission_statuses', label: 'Statuts de Mission', icon: '💼' },
+  { value: 'application_statuses', label: 'Statuts de Candidature', icon: '📋' },
+  { value: 'validation_types', label: 'Types de Validation', icon: '✓' },
+  { value: 'validation_statuses', label: 'Statuts de Validation', icon: '✅' },
+  { value: 'contract_types', label: 'Types de Contrat', icon: '📝' },
+  { value: 'document_types', label: 'Types de Documents', icon: '📄' },
+  { value: 'experience_levels', label: 'Niveaux d\'Expérience', icon: '📊' },
+  { value: 'education_levels', label: 'Niveaux d\'Éducation', icon: '🎓' },
+  { value: 'skill_categories', label: 'Catégories de Compétences', icon: '🎯' },
+  { value: 'skills', label: 'Compétences', icon: '⚡' },
+  { value: 'work_schedules', label: 'Types d\'Horaires', icon: '🕐' },
+  { value: 'salary_ranges', label: 'Fourchettes Salariales', icon: '💰' },
+  { value: 'countries', label: 'Pays', icon: '🌍' },
+  { value: 'medical_aptitudes', label: 'Aptitudes Médicales', icon: '🏥' },
 ]
 
 export default function ReferencesManagementPage() {
