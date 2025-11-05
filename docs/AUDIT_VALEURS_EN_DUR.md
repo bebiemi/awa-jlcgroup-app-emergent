@@ -1,33 +1,33 @@
 # 🔍 Audit des Valeurs en Dur - Rapport Complet
 
-**Date**: 2025-11-05 03:02:10
+**Date**: 2025-11-05 03:27:10
 
 ---
 
 ## 📊 Résumé Exécutif
 
-**Total de valeurs en dur trouvées**: 672
+**Total de valeurs en dur trouvées**: 699
 
 ### Par Sévérité
 
 | Sévérité | Nombre | Pourcentage |
 |----------|--------|-------------|
-| 🔴 CRITICAL | 329 | 49.0% |
-| 🟠 HIGH | 81 | 12.1% |
-| 🟡 MEDIUM | 78 | 11.6% |
-| 🟢 LOW | 184 | 27.4% |
+| 🔴 CRITICAL | 345 | 49.4% |
+| 🟠 HIGH | 87 | 12.4% |
+| 🟡 MEDIUM | 83 | 11.9% |
+| 🟢 LOW | 184 | 26.3% |
 
 ### Par Catégorie
 
 | Catégorie | Nombre |
 |-----------|--------|
 | messages | 168 |
-| roles | 164 |
-| validation_types | 102 |
-| application_status | 63 |
-| user_status | 60 |
-| contract_types | 50 |
-| mission_status | 21 |
+| roles | 165 |
+| validation_types | 106 |
+| application_status | 74 |
+| user_status | 61 |
+| contract_types | 55 |
+| mission_status | 26 |
 | delays_days | 17 |
 | numeric_limits | 16 |
 | document_types | 11 |
@@ -38,7 +38,7 @@
 |---------|--------------------------|
 | `auth-microservice/awana_auth_routes.py` | 77 |
 | `apps/web/src/features/admin/pages/ValidationsPage.tsx` | 75 |
-| `apps/web/src/hooks/useAppConfig.ts` | 36 |
+| `apps/web/src/hooks/useAppConfig.ts` | 65 |
 | `auth-microservice/google_auth_routes.py` | 32 |
 | `auth-microservice/scripts/seed_mission_references.py` | 32 |
 | `auth-microservice/mission_routes.py` | 26 |
@@ -56,7 +56,7 @@
 
 ## 🔴 Sévérité: CRITICAL
 
-**Total**: 329 occurrences
+**Total**: 345 occurrences
 
 ### 📄 `apps/web/src/components/Breadcrumb.tsx`
 
@@ -118,25 +118,6 @@ if (result.user.roles.includes('admin') || result.user.roles.includes('super_adm
 ```
 
 **Valeur en dur**: `'company'`
-
-
-### 📄 `apps/web/src/components/Sidebar.tsx`
-
-**1. Ligne 55** | Catégorie: `roles`
-
-```
-if (user.roles.includes('agency')) return '/agence'
-```
-
-**Valeur en dur**: `'agency'`
-
-**2. Ligne 64** | Catégorie: `roles`
-
-```
-const isCommercial = user.roles.includes('commercial')
-```
-
-**Valeur en dur**: `'commercial'`
 
 
 ### 📄 `apps/web/src/features/admin/api/validationApi.ts`
@@ -1579,7 +1560,7 @@ profile_type: 'interim' | 'company' | 'collaborator'
 
 ### 📄 `apps/web/src/hooks/useAppConfig.ts`
 
-**1. Ligne 47** | Catégorie: `roles`
+**1. Ligne 39** | Catégorie: `roles`
 
 ```
 admin: 'admin',
@@ -1587,7 +1568,7 @@ admin: 'admin',
 
 **Valeur en dur**: `'admin'`
 
-**2. Ligne 48** | Catégorie: `roles`
+**2. Ligne 40** | Catégorie: `roles`
 
 ```
 super_admin: 'super_admin',
@@ -1595,7 +1576,7 @@ super_admin: 'super_admin',
 
 **Valeur en dur**: `'super_admin'`
 
-**3. Ligne 49** | Catégorie: `roles`
+**3. Ligne 41** | Catégorie: `roles`
 
 ```
 company: 'company',
@@ -1603,7 +1584,7 @@ company: 'company',
 
 **Valeur en dur**: `'company'`
 
-**4. Ligne 49** | Catégorie: `validation_types`
+**4. Ligne 41** | Catégorie: `validation_types`
 
 ```
 company: 'company',
@@ -1611,7 +1592,7 @@ company: 'company',
 
 **Valeur en dur**: `'company'`
 
-**5. Ligne 50** | Catégorie: `roles`
+**5. Ligne 42** | Catégorie: `roles`
 
 ```
 interim: 'interim',
@@ -1619,7 +1600,7 @@ interim: 'interim',
 
 **Valeur en dur**: `'interim'`
 
-**6. Ligne 50** | Catégorie: `validation_types`
+**6. Ligne 42** | Catégorie: `validation_types`
 
 ```
 interim: 'interim',
@@ -1627,7 +1608,7 @@ interim: 'interim',
 
 **Valeur en dur**: `'interim'`
 
-**7. Ligne 51** | Catégorie: `roles`
+**7. Ligne 43** | Catégorie: `roles`
 
 ```
 agency: 'agency',
@@ -1635,7 +1616,7 @@ agency: 'agency',
 
 **Valeur en dur**: `'agency'`
 
-**8. Ligne 52** | Catégorie: `roles`
+**8. Ligne 44** | Catégorie: `roles`
 
 ```
 commercial: 'commercial',
@@ -1643,7 +1624,7 @@ commercial: 'commercial',
 
 **Valeur en dur**: `'commercial'`
 
-**9. Ligne 53** | Catégorie: `roles`
+**9. Ligne 45** | Catégorie: `roles`
 
 ```
 validator: 'validator'
@@ -1651,7 +1632,7 @@ validator: 'validator'
 
 **Valeur en dur**: `'validator'`
 
-**10. Ligne 109** | Catégorie: `application_status`
+**10. Ligne 80** | Catégorie: `application_status`
 
 ```
 submitted: 'submitted',
@@ -1659,7 +1640,7 @@ submitted: 'submitted',
 
 **Valeur en dur**: `'submitted'`
 
-**11. Ligne 110** | Catégorie: `application_status`
+**11. Ligne 81** | Catégorie: `application_status`
 
 ```
 review: 'review',
@@ -1667,7 +1648,7 @@ review: 'review',
 
 **Valeur en dur**: `'review'`
 
-**12. Ligne 111** | Catégorie: `application_status`
+**12. Ligne 82** | Catégorie: `application_status`
 
 ```
 interview_scheduled: 'interview_scheduled',
@@ -1675,7 +1656,7 @@ interview_scheduled: 'interview_scheduled',
 
 **Valeur en dur**: `'interview_scheduled'`
 
-**13. Ligne 112** | Catégorie: `application_status`
+**13. Ligne 83** | Catégorie: `application_status`
 
 ```
 interviewed: 'interviewed',
@@ -1683,7 +1664,7 @@ interviewed: 'interviewed',
 
 **Valeur en dur**: `'interviewed'`
 
-**14. Ligne 113** | Catégorie: `application_status`
+**14. Ligne 84** | Catégorie: `application_status`
 
 ```
 selected: 'selected',
@@ -1691,7 +1672,7 @@ selected: 'selected',
 
 **Valeur en dur**: `'selected'`
 
-**15. Ligne 114** | Catégorie: `application_status`
+**15. Ligne 85** | Catégorie: `application_status`
 
 ```
 rejected: 'rejected',
@@ -1699,7 +1680,7 @@ rejected: 'rejected',
 
 **Valeur en dur**: `'rejected'`
 
-**16. Ligne 115** | Catégorie: `application_status`
+**16. Ligne 86** | Catégorie: `application_status`
 
 ```
 medical_pending: 'medical_pending',
@@ -1707,7 +1688,7 @@ medical_pending: 'medical_pending',
 
 **Valeur en dur**: `'medical_pending'`
 
-**17. Ligne 116** | Catégorie: `application_status`
+**17. Ligne 87** | Catégorie: `application_status`
 
 ```
 medical_completed: 'medical_completed',
@@ -1715,7 +1696,7 @@ medical_completed: 'medical_completed',
 
 **Valeur en dur**: `'medical_completed'`
 
-**18. Ligne 117** | Catégorie: `application_status`
+**18. Ligne 88** | Catégorie: `application_status`
 
 ```
 contract_pending: 'contract_pending',
@@ -1723,7 +1704,7 @@ contract_pending: 'contract_pending',
 
 **Valeur en dur**: `'contract_pending'`
 
-**19. Ligne 118** | Catégorie: `application_status`
+**19. Ligne 89** | Catégorie: `application_status`
 
 ```
 contract_signed: 'contract_signed'
@@ -1731,7 +1712,7 @@ contract_signed: 'contract_signed'
 
 **Valeur en dur**: `'contract_signed'`
 
-**20. Ligne 134** | Catégorie: `roles`
+**20. Ligne 98** | Catégorie: `roles`
 
 ```
 interim: 'interim',
@@ -1739,7 +1720,7 @@ interim: 'interim',
 
 **Valeur en dur**: `'interim'`
 
-**21. Ligne 134** | Catégorie: `validation_types`
+**21. Ligne 98** | Catégorie: `validation_types`
 
 ```
 interim: 'interim',
@@ -1747,7 +1728,7 @@ interim: 'interim',
 
 **Valeur en dur**: `'interim'`
 
-**22. Ligne 135** | Catégorie: `roles`
+**22. Ligne 99** | Catégorie: `roles`
 
 ```
 company: 'company',
@@ -1755,7 +1736,7 @@ company: 'company',
 
 **Valeur en dur**: `'company'`
 
-**23. Ligne 135** | Catégorie: `validation_types`
+**23. Ligne 99** | Catégorie: `validation_types`
 
 ```
 company: 'company',
@@ -1763,13 +1744,157 @@ company: 'company',
 
 **Valeur en dur**: `'company'`
 
-**24. Ligne 136** | Catégorie: `validation_types`
+**24. Ligne 100** | Catégorie: `validation_types`
 
 ```
 collaborator: 'collaborator'
 ```
 
 **Valeur en dur**: `'collaborator'`
+
+**25. Ligne 115** | Catégorie: `application_status`
+
+```
+applicationStatuses: ['submitted', 'review', 'interview_scheduled', 'interviewed', 'selected', 'rejected', 'medical_pending', 'medical_completed', 'contract_pending', 'contract_signed'],
+```
+
+**Valeur en dur**: `'submitted'`
+
+**26. Ligne 115** | Catégorie: `application_status`
+
+```
+applicationStatuses: ['submitted', 'review', 'interview_scheduled', 'interviewed', 'selected', 'rejected', 'medical_pending', 'medical_completed', 'contract_pending', 'contract_signed'],
+```
+
+**Valeur en dur**: `'review'`
+
+**27. Ligne 115** | Catégorie: `application_status`
+
+```
+applicationStatuses: ['submitted', 'review', 'interview_scheduled', 'interviewed', 'selected', 'rejected', 'medical_pending', 'medical_completed', 'contract_pending', 'contract_signed'],
+```
+
+**Valeur en dur**: `'interview_scheduled'`
+
+**28. Ligne 115** | Catégorie: `application_status`
+
+```
+applicationStatuses: ['submitted', 'review', 'interview_scheduled', 'interviewed', 'selected', 'rejected', 'medical_pending', 'medical_completed', 'contract_pending', 'contract_signed'],
+```
+
+**Valeur en dur**: `'interviewed'`
+
+**29. Ligne 115** | Catégorie: `application_status`
+
+```
+applicationStatuses: ['submitted', 'review', 'interview_scheduled', 'interviewed', 'selected', 'rejected', 'medical_pending', 'medical_completed', 'contract_pending', 'contract_signed'],
+```
+
+**Valeur en dur**: `'selected'`
+
+**30. Ligne 115** | Catégorie: `application_status`
+
+```
+applicationStatuses: ['submitted', 'review', 'interview_scheduled', 'interviewed', 'selected', 'rejected', 'medical_pending', 'medical_completed', 'contract_pending', 'contract_signed'],
+```
+
+**Valeur en dur**: `'rejected'`
+
+**31. Ligne 115** | Catégorie: `application_status`
+
+```
+applicationStatuses: ['submitted', 'review', 'interview_scheduled', 'interviewed', 'selected', 'rejected', 'medical_pending', 'medical_completed', 'contract_pending', 'contract_signed'],
+```
+
+**Valeur en dur**: `'medical_pending'`
+
+**32. Ligne 115** | Catégorie: `application_status`
+
+```
+applicationStatuses: ['submitted', 'review', 'interview_scheduled', 'interviewed', 'selected', 'rejected', 'medical_pending', 'medical_completed', 'contract_pending', 'contract_signed'],
+```
+
+**Valeur en dur**: `'medical_completed'`
+
+**33. Ligne 115** | Catégorie: `application_status`
+
+```
+applicationStatuses: ['submitted', 'review', 'interview_scheduled', 'interviewed', 'selected', 'rejected', 'medical_pending', 'medical_completed', 'contract_pending', 'contract_signed'],
+```
+
+**Valeur en dur**: `'contract_pending'`
+
+**34. Ligne 115** | Catégorie: `application_status`
+
+```
+applicationStatuses: ['submitted', 'review', 'interview_scheduled', 'interviewed', 'selected', 'rejected', 'medical_pending', 'medical_completed', 'contract_pending', 'contract_signed'],
+```
+
+**Valeur en dur**: `'contract_signed'`
+
+**35. Ligne 116** | Catégorie: `application_status`
+
+```
+validationStatuses: ['pending', 'approved', 'rejected'],
+```
+
+**Valeur en dur**: `'rejected'`
+
+**36. Ligne 117** | Catégorie: `roles`
+
+```
+validationTypes: ['interim', 'company', 'collaborator'],
+```
+
+**Valeur en dur**: `'company'`
+
+**37. Ligne 117** | Catégorie: `roles`
+
+```
+validationTypes: ['interim', 'company', 'collaborator'],
+```
+
+**Valeur en dur**: `'interim'`
+
+**38. Ligne 117** | Catégorie: `validation_types`
+
+```
+validationTypes: ['interim', 'company', 'collaborator'],
+```
+
+**Valeur en dur**: `'interim'`
+
+**39. Ligne 117** | Catégorie: `validation_types`
+
+```
+validationTypes: ['interim', 'company', 'collaborator'],
+```
+
+**Valeur en dur**: `'company'`
+
+**40. Ligne 117** | Catégorie: `validation_types`
+
+```
+validationTypes: ['interim', 'company', 'collaborator'],
+```
+
+**Valeur en dur**: `'collaborator'`
+
+**41. Ligne 118** | Catégorie: `roles`
+
+```
+contractTypes: ['cdi', 'cdd', 'interim', 'freelance', 'stage'],
+```
+
+**Valeur en dur**: `'interim'`
+
+**42. Ligne 118** | Catégorie: `validation_types`
+
+```
+contractTypes: ['cdi', 'cdd', 'interim', 'freelance', 'stage'],
+```
+
+**Valeur en dur**: `'interim'`
 
 
 ### 📄 `apps/web/src/pages/LandingPage.tsx`
@@ -2812,7 +2937,7 @@ total_rejected = await db.validations.count_documents({"status": "rejected"})
 
 ## 🟠 Sévérité: HIGH
 
-**Total**: 81 occurrences
+**Total**: 87 occurrences
 
 ### 📄 `apps/web/src/components/ActionButton.tsx`
 
@@ -3234,7 +3359,7 @@ export type ContractStatus = 'not_generated' | 'draft' | 'sent' | 'signed_by_int
 
 ### 📄 `apps/web/src/hooks/useAppConfig.ts`
 
-**1. Ligne 69** | Catégorie: `user_status`
+**1. Ligne 54** | Catégorie: `user_status`
 
 ```
 active: 'active',
@@ -3242,7 +3367,7 @@ active: 'active',
 
 **Valeur en dur**: `'active'`
 
-**2. Ligne 70** | Catégorie: `user_status`
+**2. Ligne 55** | Catégorie: `user_status`
 
 ```
 pending: 'pending',
@@ -3250,7 +3375,7 @@ pending: 'pending',
 
 **Valeur en dur**: `'pending'`
 
-**3. Ligne 71** | Catégorie: `user_status`
+**3. Ligne 56** | Catégorie: `user_status`
 
 ```
 suspended: 'suspended',
@@ -3258,7 +3383,7 @@ suspended: 'suspended',
 
 **Valeur en dur**: `'suspended'`
 
-**4. Ligne 72** | Catégorie: `user_status`
+**4. Ligne 57** | Catégorie: `user_status`
 
 ```
 deleted: 'deleted',
@@ -3266,7 +3391,7 @@ deleted: 'deleted',
 
 **Valeur en dur**: `'deleted'`
 
-**5. Ligne 73** | Catégorie: `user_status`
+**5. Ligne 58** | Catégorie: `user_status`
 
 ```
 blocked: 'blocked'
@@ -3274,7 +3399,7 @@ blocked: 'blocked'
 
 **Valeur en dur**: `'blocked'`
 
-**6. Ligne 89** | Catégorie: `mission_status`
+**6. Ligne 67** | Catégorie: `mission_status`
 
 ```
 draft: 'draft',
@@ -3282,7 +3407,7 @@ draft: 'draft',
 
 **Valeur en dur**: `'draft'`
 
-**7. Ligne 90** | Catégorie: `mission_status`
+**7. Ligne 68** | Catégorie: `mission_status`
 
 ```
 published: 'published',
@@ -3290,7 +3415,7 @@ published: 'published',
 
 **Valeur en dur**: `'published'`
 
-**8. Ligne 91** | Catégorie: `mission_status`
+**8. Ligne 69** | Catégorie: `mission_status`
 
 ```
 closed: 'closed',
@@ -3298,7 +3423,7 @@ closed: 'closed',
 
 **Valeur en dur**: `'closed'`
 
-**9. Ligne 92** | Catégorie: `mission_status`
+**9. Ligne 70** | Catégorie: `mission_status`
 
 ```
 cancelled: 'cancelled',
@@ -3306,13 +3431,61 @@ cancelled: 'cancelled',
 
 **Valeur en dur**: `'cancelled'`
 
-**10. Ligne 93** | Catégorie: `mission_status`
+**10. Ligne 71** | Catégorie: `mission_status`
 
 ```
 archived: 'archived'
 ```
 
 **Valeur en dur**: `'archived'`
+
+**11. Ligne 114** | Catégorie: `mission_status`
+
+```
+missionStatuses: ['draft', 'published', 'closed', 'cancelled', 'archived'],
+```
+
+**Valeur en dur**: `'draft'`
+
+**12. Ligne 114** | Catégorie: `mission_status`
+
+```
+missionStatuses: ['draft', 'published', 'closed', 'cancelled', 'archived'],
+```
+
+**Valeur en dur**: `'published'`
+
+**13. Ligne 114** | Catégorie: `mission_status`
+
+```
+missionStatuses: ['draft', 'published', 'closed', 'cancelled', 'archived'],
+```
+
+**Valeur en dur**: `'closed'`
+
+**14. Ligne 114** | Catégorie: `mission_status`
+
+```
+missionStatuses: ['draft', 'published', 'closed', 'cancelled', 'archived'],
+```
+
+**Valeur en dur**: `'cancelled'`
+
+**15. Ligne 114** | Catégorie: `mission_status`
+
+```
+missionStatuses: ['draft', 'published', 'closed', 'cancelled', 'archived'],
+```
+
+**Valeur en dur**: `'archived'`
+
+**16. Ligne 116** | Catégorie: `user_status`
+
+```
+validationStatuses: ['pending', 'approved', 'rejected'],
+```
+
+**Valeur en dur**: `'pending'`
 
 
 ### 📄 `apps/web/src/types/index.ts`
@@ -3539,7 +3712,7 @@ status=updated_user_doc.get("status", "pending"),
 
 ## 🟡 Sévérité: MEDIUM
 
-**Total**: 78 occurrences
+**Total**: 83 occurrences
 
 ### 📄 `apps/web/src/components/LoginModal.tsx`
 
@@ -3836,7 +4009,7 @@ const [selectedDocType, setSelectedDocType] = useState('cv')
 
 ### 📄 `apps/web/src/hooks/useAppConfig.ts`
 
-**1. Ligne 50** | Catégorie: `contract_types`
+**1. Ligne 42** | Catégorie: `contract_types`
 
 ```
 interim: 'interim',
@@ -3844,13 +4017,53 @@ interim: 'interim',
 
 **Valeur en dur**: `'interim'`
 
-**2. Ligne 134** | Catégorie: `contract_types`
+**2. Ligne 98** | Catégorie: `contract_types`
 
 ```
 interim: 'interim',
 ```
 
 **Valeur en dur**: `'interim'`
+
+**3. Ligne 117** | Catégorie: `contract_types`
+
+```
+validationTypes: ['interim', 'company', 'collaborator'],
+```
+
+**Valeur en dur**: `'interim'`
+
+**4. Ligne 118** | Catégorie: `contract_types`
+
+```
+contractTypes: ['cdi', 'cdd', 'interim', 'freelance', 'stage'],
+```
+
+**Valeur en dur**: `'cdi'`
+
+**5. Ligne 118** | Catégorie: `contract_types`
+
+```
+contractTypes: ['cdi', 'cdd', 'interim', 'freelance', 'stage'],
+```
+
+**Valeur en dur**: `'cdd'`
+
+**6. Ligne 118** | Catégorie: `contract_types`
+
+```
+contractTypes: ['cdi', 'cdd', 'interim', 'freelance', 'stage'],
+```
+
+**Valeur en dur**: `'interim'`
+
+**7. Ligne 118** | Catégorie: `contract_types`
+
+```
+contractTypes: ['cdi', 'cdd', 'interim', 'freelance', 'stage'],
+```
+
+**Valeur en dur**: `'freelance'`
 
 
 ### 📄 `apps/web/src/pages/LandingPage.tsx`
