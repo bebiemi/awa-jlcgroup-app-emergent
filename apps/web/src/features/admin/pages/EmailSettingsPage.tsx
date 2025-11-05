@@ -114,7 +114,7 @@ export const EmailSettingsPage: React.FC = () => {
       await updateSettings(formData).unwrap();
       alert('Configuration enregistrée avec succès !');
     } catch (err: any) {
-      alert(\`Erreur: \${err.data?.detail || 'Erreur inconnue'}\`);
+      alert(`Erreur: ${err.data?.detail || 'Erreur inconnue'}`);
     }
   };
 
