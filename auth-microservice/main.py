@@ -39,21 +39,35 @@ db = None
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     global client, db
-    logger.info("Starting AWANA Auth Microservice...")
+    logger.info(f"🚀 Starting AWANA Auth Microservice (env: {env})...")
     
-    mongo_url = os.getenv('MONGO_URL', 'mongodb://localhost:27017')
-    client = AsyncIOMotorClient(mongo_url)
-    db = client[os.getenv('DATABASE_NAME', 'auth_db')]
-    logger.info(f"Connected to MongoDB: {os.getenv('DATABASE_NAME')}")
+    # Récupérer la configuration DB depuis ConfigManager
+    mongo_url = config.get_secret('MONGO_URL', required=True)
+    db_name = config.get('database.name', required=True)
+    pool_size = config.get('database.pool_size', default=10)
+    
+    logger.info(f"📊 Database config: {db_name}, pool_size={pool_size}")
+    
+    client = AsyncIOMotorClient(
+        mongo_url,
+        maxPoolSize=pool_size,
+        minPoolSize=config.get('database.min_pool_size', default=5),
+        socketTimeoutMS=config.get('database.socket_timeout_ms', default=30000),
+        connectTimeoutMS=config.get('database.connect_timeout_ms', default=10000),
+        serverSelectionTimeoutMS=config.get('database.server_selection_timeout_ms', default=5000)
+    )
+    db = client[db_name]
+    logger.info(f"✅ Connected to MongoDB: {db_name}")
     
     from awana_auth.rbac.manager import RBACManager
     rbac_manager = RBACManager(db)
     await rbac_manager.initialize_default_roles()
-    logger.info("AWANA Auth initialized")
+    logger.info("✅ AWANA Auth initialized")
     
     yield
     
     if client:
+        logger.info("🔌 Closing MongoDB connection...")
         client.close()
 
 app = FastAPI(
