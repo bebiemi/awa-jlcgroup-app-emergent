@@ -18,8 +18,9 @@ async def seed_mission_references():
     
     # Connexion MongoDB
     mongo_url = os.environ.get('MONGO_URL', 'mongodb://localhost:27017')
+    db_name = os.environ.get('DATABASE_NAME', 'auth_db')
     client = AsyncIOMotorClient(mongo_url)
-    db = client.awana_db
+    db = client[db_name]
     
     print("🚀 Démarrage de la migration des référentiels missions...")
     
