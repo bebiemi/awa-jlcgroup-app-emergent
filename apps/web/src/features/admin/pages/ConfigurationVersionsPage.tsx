@@ -54,7 +54,7 @@ export default function ConfigurationVersionsPage() {
 
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_AUTH_SERVICE_URL}/api/versions/snapshot?description=${encodeURIComponent(description)}`,
+        `/auth-api/versions/snapshot?description=${encodeURIComponent(description)}`,
         {
           method: 'POST',
           headers: {
