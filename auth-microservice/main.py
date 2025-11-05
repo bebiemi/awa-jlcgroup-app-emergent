@@ -108,8 +108,19 @@ app.include_router(configuration_router, prefix="/api/auth")
 
 @app.get("/health")
 async def health_check():
-    return {"status": "healthy", "service": "awana-auth", "version": "1.0.0"}
+    return {
+        "status": "healthy",
+        "service": config.get("app.name"),
+        "version": config.get("app.version"),
+        "environment": env
+    }
 
 @app.get("/")
 async def root():
-    return {"service": "AWANA Auth", "docs": "/docs", "health": "/health"}
+    return {
+        "service": config.get("app.name"),
+        "version": config.get("app.version"),
+        "environment": env,
+        "docs": "/docs",
+        "health": "/health"
+    }
