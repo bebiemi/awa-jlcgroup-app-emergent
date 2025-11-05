@@ -156,7 +156,7 @@ function App() {
       <Route
         path="/missions/:id"
         element={
-          <ProtectedRoute requiredRoles={['admin', 'super_admin', 'commercial', 'company']}>
+          <ProtectedRoute requiredRoles={[roles.admin, roles.super_admin, roles.commercial, roles.company]}>
             <MissionDetailPage />
           </ProtectedRoute>
         }
@@ -164,7 +164,7 @@ function App() {
       <Route
         path="/missions/:id/edit"
         element={
-          <ProtectedRoute requiredRoles={['admin', 'super_admin', 'commercial', 'company']}>
+          <ProtectedRoute requiredRoles={[roles.admin, roles.super_admin, roles.commercial, roles.company]}>
             <EditMissionPage />
           </ProtectedRoute>
         }
@@ -172,7 +172,7 @@ function App() {
       <Route
         path="/missions/:id/candidatures"
         element={
-          <ProtectedRoute requiredRoles={['admin', 'super_admin', 'commercial']}>
+          <ProtectedRoute requiredRoles={[roles.admin, roles.super_admin, roles.commercial]}>
             <ApplicationsManagementPage />
           </ProtectedRoute>
         }
@@ -182,7 +182,7 @@ function App() {
       <Route
         path="/offres"
         element={
-          <ProtectedRoute requiredRoles={['interim']}>
+          <ProtectedRoute requiredRoles={[roles.interim]}>
             <OffresPage />
           </ProtectedRoute>
         }
@@ -190,7 +190,7 @@ function App() {
       <Route
         path="/offres/:id"
         element={
-          <ProtectedRoute requiredRoles={['interim']}>
+          <ProtectedRoute requiredRoles={[roles.interim]}>
             <MissionDetailPage />
           </ProtectedRoute>
         }
@@ -198,7 +198,7 @@ function App() {
       <Route
         path="/offres/:id/postuler"
         element={
-          <ProtectedRoute requiredRoles={['interim']}>
+          <ProtectedRoute requiredRoles={[roles.interim]}>
             <ApplyMissionPage />
           </ProtectedRoute>
         }
@@ -206,7 +206,7 @@ function App() {
       <Route
         path="/mes-candidatures"
         element={
-          <ProtectedRoute requiredRoles={['interim']}>
+          <ProtectedRoute requiredRoles={[roles.interim]}>
             <MyApplicationsPage />
           </ProtectedRoute>
         }
@@ -215,7 +215,7 @@ function App() {
       <Route
         path="/interimaire"
         element={
-          <ProtectedRoute requiredRoles={['interim']}>
+          <ProtectedRoute requiredRoles={[roles.interim]}>
             <InterimDashboard />
           </ProtectedRoute>
         }
@@ -223,7 +223,7 @@ function App() {
       <Route
         path="/missions-interim"
         element={
-          <ProtectedRoute requiredRoles={['interim']}>
+          <ProtectedRoute requiredRoles={[roles.interim]}>
             <Navigate to="/offres" replace />
           </ProtectedRoute>
         }
