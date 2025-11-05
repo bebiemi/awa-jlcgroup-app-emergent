@@ -1572,7 +1572,7 @@ def test_profile_completion_system():
     
     skills_response = test_endpoint(
         "PUT",
-        f"{API_BASE_URL}/profiles/me",
+        f"{AUTH_BASE_URL}/profiles/me",
         data=skills_update,
         headers=headers,
         expected_status=200,
