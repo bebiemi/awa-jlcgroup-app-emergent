@@ -128,6 +128,13 @@ async def update_reference(
         {"$set": update_data}
     )
     
+    # Invalider le cache pour cette catégorie
+    category = ref.get("category")
+    if category:
+        await reference_cache.invalidate(f"refs:{category}")
+        await reference_cache.invalidate(f"refs:{category}:active=True")
+        await reference_cache.invalidate(f"refs:{category}:active=False")
+    
     updated_ref = await db.system_references.find_one({"id": ref_id})
     if updated_ref and "_id" in updated_ref:
         updated_ref["_id"] = str(updated_ref["_id"])
