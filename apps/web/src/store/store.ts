@@ -38,6 +38,8 @@ export const store = configureStore({
     [emailSettingsApi.reducerPath]: emailSettingsApi.reducer,
     [emailHistoryApi.reducerPath]: emailHistoryApi.reducer,
     [emailTemplatesApi.reducerPath]: emailTemplatesApi.reducer,
+    [contractApi.reducerPath]: contractApi.reducer,
+    [applicationApi.reducerPath]: applicationApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
