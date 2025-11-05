@@ -1,9 +1,8 @@
 /**
  * Hook pour accéder à la configuration de l'application
- * Charge les rôles, statuts et autres configurations depuis le backend
+ * Retourne les valeurs de configuration par défaut
+ * TODO: Charger depuis l'API backend quand les référentiels sont initialisés
  */
-import { useQuery } from '@reduxjs/toolkit/query/react'
-import { configurationApi } from '../features/admin/api/configurationApi'
 
 export interface AppConfig {
   roles: {
