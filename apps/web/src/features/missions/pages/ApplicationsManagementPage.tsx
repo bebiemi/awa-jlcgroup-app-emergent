@@ -84,6 +84,7 @@ export default function ApplicationsManagementPage() {
     { skip: !id }
   )
 
+  const { getMetadata: getApplicationMetadata } = useApplicationStatuses()
   const [updateApplication] = useUpdateApplicationMutation()
   const [shortlistApplication] = useShortlistApplicationMutation()
 
