@@ -71,19 +71,25 @@ async def lifespan(app: FastAPI):
         client.close()
 
 app = FastAPI(
-    title="AWANA Auth Microservice",
+    title=config.get("app.name", default="AWANA Auth Microservice"),
     description="Standalone Auth with JWT, OAuth2, RBAC",
-    version="1.0.0",
+    version=config.get("app.version", default="1.0.0"),
+    debug=config.get("app.debug", default=False),
     lifespan=lifespan
 )
 
-allowed_origins = os.getenv('CORS_ORIGINS', 'http://localhost:3000').split(',')
+# Configuration CORS depuis ConfigManager
+cors_origins = config.get("security.cors.allow_origins", default=["http://localhost:3000"])
+cors_methods = config.get("security.cors.allow_methods", default=["*"])
+cors_headers = config.get("security.cors.allow_headers", default=["*"])
+cors_credentials = config.get("security.cors.allow_credentials", default=True)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=allowed_origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=cors_origins,
+    allow_credentials=cors_credentials,
+    allow_methods=cors_methods,
+    allow_headers=cors_headers,
 )
 
 app.state.limiter = limiter
