@@ -64,14 +64,14 @@ export default function InterimDashboard() {
           <Card
             className={clsx(
               'border-l-4',
-              validation.status === 'pending' && 'border-yellow-500 bg-yellow-50',
+              validation.status === userStatuses.pending && 'border-yellow-500 bg-yellow-50',
               validation.status === 'approved' && 'border-green-500 bg-green-50',
               validation.status === 'rejected' && 'border-red-500 bg-red-50'
             )}
           >
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                {validation.status === 'pending' && (
+                {validation.status === userStatuses.pending && (
                   <ClockIcon className="h-8 w-8 text-yellow-600" />
                 )}
                 {validation.status === 'approved' && (
@@ -82,7 +82,7 @@ export default function InterimDashboard() {
                 )}
               </div>
               <div className="ml-4 flex-1">
-                {validation.status === 'pending' && (
+                {validation.status === userStatuses.pending && (
                   <>
                     <h3 className="text-lg font-semibold text-yellow-900">
                       Validation en cours
