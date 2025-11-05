@@ -185,7 +185,7 @@ export default function MissionDetailPage() {
               <CalendarIcon className="h-6 w-6 text-gray-400 mr-3 mt-1" />
               <div>
                 <p className="text-sm text-gray-600">Type de contrat</p>
-                <p className="font-semibold text-gray-900">{mission.contract_type}</p>
+                <p className="font-semibold text-gray-900">{getContractTypeLabel(mission.contract_type)}</p>
               </div>
             </div>
 
