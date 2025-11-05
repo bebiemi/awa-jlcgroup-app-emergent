@@ -56,7 +56,7 @@ export const contractApi = createApi({
         const params = new URLSearchParams();
         if (status_filter) params.append('status_filter', status_filter);
         if (include_ended) params.append('include_ended', 'true');
-        return `/api/contracts/me?${params.toString()}`;
+        return `/contracts/me?${params.toString()}`;
       },
       providesTags: ['Contracts'],
     }),
@@ -65,11 +65,11 @@ export const contractApi = createApi({
       upcoming_end: any | null;
       can_apply: boolean;
     }, void>({
-      query: () => '/api/contracts/active',
+      query: () => '/contracts/active',
       providesTags: ['Contracts'],
     }),
     getContractDetails: builder.query<{ contract: Contract }, string>({
-      query: (contractId) => `/api/contracts/${contractId}`,
+      query: (contractId) => `/contracts/${contractId}`,
       providesTags: ['Contracts'],
     }),
   }),
