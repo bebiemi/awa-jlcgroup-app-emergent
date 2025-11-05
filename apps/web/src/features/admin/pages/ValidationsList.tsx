@@ -9,7 +9,10 @@ import toast from 'react-hot-toast'
 import clsx from 'clsx'
 
 export default function ValidationsList() {
-  const [statusFilter, setStatusFilter] = useState<string>('pending')
+  const { data: validationStatuses = [] } = useReferences('validation_statuses')
+  const pendingStatus = validationStatuses.find(vs => vs.code === 'pending')?.code || 'pending'
+  
+  const [statusFilter, setStatusFilter] = useState<string>(pendingStatus)
   const [selectedValidation, setSelectedValidation] = useState<string | null>(null)
   const [showApproveModal, setShowApproveModal] = useState(false)
   const [showRejectModal, setShowRejectModal] = useState(false)
