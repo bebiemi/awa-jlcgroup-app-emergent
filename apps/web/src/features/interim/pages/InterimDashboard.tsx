@@ -20,7 +20,12 @@ import clsx from 'clsx'
 export default function InterimDashboard() {
   const { data: profile, isLoading: profileLoading } = useGetMyProfileQuery()
   const { data: validation } = useGetMyValidationQuery()
+  const { data: contractData } = useGetActiveContractQuery()
   const userStatuses = useUserStatuses()
+  
+  const activeContract = contractData?.active_contract
+  const upcomingEnd = contractData?.upcoming_end
+  const canApply = contractData?.can_apply ?? true
 
   if (profileLoading) {
     return (
