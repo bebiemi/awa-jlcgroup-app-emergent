@@ -95,6 +95,7 @@ Voir `/docs` pour plus d'informations:
 - **[💻 Dev Guide](/docs/DEPLOYMENT_DEV_GUIDE.md)** - Guide de déploiement environnement dev
 - **[🏭 Production Guide](/docs/DEPLOYMENT_PROD_GUIDE.md)** - Guide de déploiement production
 - **[⚙️ Configuration System](/docs/CONFIGURATION_SYSTEM_GUIDE.md)** - Système de configuration centralisé
+- **[🕐 Configuration Versioning](/docs/CONFIGURATION_VERSIONING_GUIDE.md)** - Système de versioning et rollback de configuration
 - **[✅ Checklist Template](/docs/DEPLOYMENT_CHECKLIST_TEMPLATE.md)** - Template de checklist de déploiement
 
 ## Licence
