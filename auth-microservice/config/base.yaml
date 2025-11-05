@@ -120,8 +120,73 @@ workflows:
     application_deadline_days: 30
     max_applications_per_mission: 100
     
+    # Mission Statuses
+    statuses:
+      draft: "draft"
+      published: "published"
+      closed: "closed"
+      cancelled: "cancelled"
+      archived: "archived"
+      all:
+        - "draft"
+        - "published"
+        - "closed"
+        - "cancelled"
+        - "archived"
+    
+    # Permissions par rôle
+    permissions:
+      create:
+        - "admin"
+        - "super_admin"
+        - "company"
+        - "commercial"
+      view_all:
+        - "admin"
+        - "super_admin"
+      publish:
+        - "admin"
+        - "super_admin"
+        - "commercial"
+      edit:
+        - "admin"
+        - "super_admin"
+        - "commercial"
+      delete:
+        - "admin"
+        - "super_admin"
+      view_own:
+        - "company"
+        - "commercial"
+      apply:
+        - "interim"
+    
   # Application Workflow Configuration
   application:
+    # Application Statuses
+    statuses:
+      submitted: "submitted"
+      review: "review"
+      interview_scheduled: "interview_scheduled"
+      interviewed: "interviewed"
+      selected: "selected"
+      rejected: "rejected"
+      medical_pending: "medical_pending"
+      medical_completed: "medical_completed"
+      contract_pending: "contract_pending"
+      contract_signed: "contract_signed"
+      all:
+        - "submitted"
+        - "review"
+        - "interview_scheduled"
+        - "interviewed"
+        - "selected"
+        - "rejected"
+        - "medical_pending"
+        - "medical_completed"
+        - "contract_pending"
+        - "contract_signed"
+    
     # Délais par étape (en jours)
     delays:
       interview_scheduling: 7
@@ -140,6 +205,55 @@ workflows:
       max_applications_per_candidate: 10
       min_days_between_applications: 1
       allow_reapplication_after_rejection_days: 30
+    
+    # Permissions
+    permissions:
+      view_all:
+        - "admin"
+        - "super_admin"
+        - "commercial"
+      manage:
+        - "admin"
+        - "super_admin"
+        - "commercial"
+        - "company"
+      view_own:
+        - "interim"
+  
+  # Validation Workflow Configuration
+  validation:
+    # Validation Statuses
+    statuses:
+      pending: "pending"
+      approved: "approved"
+      rejected: "rejected"
+      all:
+        - "pending"
+        - "approved"
+        - "rejected"
+    
+    # Validation Types
+    types:
+      interim: "interim"
+      company: "company"
+      collaborator: "collaborator"
+      all:
+        - "interim"
+        - "company"
+        - "collaborator"
+    
+    # Permissions
+    permissions:
+      validator_roles:
+        - "admin"
+        - "super_admin"
+        - "commercial"
+      view_all:
+        - "admin"
+        - "super_admin"
+      assign_validator:
+        - "admin"
+        - "super_admin"
 
 notifications:
   # Email Configuration
