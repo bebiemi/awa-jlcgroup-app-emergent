@@ -38,21 +38,35 @@ os.makedirs(UPLOAD_DIR, exist_ok=True)
 def calculate_profile_completion(profile_data: dict, profile_type: str) -> int:
     """Calculate profile completion percentage based on filled fields"""
     if profile_type == "interim":
-        total_fields = 15
+        total_fields = 20  # Augmenté pour inclure les champs de base
         filled = 0
+        
+        # Champs de base (essentiels)
+        if profile_data.get("first_name"): filled += 1
+        if profile_data.get("last_name"): filled += 1
+        if profile_data.get("email"): filled += 1
+        if profile_data.get("phone"): filled += 1
+        if profile_data.get("date_of_birth"): filled += 1
+        if profile_data.get("place_of_birth"): filled += 1
+        if profile_data.get("address"): filled += 1
+        
+        # Informations professionnelles
         if profile_data.get("education_level"): filled += 1
         if profile_data.get("years_of_experience"): filled += 1
         if profile_data.get("sectors") and len(profile_data["sectors"]) > 0: filled += 1
         if profile_data.get("skills") and len(profile_data["skills"]) > 0: filled += 1
         if profile_data.get("languages") and len(profile_data["languages"]) > 0: filled += 1
         if profile_data.get("has_driving_license"): filled += 1
+        
+        # Disponibilités
         if profile_data.get("general_availability") and len(profile_data["general_availability"]) > 0: filled += 1
         if profile_data.get("available_immediately") or profile_data.get("available_from_date"): filled += 1
         if profile_data.get("accepted_mission_types") and len(profile_data["accepted_mission_types"]) > 0: filled += 1
-        if profile_data.get("cv_document_id"): filled += 2  # CV is important
+        
+        # Documents (important)
+        if profile_data.get("cv_document_id"): filled += 2  # CV est très important
         if profile_data.get("photo_url"): filled += 1
         if profile_data.get("nationality"): filled += 1
-        if profile_data.get("social_security_number"): filled += 1
         if profile_data.get("document_ids") and len(profile_data["document_ids"]) > 0: filled += 1
         
         return int((filled / total_fields) * 100)
