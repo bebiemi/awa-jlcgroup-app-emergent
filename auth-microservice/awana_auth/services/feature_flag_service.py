@@ -57,8 +57,9 @@ class FeatureFlagService:
         cache_key = f"flag:{flag_key}:{context.user_id}:{':'.join(sorted(context.roles))}:{context.environment}"
         
         # Vérifier cache
-        if self._is_cache_valid(cache_key):
-            return self.cache.get(cache_key, False)
+        cached = self.cache.get(cache_key, prefix="feature_flags")
+        if cached is not None:
+            return cached
         
         # 1. Vérifier USER flag
         if context.user_id:
