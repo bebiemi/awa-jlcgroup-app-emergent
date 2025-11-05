@@ -9,6 +9,8 @@ export default function GoogleCallback() {
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
+  const roles = useRoles()
+  const userStatuses = useUserStatuses()
 
   useEffect(() => {
     const handleCallback = async () => {
