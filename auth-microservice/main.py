@@ -38,6 +38,7 @@ from email_routes import router as email_router
 from email_settings_routes import router as email_settings_router
 from email_history_routes import router as email_history_router
 from email_template_routes import router as email_template_router
+from contract_routes import router as contract_router
 from rate_limit import limiter
 
 client = None
