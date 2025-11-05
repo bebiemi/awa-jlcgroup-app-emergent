@@ -41,7 +41,9 @@ class ConfigManager:
             config_dir: Répertoire des fichiers de configuration
         """
         self.env = env or os.getenv("APP_ENV", "local")
-        self.config_dir = Path(config_dir or "/app/auth-microservice/config")
+        # Détecter si on est dans Docker (WORKDIR=/app) ou en local
+        default_config_dir = "/app/config" if os.path.exists("/app/config") else "/app/auth-microservice/config"
+        self.config_dir = Path(config_dir or default_config_dir)
         self._config: Dict[str, Any] = {}
         self._secrets: Dict[str, Any] = {}
         self._required_vars: List[str] = []
