@@ -172,17 +172,86 @@ async def get_active_contract(
     """
     Récupérer le contrat actif de l'utilisateur (s'il existe)
     """
-    result = await get_my_contracts(
-        status_filter="active",
-        include_ended=False,
-        current_user=current_user,
-        db=db
+    # Vérifier que l'utilisateur est un intérimaire
+    if "interim" not in current_user.roles:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Accès réservé aux intérimaires"
+        )
+    
+    # Récupérer le profil de l'utilisateur
+    profile = await db.interim_profiles.find_one({"user_id": current_user.id})
+    
+    if not profile:
+        return {
+            "active_contract": None,
+            "upcoming_end": None,
+            "can_apply": True
+        }
+    
+    # Construire le filtre pour les applications
+    app_query = {
+        "interim_id": current_user.id,
+        "status": {"$in": ["contract_signed", "contract_pending"]}
+    }
+    
+    # Récupérer les applications avec contrat
+    applications = await db.mission_applications.find(app_query).to_list(length=None)
+    
+    active_contract = None
+    upcoming_end = None
+    
+    now = datetime.now(timezone.utc)
+    
+    for app in applications:
+        # Récupérer la mission associée
+        mission = await db.missions.find_one({"id": app["mission_id"]})
+        
+        if not mission:
+            continue
+        
+        if app["status"] == "contract_signed":
+            if mission.get("start_date") and mission.get("end_date"):
+                try:
+                    start = datetime.fromisoformat(mission["start_date"].replace('Z', '+00:00'))
+                    end = datetime.fromisoformat(mission["end_date"].replace('Z', '+00:00'))
+                    
+                    if start <= now <= end:
+                        # Contrat actif trouvé
+                        days_remaining = (end - now).days
+                        
+                        active_contract = {
+                            "id": app["id"],
+                            "mission_id": app["mission_id"],
+                            "mission_title": mission.get("title", "Mission"),
+                            "company_name": mission.get("company_name", ""),
+                            "location": mission.get("location", ""),
+                            "start_date": mission.get("start_date"),
+                            "end_date": mission.get("end_date"),
+                            "days_remaining": days_remaining
+                        }
+                        
+                        # Vérifier alerte J-14
+                        if days_remaining <= 14 and days_remaining > 0:
+                            upcoming_end = {
+                                "contract_id": app["id"],
+                                "mission_title": mission.get("title", "Mission"),
+                                "end_date": mission.get("end_date"),
+                                "days_remaining": days_remaining
+                            }
+                        break
+                except:
+                    pass
+    
+    # Déterminer si l'utilisateur peut postuler
+    can_apply = active_contract is None or (
+        upcoming_end and upcoming_end["days_remaining"] <= 5
     )
     
     return {
-        "active_contract": result["active_contract"],
-        "upcoming_end": result["upcoming_end"],
-        "can_apply": result["can_apply"]
+        "active_contract": active_contract,
+        "upcoming_end": upcoming_end,
+        "can_apply": can_apply
     }
 
 
