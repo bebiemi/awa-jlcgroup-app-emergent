@@ -139,12 +139,14 @@ async def get_version_details(
 @router.post("/rollback", dependencies=[Depends(require_admin)])
 async def rollback_to_version(
     rollback: RollbackRequest,
+    background_tasks: BackgroundTasks,
     current_user: User = Depends(get_current_user),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """
     Rollback vers une version antérieure
     Nécessite admin
+    Envoie une notification email aux admins
     """
     # Récupérer la version cible
     target_version = await db.configuration_history.find_one({"id": rollback.version_id})
