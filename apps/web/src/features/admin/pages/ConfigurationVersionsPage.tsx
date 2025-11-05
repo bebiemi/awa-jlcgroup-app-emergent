@@ -81,38 +81,56 @@ export default function ConfigurationVersionsPage() {
 
   const rollbackToVersion = async () => {
     if (!selectedVersion || !rollbackReason.trim()) {
-      toast.error('Raison requise')
+      toast.error('Veuillez entrer une raison pour le rollback')
       return
     }
 
     try {
-      const response = await fetch(
-        '/auth-api/versions/rollback',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('token')}`,
-          },
-          body: JSON.stringify({
-            version_id: selectedVersion.id,
-            reason: rollbackReason
-          })
-        }
-      )
+      const response = await fetch('/auth-api/versions/rollback', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        },
+        body: JSON.stringify({
+          version_id: selectedVersion.id,
+          reason: rollbackReason
+        })
+      })
 
       if (response.ok) {
         toast.success('Rollback effectué avec succès')
         setShowRollbackModal(false)
         setRollbackReason('')
-        setSelectedVersion(null)
         loadVersions()
       } else {
         toast.error('Erreur lors du rollback')
       }
     } catch (error) {
-      toast.error('Erreur réseau')
+      toast.error('Erreur lors du rollback')
     }
+  }
+
+  const compareVersions = async () => {
+    if (!selectedVersion || !versionToCompare) {
+      toast.error('Veuillez sélectionner deux versions')
+      return
+    }
+
+    try {
+      const response = await fetch(`/auth-api/versions/compare/${selectedVersion.id}/${versionToCompare}`)
+      const data = await response.json()
+      setCompareResult(data)
+    } catch (error) {
+      toast.error('Erreur lors de la comparaison')
+    }
+  }
+
+  const openCompareModal = (version: Version) => {
+    setSelectedVersion(version)
+    setVersionToCompare('')
+    setCompareResult(null)
+    setShowCompareModal(true)
   }
 
   useEffect(() => {
