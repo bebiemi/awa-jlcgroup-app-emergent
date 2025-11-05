@@ -29,7 +29,10 @@ export default function ConfigurationVersionsPage() {
   const [loading, setLoading] = useState(false)
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [showRollbackModal, setShowRollbackModal] = useState(false)
+  const [showCompareModal, setShowCompareModal] = useState(false)
   const [selectedVersion, setSelectedVersion] = useState<Version | null>(null)
+  const [versionToCompare, setVersionToCompare] = useState<string>('')
+  const [compareResult, setCompareResult] = useState<any>(null)
   const [description, setDescription] = useState('')
   const [rollbackReason, setRollbackReason] = useState('')
 
