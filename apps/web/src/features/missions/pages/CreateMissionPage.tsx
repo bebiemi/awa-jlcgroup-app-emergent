@@ -169,22 +169,13 @@ export default function CreateMissionPage() {
             <h2 className="text-lg font-semibold text-gray-900">Détails du contrat</h2>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Type de contrat *
-                </label>
-                <select
-                  value={formData.contract_type}
-                  onChange={(e) => setFormData({ ...formData, contract_type: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-jlc-purple-500"
-                >
-                  <option value="CDD">CDD</option>
-                  <option value="CDI">CDI</option>
-                  <option value="Stage">Stage</option>
-                  <option value="Interim">Intérim</option>
-                  <option value="Freelance">Freelance</option>
-                </select>
-              </div>
+              <ReferenceSelect
+                category="contract_types"
+                value={formData.contract_type || ''}
+                onChange={(value) => setFormData({ ...formData, contract_type: value })}
+                label="Type de contrat"
+                required
+              />
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
