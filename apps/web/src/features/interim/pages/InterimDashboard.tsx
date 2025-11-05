@@ -47,7 +47,7 @@ export default function InterimDashboard() {
     if (!p.phone) missing.push('Téléphone')
     if (!p.photo_url) missing.push('Photo de profil')
     if (!p.skills || p.skills.length === 0) missing.push('Compétences')
-    if (!profile.interim_data?.experience_years) missing.push('Années d’expérience')
+    if (!p.years_of_experience) missing.push('Années d’expérience')
     if (!profile.interim_data?.resume_url) missing.push('CV')
     if (!profile.interim_data?.availability) missing.push('Disponibilité')
     if (!profile.interim_data?.bio) missing.push('Biographie')
