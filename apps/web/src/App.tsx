@@ -136,6 +136,14 @@ function App() {
           </ProtectedRoute>
         }
       />
+      <Route
+        path="/admin/versions"
+        element={
+          <ProtectedRoute requiredRoles={[roles.admin, roles.super_admin]}>
+            <ConfigurationVersionsPage />
+          </ProtectedRoute>
+        }
+      />
       
       {/* Routes Missions - Admin & Commercial */}
       <Route
