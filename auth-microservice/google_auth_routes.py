@@ -619,7 +619,7 @@ async def complete_google_registration(
             provider=updated_user_doc["provider"],
             provider_user_id=updated_user_doc.get("provider_user_id"),
             is_verified=updated_user_doc.get("is_verified", False),
-            status=updated_user_doc.get("status", "pending"),
+            status=updated_user_doc.get("status", cfg.get_pending_status()),
             roles=[registration_data.role]
         )
         
