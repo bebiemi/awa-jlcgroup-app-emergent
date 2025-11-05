@@ -59,11 +59,11 @@ export default function ValidationsPage() {
     // Filter validations based on tile clicked
     let filtered = validations
     if (type === 'interim') {
-      filtered = validations.filter((v: Validation) => v.validation_type === 'interim' && v.status === 'pending')
+      filtered = validations.filter((v: Validation) => v.validation_type === validationTypesConfig.interim && v.status === validationStatusesConfig.pending)
     } else if (type === 'company') {
-      filtered = validations.filter((v: Validation) => v.validation_type === 'company' && v.status === 'pending')
+      filtered = validations.filter((v: Validation) => v.validation_type === validationTypesConfig.company && v.status === validationStatusesConfig.pending)
     } else if (type === 'collaborator') {
-      filtered = validations.filter((v: Validation) => v.validation_type === 'collaborator' && v.status === 'pending')
+      filtered = validations.filter((v: Validation) => v.validation_type === validationTypesConfig.collaborator && v.status === validationStatusesConfig.pending)
     } else if (type === 'warnings') {
       filtered = validations.filter((v: Validation) => v.has_location_warning && v.status === 'pending')
     } else {
