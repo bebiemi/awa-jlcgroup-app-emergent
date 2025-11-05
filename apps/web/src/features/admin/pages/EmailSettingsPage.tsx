@@ -351,7 +351,7 @@ export const EmailSettingsPage: React.FC = () => {
           </div>
 
           {testResult && (
-            <div className={\`p-3 rounded \${testResult.success ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}\`}>
+            <div className={`p-3 rounded ${testResult.success ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
               {testResult.message}
             </div>
           )}
