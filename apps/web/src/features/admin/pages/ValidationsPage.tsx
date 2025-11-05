@@ -28,8 +28,24 @@ import toast from 'react-hot-toast'
 type TabType = 'interim' | 'company' | 'collaborator'
 
 export default function ValidationsPage() {
+  // Charger les référentiels de configuration
+  const { data: validationTypes = [] } = useReferences('validation_types')
+  const { data: validationStatuses = [] } = useReferences('validation_statuses')
+  
+  const validationTypesConfig = {
+    interim: validationTypes.find(vt => vt.code === 'interim')?.code || 'interim',
+    company: validationTypes.find(vt => vt.code === 'company')?.code || 'company',
+    collaborator: validationTypes.find(vt => vt.code === 'collaborator')?.code || 'collaborator'
+  }
+  
+  const validationStatusesConfig = {
+    pending: validationStatuses.find(vs => vs.code === 'pending')?.code || 'pending',
+    approved: validationStatuses.find(vs => vs.code === 'approved')?.code || 'approved',
+    rejected: validationStatuses.find(vs => vs.code === 'rejected')?.code || 'rejected'
+  }
+  
   const [activeTab, setActiveTab] = useState<TabType>('interim')
-  const [statusFilter, setStatusFilter] = useState<string>('pending')
+  const [statusFilter, setStatusFilter] = useState<string>(validationStatusesConfig.pending)
   const [selectedValidation, setSelectedValidation] = useState<Validation | null>(null)
   const [showRejectModal, setShowRejectModal] = useState(false)
   const [showAssignModal, setShowAssignModal] = useState(false)
