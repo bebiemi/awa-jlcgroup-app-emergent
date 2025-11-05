@@ -382,7 +382,7 @@ async def google_callback(
             provider=user_doc["provider"],
             provider_user_id=user_doc.get("provider_user_id"),
             is_verified=user_doc.get("is_verified", False),
-            status=user_doc.get("status", "pending"),
+            status=user_doc.get("status", cfg.get_pending_status()),
             roles=roles
         )
         
