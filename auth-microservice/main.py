@@ -110,6 +110,7 @@ app.include_router(document_router)
 app.include_router(configuration_router, prefix="/api/auth")
 app.include_router(version_router)
 app.include_router(feature_flag_router)
+app.include_router(role_visibility_router)
 
 @app.get("/health")
 async def health_check():
