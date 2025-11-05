@@ -132,6 +132,7 @@ export const configurationApi = createApi({
 })
 
 export const {
+  useGetAllConfigQuery,
   useGetReferencesQuery,
   useCreateReferenceMutation,
   useUpdateReferenceMutation,
