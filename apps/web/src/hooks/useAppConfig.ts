@@ -50,14 +50,7 @@ export const useRoles = () => {
  * Hook pour accéder aux statuts utilisateur
  */
 export const useUserStatuses = () => {
-  const { data: references = [] } = configurationApi.useGetReferencesByCategoryQuery('user_statuses')
-  
-  const statuses = references.reduce((acc, ref) => {
-    acc[ref.code] = ref.code
-    return acc
-  }, {} as Record<string, string>)
-  
-  return statuses && Object.keys(statuses).length > 0 ? statuses : {
+  return {
     active: 'active',
     pending: 'pending',
     suspended: 'suspended',
