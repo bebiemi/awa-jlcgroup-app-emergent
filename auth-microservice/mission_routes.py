@@ -509,6 +509,29 @@ async def update_application(
     update_data = {k: v for k, v in application_update.dict(exclude_unset=True).items() if v is not None}
     update_data["updated_at"] = datetime.now(timezone.utc)
     
+    # Valider le nouveau statut si présent
+    if "status" in update_data:
+        new_status = update_data["status"]
+        
+        # Valider que le statut existe
+        if not await validate_status(db, "application_statuses", new_status):
+            valid_statuses = await get_valid_statuses(db, "application_statuses")
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Statut invalide '{new_status}'. Valeurs autorisées: {valid_statuses}"
+            )
+        
+        # Valider les transitions autorisées
+        current_status = application.get("status")
+        current_metadata = await get_status_metadata(db, "application_statuses", current_status)
+        allowed_transitions = current_metadata.get("next_possible_statuses", [])
+        
+        if allowed_transitions and new_status not in allowed_transitions:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Transition non autorisée de '{current_status}' vers '{new_status}'. Transitions possibles: {allowed_transitions}"
+            )
+    
     # Tracking automatique des dates
     if "status" in update_data:
         if update_data["status"] == ApplicationStatus.SENT_TO_CLIENT:
