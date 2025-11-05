@@ -231,7 +231,7 @@ function App() {
       <Route
         path="/entreprise"
         element={
-          <ProtectedRoute requiredRoles={['company']}>
+          <ProtectedRoute requiredRoles={[roles.company]}>
             <CompanyDashboard />
           </ProtectedRoute>
         }
@@ -239,7 +239,7 @@ function App() {
       <Route
         path="/offres"
         element={
-          <ProtectedRoute requiredRoles={['company']}>
+          <ProtectedRoute requiredRoles={[roles.company]}>
             <Navigate to="/admin" replace />
           </ProtectedRoute>
         }
@@ -247,7 +247,7 @@ function App() {
       <Route
         path="/agence"
         element={
-          <ProtectedRoute requiredRoles={['agency']}>
+          <ProtectedRoute requiredRoles={[roles.agency]}>
             <AgencyDashboard />
           </ProtectedRoute>
         }
@@ -255,7 +255,7 @@ function App() {
       <Route
         path="/commercial"
         element={
-          <ProtectedRoute requiredRoles={['commercial']}>
+          <ProtectedRoute requiredRoles={[roles.commercial]}>
             <CommercialDashboard />
           </ProtectedRoute>
         }
