@@ -101,7 +101,15 @@ export default function Sidebar() {
           { label: 'Règles Métier', path: '/admin/rules', icon: Cog6ToothIcon },
           { label: 'Feature Flags', path: '/admin/feature-flags', icon: FlagIcon },
           { label: 'Versions Config', path: '/admin/versions', icon: ClockIcon },
+          { label: 'Configuration Email', path: '/admin/email-settings', icon: EnvelopeIcon },
           { label: 'Profils & Permissions', path: '/admin/profiles', icon: ShieldCheckIcon },
+        ],
+      },
+      {
+        title: 'Notifications',
+        items: [
+          { label: 'Historique Emails', path: '/admin/email-history', icon: InboxIcon },
+          { label: 'Templates Email', path: '/admin/email-templates', icon: DocumentTextIcon },
         ],
       },
       {
