@@ -24,6 +24,38 @@ database:
   server_selection_timeout_ms: 5000
 
 security:
+  # Roles Configuration
+  roles:
+    admin: "admin"
+    super_admin: "super_admin"
+    company: "company"
+    interim: "interim"
+    agency: "agency"
+    commercial: "commercial"
+    validator: "validator"
+    all:
+      - "admin"
+      - "super_admin"
+      - "company"
+      - "interim"
+      - "agency"
+      - "commercial"
+      - "validator"
+  
+  # User Status Configuration
+  user_statuses:
+    active: "active"
+    pending: "pending"
+    suspended: "suspended"
+    deleted: "deleted"
+    blocked: "blocked"
+    all:
+      - "active"
+      - "pending"
+      - "suspended"
+      - "deleted"
+      - "blocked"
+  
   # JWT Configuration
   jwt:
     algorithm: "HS256"
