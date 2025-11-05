@@ -21,7 +21,7 @@ export default function CreateMissionPage() {
     experience_required: '',
     education_level: '',
     location: '',
-    contract_type: 'CDD',
+    contract_type: 'cdd',
     salary_range: '',
     duration: '',
     working_hours: '',
