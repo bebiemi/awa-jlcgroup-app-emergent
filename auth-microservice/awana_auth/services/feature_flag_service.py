@@ -158,7 +158,8 @@ class FeatureFlagService:
                 FeatureFlagType.ROLE.value
             ]}
         
-        flags = await self.db.feature_flags.find(query).to_list(length=None)
+        cursor = self.db.feature_flags.find(query, {'_id': 0})
+        flags = await cursor.to_list(length=None)
         return flags
     
     async def create_flag(
