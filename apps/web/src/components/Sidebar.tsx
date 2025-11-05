@@ -77,7 +77,6 @@ export default function Sidebar() {
           { label: 'Utilisateurs', path: '/admin/users', icon: UserGroupIcon },
           { label: 'Groupes', path: '/admin/groups', icon: UserGroupIcon },
           { label: 'Localisations', path: '/admin/locations', icon: MapPinIcon },
-          { label: 'Référentiels', path: '/admin/references', icon: Cog6ToothIcon },
           { label: 'Validations', path: '/admin/validations', icon: ClipboardDocumentCheckIcon },
         ],
       },
@@ -88,9 +87,10 @@ export default function Sidebar() {
         ],
       },
       {
-        title: 'Sécurité',
+        title: 'Paramètres',
         items: [
-          { label: 'Profils & Permissions', path: '/admin/profiles', icon: Cog6ToothIcon },
+          { label: 'Référentiels', path: '/admin/references', icon: Cog6ToothIcon },
+          { label: 'Profils & Permissions', path: '/admin/profiles', icon: ShieldCheckIcon },
         ],
       },
       {
