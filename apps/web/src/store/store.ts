@@ -29,6 +29,7 @@ export const store = configureStore({
     [locationApi.reducerPath]: locationApi.reducer,
     [missionApi.reducerPath]: missionApi.reducer,
     [configurationApi.reducerPath]: configurationApi.reducer,
+    [featureFlagApi.reducerPath]: featureFlagApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
