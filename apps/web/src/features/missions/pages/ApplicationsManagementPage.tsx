@@ -288,11 +288,11 @@ export default function ApplicationsManagementPage() {
                           Postulé le {new Date(app.created_at).toLocaleDateString('fr-FR')}
                         </p>
                       </div>
-                      <span className={`px-3 py-1 text-xs font-medium rounded-full ${
-                        STATUS_COLORS[app.status] || 'bg-gray-100 text-gray-800'
-                      }`}>
-                        {STATUS_LABELS[app.status]}
-                      </span>
+                      <StatusBadge
+                        category="application_statuses"
+                        status={app.status}
+                        showIcon
+                      />
                     </div>
 
                     {/* Cover Letter Preview */}
