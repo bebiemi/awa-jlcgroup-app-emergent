@@ -106,6 +106,7 @@ app.include_router(profile_router, prefix="/api")
 app.include_router(mission_router)
 app.include_router(document_router)
 app.include_router(configuration_router, prefix="/api/auth")
+app.include_router(config_api_router)  # Config API pour frontend
 
 @app.get("/health")
 async def health_check():
