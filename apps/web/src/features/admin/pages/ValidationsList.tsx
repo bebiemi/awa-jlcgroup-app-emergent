@@ -185,11 +185,11 @@ export default function ValidationsList() {
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className={clsx(
                           'px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full',
-                          validation.status === 'pending' && 'bg-yellow-100 text-yellow-800',
+                          validation.status === pendingStatus && 'bg-yellow-100 text-yellow-800',
                           validation.status === 'approved' && 'bg-green-100 text-green-800',
                           validation.status === 'rejected' && 'bg-red-100 text-red-800'
                         )}>
-                          {validation.status === 'pending' && 'En attente'}
+                          {validation.status === pendingStatus && 'En attente'}
                           {validation.status === 'approved' && 'Approuvé'}
                           {validation.status === 'rejected' && 'Refusé'}
                         </span>
@@ -198,7 +198,7 @@ export default function ValidationsList() {
                         {new Date(validation.created_at).toLocaleDateString('fr-FR')}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        {validation.status === 'pending' && (
+                        {validation.status === pendingStatus && (
                           <div className="flex space-x-2">
                             <button
                               onClick={() => {
