@@ -1,102 +1,96 @@
 <analysis>
-The AI engineer's trajectory details an iterative development process for the JLC application. Initially, work focused on enhancing authentication with Google OAuth, local registration, and a rudimentary admin dashboard. Significant effort was then directed towards implementing a comprehensive Multi-Factor Authentication (MFA) system on the backend, extending user models, creating dedicated services and API routes for TOTP, Email OTP, and recovery codes, and integrating MFA into the local login flow.
+The AI engineer's trajectory shows a robust, iterative development process focused on extending the JLC application's core functionality and addressing critical bugs. Initially, efforts were geared towards implementing the complex Candidat Mise à dispo (Mission Management) workflow, involving extensive backend API development and a full suite of frontend pages and navigation updates. This phase successfully integrated mission creation, application, and management features.
 
-Following this, the engineer addressed several user-requested UI/UX and administrative improvements, including an adaptive landing page, reorganized sidebar navigation, auto-logout for inactivity, and a dynamic admin dashboard with key performance indicators. A critical bug involving incorrect API routing for MFA reset functionality was identified and resolved through careful analysis of frontend API calls, Vite proxy configuration, and backend router definitions.
+A significant portion of the work involved debugging and refining existing features, particularly authentication and user management. Key issues resolved include: a  during user creation, a 404 error for user role updates, and a 401 Unauthorized error due to incorrect authentication logic for non-admin users. Dashboards and navigation for different user roles (Company, Agency, Commercial) were also implemented and corrected.
 
-Currently, the focus has shifted to implementing a robust Location Management system (Pays, Province, Ville, Arrondissement, Quartier) with custom fields and integrating it into company registration validation. This involves new backend models, API routes, seed data, and corresponding frontend pages and components. Concurrently, a new Validation System for users and companies is being developed, with backend routes and a new frontend page. The immediate issue is a JSX syntax error in the newly created  file, which the engineer is about to fix. The process highlights continuous debugging of API endpoint discrepancies and frontend rendering issues.
+Beyond feature development, the engineer addressed several user experience and operational requests, such as adjusting the inactivity timeout. A substantial part of the recent work focused on deployment and infrastructure, providing detailed guides for Docker, AWS, local SSL deployment, and Let's Encrypt integration and automated renewal. The trajectory concludes with the user requesting dynamic configuration for the entire application, signaling a shift towards making the application more flexible and maintainable, which the engineer has just begun to address.
 </analysis>
 
 <product_requirements>
-The JLC application aims to be a multi-actor interim management platform for the JLC Group, supporting Admin, Agency, Company, and Interim roles. It requires JWT + OAuth2 Google IDP authentication, roles/permissions, extended profiles with CRUD operations and avatar uploads per role, account validation, Admin/Interim dashboards, and a notification system. The backend uses FastAPI/MongoDB, and the frontend React 18 with Redux Toolkit/RTK Query.
+The JLC application is a multi-actor interim management platform (Admin, Agency, Company, Interim) built with FastAPI/MongoDB (backend) and React 18/Redux Toolkit (frontend). It features JWT + OAuth2 Google IDP authentication, a robust RBAC system, extended user profiles, account validation, role-specific dashboards, and a notification system.
 
-**Implemented Features so far include:**
-1.  **Authentication & Registration:** Functional Google OAuth and local registration with dynamic fields, email validation, and password reset.
-2.  **UI/UX Enhancements:** Public landing page, enhanced login page, breadcrumbs, retractable sidebar with role-based navigation, and a login modal.
-3.  **Admin User Management:** Backend endpoint for a paginated user list; frontend page with search, filters, and actions (modify, delete, block). Added super-admin ability to reset user MFA.
-4.  **Admin Security Management:** Backend models and APIs for Permissions, Profiles, and Groups; initial seeding.
-5.  **Multi-Factor Authentication (MFA):** Backend models, service, and API routes for TOTP, Email OTP, and recovery codes, integrated into local login. Frontend components for MFA setup, verification, and a Security Settings page.
-6.  **Admin Dashboard & Navigation:** Dashboard displaying real-time KPIs, reorganized sidebar to categorize Users and Groups under Management. Admin Home button redirects to the admin dashboard.
-7.  **Adaptive Landing Page:** Landing page now displays relevant actions (login/register or access dashboard) based on user login status.
-8.  **Location Management (in progress):** A hierarchical location system (Country, Province, City, Arrondissement, Neighborhood) with CRUD, visibility, and custom fields. Backend models, API routes, and Gabon seed data are complete. Frontend API, management page with TreeView, and modals are being built, with a  integrated into the registration page.
-9.  **Validation System (in progress):** A system for validating company registrations, including warnings for missing countries, assignable validators, and separate validation lists for users and companies. Backend routes and frontend pages are being built.
+Key features already implemented: Authentication (Google OAuth, local registration, email validation, password reset, MFA), UI/UX (adaptive landing page, sidebar, login modal, responsive design, standardized components like Modal, PhoneInput, ActionButton), Admin (user management, permissions, dashboard), Location Management (hierarchical CRUD), Validation System (user/company validations, validator assignment), Collaborator System, and Branding.
+
+The main new feature implemented is the **Candidat Mise à dispo Workflow**. This multi-step process manages client resource needs, mission creation, job posting, candidate application, interviews, client selection, medical visits (file upload), contract validation (PDF upload), and dynamic process flow based on medical aptitude. This workflow is accessible via a Processus section. The user has also requested to eliminate hardcoded data, using dynamic variables, configurable tables, and parametric rules across the application.
 </product_requirements>
 
 <key_technical_concepts>
--   **FastAPI**: Backend web framework.
--   **MongoDB**: NoSQL database for data and session management.
--   **React 18 & TypeScript**: Frontend UI.
--   **Redux Toolkit & RTK Query**: Frontend state/API management.
+-   **FastAPI**: Python web framework for RESTful APIs.
+-   **MongoDB**: NoSQL database for flexible data storage.
+-   **React 18 & TypeScript**: Frontend UI development.
+-   **Redux Toolkit & RTK Query**: State management and API interaction.
 -   **Vite**: Frontend build tool.
--   **OAuth2 Google IDP**: Google authentication.
--   **JWT**: Token-based authentication.
--   **RBAC (Role-Based Access Control)**: Permission management.
--   **MFA (Multi-Factor Authentication)**: TOTP, Email OTP, Recovery Codes.
+-   **OAuth2 Google IDP, JWT, RBAC, MFA**: Authentication and authorization.
+-   **Docker & Docker Compose**: Containerization for deployment.
+-   **AWS**: Cloud deployment target.
+-   **Let's Encrypt**: SSL certificate management for HTTPS.
+-   **Nginx**: Web server and reverse proxy.
 </key_technical_concepts>
 
 <code_architecture>
-The application uses a monorepo structure with symbolic links:  and .
+The application uses a monorepo structure with  (FastAPI) and  (React/Vite) symbolic links. The core authentication and business logic is within .
 
 
 **File Importance & Changes**:
--   : Fixes RBAC for Google OAuth users.
--   : Defines backend data structures, extended for MFA fields and models (, , , , , , ).
--    (New): Defines Pydantic models for hierarchical locations (Country, Province, City, Arrondissement, Neighborhood) with custom fields.
--   : Core authentication routes. Modified  for MFA. Integrated MFA checks into  and . Added Admin MFA reset endpoint (). Added dashboard KPI endpoint (). Removed duplicate  and  routes.
--   : Entry point. Modified to include , , , , and .
--    (New): API endpoints for MFA setup, verification, and recovery codes. Debugged endpoint naming discrepancies.
--    (New): Implements MFA logic.
--    (New): Contains API endpoints for Location CRUD, visibility toggle, and tree view retrieval.
--    (New): Contains API endpoints for fetching and managing user/company validations.
--    (New): Script to seed Gabon's location data into MongoDB.
--   : Frontend routing. Updated to include new admin routes (UserManagement, Groups, Profiles, CreateUser), , , , and . Integrated  hook.
--   : Redux store. Registered , , , , , and .
--   : Intelligent sidebar. Updated for new Security link, reorganized Users and Groups under Management, and made JLC logo clickable to redirect to the appropriate dashboard. Added Localisations link.
--    (New): A cascading dropdown component for selecting hierarchical locations.
--   : Public landing page. Modified to adapt content and navigation based on user login status.
--    (New): Page to manage MFA settings.
--   : Modified for MFA flow and  handling.
--    (New): Frontend page for MFA verification during login.
--   : Modified to include the  component and send location data during registration.
--    (New): RTK Query API slice for MFA endpoints.
--   : RTK Query API slice. Corrected  and added .
--   : RTK Query API slice. Added .
--    (New): RTK Query API slice for Location Management. Corrected  for Vite proxy.
--   : RTK Query API slice for Validation Management.
--   : Updated to display real KPI data. Fixed dead code causing blank page.
--   : Added Reset MFA button and integrated .
--    (New): Frontend page for viewing and managing hierarchical locations.
--    (New): Frontend page for managing user and company validations.
--    (New): Modal for super-admin to reset user MFA.
--   , ,  (New): Modals for Location CRUD.
--    (New): Custom React hook for auto-logout after inactivity.
--   : Updated with new types for MFA, Location, and Validation responses.
--   : Proxy configuration for  to .
+-    (New): Defines , ,  data models. Crucial for the new mission workflow.
+-   : Contains  model.
+-   :
+    -   **Changes**: Fixed  by correcting  import to  and adding  import, resolving 500 errors during user creation.
+-    (New): Implements mission CRUD and application management APIs.
+-    (New): Handles document upload APIs.
+-   :
+    -   **Changes**: Integrated  and .
+-   :
+    -   **Changes**: Added a  endpoint to update user details and roles, fixing a 404 error during user role assignment.
+-   :
+    -   **Changes**: Updated routing for all new mission-related pages. Modified redirection logic for 'company', 'agency', and 'commercial' roles to their respective dashboards instead of .
+-   :
+    -   **Changes**: Registered new  and  RTK Query slices.
+-   :
+    -   **Changes**: Added new navigation links for the mission workflow. Implemented specific navigation sections for Admin, Company, Agency, and Commercial roles.
+-   :
+    -   **Changes**: Modified redirection logic after login to direct users to their specific role dashboards (, , ) based on their highest priority role.
+-   : Contains  mutation used by .
+-   : Contains  mutation used by .
+-   : Frontend form for creating users.
+-   : Frontend modal for editing user details, including role assignment.
+-    (New Pages & API): Complete set of frontend files for Mission Management.
+-    (New): Dedicated dashboard for 'company' role.
+-    (New): Dedicated dashboard for 'agency' role.
+-    (New): Dedicated dashboard for 'commercial' role.
+-   :
+    -   **Changes**: Modified  to 60 (1 hour) and  to 5.
+-    (New): Optimized Nginx configuration with Let's Encrypt support.
+-    (New): Script for renewing Let's Encrypt certificates.
+-    (New): Script for automated SSL renewal setup.
+-    (New): Script for containerized SSL renewal.
+-    (New files): Multiple new Markdown documents were created for user guidance, troubleshooting, and various deployment procedures (e.g., , , , , ).
 </code_architecture>
 
 <pending_tasks>
--   Implement captcha for the registration page.
--   Add support for other Identity Providers (IDPs) on the login page (placeholders exist).
--   Ensure dynamic fields on registration/profile pages retain user input when switching between Interim/Société roles.
--   Complete the frontend UI for managing custom fields in the Location Management.
--   Implement the frontend UI for assigning validators to validation requests.
--   Fix the JSX syntax error in .
+-   Complete frontend UI for managing custom fields in Location Management.
+-   Refine frontend UI and workflow for assigning validators in the Validation System.
+-   Integrate the  component into other relevant application pages (e.g., ProfilePage).
+-   Convert all remaining modals to use the new reusable  component across the application.
+-   Standardize action icons across all relevant pages using the new  component.
+-   Implement real-time notifications for the new mission workflow.
+-   Implement automatic email notifications for the new mission workflow.
+-   Implement cloud storage (S3) for uploaded documents.
+-   Implement automated E2E and backend tests for the new features.
+-   Continue developing the system for dynamic configuration (variables, configurable tables, parametric rules).
 </pending_tasks>
 
 <current_work>
-The AI engineer is currently engaged in the comprehensive implementation of a **Location Management System** and a **Validation System for company registrations**, which includes separate lists for users and companies.
+The AI engineer has most recently been working on enhancing the application's configurability by moving away from hardcoded values. Following the user's request for dynamic variables, configurable tables, and parametric rules across the application, the engineer initiated the creation of a comprehensive system for dynamic configuration.
 
-For Location Management:
--   **Backend**:  (new models),  (new API routes for CRUD, visibility, tree view), and  (script to populate Gabon's hierarchy) have been created and integrated into . The backend is functional and successfully returns location data.
--   **Frontend**:  (new RTK Query slice),  (new page with TreeView), and associated modals (, , ) have been created. The route has been added to  and a link to the . The  for  was debugged and corrected to resolve 404/405 errors due to the Vite proxy configuration.
--   **Integration**: A new  component has been developed and successfully integrated into  to capture hierarchical location data during user/company registration.
+Specifically, the work involved:
+-   Acknowledging the user's request and recognizing it as a best practice for scalability and maintainability.
+-   Beginning the analysis of the application to identify areas that can benefit from dynamic configuration.
+-   Creating a new documentation file: . This guide is intended to outline the system and approach for implementing dynamic configuration. The engineer noted that the initial file was becoming too large and planned to create a second, supplementary file for this purpose, indicating a thorough and detailed approach to this new feature.
 
-For the Validation System:
--   **Backend**:  (new API routes for fetching and managing validations by type) has been created and integrated into .
--   **Frontend**:  (updated RTK Query slice) and  (new page with tabs for user/company validations) have been created. This new page replaces the old  in .
-
-The immediate task being addressed is a frontend JSX syntax error in  (line 112:24) related to incorrect escaping of quotes within JSX attributes, which is preventing the page from rendering correctly.
+This task is currently in its very early stages, focused on documentation and conceptualization of the dynamic configuration system, which will lay the groundwork for future implementation.
 </current_work>
 
 <optional_next_step>
-Fix the JSX syntax error in .
+Create the second part of the  to detail the dynamic configuration system.
 </optional_next_step>
