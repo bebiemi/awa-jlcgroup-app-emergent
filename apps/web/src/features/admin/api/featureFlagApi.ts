@@ -63,10 +63,10 @@ export const featureFlagApi = createApi({
   reducerPath: 'featureFlagApi',
   baseQuery: fetchBaseQuery({
     baseUrl: '/auth-api',
-    prepareHeaders: (headers) => {
-      const token = localStorage.getItem('token')
+    prepareHeaders: (headers, { getState }) => {
+      const token = (getState() as RootState).auth.token
       if (token) {
-        headers.set('Authorization', `Bearer ${token}`)
+        headers.set('authorization', `Bearer ${token}`)
       }
       return headers
     },
