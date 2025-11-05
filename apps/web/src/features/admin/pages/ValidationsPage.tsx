@@ -65,9 +65,9 @@ export default function ValidationsPage() {
     } else if (type === 'collaborator') {
       filtered = validations.filter((v: Validation) => v.validation_type === validationTypesConfig.collaborator && v.status === validationStatusesConfig.pending)
     } else if (type === 'warnings') {
-      filtered = validations.filter((v: Validation) => v.has_location_warning && v.status === 'pending')
+      filtered = validations.filter((v: Validation) => v.has_location_warning && v.status === validationStatusesConfig.pending)
     } else {
-      filtered = validations.filter((v: Validation) => v.status === 'pending')
+      filtered = validations.filter((v: Validation) => v.status === validationStatusesConfig.pending)
     }
     
     // Don't open modal if no validations
@@ -96,7 +96,7 @@ export default function ValidationsPage() {
   const getFilteredValidators = () => {
     const allUsers = usersData?.users || []
     
-    if (selectedValidation?.validation_type === 'collaborator') {
+    if (selectedValidation?.validation_type === validationTypesConfig.collaborator) {
       // For collaborators, only show users in RH or Commerciales groups
       // Since we don't have group membership in user data yet, filter by roles
       return allUsers.filter((user: any) => 
@@ -360,7 +360,7 @@ export default function ValidationsPage() {
                         {getStatusBadge(validation.status)}
                         
                         {/* Collaborator Badge */}
-                        {validation.validation_type === 'collaborator' && (
+                        {validation.validation_type === validationTypesConfig.collaborator && (
                           <span className="inline-flex items-center px-3 py-1 text-xs font-semibold rounded-full bg-purple-100 text-purple-800 border border-purple-300">
                             <UserIcon className="h-4 w-4 mr-1" />
                             Collaborateur JLC
@@ -378,7 +378,7 @@ export default function ValidationsPage() {
                       <p className="text-sm text-gray-600 mb-2">{validation.user_email}</p>
                       
                       {/* Collaborator-specific info */}
-                      {validation.validation_type === 'collaborator' && (
+                      {validation.validation_type === validationTypesConfig.collaborator && (
                         <div className="bg-purple-50 border border-purple-200 rounded-lg p-3 mb-2">
                           <div className="grid grid-cols-3 gap-4 text-sm">
                             {validation.employee_number && (
@@ -434,7 +434,7 @@ export default function ValidationsPage() {
                       </p>
                     </div>
 
-                    {validation.status === 'pending' && (
+                    {validation.status === validationStatusesConfig.pending && (
                       <ActionButtonGroup className="ml-4">
                         <ActionButton 
                           type="approve" 
@@ -528,7 +528,7 @@ export default function ValidationsPage() {
           </p>
           
           {/* Info message for collaborator validation */}
-          {selectedValidation?.validation_type === 'collaborator' && (
+          {selectedValidation?.validation_type === validationTypesConfig.collaborator && (
             <div className="mb-4 bg-purple-50 border border-purple-200 rounded-lg p-3">
               <p className="text-xs text-purple-800">
                 ℹ️ Pour les collaborateurs, seuls les membres des équipes RH et Commerciales peuvent valider.
