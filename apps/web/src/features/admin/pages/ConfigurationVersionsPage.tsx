@@ -166,7 +166,8 @@ export default function ConfigurationVersionsPage() {
           </Card>
 
           <Card>
-            <div className="flex-shrink-0 bg-blue-100 rounded-lg p-3">
+            <div className="flex items-center">
+              <div className="flex-shrink-0 bg-blue-100 rounded-lg p-3">
                 <ArrowPathIcon className="h-6 w-6 text-blue-600" />
               </div>
               <div className="ml-4">
@@ -175,6 +176,7 @@ export default function ConfigurationVersionsPage() {
                   {versions.filter(v => v.snapshot_type === 'rollback').length}
                 </p>
               </div>
+            </div>
           </Card>
         </div>
 
