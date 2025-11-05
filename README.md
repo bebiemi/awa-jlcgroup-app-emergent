@@ -80,6 +80,14 @@ Voir `/docs` pour plus d'informations:
 - API endpoints
 - Configuration dynamique
 
+### 🔍 Audit & Qualité du Code
+
+- **[📑 Index Audit](/docs/AUDIT_INDEX.md)** - Point d'entrée pour l'audit des valeurs en dur
+- **[📊 Résumé Exécutif](/docs/AUDIT_EXECUTIVE_SUMMARY.md)** - Vue d'ensemble de l'audit (886 valeurs en dur identifiées)
+- **[🎯 Plan d'Action](/docs/AUDIT_ACTION_PLAN.md)** - Plan de correction en 4 phases
+- **[🔍 Rapport Complet](/docs/AUDIT_VALEURS_EN_DUR.md)** - Détails des 886 occurrences
+- **[🛠️ Script d'Audit](/scripts/audit_hardcoded_values.py)** - Outil automatisé de détection
+
 ### Déploiement
 
 - **[📋 Deployment Overview](/docs/DEPLOYMENT_OVERVIEW.md)** - Vue d'ensemble complète du déploiement
