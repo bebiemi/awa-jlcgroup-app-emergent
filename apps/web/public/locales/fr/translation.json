@@ -1,0 +1,209 @@
+{
+  "common": {
+    "login": "Connexion",
+    "logout": "Déconnexion",
+    "register": "S'inscrire",
+    "signup": "Inscription",
+    "email": "Email",
+    "password": "Mot de passe",
+    "confirm_password": "Confirmer le mot de passe",
+    "forgot_password": "Mot de passe oublié ?",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "create": "Créer",
+    "search": "Rechercher",
+    "filter": "Filtrer",
+    "actions": "Actions",
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "success": "Succès",
+    "welcome": "Bienvenue",
+    "back": "Retour",
+    "next": "Suivant",
+    "submit": "Soumettre",
+    "close": "Fermer",
+    "yes": "Oui",
+    "no": "Non",
+    "confirm": "Confirmer",
+    "view": "Voir",
+    "download": "Télécharger",
+    "upload": "Téléverser",
+    "profile": "Profil",
+    "settings": "Paramètres",
+    "status": "Statut",
+    "date": "Date",
+    "name": "Nom",
+    "description": "Description",
+    "phone": "Téléphone",
+    "address": "Adresse",
+    "city": "Ville",
+    "country": "Pays"
+  },
+  "nav": {
+    "home": "Accueil",
+    "dashboard": "Tableau de bord",
+    "missions": "Missions",
+    "offers": "Offres",
+    "applications": "Candidatures",
+    "my_applications": "Mes candidatures",
+    "validations": "Validations",
+    "users": "Utilisateurs",
+    "groups": "Groupes",
+    "profiles": "Profils",
+    "locations": "Localisations",
+    "references": "Référentiels",
+    "business_rules": "Règles métier",
+    "admin": "Administration"
+  },
+  "landing": {
+    "hero_title": "Votre partenaire intérim au Gabon",
+    "hero_subtitle": "Connectez talents et opportunités pour construire l'avenir du travail",
+    "cta_find_mission": "Trouver une mission",
+    "cta_recruit": "Recruter des talents",
+    "stats": {
+      "active_offers": "Offres actives",
+      "partner_companies": "Entreprises partenaires",
+      "registered_interims": "Intérimaires inscrits",
+      "successful_missions": "Missions réussies"
+    },
+    "why_choose": "Pourquoi choisir JLC GROUP ?",
+    "why_subtitle": "La plateforme de référence pour l'intérim au Gabon",
+    "features": {
+      "find_mission": {
+        "title": "Trouvez votre mission",
+        "description": "Accédez à des centaines d'offres d'intérim dans tous les secteurs au Gabon"
+      },
+      "recruit_easily": {
+        "title": "Recrutez facilement",
+        "description": "Trouvez les meilleurs profils pour vos missions temporaires"
+      },
+      "personalized_support": {
+        "title": "Accompagnement personnalisé",
+        "description": "Notre équipe vous accompagne à chaque étape de votre parcours"
+      }
+    }
+  },
+  "auth": {
+    "login_title": "Connexion à JLC Group",
+    "register_title": "Créer un compte",
+    "login_with_google": "Se connecter avec Google",
+    "or": "OU",
+    "no_account": "Pas encore de compte ?",
+    "already_account": "Vous avez déjà un compte ?",
+    "role_selection_title": "Choisissez votre profil",
+    "role_selection_subtitle": "Sélectionnez le type de compte qui correspond à vos besoins",
+    "roles": {
+      "interim": {
+        "title": "Intérimaire",
+        "description": "Je cherche des missions d'intérim"
+      },
+      "company": {
+        "title": "Entreprise",
+        "description": "Je cherche à recruter des intérimaires"
+      },
+      "agency": {
+        "title": "Agence",
+        "description": "Je suis une agence d'intérim"
+      }
+    }
+  },
+  "missions": {
+    "title": "Missions",
+    "create": "Créer une mission",
+    "edit": "Modifier la mission",
+    "details": "Détails de la mission",
+    "list": "Liste des missions",
+    "search_placeholder": "Rechercher une mission...",
+    "no_missions": "Aucune mission disponible",
+    "fields": {
+      "title": "Titre",
+      "description": "Description",
+      "location": "Lieu",
+      "contract_type": "Type de contrat",
+      "duration": "Durée",
+      "salary": "Salaire",
+      "requirements": "Exigences",
+      "start_date": "Date de début",
+      "end_date": "Date de fin",
+      "status": "Statut"
+    },
+    "status": {
+      "draft": "Brouillon",
+      "published": "Publiée",
+      "closed": "Fermée",
+      "cancelled": "Annulée",
+      "archived": "Archivée"
+    },
+    "actions": {
+      "apply": "Postuler",
+      "view_applications": "Voir les candidatures",
+      "publish": "Publier",
+      "close": "Fermer",
+      "archive": "Archiver"
+    }
+  },
+  "applications": {
+    "title": "Candidatures",
+    "my_applications": "Mes candidatures",
+    "apply_to_mission": "Postuler à cette mission",
+    "no_applications": "Aucune candidature",
+    "status": {
+      "submitted": "Soumise",
+      "review": "En révision",
+      "interview_scheduled": "Entretien planifié",
+      "interviewed": "Entretien effectué",
+      "selected": "Sélectionné",
+      "rejected": "Rejetée",
+      "medical_pending": "Visite médicale en attente",
+      "medical_completed": "Visite médicale effectuée",
+      "contract_pending": "Contrat en attente",
+      "contract_signed": "Contrat signé"
+    }
+  },
+  "validations": {
+    "title": "Validations",
+    "pending": "En attente",
+    "approved": "Approuvées",
+    "rejected": "Rejetées",
+    "validate": "Valider",
+    "reject": "Rejeter",
+    "types": {
+      "interim": "Intérimaire",
+      "company": "Entreprise",
+      "collaborator": "Collaborateur"
+    },
+    "status": {
+      "pending": "En attente",
+      "approved": "Approuvé",
+      "rejected": "Refusé"
+    }
+  },
+  "profile": {
+    "title": "Profil",
+    "edit": "Modifier le profil",
+    "personal_info": "Informations personnelles",
+    "professional_info": "Informations professionnelles",
+    "documents": "Documents",
+    "skills": "Compétences",
+    "experience": "Expérience",
+    "education": "Formation"
+  },
+  "messages": {
+    "success": {
+      "saved": "Enregistré avec succès",
+      "updated": "Mis à jour avec succès",
+      "deleted": "Supprimé avec succès",
+      "created": "Créé avec succès"
+    },
+    "errors": {
+      "generic": "Une erreur s'est produite",
+      "network": "Erreur réseau",
+      "required_field": "Ce champ est requis",
+      "invalid_email": "Email invalide",
+      "password_mismatch": "Les mots de passe ne correspondent pas",
+      "min_length": "Longueur minimale : {{min}} caractères"
+    }
+  }
+}
