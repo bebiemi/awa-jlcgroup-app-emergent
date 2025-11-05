@@ -34,6 +34,7 @@ from configuration_routes import router as configuration_router
 from version_routes import router as version_router
 from feature_flag_routes import router as feature_flag_router
 from role_visibility_routes import router as role_visibility_router
+from email_routes import router as email_router
 from rate_limit import limiter
 
 client = None
