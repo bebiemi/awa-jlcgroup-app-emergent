@@ -57,7 +57,7 @@ export default function GoogleCallback() {
         const data = await response.json()
 
         // Check if this is a new user (needs role selection)
-        if (data.user.status === 'pending' && data.user.roles.length === 1 && data.user.roles[0] === 'interim') {
+        if (data.user.status === userStatuses.pending && data.user.roles.length === 1 && data.user.roles[0] === roles.interim) {
           // This is a new user with default role, redirect to role selection
           navigate('/auth/role-selection', {
             state: {
