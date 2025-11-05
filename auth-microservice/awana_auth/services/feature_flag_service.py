@@ -27,26 +27,18 @@ class FeatureFlagService:
     
     def _is_cache_valid(self, key: str) -> bool:
         """Vérifier si le cache est toujours valide"""
-        if key not in self.cache_timestamps:
-            return False
-        age = (datetime.now(timezone.utc) - self.cache_timestamps[key]).total_seconds()
-        return age < self.cache_ttl
+        return self.cache.exists(key, prefix="feature_flags")
     
     def _set_cache(self, key: str, value: Any):
         """Mettre en cache une valeur"""
-        self.cache[key] = value
-        self.cache_timestamps[key] = datetime.now(timezone.utc)
+        self.cache.set(key, value, ttl=self.cache_ttl, prefix="feature_flags")
     
     def _invalidate_cache(self, pattern: Optional[str] = None):
         """Invalider le cache (tout ou pattern spécifique)"""
         if pattern:
-            keys_to_delete = [k for k in self.cache.keys() if pattern in k]
-            for key in keys_to_delete:
-                del self.cache[key]
-                del self.cache_timestamps[key]
+            self.cache.delete_pattern(f"*{pattern}*", prefix="feature_flags")
         else:
-            self.cache.clear()
-            self.cache_timestamps.clear()
+            self.cache.delete_pattern("*", prefix="feature_flags")
     
     async def is_enabled(
         self, 
