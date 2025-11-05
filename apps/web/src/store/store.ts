@@ -12,6 +12,9 @@ import { locationApi } from '@/features/admin/api/locationApi'
 import { missionApi } from '@/features/missions/api/missionApi'
 import { configurationApi } from '@/features/admin/api/configurationApi'
 import { featureFlagApi } from '@/features/admin/api/featureFlagApi'
+import { emailSettingsApi } from '@/features/admin/api/emailSettingsApi'
+import { emailHistoryApi } from '@/features/admin/api/emailHistoryApi'
+import { emailTemplatesApi } from '@/features/admin/api/emailTemplatesApi'
 import authReducer from '@/features/auth/slices/authSlice'
 
 export const store = configureStore({
