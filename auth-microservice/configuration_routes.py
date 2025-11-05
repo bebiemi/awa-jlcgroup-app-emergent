@@ -109,6 +109,9 @@ async def update_reference(
     )
     
     updated_ref = await db.system_references.find_one({"id": ref_id})
+    if updated_ref and "_id" in updated_ref:
+        updated_ref["_id"] = str(updated_ref["_id"])
+    
     return {"reference": updated_ref}
 
 
