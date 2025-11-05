@@ -5,10 +5,13 @@ import LocationSelector from '@/components/LocationSelector'
 import PhoneInput from '@/components/PhoneInput'
 import toast from 'react-hot-toast'
 import { ArrowPathIcon, CheckCircleIcon, XCircleIcon, ShieldCheckIcon } from '@heroicons/react/24/outline'
+import { useRoles } from '@/hooks/useAppConfig'
 
-type UserRole = 'interim' | 'company'
+type UserRole = roles.interim | roles.company
 
 export default function RegisterPage() {
+  const roles = useRoles()
+
   const navigate = useNavigate()
   const [register, { isLoading }] = useRegisterMutation()
   
@@ -101,7 +104,7 @@ export default function RegisterPage() {
       if (!formData.jobTitle.trim()) {
         newErrors.jobTitle = 'Le poste est requis'
       }
-    } else if (formData.role === 'company') {
+    } else if (formData.role === roles.company) {
       if (!formData.companyName.trim()) {
         newErrors.companyName = 'Le nom de la société est requis'
       }
@@ -144,10 +147,10 @@ export default function RegisterPage() {
       }
 
       // Add role-specific fields
-      if (formData.role === 'interim' && !formData.isCollaborator) {
+      if (formData.role === roles.interim && !formData.isCollaborator) {
         payload.phone = formData.phone
         payload.date_of_birth = formData.dateOfBirth
-      } else if (formData.role === 'company') {
+      } else if (formData.role === roles.company) {
         payload.company_name = formData.companyName
         payload.legal_representative = formData.legalRepresentative
         payload.nif = formData.nif
@@ -266,14 +269,14 @@ export default function RegisterPage() {
               {/* Interim Role */}
               <button
                 type="button"
-                onClick={() => handleRoleSelect('interim')}
+                onClick={() => handleRoleSelect(roles.interim)}
                 className={`relative p-4 border-2 rounded-xl transition-all transform hover:scale-105 ${
-                  formData.role === 'interim'
+                  formData.role === roles.interim
                     ? 'border-jlc-purple-600 bg-jlc-purple-50 shadow-lg'
                     : 'border-gray-300 hover:border-jlc-purple-400 bg-white'
                 }`}
               >
-                {formData.role === 'interim' && (
+                {formData.role === roles.interim && (
                   <CheckCircleIcon className="absolute top-2 right-2 h-5 w-5 text-jlc-purple-600" />
                 )}
                 <div className="text-center">
@@ -288,14 +291,14 @@ export default function RegisterPage() {
               {/* Company Role */}
               <button
                 type="button"
-                onClick={() => handleRoleSelect('company')}
+                onClick={() => handleRoleSelect(roles.company)}
                 className={`relative p-4 border-2 rounded-xl transition-all transform hover:scale-105 ${
-                  formData.role === 'company'
+                  formData.role === roles.company
                     ? 'border-jlc-purple-600 bg-jlc-purple-50 shadow-lg'
                     : 'border-gray-300 hover:border-jlc-purple-400 bg-white'
                 }`}
               >
-                {formData.role === 'company' && (
+                {formData.role === roles.company && (
                   <CheckCircleIcon className="absolute top-2 right-2 h-5 w-5 text-jlc-purple-600" />
                 )}
                 <div className="text-center">
@@ -515,7 +518,7 @@ export default function RegisterPage() {
               </div>
 
               {/* Role-specific fields */}
-              {formData.role === 'interim' && (
+              {formData.role === roles.interim && (
                 <div className="border-t pt-6">
                   <h3 className="text-base font-semibold text-gray-900 mb-3">
                     Informations personnelles (Intérimaire)
@@ -549,7 +552,7 @@ export default function RegisterPage() {
                 </div>
               )}
 
-              {formData.role === 'company' && (
+              {formData.role === roles.company && (
                 <div className="border-t pt-6">
                   <h3 className="text-base font-semibold text-gray-900 mb-3">
                     Informations entreprise (Société)

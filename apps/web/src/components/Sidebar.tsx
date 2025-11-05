@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAppSelector, useAppDispatch } from '@/store/hooks'
 import { logoutAction } from '@/features/auth/slices/authSlice'
 import {
+import { useRoles } from '@/hooks/useAppConfig'
   HomeIcon,
   UserGroupIcon,
   ClipboardDocumentCheckIcon,
@@ -31,6 +32,8 @@ interface NavItem {
 }
 
 export default function Sidebar() {
+  const roles = useRoles()
+
   const [isCollapsed, setIsCollapsed] = useState(false)
   const [isMobileOpen, setIsMobileOpen] = useState(false)
   const location = useLocation()
@@ -46,18 +49,18 @@ export default function Sidebar() {
   // Get dashboard path based on user role
   const getDashboardPath = () => {
     if (!user) return '/'
-    if (user.roles.includes('admin') || user.roles.includes('super_admin')) return '/admin'
-    if (user.roles.includes('interim')) return '/interimaire'
-    if (user.roles.includes('company')) return '/entreprise'
+    if (user.roles.includes(roles.admin) || user.roles.includes(roles.super_admin)) return '/admin'
+    if (user.roles.includes(roles.interim)) return '/interimaire'
+    if (user.roles.includes(roles.company)) return '/entreprise'
     if (user.roles.includes('agency')) return '/agence'
     return '/profile'
   }
 
   if (!user) return null
 
-  const isAdmin = user.roles.includes('admin') || user.roles.includes('super_admin')
-  const isInterim = user.roles.includes('interim')
-  const isCompany = user.roles.includes('company')
+  const isAdmin = user.roles.includes(roles.admin) || user.roles.includes(roles.super_admin)
+  const isInterim = user.roles.includes(roles.interim)
+  const isCompany = user.roles.includes(roles.company)
   const isCommercial = user.roles.includes('commercial')
 
   // Navigation sections based on user role
