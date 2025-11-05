@@ -265,3 +265,138 @@ async def get_all_audit_events(
         "total": len(events),
         "filtered_by": target_type
     }
+
+
+@router.get("/export", dependencies=[Depends(require_super_admin)])
+async def export_feature_flags(
+    current_user: User = Depends(require_super_admin),
+    db: AsyncIOMotorDatabase = Depends(get_database)
+):
+    """
+    Exporter tous les feature flags au format JSON
+    Réservé aux super-admins
+    """
+    from fastapi.responses import JSONResponse
+    import json
+    from datetime import datetime
+    
+    service = FeatureFlagService(db)
+    flags = await service.get_all_flags(
+        caller_roles=current_user.roles,
+        include_inactive=True
+    )
+    
+    export_data = {
+        "exported_at": datetime.now(timezone.utc).isoformat(),
+        "exported_by": current_user.username,
+        "total_flags": len(flags),
+        "flags": flags
+    }
+    
+    # Audit
+    await service._create_audit_event(
+        actor_id=current_user.id,
+        actor_name=current_user.full_name or current_user.username,
+        action=AuditEventType.FEATURE_FLAG_CREATED,  # Using existing type
+        target_type="export",
+        target_id=None,
+        payload={
+            "action": "export_all_flags",
+            "total_exported": len(flags)
+        }
+    )
+    
+    return JSONResponse(
+        content=export_data,
+        headers={
+            "Content-Disposition": f"attachment; filename=feature_flags_export_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+        }
+    )
+
+
+@router.post("/import", dependencies=[Depends(require_super_admin)])
+async def import_feature_flags(
+    import_data: dict,
+    overwrite: bool = Query(False, description="Overwrite existing flags with same key"),
+    current_user: User = Depends(require_super_admin),
+    db: AsyncIOMotorDatabase = Depends(get_database)
+):
+    """
+    Importer des feature flags depuis un fichier JSON
+    Réservé aux super-admins
+    """
+    service = FeatureFlagService(db)
+    
+    if "flags" not in import_data:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Format invalide: 'flags' requis"
+        )
+    
+    flags_to_import = import_data["flags"]
+    results = {
+        "total": len(flags_to_import),
+        "imported": 0,
+        "skipped": 0,
+        "errors": []
+    }
+    
+    for flag_data in flags_to_import:
+        try:
+            # Vérifier si existe déjà
+            existing = await db.feature_flags.find_one({"key": flag_data["key"]})
+            
+            if existing and not overwrite:
+                results["skipped"] += 1
+                continue
+            
+            if existing and overwrite:
+                # Mettre à jour
+                await db.feature_flags.update_one(
+                    {"key": flag_data["key"]},
+                    {"$set": {
+                        "type": flag_data["type"],
+                        "value": flag_data["value"],
+                        "target": flag_data.get("target"),
+                        "metadata": flag_data.get("metadata", {}),
+                        "updated_at": datetime.now(timezone.utc)
+                    }}
+                )
+                results["imported"] += 1
+            else:
+                # Créer nouveau
+                flag_data["created_by"] = current_user.id
+                flag_data["created_at"] = datetime.now(timezone.utc)
+                flag_data["updated_at"] = datetime.now(timezone.utc)
+                await db.feature_flags.insert_one(flag_data)
+                results["imported"] += 1
+                
+        except Exception as e:
+            results["errors"].append({
+                "key": flag_data.get("key", "unknown"),
+                "error": str(e)
+            })
+    
+    # Audit
+    await service._create_audit_event(
+        actor_id=current_user.id,
+        actor_name=current_user.full_name or current_user.username,
+        action=AuditEventType.FEATURE_FLAG_CREATED,
+        target_type="import",
+        target_id=None,
+        payload={
+            "action": "import_flags",
+            "total": results["total"],
+            "imported": results["imported"],
+            "skipped": results["skipped"],
+            "errors_count": len(results["errors"])
+        }
+    )
+    
+    # Invalider cache
+    service._invalidate_cache()
+    
+    return {
+        "message": f"Import terminé: {results['imported']} importés, {results['skipped']} ignorés",
+        "results": results
+    }
