@@ -14,16 +14,16 @@ from awana_auth.core.feature_flag_models import (
     AuditEvent,
     AuditEventType,
 )
+from awana_auth.services.redis_cache_service import get_cache_service
 
 
 class FeatureFlagService:
     """Service de gestion des feature flags"""
     
-    def __init__(self, db: AsyncIOMotorDatabase):
+    def __init__(self, db: AsyncIOMotorDatabase, use_redis: bool = True):
         self.db = db
-        self.cache: Dict[str, Any] = {}  # Cache simple en mémoire
+        self.cache = get_cache_service(use_redis=use_redis)
         self.cache_ttl = 300  # 5 minutes
-        self.cache_timestamps: Dict[str, datetime] = {}
     
     def _is_cache_valid(self, key: str) -> bool:
         """Vérifier si le cache est toujours valide"""
