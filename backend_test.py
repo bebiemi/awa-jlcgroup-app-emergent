@@ -1425,58 +1425,12 @@ def test_update_user_endpoint():
     return True
 
 
-def test_user_paf_login_issue():
-    """Test login issue for newly created interim user 'paf'"""
-    print(f"\n{Colors.BOLD}=== Testing User 'paf' Login Issue ==={Colors.ENDC}")
+def test_profile_completion_system():
+    """Test profile completion system with user 'paf'"""
+    print(f"\n{Colors.BOLD}=== Testing Profile Completion System ==={Colors.ENDC}")
     
-    # Step 1: Get admin token first
-    print(f"\n  Step 1: Admin Login to Get Token")
-    admin_token = test_admin_login()
-    if not admin_token:
-        log_test("Admin Login for Investigation", "FAIL", "Cannot get admin token")
-        return False
-    
-    headers = {"Authorization": f"Bearer {admin_token}"}
-    
-    # Step 2: Search for user 'paf' in the database
-    print(f"\n  Step 2: Search for User 'paf'")
-    
-    search_response = test_endpoint(
-        "GET", 
-        f"{AUTH_BASE_URL}/auth/users?search=paf",
-        headers=headers,
-        expected_status=200,
-        test_name="Search for User 'paf'"
-    )
-    
-    user_paf = None
-    if search_response:
-        users = search_response.get("users", [])
-        log_test("User Search Results", "PASS", f"Found {len(users)} users matching 'paf'")
-        
-        # Look for exact username match
-        for user in users:
-            if user.get("username") == "paf":
-                user_paf = user
-                break
-        
-        if user_paf:
-            log_test("User 'paf' Found", "PASS", f"User exists with ID: {user_paf.get('id', 'Unknown')[:8]}...")
-            print(f"    Username: {user_paf.get('username')}")
-            print(f"    Email: {user_paf.get('email')}")
-            print(f"    Status: {user_paf.get('status')}")
-            print(f"    Roles: {user_paf.get('roles', [])}")
-            print(f"    Is Verified: {user_paf.get('is_verified')}")
-            print(f"    Created At: {user_paf.get('created_at')}")
-        else:
-            log_test("User 'paf' Not Found", "FAIL", "User 'paf' does not exist in the database")
-            return False
-    else:
-        log_test("User Search Failed", "FAIL", "Cannot search for users")
-        return False
-    
-    # Step 3: Test login with the provided credentials
-    print(f"\n  Step 3: Test Login with Credentials")
+    # Step 1: Login with user 'paf'
+    print(f"\n  Step 1: Login with User 'paf'")
     
     login_data = {
         "username": "paf",
@@ -1487,111 +1441,218 @@ def test_user_paf_login_issue():
         "POST",
         f"{AUTH_BASE_URL}/auth/local/login",
         data=login_data,
-        expected_status=401,  # We expect this to fail based on the issue
+        expected_status=200,
         test_name="Login with 'paf' credentials"
     )
     
-    if login_response:
-        error_detail = login_response.get("detail", "No error message")
-        log_test("Login Error Captured", "PASS", f"Error: {error_detail}")
-        
-        # Analyze the error
-        if "invalid" in error_detail.lower() or "incorrect" in error_detail.lower():
-            log_test("Error Analysis", "INFO", "Likely password or username issue")
-        elif "pending" in error_detail.lower() or "not verified" in error_detail.lower():
-            log_test("Error Analysis", "INFO", "Likely account status issue")
-        elif "suspended" in error_detail.lower() or "blocked" in error_detail.lower():
-            log_test("Error Analysis", "INFO", "Account may be suspended/blocked")
-        else:
-            log_test("Error Analysis", "INFO", f"Unknown error type: {error_detail}")
+    if not login_response:
+        log_test("User 'paf' Login", "FAIL", "Cannot login with provided credentials")
+        return False
     
-    # Step 4: Analyze potential issues based on user data
-    print(f"\n  Step 4: Issue Analysis")
+    access_token = login_response.get("access_token")
+    if not access_token:
+        log_test("Access Token", "FAIL", "No access token received")
+        return False
     
-    if user_paf:
-        status = user_paf.get("status", "unknown")
-        is_verified = user_paf.get("is_verified", False)
-        roles = user_paf.get("roles", [])
-        
-        issues_found = []
-        
-        # Check status
-        if status != "active":
-            issues_found.append(f"User status is '{status}' (should be 'active')")
-            log_test("Status Issue", "FAIL", f"User status is '{status}', not 'active'")
-        else:
-            log_test("Status Check", "PASS", "User status is 'active'")
-        
-        # Check verification
-        if not is_verified:
-            issues_found.append("User is not verified (is_verified = false)")
-            log_test("Verification Issue", "FAIL", "User is not verified")
-        else:
-            log_test("Verification Check", "PASS", "User is verified")
-        
-        # Check roles
-        if "interim" not in roles:
-            issues_found.append(f"User doesn't have 'interim' role (roles: {roles})")
-            log_test("Role Issue", "FAIL", f"User doesn't have 'interim' role: {roles}")
-        else:
-            log_test("Role Check", "PASS", "User has 'interim' role")
-        
-        # Summary of issues
-        if issues_found:
-            print(f"\n  {Colors.RED}Issues Found:{Colors.ENDC}")
-            for i, issue in enumerate(issues_found, 1):
-                print(f"    {i}. {issue}")
-            
-            log_test("Issue Summary", "FAIL", f"Found {len(issues_found)} issues preventing login")
-        else:
-            log_test("Issue Summary", "WARN", "No obvious issues found - may be password related")
+    headers = {"Authorization": f"Bearer {access_token}"}
+    log_test("User 'paf' Login", "PASS", f"Successfully logged in, token: {access_token[:20]}...")
     
-    # Step 5: Test with different scenarios if user exists
-    if user_paf and user_paf.get("status") == "active" and user_paf.get("is_verified"):
-        print(f"\n  Step 5: Additional Login Tests")
-        
-        # Test with email instead of username
-        user_email = user_paf.get("email")
-        if user_email:
-            email_login_data = {
-                "username": user_email,  # Try email as username
-                "password": "AZERTY123456!!nbvcxw"
-            }
-            
-            email_login_response = test_endpoint(
-                "POST",
-                f"{AUTH_BASE_URL}/auth/local/login",
-                data=email_login_data,
-                expected_status=401,  # Still expect failure
-                test_name="Login with email as username"
-            )
-            
-            if email_login_response:
-                email_error = email_login_response.get("detail", "")
-                log_test("Email Login Test", "INFO", f"Email login error: {email_error}")
+    # Step 2: Get initial profile and completion percentage
+    print(f"\n  Step 2: Get Initial Profile")
     
-    # Step 6: Test password reset to verify if password is the issue
-    if user_paf and user_paf.get("status") == "active" and user_paf.get("is_verified"):
-        print(f"\n  Step 6: Test Password Reset for User 'paf'")
+    initial_profile_response = test_endpoint(
+        "GET",
+        f"{API_BASE_URL}/profiles/me",
+        headers=headers,
+        expected_status=200,
+        test_name="Get Initial Profile"
+    )
+    
+    if not initial_profile_response:
+        log_test("Initial Profile", "FAIL", "Cannot get initial profile")
+        return False
+    
+    initial_profile = initial_profile_response.get("profile", {})
+    initial_completion = initial_profile.get("profile_completion_percentage", 0)
+    profile_type = initial_profile_response.get("profile_type", "unknown")
+    
+    log_test("Initial Profile Retrieved", "PASS", f"Profile type: {profile_type}, Initial completion: {initial_completion}%")
+    
+    # Log current profile fields
+    print(f"    Current profile fields:")
+    for field in ["first_name", "last_name", "email", "phone", "skills"]:
+        value = initial_profile.get(field, "Not set")
+        print(f"      {field}: {value}")
+    
+    # Step 3: Update profile with missing basic fields
+    print(f"\n  Step 3: Update Profile with Missing Basic Fields")
+    
+    update_data = {}
+    
+    # Add missing basic fields
+    if not initial_profile.get("first_name"):
+        update_data["first_name"] = "Pierre"
+    
+    if not initial_profile.get("last_name"):
+        update_data["last_name"] = "Martin"
+    
+    if not initial_profile.get("phone"):
+        update_data["phone"] = "+241 01 02 03 04"
+    
+    # Add skills if empty
+    current_skills = initial_profile.get("skills", [])
+    if not current_skills:
+        update_data["skills"] = ["Communication", "Organisation"]
+    
+    if update_data:
+        print(f"    Updating fields: {list(update_data.keys())}")
         
-        user_email = user_paf.get("email")
-        if user_email:
-            # Request password reset
-            reset_request = test_endpoint(
-                "POST",
-                f"{AUTH_BASE_URL}/auth/forgot-password",
-                data={"email": user_email},
-                expected_status=200,
-                test_name="Password Reset Request for 'paf'"
-            )
+        update_response = test_endpoint(
+            "PUT",
+            f"{API_BASE_URL}/profiles/me",
+            data=update_data,
+            headers=headers,
+            expected_status=200,
+            test_name="Update Profile with Basic Fields"
+        )
+        
+        if update_response:
+            new_completion = update_response.get("completion_percentage", 0)
+            log_test("Profile Update", "PASS", f"Profile updated, new completion: {new_completion}%")
             
-            if reset_request:
-                log_test("Password Reset Available", "PASS", "Password reset system is working")
-                print(f"    Reset can be requested for: {user_email}")
+            if new_completion > initial_completion:
+                log_test("Completion Increase", "PASS", f"Completion increased from {initial_completion}% to {new_completion}%")
             else:
-                log_test("Password Reset Failed", "FAIL", "Cannot request password reset")
+                log_test("Completion Increase", "FAIL", f"Completion did not increase: {initial_completion}% -> {new_completion}%")
+        else:
+            log_test("Profile Update", "FAIL", "Failed to update profile")
+            return False
+    else:
+        log_test("Profile Update", "INFO", "No missing basic fields to update")
+    
+    # Step 4: Get profile after update to verify changes
+    print(f"\n  Step 4: Verify Profile After Update")
+    
+    updated_profile_response = test_endpoint(
+        "GET",
+        f"{API_BASE_URL}/profiles/me",
+        headers=headers,
+        expected_status=200,
+        test_name="Get Updated Profile"
+    )
+    
+    if updated_profile_response:
+        updated_profile = updated_profile_response.get("profile", {})
+        final_completion = updated_profile.get("profile_completion_percentage", 0)
+        
+        log_test("Updated Profile Retrieved", "PASS", f"Final completion: {final_completion}%")
+        
+        # Verify updated fields are present
+        for field, expected_value in update_data.items():
+            if field == "skills":
+                actual_skills = updated_profile.get("skills", [])
+                if all(skill in actual_skills for skill in expected_value):
+                    log_test(f"Field Update - {field}", "PASS", f"Skills correctly updated: {actual_skills}")
+                else:
+                    log_test(f"Field Update - {field}", "FAIL", f"Skills not updated correctly. Expected: {expected_value}, Got: {actual_skills}")
+            else:
+                actual_value = updated_profile.get(field)
+                if actual_value == expected_value:
+                    log_test(f"Field Update - {field}", "PASS", f"{field} = {actual_value}")
+                else:
+                    log_test(f"Field Update - {field}", "FAIL", f"Expected {field} = {expected_value}, got {actual_value}")
+    
+    # Step 5: Test adding unique skills to system references
+    print(f"\n  Step 5: Test Adding Unique Skills to System References")
+    
+    unique_skill = "Gestion de projet 2025"
+    skills_update = {
+        "skills": [unique_skill]
+    }
+    
+    skills_response = test_endpoint(
+        "PUT",
+        f"{API_BASE_URL}/profiles/me",
+        data=skills_update,
+        headers=headers,
+        expected_status=200,
+        test_name="Add Unique Skill"
+    )
+    
+    if skills_response:
+        log_test("Unique Skill Added", "PASS", f"Added skill: {unique_skill}")
+        
+        # Step 6: Verify skill was added to system references
+        print(f"\n  Step 6: Verify Skill in System References")
+        
+        # We need to check the MongoDB directly or through an admin endpoint
+        # For now, let's verify the skill is in the profile
+        final_profile_response = test_endpoint(
+            "GET",
+            f"{API_BASE_URL}/profiles/me",
+            headers=headers,
+            expected_status=200,
+            test_name="Verify Skill in Profile"
+        )
+        
+        if final_profile_response:
+            final_profile = final_profile_response.get("profile", {})
+            final_skills = final_profile.get("skills", [])
+            
+            if unique_skill in final_skills:
+                log_test("Skill in Profile", "PASS", f"Skill '{unique_skill}' found in profile")
+            else:
+                log_test("Skill in Profile", "FAIL", f"Skill '{unique_skill}' not found in profile. Skills: {final_skills}")
+            
+            # Check if completion percentage reflects the skill addition
+            skill_completion = final_profile.get("profile_completion_percentage", 0)
+            log_test("Final Completion", "PASS", f"Final completion percentage: {skill_completion}%")
     
     return True
+
+
+def test_mongodb_skill_verification():
+    """Verify that new skills are added to system_references collection"""
+    print(f"\n{Colors.BOLD}=== Testing MongoDB Skill References ==={Colors.ENDC}")
+    
+    try:
+        from pymongo import MongoClient
+        import os
+        
+        # Connect to MongoDB
+        mongo_url = os.getenv('MONGO_URL', 'mongodb://localhost:27017')
+        client = MongoClient(mongo_url)
+        
+        # Check jlc_db.system_references
+        jlc_db = client['jlc_db']
+        references_collection = jlc_db.system_references
+        
+        # Look for the unique skill we added
+        skill_code = "gestion_de_projet_2025"
+        skill_ref = references_collection.find_one({
+            "category": "skills",
+            "code": skill_code
+        })
+        
+        if skill_ref:
+            log_test("Skill Reference Found", "PASS", f"Skill '{skill_code}' found in system_references")
+            print(f"    Label FR: {skill_ref.get('label_fr')}")
+            print(f"    Label EN: {skill_ref.get('label_en')}")
+            print(f"    Is Active: {skill_ref.get('is_active')}")
+            print(f"    Added By: {skill_ref.get('metadata', {}).get('added_by')}")
+        else:
+            log_test("Skill Reference Not Found", "FAIL", f"Skill '{skill_code}' not found in system_references")
+        
+        # Count total skills in references
+        total_skills = references_collection.count_documents({"category": "skills"})
+        log_test("Total Skills in References", "PASS", f"Found {total_skills} skills in system_references")
+        
+        client.close()
+        return skill_ref is not None
+        
+    except Exception as e:
+        log_test("MongoDB Skill Verification", "FAIL", f"Error connecting to MongoDB: {str(e)}")
+        return False
 
 
 def test_email_notification_system():
