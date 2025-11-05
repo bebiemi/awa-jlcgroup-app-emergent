@@ -18,6 +18,7 @@ from validation_routes import validation_router
 from profile_routes import profile_router
 from mission_routes import router as mission_router
 from document_routes import router as document_router
+from configuration_routes import router as configuration_router
 from rate_limit import limiter
 
 logging.basicConfig(level=logging.INFO)
