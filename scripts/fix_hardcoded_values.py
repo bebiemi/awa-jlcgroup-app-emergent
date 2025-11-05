@@ -156,11 +156,16 @@ class HardcodedValuesFixer:
             "profile_routes.py",
             "google_auth_routes.py",
             "security_routes.py",
+            "mfa_routes.py",
+            "document_routes.py",
+            "location_routes.py",
         ]
         
+        total_files = 0
         for filename in priority_files:
             file_path = backend_dir / filename
             if file_path.exists():
+                total_files += 1
                 print(f"\n  📄 {filename}")
                 fixes, changes = self.fix_file(file_path)
                 self.fixes_applied += fixes
@@ -173,6 +178,8 @@ class HardcodedValuesFixer:
                         print(f"       ... et {len(changes) - 3} autres")
                 else:
                     print(f"    ℹ️  Aucune correction nécessaire")
+        
+        print(f"\n  📊 Total: {total_files} fichiers traités")
     
     def generate_report(self) -> str:
         """Générer un rapport de correction"""
