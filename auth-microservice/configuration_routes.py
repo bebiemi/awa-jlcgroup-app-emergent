@@ -71,8 +71,14 @@ async def create_reference(
         id=str(uuid.uuid4())
     )
     
-    await db.system_references.insert_one(reference.dict())
-    return {"reference": reference.dict()}
+    ref_dict = reference.dict()
+    await db.system_references.insert_one(ref_dict)
+    
+    # Remove MongoDB _id
+    if "_id" in ref_dict:
+        del ref_dict["_id"]
+    
+    return {"reference": ref_dict}
 
 
 @router.patch("/references/{ref_id}", dependencies=[Depends(require_admin)])
