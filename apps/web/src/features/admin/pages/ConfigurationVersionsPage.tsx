@@ -84,7 +84,7 @@ export default function ConfigurationVersionsPage() {
 
     try {
       const response = await fetch(
-        `${import.meta.env.REACT_APP_BACKEND_URL}/api/versions/rollback`,
+        `${import.meta.env.VITE_AUTH_SERVICE_URL}/api/versions/rollback`,
         {
           method: 'POST',
           headers: {
