@@ -1,0 +1,147 @@
+# Configuration PRODUCTION - Environnement de production
+
+app:
+  debug: false
+
+server:
+  reload: false
+  log_level: "warning"
+  workers: 8
+
+database:
+  pool_size: 30
+  max_pool_size: 100
+  socket_timeout_ms: 45000
+
+security:
+  jwt:
+    access_token_expire_minutes: 30
+    refresh_token_expire_days: 7
+    
+  password:
+    max_attempts: 5
+    lockout_duration_minutes: 30
+    
+  cors:
+    allow_origins:
+      - "https://jlc-platform.com"
+      - "https://www.jlc-platform.com"
+      - "https://api.jlc-platform.com"
+    allow_credentials: true
+      
+  rate_limit:
+    enabled: true
+    default_limit: 100
+    default_period_seconds: 60
+    routes:
+      login: 
+        limit: 5
+        period_seconds: 300
+      register:
+        limit: 3
+        period_seconds: 3600
+
+workflows:
+  mission:
+    auto_publish: false
+    application_deadline_days: 30
+    max_applications_per_mission: 100
+    
+  application:
+    delays:
+      interview_scheduling: 7
+      interview_to_decision: 3
+      medical_check: 14
+      contract_preparation: 7
+      
+    auto_transitions:
+      enabled: true
+      interview_reminder_days: 2
+      medical_expiry_days: 90
+      
+    restrictions:
+      max_applications_per_candidate: 10
+      min_days_between_applications: 1
+      allow_reapplication_after_rejection_days: 30
+
+notifications:
+  email:
+    enabled: true
+    from_name: "JLC Platform"
+    from_email: "noreply@jlc-platform.com"
+    reply_to: "support@jlc-platform.com"
+    
+  sms:
+    enabled: true
+    provider: "twilio"
+    
+  push:
+    enabled: true
+    provider: "firebase"
+
+storage:
+  uploads:
+    max_file_size_mb: 10
+    
+  cloud:
+    enabled: true
+    provider: "s3"
+    bucket: "jlc-prod-uploads"
+    region: "eu-west-1"
+
+cache:
+  references:
+    enabled: true
+    ttl_minutes: 30
+    max_size: 5000
+    
+  sessions:
+    enabled: true
+    ttl_minutes: 60
+
+features:
+  mfa:
+    enabled: true
+    methods: ["totp", "sms", "email"]
+    
+  email_verification:
+    enabled: true
+    token_expiry_hours: 24
+    
+  password_reset:
+    enabled: true
+    token_expiry_hours: 2
+    
+  social_login:
+    google: true
+    linkedin: true
+    
+  ai_features:
+    enabled: true
+    cv_parsing: true
+    candidate_scoring: true
+    skill_matching: true
+
+monitoring:
+  logging:
+    level: "WARNING"
+    format: "json"
+    file: "/var/log/jlc/auth-service.log"
+    max_bytes: 52428800  # 50MB
+    backup_count: 10
+    
+  metrics:
+    enabled: true
+    provider: "prometheus"
+    port: 9090
+    
+  tracing:
+    enabled: true
+    provider: "jaeger"
+
+localization:
+  default_language: "fr"
+  supported_languages:
+    - "fr"
+    - "en"
+  timezone: "Africa/Libreville"
