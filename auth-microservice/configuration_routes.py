@@ -193,9 +193,13 @@ async def create_setting(
         )
     
     app_setting = ApplicationSetting(**setting.dict(), id=str(uuid.uuid4()))
-    await db.application_settings.insert_one(app_setting.dict())
+    setting_dict = app_setting.dict()
+    await db.application_settings.insert_one(setting_dict)
     
-    return {"setting": app_setting.dict()}
+    if "_id" in setting_dict:
+        del setting_dict["_id"]
+    
+    return {"setting": setting_dict}
 
 
 @router.patch("/settings/{key}", dependencies=[Depends(require_admin)])
