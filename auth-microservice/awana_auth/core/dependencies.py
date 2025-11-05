@@ -11,7 +11,7 @@ from ..core.exceptions import InvalidTokenError, UserNotFoundError
 from ..session.jwt import JWTManager
 from ..session.storage import SessionStorage
 from ..rbac.manager import RBACManager
-import os
+from .config_manager import get_config
 import logging
 
 logger = logging.getLogger(__name__)
@@ -27,16 +27,22 @@ _db: Optional[AsyncIOMotorDatabase] = None
 
 
 def get_database() -> AsyncIOMotorDatabase:
-    """Get database instance"""
+    """Get database instance from ConfigManager"""
     global _db
     
     if _db is None:
-        mongo_url = os.getenv("MONGO_URL", "mongodb://localhost:27017")
-        database_name = os.getenv("DATABASE_NAME", "awana_prod")
+        config = get_config()
+        mongo_url = config.get_secret("MONGO_URL", required=True)
+        database_name = config.get("database.name", required=True)
+        pool_size = config.get("database.pool_size", default=10)
         
-        client = AsyncIOMotorClient(mongo_url)
+        client = AsyncIOMotorClient(
+            mongo_url,
+            maxPoolSize=pool_size,
+            minPoolSize=config.get("database.min_pool_size", default=5)
+        )
         _db = client[database_name]
-        logger.info(f"Database initialized: {database_name}")
+        logger.info(f"✅ Database initialized: {database_name} (pool={pool_size})")
     
     return _db
 
