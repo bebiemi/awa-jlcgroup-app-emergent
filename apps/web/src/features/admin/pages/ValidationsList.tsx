@@ -85,15 +85,15 @@ export default function ValidationsList() {
         <div className="bg-white rounded-lg shadow p-4">
           <div className="flex space-x-4">
             <button
-              onClick={() => setStatusFilter('pending')}
+              onClick={() => setStatusFilter(pendingStatus)}
               className={clsx(
                 'px-4 py-2 rounded-lg font-medium transition-colors',
-                statusFilter === 'pending'
+                statusFilter === pendingStatus
                   ? 'bg-jlc-purple-600 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               )}
             >
-              En attente ({data?.items.filter(v => v.status === 'pending').length || 0})
+              En attente ({data?.items.filter(v => v.status === pendingStatus).length || 0})
             </button>
             <button
               onClick={() => setStatusFilter('approved')}
