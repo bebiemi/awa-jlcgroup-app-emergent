@@ -1,0 +1,73 @@
+# Configuration DEV - Environnement d'intégration
+
+app:
+  debug: true
+
+server:
+  reload: false
+  log_level: "debug"
+  workers: 2
+
+database:
+  pool_size: 10
+  max_pool_size: 30
+
+security:
+  jwt:
+    access_token_expire_minutes: 60
+    
+  cors:
+    allow_origins:
+      - "https://dev.jlc-platform.com"
+      - "https://dev-api.jlc-platform.com"
+      
+  rate_limit:
+    enabled: true
+    default_limit: 200  # Plus permissif qu'en prod
+
+workflows:
+  application:
+    delays:
+      interview_scheduling: 3  # Délais réduits pour tests
+      interview_to_decision: 1
+      medical_check: 5
+      contract_preparation: 2
+
+notifications:
+  email:
+    enabled: true
+    from_email: "noreply-dev@jlc-platform.com"
+    
+  sms:
+    enabled: false  # Désactivé pour éviter les coûts
+
+storage:
+  cloud:
+    enabled: true
+    provider: "s3"
+    bucket: "jlc-dev-uploads"
+    region: "eu-west-1"
+
+cache:
+  references:
+    ttl_minutes: 15
+
+features:
+  mfa:
+    enabled: true
+    methods: ["totp", "email"]
+    
+  ai_features:
+    enabled: true
+    cv_parsing: true
+    candidate_scoring: true
+    skill_matching: true
+
+monitoring:
+  logging:
+    level: "DEBUG"
+    format: "json"
+    
+  metrics:
+    enabled: true
+    provider: "prometheus"
