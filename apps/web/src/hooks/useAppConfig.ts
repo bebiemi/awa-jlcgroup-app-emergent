@@ -63,14 +63,7 @@ export const useUserStatuses = () => {
  * Hook pour accéder aux statuts de mission
  */
 export const useMissionStatuses = () => {
-  const { data: references = [] } = configurationApi.useGetReferencesByCategoryQuery('mission_statuses')
-  
-  const statuses = references.reduce((acc, ref) => {
-    acc[ref.code] = ref.code
-    return acc
-  }, {} as Record<string, string>)
-  
-  return statuses && Object.keys(statuses).length > 0 ? statuses : {
+  return {
     draft: 'draft',
     published: 'published',
     closed: 'closed',
@@ -83,14 +76,7 @@ export const useMissionStatuses = () => {
  * Hook pour accéder aux statuts d'application
  */
 export const useApplicationStatuses = () => {
-  const { data: references = [] } = configurationApi.useGetReferencesByCategoryQuery('application_statuses')
-  
-  const statuses = references.reduce((acc, ref) => {
-    acc[ref.code] = ref.code
-    return acc
-  }, {} as Record<string, string>)
-  
-  return statuses && Object.keys(statuses).length > 0 ? statuses : {
+  return {
     submitted: 'submitted',
     review: 'review',
     interview_scheduled: 'interview_scheduled',
@@ -108,14 +94,7 @@ export const useApplicationStatuses = () => {
  * Hook pour accéder aux types de validation
  */
 export const useValidationTypes = () => {
-  const { data: references = [] } = configurationApi.useGetReferencesByCategoryQuery('validation_types')
-  
-  const types = references.reduce((acc, ref) => {
-    acc[ref.code] = ref.code
-    return acc
-  }, {} as Record<string, string>)
-  
-  return types && Object.keys(types).length > 0 ? types : {
+  return {
     interim: 'interim',
     company: 'company',
     collaborator: 'collaborator'
@@ -128,19 +107,14 @@ export const useValidationTypes = () => {
 export const useAppConfig = (): AppConfig => {
   const roles = useRoles()
   const userStatuses = useUserStatuses()
-  const { data: missionStatusesRefs = [] } = configurationApi.useGetReferencesByCategoryQuery('mission_statuses')
-  const { data: applicationStatusesRefs = [] } = configurationApi.useGetReferencesByCategoryQuery('application_statuses')
-  const { data: validationStatusesRefs = [] } = configurationApi.useGetReferencesByCategoryQuery('validation_statuses')
-  const { data: validationTypesRefs = [] } = configurationApi.useGetReferencesByCategoryQuery('validation_types')
-  const { data: contractTypesRefs = [] } = configurationApi.useGetReferencesByCategoryQuery('contract_types')
   
   return {
     roles,
     userStatuses,
-    missionStatuses: missionStatusesRefs.map(r => r.code),
-    applicationStatuses: applicationStatusesRefs.map(r => r.code),
-    validationStatuses: validationStatusesRefs.map(r => r.code),
-    validationTypes: validationTypesRefs.map(r => r.code),
-    contractTypes: contractTypesRefs.map(r => r.code),
+    missionStatuses: ['draft', 'published', 'closed', 'cancelled', 'archived'],
+    applicationStatuses: ['submitted', 'review', 'interview_scheduled', 'interviewed', 'selected', 'rejected', 'medical_pending', 'medical_completed', 'contract_pending', 'contract_signed'],
+    validationStatuses: ['pending', 'approved', 'rejected'],
+    validationTypes: ['interim', 'company', 'collaborator'],
+    contractTypes: ['cdi', 'cdd', 'interim', 'freelance', 'stage'],
   }
 }
