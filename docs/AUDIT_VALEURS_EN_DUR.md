@@ -1,32 +1,32 @@
 # 🔍 Audit des Valeurs en Dur - Rapport Complet
 
-**Date**: 2025-11-05 03:27:10
+**Date**: 2025-11-05 03:32:21
 
 ---
 
 ## 📊 Résumé Exécutif
 
-**Total de valeurs en dur trouvées**: 699
+**Total de valeurs en dur trouvées**: 684
 
 ### Par Sévérité
 
 | Sévérité | Nombre | Pourcentage |
 |----------|--------|-------------|
-| 🔴 CRITICAL | 345 | 49.4% |
-| 🟠 HIGH | 87 | 12.4% |
-| 🟡 MEDIUM | 83 | 11.9% |
-| 🟢 LOW | 184 | 26.3% |
+| 🔴 CRITICAL | 343 | 50.1% |
+| 🟠 HIGH | 75 | 11.0% |
+| 🟡 MEDIUM | 82 | 12.0% |
+| 🟢 LOW | 184 | 26.9% |
 
 ### Par Catégorie
 
 | Catégorie | Nombre |
 |-----------|--------|
 | messages | 168 |
-| roles | 165 |
-| validation_types | 106 |
+| roles | 164 |
+| validation_types | 105 |
 | application_status | 74 |
-| user_status | 61 |
-| contract_types | 55 |
+| contract_types | 54 |
+| user_status | 49 |
 | mission_status | 26 |
 | delays_days | 17 |
 | numeric_limits | 16 |
@@ -39,24 +39,24 @@
 | `auth-microservice/awana_auth_routes.py` | 77 |
 | `apps/web/src/features/admin/pages/ValidationsPage.tsx` | 75 |
 | `apps/web/src/hooks/useAppConfig.ts` | 65 |
-| `auth-microservice/google_auth_routes.py` | 32 |
 | `auth-microservice/scripts/seed_mission_references.py` | 32 |
+| `auth-microservice/google_auth_routes.py` | 29 |
 | `auth-microservice/mission_routes.py` | 26 |
 | `apps/web/src/features/auth/pages/RoleSelectionPage.tsx` | 20 |
 | `auth-microservice/mfa_routes.py` | 19 |
 | `auth-microservice/awana_auth/rbac/models.py` | 18 |
-| `apps/web/src/features/admin/pages/ValidationsList.tsx` | 18 |
 | `auth-microservice/validation_routes.py` | 17 |
 | `apps/web/src/types/index.ts` | 17 |
 | `auth-microservice/security_routes.py` | 16 |
 | `auth-microservice/awana_auth/core/dependencies.py` | 14 |
 | `apps/web/src/features/admin/pages/UserManagementPage.tsx` | 14 |
+| `auth-microservice/awana_auth/core/models.py` | 13 |
 
 ---
 
 ## 🔴 Sévérité: CRITICAL
 
-**Total**: 345 occurrences
+**Total**: 343 occurrences
 
 ### 📄 `apps/web/src/components/Breadcrumb.tsx`
 
@@ -310,7 +310,7 @@ status: 'pending' | 'approved' | 'rejected'
 
 ### 📄 `apps/web/src/features/admin/pages/ValidationsList.tsx`
 
-**1. Ligne 106** | Catégorie: `application_status`
+**1. Ligne 110** | Catégorie: `application_status`
 
 ```
 onClick={() => setStatusFilter('rejected')}
@@ -318,7 +318,7 @@ onClick={() => setStatusFilter('rejected')}
 
 **Valeur en dur**: `'rejected'`
 
-**2. Ligne 109** | Catégorie: `application_status`
+**2. Ligne 113** | Catégorie: `application_status`
 
 ```
 statusFilter === 'rejected'
@@ -326,7 +326,7 @@ statusFilter === 'rejected'
 
 **Valeur en dur**: `'rejected'`
 
-**3. Ligne 174** | Catégorie: `roles`
+**3. Ligne 178** | Catégorie: `roles`
 
 ```
 validation.validation_type === 'interim'
@@ -334,7 +334,7 @@ validation.validation_type === 'interim'
 
 **Valeur en dur**: `'interim'`
 
-**4. Ligne 174** | Catégorie: `validation_types`
+**4. Ligne 178** | Catégorie: `validation_types`
 
 ```
 validation.validation_type === 'interim'
@@ -342,7 +342,7 @@ validation.validation_type === 'interim'
 
 **Valeur en dur**: `'interim'`
 
-**5. Ligne 178** | Catégorie: `roles`
+**5. Ligne 182** | Catégorie: `roles`
 
 ```
 {validation.validation_type === 'interim' ? 'Intérimaire' : 'Entreprise'}
@@ -350,7 +350,7 @@ validation.validation_type === 'interim'
 
 **Valeur en dur**: `'interim'`
 
-**6. Ligne 178** | Catégorie: `validation_types`
+**6. Ligne 182** | Catégorie: `validation_types`
 
 ```
 {validation.validation_type === 'interim' ? 'Intérimaire' : 'Entreprise'}
@@ -358,7 +358,7 @@ validation.validation_type === 'interim'
 
 **Valeur en dur**: `'interim'`
 
-**7. Ligne 186** | Catégorie: `application_status`
+**7. Ligne 190** | Catégorie: `application_status`
 
 ```
 validation.status === 'rejected' && 'bg-red-100 text-red-800'
@@ -366,7 +366,7 @@ validation.status === 'rejected' && 'bg-red-100 text-red-800'
 
 **Valeur en dur**: `'rejected'`
 
-**8. Ligne 190** | Catégorie: `application_status`
+**8. Ligne 194** | Catégorie: `application_status`
 
 ```
 {validation.status === 'rejected' && 'Refusé'}
@@ -903,23 +903,7 @@ role: 'interim' | 'company'
 
 ### 📄 `apps/web/src/features/auth/pages/GoogleCallback.tsx`
 
-**1. Ligne 57** | Catégorie: `roles`
-
-```
-if (data.user.status === 'pending' && data.user.roles.length === 1 && data.user.roles[0] === 'interim') {
-```
-
-**Valeur en dur**: `'interim'`
-
-**2. Ligne 57** | Catégorie: `validation_types`
-
-```
-if (data.user.status === 'pending' && data.user.roles.length === 1 && data.user.roles[0] === 'interim') {
-```
-
-**Valeur en dur**: `'interim'`
-
-**3. Ligne 83** | Catégorie: `roles`
+**1. Ligne 86** | Catégorie: `roles`
 
 ```
 if (userRoles.includes('admin') || userRoles.includes('super_admin')) {
@@ -927,7 +911,7 @@ if (userRoles.includes('admin') || userRoles.includes('super_admin')) {
 
 **Valeur en dur**: `'admin'`
 
-**4. Ligne 83** | Catégorie: `roles`
+**2. Ligne 86** | Catégorie: `roles`
 
 ```
 if (userRoles.includes('admin') || userRoles.includes('super_admin')) {
@@ -935,7 +919,7 @@ if (userRoles.includes('admin') || userRoles.includes('super_admin')) {
 
 **Valeur en dur**: `'super_admin'`
 
-**5. Ligne 85** | Catégorie: `roles`
+**3. Ligne 88** | Catégorie: `roles`
 
 ```
 } else if (userRoles.includes('interim')) {
@@ -943,7 +927,7 @@ if (userRoles.includes('admin') || userRoles.includes('super_admin')) {
 
 **Valeur en dur**: `'interim'`
 
-**6. Ligne 85** | Catégorie: `validation_types`
+**4. Ligne 88** | Catégorie: `validation_types`
 
 ```
 } else if (userRoles.includes('interim')) {
@@ -951,7 +935,7 @@ if (userRoles.includes('admin') || userRoles.includes('super_admin')) {
 
 **Valeur en dur**: `'interim'`
 
-**7. Ligne 87** | Catégorie: `roles`
+**5. Ligne 90** | Catégorie: `roles`
 
 ```
 } else if (userRoles.includes('company')) {
@@ -959,7 +943,7 @@ if (userRoles.includes('admin') || userRoles.includes('super_admin')) {
 
 **Valeur en dur**: `'company'`
 
-**8. Ligne 87** | Catégorie: `validation_types`
+**6. Ligne 90** | Catégorie: `validation_types`
 
 ```
 } else if (userRoles.includes('company')) {
@@ -967,7 +951,7 @@ if (userRoles.includes('admin') || userRoles.includes('super_admin')) {
 
 **Valeur en dur**: `'company'`
 
-**9. Ligne 89** | Catégorie: `roles`
+**7. Ligne 92** | Catégorie: `roles`
 
 ```
 } else if (userRoles.includes('agency')) {
@@ -1235,7 +1219,7 @@ selectedRole === 'company'
 
 ### 📄 `apps/web/src/features/interim/pages/InterimDashboard.tsx`
 
-**1. Ligne 67** | Catégorie: `application_status`
+**1. Ligne 69** | Catégorie: `application_status`
 
 ```
 validation.status === 'rejected' && 'border-red-500 bg-red-50'
@@ -1243,7 +1227,7 @@ validation.status === 'rejected' && 'border-red-500 bg-red-50'
 
 **Valeur en dur**: `'rejected'`
 
-**2. Ligne 78** | Catégorie: `application_status`
+**2. Ligne 80** | Catégorie: `application_status`
 
 ```
 {validation.status === 'rejected' && (
@@ -1251,7 +1235,7 @@ validation.status === 'rejected' && 'border-red-500 bg-red-50'
 
 **Valeur en dur**: `'rejected'`
 
-**3. Ligne 105** | Catégorie: `application_status`
+**3. Ligne 107** | Catégorie: `application_status`
 
 ```
 {validation.status === 'rejected' && (
@@ -2937,7 +2921,7 @@ total_rejected = await db.validations.count_documents({"status": "rejected"})
 
 ## 🟠 Sévérité: HIGH
 
-**Total**: 87 occurrences
+**Total**: 75 occurrences
 
 ### 📄 `apps/web/src/components/ActionButton.tsx`
 
@@ -3087,63 +3071,23 @@ title={user.status === 'suspended' ? 'Débloquer' : 'Bloquer'}
 
 ### 📄 `apps/web/src/features/admin/pages/ValidationsList.tsx`
 
-**1. Ligne 11** | Catégorie: `user_status`
+**1. Ligne 13** | Catégorie: `user_status`
 
 ```
-const [statusFilter, setStatusFilter] = useState<string>('pending')
-```
-
-**Valeur en dur**: `'pending'`
-
-**2. Ligne 84** | Catégorie: `user_status`
-
-```
-onClick={() => setStatusFilter('pending')}
+const pendingStatus = validationStatuses.find(vs => vs.code === 'pending')?.code || 'pending'
 ```
 
 **Valeur en dur**: `'pending'`
 
-**3. Ligne 87** | Catégorie: `user_status`
+**2. Ligne 13** | Catégorie: `user_status`
 
 ```
-statusFilter === 'pending'
-```
-
-**Valeur en dur**: `'pending'`
-
-**4. Ligne 92** | Catégorie: `user_status`
-
-```
-En attente ({data?.items.filter(v => v.status === 'pending').length || 0})
+const pendingStatus = validationStatuses.find(vs => vs.code === 'pending')?.code || 'pending'
 ```
 
 **Valeur en dur**: `'pending'`
 
-**5. Ligne 184** | Catégorie: `user_status`
-
-```
-validation.status === 'pending' && 'bg-yellow-100 text-yellow-800',
-```
-
-**Valeur en dur**: `'pending'`
-
-**6. Ligne 188** | Catégorie: `user_status`
-
-```
-{validation.status === 'pending' && 'En attente'}
-```
-
-**Valeur en dur**: `'pending'`
-
-**7. Ligne 197** | Catégorie: `user_status`
-
-```
-{validation.status === 'pending' && (
-```
-
-**Valeur en dur**: `'pending'`
-
-**8. Ligne 221** | Catégorie: `user_status`
+**3. Ligne 225** | Catégorie: `user_status`
 
 ```
 {validation.status !== 'pending' && (
@@ -3179,17 +3123,6 @@ pending: validationStatuses.find(vs => vs.code === 'pending')?.code || 'pending'
 **Valeur en dur**: `"pending"`
 
 
-### 📄 `apps/web/src/features/auth/pages/GoogleCallback.tsx`
-
-**1. Ligne 57** | Catégorie: `user_status`
-
-```
-if (data.user.status === 'pending' && data.user.roles.length === 1 && data.user.roles[0] === 'interim') {
-```
-
-**Valeur en dur**: `'pending'`
-
-
 ### 📄 `apps/web/src/features/company/pages/CompanyDashboard.tsx`
 
 **1. Ligne 29** | Catégorie: `user_status`
@@ -3223,33 +3156,6 @@ mission.status === 'active'
 ```
 
 **Valeur en dur**: `'active'`
-
-
-### 📄 `apps/web/src/features/interim/pages/InterimDashboard.tsx`
-
-**1. Ligne 65** | Catégorie: `user_status`
-
-```
-validation.status === 'pending' && 'border-yellow-500 bg-yellow-50',
-```
-
-**Valeur en dur**: `'pending'`
-
-**2. Ligne 72** | Catégorie: `user_status`
-
-```
-{validation.status === 'pending' && (
-```
-
-**Valeur en dur**: `'pending'`
-
-**3. Ligne 83** | Catégorie: `user_status`
-
-```
-{validation.status === 'pending' && (
-```
-
-**Valeur en dur**: `'pending'`
 
 
 ### 📄 `apps/web/src/features/missions/api/missionApi.ts`
@@ -3648,33 +3554,6 @@ suspended_users = await db.users.count_documents({"status": "suspended"})
 **Valeur en dur**: `"suspended"`
 
 
-### 📄 `auth-microservice/google_auth_routes.py`
-
-**1. Ligne 385** | Catégorie: `user_status`
-
-```
-status=user_doc.get("status", "pending"),
-```
-
-**Valeur en dur**: `"pending"`
-
-**2. Ligne 447** | Catégorie: `user_status`
-
-```
-"status": existing_user["status"] if existing_user else "pending",
-```
-
-**Valeur en dur**: `"pending"`
-
-**3. Ligne 622** | Catégorie: `user_status`
-
-```
-status=updated_user_doc.get("status", "pending"),
-```
-
-**Valeur en dur**: `"pending"`
-
-
 ### 📄 `auth-microservice/scripts/seed_mission_references.py`
 
 **1. Ligne 32** | Catégorie: `mission_status`
@@ -3712,7 +3591,7 @@ status=updated_user_doc.get("status", "pending"),
 
 ## 🟡 Sévérité: MEDIUM
 
-**Total**: 83 occurrences
+**Total**: 82 occurrences
 
 ### 📄 `apps/web/src/components/LoginModal.tsx`
 
@@ -3760,7 +3639,7 @@ status=updated_user_doc.get("status", "pending"),
 
 ### 📄 `apps/web/src/features/admin/pages/ValidationsList.tsx`
 
-**1. Ligne 174** | Catégorie: `contract_types`
+**1. Ligne 178** | Catégorie: `contract_types`
 
 ```
 validation.validation_type === 'interim'
@@ -3768,7 +3647,7 @@ validation.validation_type === 'interim'
 
 **Valeur en dur**: `'interim'`
 
-**2. Ligne 178** | Catégorie: `contract_types`
+**2. Ligne 182** | Catégorie: `contract_types`
 
 ```
 {validation.validation_type === 'interim' ? 'Intérimaire' : 'Entreprise'}
@@ -3881,15 +3760,7 @@ role: 'interim' | 'company'
 
 ### 📄 `apps/web/src/features/auth/pages/GoogleCallback.tsx`
 
-**1. Ligne 57** | Catégorie: `contract_types`
-
-```
-if (data.user.status === 'pending' && data.user.roles.length === 1 && data.user.roles[0] === 'interim') {
-```
-
-**Valeur en dur**: `'interim'`
-
-**2. Ligne 85** | Catégorie: `contract_types`
+**1. Ligne 88** | Catégorie: `contract_types`
 
 ```
 } else if (userRoles.includes('interim')) {
