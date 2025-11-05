@@ -29,6 +29,106 @@ export default function InterimProfileForm({ profile }: Props) {
         </p>
       </div>
 
+      {/* Informations de base */}
+      <div>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Informations de Base</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Prénom <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              value={formData.first_name || ''}
+              onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-jlc-purple-500"
+              placeholder="Votre prénom"
+              required
+            />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Nom <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              value={formData.last_name || ''}
+              onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-jlc-purple-500"
+              placeholder="Votre nom"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Date de naissance
+            </label>
+            <input
+              type="date"
+              value={formData.date_of_birth || ''}
+              onChange={(e) => setFormData({ ...formData, date_of_birth: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-jlc-purple-500"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Lieu de naissance
+            </label>
+            <input
+              type="text"
+              value={formData.place_of_birth || ''}
+              onChange={(e) => setFormData({ ...formData, place_of_birth: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-jlc-purple-500"
+              placeholder="Ville, Pays"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Téléphone <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="tel"
+              value={formData.phone || ''}
+              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-jlc-purple-500"
+              placeholder="+241 XX XX XX XX"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Email <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="email"
+              value={formData.email || ''}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-jlc-purple-500"
+              placeholder="votre.email@exemple.com"
+              required
+            />
+          </div>
+
+          <div className="md:col-span-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Adresse complète
+            </label>
+            <input
+              type="text"
+              value={formData.address || ''}
+              onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-jlc-purple-500"
+              placeholder="Adresse, ville, quartier"
+            />
+          </div>
+        </div>
+      </div>
+
       {/* Informations personnelles */}
       <div>
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Informations Personnelles</h3>
