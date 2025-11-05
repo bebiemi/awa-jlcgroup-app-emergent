@@ -245,6 +245,12 @@ async def get_business_rules(
         query["is_active"] = is_active
     
     rules = await db.business_rules.find(query).sort("priority", 1).to_list(length=None)
+    
+    # Convertir les ObjectId en str
+    for rule in rules:
+        if "_id" in rule:
+            rule["_id"] = str(rule["_id"])
+    
     return {"rules": rules}
 
 
