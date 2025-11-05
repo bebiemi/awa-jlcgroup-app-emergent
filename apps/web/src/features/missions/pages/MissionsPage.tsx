@@ -71,6 +71,7 @@ export default function MissionsPage() {
     ...(selectedStatus !== 'all' && { status: selectedStatus }),
   })
 
+  const { getLabel: getContractTypeLabel } = useContractTypes()
   const [publishMission] = usePublishMissionMutation()
   const [deleteMission] = useDeleteMissionMutation()
 
