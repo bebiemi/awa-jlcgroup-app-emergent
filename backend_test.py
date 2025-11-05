@@ -1462,7 +1462,7 @@ def test_profile_completion_system():
     
     initial_profile_response = test_endpoint(
         "GET",
-        f"{API_BASE_URL}/profiles/me",
+        f"{AUTH_BASE_URL}/profiles/me",
         headers=headers,
         expected_status=200,
         test_name="Get Initial Profile"
