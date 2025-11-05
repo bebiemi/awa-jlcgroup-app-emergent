@@ -252,23 +252,32 @@ export default function InterimDashboard() {
             </p>
           </Link>
 
-          <div className="block p-6 bg-white rounded-lg shadow-md border-l-4 border-blue-500">
+          <Link
+            to="/offres"
+            className="block p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow border-l-4 border-blue-500"
+          >
             <DocumentTextIcon className="h-8 w-8 text-blue-600 mb-3" />
-            <h3 className="text-lg font-semibold text-gray-900">Missions</h3>
+            <h3 className="text-lg font-semibold text-gray-900">Offres de Missions</h3>
             <p className="text-sm text-gray-600 mt-2">
               Consulter les missions disponibles
             </p>
-            <p className="text-xs text-gray-400 mt-2">(Bientôt disponible)</p>
-          </div>
+            {!canApply && (
+              <div className="mt-2 text-xs text-orange-600 font-medium">
+                ⚠️ Candidatures bloquées (mission en cours)
+              </div>
+            )}
+          </Link>
 
-          <div className="block p-6 bg-white rounded-lg shadow-md border-l-4 border-green-500">
+          <Link
+            to="/mes-candidatures"
+            className="block p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow border-l-4 border-green-500"
+          >
             <CheckCircleIcon className="h-8 w-8 text-green-600 mb-3" />
             <h3 className="text-lg font-semibold text-gray-900">Mes Candidatures</h3>
             <p className="text-sm text-gray-600 mt-2">
               Suivre l'état de mes candidatures
             </p>
-            <p className="text-xs text-gray-400 mt-2">(Bientôt disponible)</p>
-          </div>
+          </Link>
         </div>
 
         {/* Profile Summary */}
