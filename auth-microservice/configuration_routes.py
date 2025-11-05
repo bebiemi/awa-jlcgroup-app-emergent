@@ -263,8 +263,13 @@ async def create_business_rule(
     Créer une règle métier (Admin uniquement)
     """
     rule.id = str(uuid.uuid4())
-    await db.business_rules.insert_one(rule.dict())
-    return {"rule": rule.dict()}
+    rule_dict = rule.dict()
+    await db.business_rules.insert_one(rule_dict)
+    
+    if "_id" in rule_dict:
+        del rule_dict["_id"]
+    
+    return {"rule": rule_dict}
 
 
 # ==================== CACHE ====================
