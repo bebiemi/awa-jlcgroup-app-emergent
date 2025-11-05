@@ -1,0 +1,240 @@
+# Configuration de base - Valeurs par défaut pour tous les environnements
+# Les valeurs sensibles sont dans .env ou secrets manager
+
+app:
+  name: "JLC Auth Service"
+  version: "1.0.0"
+  debug: false
+  timezone: "Africa/Libreville"
+
+server:
+  host: "0.0.0.0"
+  port: 8000
+  workers: 1
+  reload: false
+  log_level: "info"
+
+database:
+  name: "auth_db"
+  pool_size: 10
+  max_pool_size: 50
+  min_pool_size: 5
+  socket_timeout_ms: 30000
+  connect_timeout_ms: 10000
+  server_selection_timeout_ms: 5000
+
+security:
+  # JWT Configuration
+  jwt:
+    algorithm: "HS256"
+    access_token_expire_minutes: 30
+    refresh_token_expire_days: 7
+    
+  # Password Policy
+  password:
+    min_length: 8
+    require_uppercase: true
+    require_lowercase: true
+    require_digit: true
+    require_special: true
+    max_attempts: 5
+    lockout_duration_minutes: 30
+    
+  # OAuth2 Google
+  oauth:
+    google:
+      enabled: true
+      scopes:
+        - "openid"
+        - "email"
+        - "profile"
+      redirect_uri_path: "/api/auth/google/callback"
+      
+  # CORS
+  cors:
+    allow_origins:
+      - "http://localhost:3000"
+    allow_credentials: true
+    allow_methods:
+      - "GET"
+      - "POST"
+      - "PUT"
+      - "PATCH"
+      - "DELETE"
+      - "OPTIONS"
+    allow_headers:
+      - "*"
+    
+  # Rate Limiting
+  rate_limit:
+    enabled: true
+    default_limit: 100
+    default_period_seconds: 60
+    routes:
+      login: 
+        limit: 5
+        period_seconds: 300
+      register:
+        limit: 3
+        period_seconds: 3600
+      password_reset:
+        limit: 3
+        period_seconds: 3600
+
+workflows:
+  # Mission Workflow Configuration
+  mission:
+    auto_publish: false
+    application_deadline_days: 30
+    max_applications_per_mission: 100
+    
+  # Application Workflow Configuration
+  application:
+    # Délais par étape (en jours)
+    delays:
+      interview_scheduling: 7
+      interview_to_decision: 3
+      medical_check: 14
+      contract_preparation: 7
+      
+    # Transitions automatiques
+    auto_transitions:
+      enabled: true
+      interview_reminder_days: 2
+      medical_expiry_days: 90
+      
+    # Restrictions
+    restrictions:
+      max_applications_per_candidate: 10
+      min_days_between_applications: 1
+      allow_reapplication_after_rejection_days: 30
+
+notifications:
+  # Email Configuration
+  email:
+    enabled: true
+    from_name: "JLC Platform"
+    from_email: "noreply@jlc-platform.com"
+    reply_to: "support@jlc-platform.com"
+    
+    # Templates
+    templates:
+      application_received: "application_received"
+      interview_scheduled: "interview_scheduled"
+      candidate_selected: "candidate_selected"
+      candidate_rejected: "candidate_rejected"
+      medical_reminder: "medical_reminder"
+      contract_ready: "contract_ready"
+      
+    # Délais d'envoi
+    delays:
+      immediate: 0
+      hourly_digest: 3600
+      daily_digest: 86400
+      
+  # SMS Configuration (optionnel)
+  sms:
+    enabled: false
+    provider: "twilio"
+    
+  # Push Notifications (optionnel)
+  push:
+    enabled: false
+    provider: "firebase"
+
+storage:
+  # Document Upload Configuration
+  uploads:
+    base_path: "/app/uploads"
+    max_file_size_mb: 10
+    allowed_extensions:
+      - "pdf"
+      - "doc"
+      - "docx"
+      - "jpg"
+      - "jpeg"
+      - "png"
+    
+    # Par type de document
+    document_types:
+      cv:
+        max_size_mb: 5
+        allowed_formats: ["pdf", "doc", "docx"]
+      medical_certificate:
+        max_size_mb: 10
+        allowed_formats: ["pdf", "jpg", "png"]
+      contract:
+        max_size_mb: 10
+        allowed_formats: ["pdf"]
+        
+  # Cloud Storage (optionnel - pour prod)
+  cloud:
+    enabled: false
+    provider: "s3"  # s3, gcs, azure
+    bucket: ""
+    region: ""
+
+cache:
+  # Reference Cache Configuration
+  references:
+    enabled: true
+    ttl_minutes: 30
+    max_size: 1000
+    
+  # Session Cache
+  sessions:
+    enabled: true
+    ttl_minutes: 60
+
+features:
+  # Feature Flags
+  mfa:
+    enabled: false
+    methods: ["totp", "sms", "email"]
+    
+  email_verification:
+    enabled: true
+    token_expiry_hours: 24
+    
+  password_reset:
+    enabled: true
+    token_expiry_hours: 2
+    
+  social_login:
+    google: true
+    linkedin: false
+    
+  ai_features:
+    enabled: false
+    cv_parsing: false
+    candidate_scoring: false
+    skill_matching: false
+
+monitoring:
+  # Logging
+  logging:
+    level: "INFO"
+    format: "json"
+    file: "/var/log/jlc/auth-service.log"
+    max_bytes: 10485760  # 10MB
+    backup_count: 5
+    
+  # Metrics (optionnel)
+  metrics:
+    enabled: false
+    provider: "prometheus"
+    port: 9090
+    
+  # Tracing (optionnel)
+  tracing:
+    enabled: false
+    provider: "jaeger"
+
+localization:
+  default_language: "fr"
+  supported_languages:
+    - "fr"
+    - "en"
+  timezone: "Africa/Libreville"
+  date_format: "DD/MM/YYYY"
+  time_format: "HH:mm"
