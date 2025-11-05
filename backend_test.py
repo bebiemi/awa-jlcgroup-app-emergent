@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-User Creation Endpoint Testing
-Tests the POST /api/auth/security/users endpoint that's failing with 500 error
+Profile Completion Testing
+Tests the profile completion system with user 'paf'
 """
 
 import requests
@@ -16,6 +16,7 @@ import re
 
 # Test configuration
 AUTH_BASE_URL = "http://localhost:8000/api"  # Direct auth service URL
+API_BASE_URL = "http://localhost:8001/api"   # JLC API service URL
 FRONTEND_PROXY_URL = "http://localhost:3000/auth-api"  # Through Vite proxy
 
 # Global variable to store test data
