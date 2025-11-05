@@ -308,7 +308,7 @@ export default function InterimDashboard() {
                   <div className="mt-3">
                     {profile.profile.skills && profile.profile.skills.length > 0 ? (
                       <div className="flex flex-wrap gap-2">
-                        {profile.interim_data.skills.map((skill, index) => (
+                        {profile.profile.skills.map((skill, index) => (
                           <span
                             key={index}
                             className="px-3 py-1 bg-jlc-purple-100 text-jlc-purple-800 rounded-full text-xs font-medium"
