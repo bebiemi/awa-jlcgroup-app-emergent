@@ -1,30 +1,24 @@
 <analysis>
-The AI engineer's trajectory shows a robust, iterative development process focused on extending the JLC application's core functionality and addressing critical bugs. Initially, efforts were geared towards implementing the complex Candidat Mise à dispo (Mission Management) workflow, involving extensive backend API development and a full suite of frontend pages and navigation updates. This phase successfully integrated mission creation, application, and management features.
+The AI engineer's trajectory demonstrates a multi-phase development effort on the JLC application. Initially, it focused on extending the Candidat Mise à dispo (Mission Management) workflow with backend APIs and a complete frontend, along with crucial bug fixes in authentication and user management. This phase also involved extensive documentation for deployment.
 
-A significant portion of the work involved debugging and refining existing features, particularly authentication and user management. Key issues resolved include: a  during user creation, a 404 error for user role updates, and a 401 Unauthorized error due to incorrect authentication logic for non-admin users. Dashboards and navigation for different user roles (Company, Agency, Commercial) were also implemented and corrected.
+A significant shift occurred with the user's request for dynamic application configuration. The engineer first implemented a system for dynamic reference data, including backend models, API routes, frontend components (e.g., , ), and integrated these into existing mission-related pages. This involved substantial debugging related to API routing, database schema, and JSON serialization.
 
-Beyond feature development, the engineer addressed several user experience and operational requests, such as adjusting the inactivity timeout. A substantial part of the recent work focused on deployment and infrastructure, providing detailed guides for Docker, AWS, local SSL deployment, and Let's Encrypt integration and automated renewal. The trajectory concludes with the user requesting dynamic configuration for the entire application, signaling a shift towards making the application more flexible and maintainable, which the engineer has just begun to address.
+Subsequently, a more robust, centralized configuration system was introduced. This system supports environment-specific YAML files, environment variable overrides, and integrates with AWS Secrets Manager for production secrets. Core backend components like , , authentication (JWT, OAuth), and file upload mechanisms were refactored to use this new , eliminating hardcoded values. The work concluded with the creation of deployment guides for development and production environments, indicating a successful transition to a more maintainable and scalable architecture.
 </analysis>
 
 <product_requirements>
-The JLC application is a multi-actor interim management platform (Admin, Agency, Company, Interim) built with FastAPI/MongoDB (backend) and React 18/Redux Toolkit (frontend). It features JWT + OAuth2 Google IDP authentication, a robust RBAC system, extended user profiles, account validation, role-specific dashboards, and a notification system.
+The JLC application is a multi-actor interim management platform (Admin, Agency, Company, Interim) built with FastAPI/MongoDB and React 18/Redux Toolkit. It features JWT + OAuth2 Google IDP authentication, a robust RBAC system, extended user profiles, account validation, role-specific dashboards, and a notification system.
 
-Key features already implemented: Authentication (Google OAuth, local registration, email validation, password reset, MFA), UI/UX (adaptive landing page, sidebar, login modal, responsive design, standardized components like Modal, PhoneInput, ActionButton), Admin (user management, permissions, dashboard), Location Management (hierarchical CRUD), Validation System (user/company validations, validator assignment), Collaborator System, and Branding.
+Key features already implemented include comprehensive Authentication (Google OAuth, local registration, email validation, password reset, MFA), UI/UX (adaptive landing page, responsive design, standardized components), Admin (user management, permissions, dashboard), Location Management, Validation System, Collaborator System, and Branding.
 
-The main new feature implemented is the **Candidat Mise à dispo Workflow**. This multi-step process manages client resource needs, mission creation, job posting, candidate application, interviews, client selection, medical visits (file upload), contract validation (PDF upload), and dynamic process flow based on medical aptitude. This workflow is accessible via a Processus section. The user has also requested to eliminate hardcoded data, using dynamic variables, configurable tables, and parametric rules across the application.
+The main new feature implemented is the **Candidat Mise à dispo Workflow**, a multi-step process for mission creation, candidate application, interviews, client selection, medical visits (file upload), and contract validation. The user explicitly requested to eliminate hardcoded data, replacing it with dynamic variables, configurable tables, and parametric rules. This evolved into a requirement for a centralized configuration system that is versionable, environment-adaptable (local, dev, staging, prod YAMLs, .env), allows environment variable overrides, secures secrets (AWS Secrets Manager for production), is well-documented, and fails fast if critical variables are absent.
 </product_requirements>
 
 <key_technical_concepts>
--   **FastAPI**: Python web framework for RESTful APIs.
--   **MongoDB**: NoSQL database for flexible data storage.
--   **React 18 & TypeScript**: Frontend UI development.
--   **Redux Toolkit & RTK Query**: State management and API interaction.
--   **Vite**: Frontend build tool.
--   **OAuth2 Google IDP, JWT, RBAC, MFA**: Authentication and authorization.
--   **Docker & Docker Compose**: Containerization for deployment.
--   **AWS**: Cloud deployment target.
--   **Let's Encrypt**: SSL certificate management for HTTPS.
--   **Nginx**: Web server and reverse proxy.
+-   **Backend:** FastAPI, MongoDB, Uvicorn, Python, PyYAML, cryptography, python-dotenv, boto3.
+-   **Frontend:** React 18, TypeScript, Redux Toolkit, RTK Query, Vite.
+-   **Authentication:** JWT, OAuth2 (Google IDP), RBAC, MFA.
+-   **Deployment/Infra:** Docker, Docker Compose, Kubernetes, AWS, Nginx, Let's Encrypt, Supervisor.
 </key_technical_concepts>
 
 <code_architecture>
@@ -32,65 +26,85 @@ The application uses a monorepo structure with  (FastAPI) and  (React/Vite) symb
 
 
 **File Importance & Changes**:
--    (New): Defines , ,  data models. Crucial for the new mission workflow.
--   : Contains  model.
--   :
-    -   **Changes**: Fixed  by correcting  import to  and adding  import, resolving 500 errors during user creation.
--    (New): Implements mission CRUD and application management APIs.
--    (New): Handles document upload APIs.
--   :
-    -   **Changes**: Integrated  and .
--   :
-    -   **Changes**: Added a  endpoint to update user details and roles, fixing a 404 error during user role assignment.
--   :
-    -   **Changes**: Updated routing for all new mission-related pages. Modified redirection logic for 'company', 'agency', and 'commercial' roles to their respective dashboards instead of .
--   :
-    -   **Changes**: Registered new  and  RTK Query slices.
--   :
-    -   **Changes**: Added new navigation links for the mission workflow. Implemented specific navigation sections for Admin, Company, Agency, and Commercial roles.
--   :
-    -   **Changes**: Modified redirection logic after login to direct users to their specific role dashboards (, , ) based on their highest priority role.
--   : Contains  mutation used by .
--   : Contains  mutation used by .
--   : Frontend form for creating users.
--   : Frontend modal for editing user details, including role assignment.
--    (New Pages & API): Complete set of frontend files for Mission Management.
--    (New): Dedicated dashboard for 'company' role.
--    (New): Dedicated dashboard for 'agency' role.
--    (New): Dedicated dashboard for 'commercial' role.
--   :
-    -   **Changes**: Modified  to 60 (1 hour) and  to 5.
--    (New): Optimized Nginx configuration with Let's Encrypt support.
--    (New): Script for renewing Let's Encrypt certificates.
--    (New): Script for automated SSL renewal setup.
--    (New): Script for containerized SSL renewal.
--    (New files): Multiple new Markdown documents were created for user guidance, troubleshooting, and various deployment procedures (e.g., , , , , ).
+-    (New): Defines  and  data models for dynamic configuration.
+-    (New): Implements API endpoints for managing reference categories and references. Addressed  serialization for responses.
+-    (New): Populates initial mission-related reference data. Updated to target .
+-    (New): Populates additional reference categories.
+-    (New): Core component of the centralized configuration system, handling hierarchical loading from YAML, environment variables, encrypted secrets, and AWS Secrets Manager.
+-   usage: encrypt_env.py [-h] {generate-key,encrypt,decrypt} ...
+
+Chiffrer/déchiffrer les fichiers .env
+
+positional arguments:
+  {generate-key,encrypt,decrypt}
+                        Commandes disponibles
+    generate-key        Générer une nouvelle clé
+    encrypt             Chiffrer un fichier
+    decrypt             Déchiffrer un fichier
+
+options:
+  -h, --help            show this help message and exit
+
+Exemples:
+  # Générer une clé de chiffrement
+  python scripts/encrypt_env.py generate-key
+  
+  # Chiffrer un fichier .env
+  python scripts/encrypt_env.py encrypt .env .env.encrypted
+  
+  # Déchiffrer un fichier .env.encrypted
+  python scripts/encrypt_env.py decrypt .env.encrypted .env
+  
+  # Utiliser une clé personnalisée
+  python scripts/encrypt_env.py encrypt .env .env.encrypted --key-file my.key
+         (New): Utility for encrypting and decrypting  files for secure local secret management.
+-    (New): Implements a simple in-memory cache for dynamic reference data.
+-   : Integrated . Migrated to use  for application-wide settings (e.g., database name, JWT algorithm).
+-   : Modified to expose the  instance and retrieve configurations (e.g., MongoDB URL, JWT settings) from it.
+-   : Enhanced to validate mission and application statuses against dynamically loaded reference data from .
+-   : Migrated to fetch rate limiting configurations from .
+-   : Migrated to retrieve authentication-related parameters (e.g., JWT token expiration) from .
+-   : Migrated to use  for Google OAuth client ID, client secret, and redirect URIs.
+-   : Migrated to use  for document upload settings (path, max file size, allowed extensions).
+-   : Registered the new  RTK Query slice.
+-    (New): RTK Query API for interacting with the backend configuration endpoints. Base URL adjusted for auth-microservice.
+-    (New): React hook for fetching and consuming dynamic reference data in frontend components.
+-    (New): Reusable UI component for selecting values from dynamic references.
+-    (New): Reusable UI component for displaying visually distinct status badges based on dynamic reference data.
+-    (New): Frontend page for administrators to manage dynamic reference categories and values.
+-    (New): A new placeholder page for managing business rules (frontend structure added, backend implementation pending).
+-   : Updated routing to include the new  and .
+-   : Modified to include navigation links for  (relocated to Paramètres) and .
+-   : Adapted to utilize  for contract type selection.
+-   : Integrated  for dynamic mission statuses and  for displaying contract type labels.
+-   : Adapted to use  for application statuses and conditionally display action buttons based on dynamic status transitions.
+-   : Adapted to display mission details using dynamic references for statuses and contract types.
+-   : Adapted to use  for editing mission contract types.
+-   : Adapted to display application statuses using .
+-   : A series of new Markdown documents were created, detailing the dynamic configuration system, migration logs, and deployment guides for various environments.
 </code_architecture>
 
 <pending_tasks>
 -   Complete frontend UI for managing custom fields in Location Management.
 -   Refine frontend UI and workflow for assigning validators in the Validation System.
 -   Integrate the  component into other relevant application pages (e.g., ProfilePage).
--   Convert all remaining modals to use the new reusable  component across the application.
+-   Convert all remaining modals to use the new reusable  component.
 -   Standardize action icons across all relevant pages using the new  component.
 -   Implement real-time notifications for the new mission workflow.
 -   Implement automatic email notifications for the new mission workflow.
 -   Implement cloud storage (S3) for uploaded documents.
--   Implement automated E2E and backend tests for the new features.
--   Continue developing the system for dynamic configuration (variables, configurable tables, parametric rules).
+-   Implement automated E2E and backend tests for the new features (beyond ).
+-   Fully implement the  in the frontend and connect it to backend logic.
 </pending_tasks>
 
 <current_work>
-The AI engineer has most recently been working on enhancing the application's configurability by moving away from hardcoded values. Following the user's request for dynamic variables, configurable tables, and parametric rules across the application, the engineer initiated the creation of a comprehensive system for dynamic configuration.
+The AI engineer has most recently completed Phase 3 of implementing a centralized configuration system. This involved migrating core backend functionalities—specifically, JWT token management, Google OAuth integration, and file upload services—to use the newly developed . Files such as , , and  were refactored to retrieve critical settings like JWT secrets, OAuth client IDs, and file storage parameters from the .
 
-Specifically, the work involved:
--   Acknowledging the user's request and recognizing it as a best practice for scalability and maintainability.
--   Beginning the analysis of the application to identify areas that can benefit from dynamic configuration.
--   Creating a new documentation file: . This guide is intended to outline the system and approach for implementing dynamic configuration. The engineer noted that the initial file was becoming too large and planned to create a second, supplementary file for this purpose, indicating a thorough and detailed approach to this new feature.
+This ensures that these vital application settings are no longer hardcoded but are dynamically loaded based on the environment using hierarchical YAML files (e.g., , , ) and environment variables, with support for encrypted secrets and AWS Secrets Manager. A new test script () was developed and successfully executed, verifying the correct loading and application of all migrated configurations and confirming backwards compatibility. Documentation () summarizing this phase was also created.
 
-This task is currently in its very early stages, focused on documentation and conceptualization of the dynamic configuration system, which will lay the groundwork for future implementation.
+Following this, the user requested the preparation of deployment guides for  and  environments. The engineer has just initiated this task by creating the placeholder documentation files:  and . The immediate focus is now on detailing the deployment procedures, including how to configure and manage the new centralized settings for these specific environments.
 </current_work>
 
 <optional_next_step>
-Create the second part of the  to detail the dynamic configuration system.
+Prepare the content for  and , detailing configuration management and AWS Secrets Manager integration for production.
 </optional_next_step>
