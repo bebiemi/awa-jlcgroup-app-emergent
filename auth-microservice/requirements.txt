@@ -17,3 +17,7 @@ pydantic-settings==2.6.1
 pillow==12.0.0
 pyotp==2.9.0
 qrcode==8.2
+pyyaml
+python-dotenv
+cryptography
+boto3
