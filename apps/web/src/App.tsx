@@ -275,6 +275,14 @@ function App() {
         }
       />
       <Route
+        path="/mes-candidatures"
+        element={
+          <ProtectedRoute requiredRoles={[roles.interim]}>
+            <MesCandidaturesPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/entreprise"
         element={
           <ProtectedRoute requiredRoles={[roles.company]}>
