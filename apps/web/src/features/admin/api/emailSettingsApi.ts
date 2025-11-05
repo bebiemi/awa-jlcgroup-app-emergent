@@ -119,6 +119,40 @@ export const emailSettingsApi = createApi({
 });
 
 export const {
+
+export const EMAIL_PROVIDERS: EmailProvider[] = [
+  { value: 'gmail', label: 'Gmail' },
+  { value: 'sendgrid', label: 'SendGrid' },
+  { value: 'office365', label: 'Office 365' },
+  { value: 'mailtrap', label: 'Mailtrap (Test)' },
+  { value: 'custom', label: 'Personnalisé' },
+];
+
+export const PROVIDER_PRESETS: Record<string, Partial<EmailConfigUpdate>> = {
+  gmail: {
+    smtp_host: 'smtp.gmail.com',
+    smtp_port: 587,
+    smtp_use_tls: true,
+  },
+  sendgrid: {
+    smtp_host: 'smtp.sendgrid.net',
+    smtp_port: 587,
+    smtp_user: 'apikey',
+    smtp_use_tls: true,
+  },
+  office365: {
+    smtp_host: 'smtp.office365.com',
+    smtp_port: 587,
+    smtp_use_tls: true,
+  },
+  mailtrap: {
+    smtp_host: 'smtp.mailtrap.io',
+    smtp_port: 2525,
+    smtp_use_tls: true,
+  },
+  custom: {},
+};
+
   useGetEmailSettingsQuery,
   useUpdateEmailSettingsMutation,
   useTestEmailConfigMutation,
