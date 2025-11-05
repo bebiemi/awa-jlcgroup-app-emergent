@@ -1593,6 +1593,299 @@ def test_user_paf_login_issue():
     return True
 
 
+def test_email_notification_system():
+    """Test the Email Notification System comprehensively"""
+    print(f"\n{Colors.BOLD}=== Testing Email Notification System ==={Colors.ENDC}")
+    
+    # Get admin token for authentication
+    admin_token = test_admin_login()
+    if not admin_token:
+        log_test("Email System Test", "FAIL", "Cannot get admin token")
+        return False
+    
+    admin_headers = {"Authorization": f"Bearer {admin_token}"}
+    
+    # Test 1: Email Status Check (GET /api/emails/status)
+    print(f"\n  Test 1: Email Status Check (Admin Access)")
+    
+    status_response = test_endpoint(
+        "GET",
+        f"{AUTH_BASE_URL}/emails/status",
+        headers=admin_headers,
+        expected_status=200,
+        test_name="Email Status Check (Admin)"
+    )
+    
+    if status_response:
+        log_test("Email Status Response", "PASS", "Status endpoint accessible to admin")
+        
+        # Verify response structure
+        expected_fields = ["enabled", "configured", "smtp_configured", "recipients_configured", "recipients_count", "status"]
+        missing_fields = [field for field in expected_fields if field not in status_response]
+        
+        if missing_fields:
+            log_test("Email Status Fields", "FAIL", f"Missing fields: {missing_fields}")
+        else:
+            log_test("Email Status Fields", "PASS", "All expected fields present")
+            
+        # Log current status
+        print(f"    Enabled: {status_response.get('enabled', 'Unknown')}")
+        print(f"    Configured: {status_response.get('configured', 'Unknown')}")
+        print(f"    SMTP Configured: {status_response.get('smtp_configured', 'Unknown')}")
+        print(f"    Recipients Configured: {status_response.get('recipients_configured', 'Unknown')}")
+        print(f"    Recipients Count: {status_response.get('recipients_count', 'Unknown')}")
+        print(f"    Status: {status_response.get('status', 'Unknown')}")
+        
+        # Since email is not configured by default, expect configured: false
+        if not status_response.get('configured', True):
+            log_test("Email Not Configured (Expected)", "PASS", "Email service correctly reports as not configured")
+        else:
+            log_test("Email Configuration Status", "WARN", "Email service reports as configured (unexpected)")
+    
+    # Test 2: Email Config Check (GET /api/emails/config) - Super Admin Only
+    print(f"\n  Test 2: Email Config Check (Super Admin Access)")
+    
+    config_response = test_endpoint(
+        "GET",
+        f"{AUTH_BASE_URL}/emails/config",
+        headers=admin_headers,
+        expected_status=200,
+        test_name="Email Config Check (Super Admin)"
+    )
+    
+    if config_response:
+        log_test("Email Config Response", "PASS", "Config endpoint accessible to super admin")
+        
+        # Verify response structure (without password)
+        expected_config_fields = ["enabled", "configured", "smtp_host", "smtp_port", "smtp_user", "smtp_use_tls", "from_email", "from_name", "admin_emails", "admin_count"]
+        missing_config_fields = [field for field in expected_config_fields if field not in config_response]
+        
+        if missing_config_fields:
+            log_test("Email Config Fields", "FAIL", f"Missing fields: {missing_config_fields}")
+        else:
+            log_test("Email Config Fields", "PASS", "All expected config fields present")
+            
+        # Verify password is not included
+        if "smtp_password" in config_response:
+            log_test("Password Security", "FAIL", "SMTP password exposed in config response")
+        else:
+            log_test("Password Security", "PASS", "SMTP password correctly hidden from response")
+            
+        # Log config details
+        print(f"    SMTP Host: {config_response.get('smtp_host', 'Not set')}")
+        print(f"    SMTP Port: {config_response.get('smtp_port', 'Not set')}")
+        print(f"    SMTP User: {config_response.get('smtp_user', 'Not set')}")
+        print(f"    From Email: {config_response.get('from_email', 'Not set')}")
+        print(f"    Admin Emails Count: {config_response.get('admin_count', 0)}")
+    
+    # Test 3: Authentication Protection
+    print(f"\n  Test 3: Authentication Protection")
+    
+    # Test without authentication
+    endpoints_to_test = [
+        ("/emails/status", "GET", "Email Status"),
+        ("/emails/config", "GET", "Email Config"),
+        ("/emails/test", "POST", "Email Test")
+    ]
+    
+    for endpoint, method, description in endpoints_to_test:
+        response = test_endpoint(
+            method,
+            f"{AUTH_BASE_URL}{endpoint}",
+            expected_status=401,
+            test_name=f"{description} Without Auth"
+        )
+        
+        if response:
+            log_test(f"{description} Auth Protection", "PASS", "Unauthenticated request correctly rejected")
+    
+    # Test 4: Service Not Configured Behavior
+    print(f"\n  Test 4: Service Not Configured Behavior")
+    
+    # Test email test endpoint when service is not configured
+    test_email_data = {
+        "to_emails": ["test@example.com"],
+        "subject": "Test Email",
+        "message": "This is a test email"
+    }
+    
+    test_email_response = test_endpoint(
+        "POST",
+        f"{AUTH_BASE_URL}/emails/test",
+        data=test_email_data,
+        headers=admin_headers,
+        expected_status=503,  # Service Unavailable
+        test_name="Email Test (Service Not Configured)"
+    )
+    
+    if test_email_response:
+        error_detail = test_email_response.get("detail", "")
+        if "non configuré" in error_detail or "not configured" in error_detail.lower():
+            log_test("Service Not Configured Error", "PASS", f"Correct error message: {error_detail}")
+        else:
+            log_test("Service Not Configured Error", "WARN", f"Unexpected error message: {error_detail}")
+    
+    # Test 5: Test Rollback Notification Endpoint
+    print(f"\n  Test 5: Test Rollback Notification")
+    
+    rollback_test_response = test_endpoint(
+        "POST",
+        f"{AUTH_BASE_URL}/emails/test-rollback-notification",
+        headers=admin_headers,
+        expected_status=503,  # Service Unavailable since not configured
+        test_name="Rollback Notification Test (Service Not Configured)"
+    )
+    
+    if rollback_test_response:
+        error_detail = rollback_test_response.get("detail", "")
+        if "non configuré" in error_detail or "not configured" in error_detail.lower():
+            log_test("Rollback Notification Error", "PASS", f"Correct error message: {error_detail}")
+        else:
+            log_test("Rollback Notification Error", "WARN", f"Unexpected error message: {error_detail}")
+    
+    # Test 6: OpenAPI Documentation Check
+    print(f"\n  Test 6: OpenAPI Documentation Check")
+    
+    # Get OpenAPI schema
+    openapi_response = test_endpoint(
+        "GET",
+        f"{AUTH_BASE_URL}/../openapi.json",
+        expected_status=200,
+        test_name="OpenAPI Schema"
+    )
+    
+    if openapi_response:
+        paths = openapi_response.get("paths", {})
+        email_endpoints = [path for path in paths.keys() if "/emails/" in path]
+        
+        expected_email_endpoints = [
+            "/api/emails/status",
+            "/api/emails/config", 
+            "/api/emails/test",
+            "/api/emails/test-rollback-notification"
+        ]
+        
+        found_endpoints = []
+        for expected in expected_email_endpoints:
+            if expected in paths:
+                found_endpoints.append(expected)
+        
+        if len(found_endpoints) == len(expected_email_endpoints):
+            log_test("OpenAPI Email Endpoints", "PASS", f"All {len(found_endpoints)} email endpoints registered")
+        else:
+            log_test("OpenAPI Email Endpoints", "WARN", f"Found {len(found_endpoints)}/{len(expected_email_endpoints)} endpoints")
+        
+        # Check if endpoints are tagged correctly
+        email_tags_found = False
+        for path_info in paths.values():
+            for method_info in path_info.values():
+                if isinstance(method_info, dict) and "emails" in method_info.get("tags", []):
+                    email_tags_found = True
+                    break
+            if email_tags_found:
+                break
+        
+        if email_tags_found:
+            log_test("OpenAPI Email Tags", "PASS", "Email endpoints correctly tagged")
+        else:
+            log_test("OpenAPI Email Tags", "WARN", "Email endpoints may not be properly tagged")
+    
+    return True
+
+
+def test_email_rollback_integration():
+    """Test email notification integration with version rollback"""
+    print(f"\n{Colors.BOLD}=== Testing Email Rollback Integration ==={Colors.ENDC}")
+    
+    # Get admin token
+    admin_token = test_admin_login()
+    if not admin_token:
+        log_test("Email Rollback Integration", "FAIL", "Cannot get admin token")
+        return False
+    
+    admin_headers = {"Authorization": f"Bearer {admin_token}"}
+    
+    # Test 1: Check if version routes are available
+    print(f"\n  Test 1: Check Version Routes Availability")
+    
+    # Try to get list of versions
+    versions_response = test_endpoint(
+        "GET",
+        f"{AUTH_BASE_URL}/versions/list",
+        headers=admin_headers,
+        expected_status=200,
+        test_name="Get Versions List"
+    )
+    
+    if versions_response:
+        log_test("Version Routes Available", "PASS", "Version management endpoints accessible")
+        
+        versions = versions_response.get("versions", [])
+        print(f"    Found {len(versions)} configuration versions")
+        
+        # Test 2: Create a test snapshot
+        print(f"\n  Test 2: Create Test Snapshot")
+        
+        snapshot_response = test_endpoint(
+            "POST",
+            f"{AUTH_BASE_URL}/versions/snapshot?description=Test snapshot for email integration&tags=test",
+            headers=admin_headers,
+            expected_status=200,
+            test_name="Create Test Snapshot"
+        )
+        
+        if snapshot_response:
+            log_test("Test Snapshot Created", "PASS", "Snapshot creation successful")
+            snapshot_id = snapshot_response.get("snapshot", {}).get("id")
+            
+            if snapshot_id:
+                print(f"    Snapshot ID: {snapshot_id}")
+                
+                # Test 3: Attempt rollback (should include email notification attempt)
+                print(f"\n  Test 3: Test Rollback with Email Notification")
+                
+                rollback_data = {
+                    "version_id": snapshot_id,
+                    "reason": "Test rollback for email notification integration"
+                }
+                
+                rollback_response = test_endpoint(
+                    "POST",
+                    f"{AUTH_BASE_URL}/versions/rollback",
+                    data=rollback_data,
+                    headers=admin_headers,
+                    expected_status=200,
+                    test_name="Rollback with Email Notification"
+                )
+                
+                if rollback_response:
+                    log_test("Rollback Execution", "PASS", "Rollback completed successfully")
+                    
+                    # Check if email notification status is included
+                    email_notification_status = rollback_response.get("email_notification")
+                    if email_notification_status:
+                        print(f"    Email Notification Status: {email_notification_status}")
+                        
+                        if email_notification_status == "disabled":
+                            log_test("Email Notification Status", "PASS", "Email notification correctly reported as disabled")
+                        elif email_notification_status == "sent":
+                            log_test("Email Notification Status", "WARN", "Email notification reported as sent (unexpected)")
+                        else:
+                            log_test("Email Notification Status", "INFO", f"Email notification status: {email_notification_status}")
+                    else:
+                        log_test("Email Notification Field", "FAIL", "email_notification field missing from rollback response")
+                else:
+                    log_test("Rollback Execution", "FAIL", "Rollback failed")
+            else:
+                log_test("Snapshot ID", "FAIL", "No snapshot ID returned")
+        else:
+            log_test("Test Snapshot Creation", "FAIL", "Cannot create test snapshot")
+    else:
+        log_test("Version Routes Available", "FAIL", "Version management endpoints not accessible")
+    
+    return True
+
+
 def test_paf_authentication_fix():
     """Test the authentication fix for user 'paf' as requested in review"""
     print(f"\n{Colors.BOLD}=== Testing User 'paf' Authentication Fix ==={Colors.ENDC}")
