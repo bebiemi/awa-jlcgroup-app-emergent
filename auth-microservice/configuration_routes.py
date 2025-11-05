@@ -38,6 +38,12 @@ async def get_references(
         query["is_active"] = is_active
     
     references = await db.system_references.find(query).sort("order", 1).to_list(length=None)
+    
+    # Convertir les ObjectId en str pour JSON serialization
+    for ref in references:
+        if "_id" in ref:
+            ref["_id"] = str(ref["_id"])
+    
     return {"references": references}
 
 
