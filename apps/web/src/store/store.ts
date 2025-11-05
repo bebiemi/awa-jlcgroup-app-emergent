@@ -44,7 +44,8 @@ export const store = configureStore({
       .concat(locationsApi.middleware)
       .concat(locationApi.middleware)
       .concat(missionApi.middleware)
-      .concat(configurationApi.middleware),
+      .concat(configurationApi.middleware)
+      .concat(featureFlagApi.middleware),
 })
 
 export type RootState = ReturnType<typeof store.getState>
