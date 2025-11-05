@@ -145,6 +145,14 @@ function App() {
           </ProtectedRoute>
         }
       />
+      <Route
+        path="/admin/feature-flags"
+        element={
+          <ProtectedRoute requiredRoles={[roles.admin, roles.super_admin]}>
+            <FeatureFlagsPage />
+          </ProtectedRoute>
+        }
+      />
       
       {/* Routes Missions - Admin & Commercial */}
       <Route
