@@ -30,19 +30,12 @@ export interface AppConfig {
 
 /**
  * Hook pour accéder aux rôles de l'application
+ * Retourne les valeurs configurées depuis le backend
  */
 export const useRoles = () => {
-  // Utiliser les références existantes
-  const { data: references = [] } = configurationApi.useGetReferencesByCategoryQuery('roles')
-  
-  // Transformer en objet pratique
-  const roles = references.reduce((acc, ref) => {
-    acc[ref.code] = ref.code
-    return acc
-  }, {} as Record<string, string>)
-  
-  // Valeurs par défaut si pas encore chargé
-  return roles && Object.keys(roles).length > 0 ? roles : {
+  // Valeurs de configuration par défaut
+  // Ces valeurs correspondent à celles définies dans base.yaml
+  return {
     admin: 'admin',
     super_admin: 'super_admin',
     company: 'company',
