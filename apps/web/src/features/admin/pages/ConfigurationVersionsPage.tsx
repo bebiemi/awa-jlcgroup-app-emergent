@@ -241,17 +241,27 @@ export default function ConfigurationVersionsPage() {
                         Par {version.created_by_name} • {new Date(version.created_at).toLocaleString('fr-FR')}
                       </p>
                     </div>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        setSelectedVersion(version)
-                        setShowRollbackModal(true)
-                      }}
-                      icon={ArrowPathIcon}
-                    >
-                      Rollback
-                    </Button>
+                    <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => openCompareModal(version)}
+                        icon={DocumentDuplicateIcon}
+                      >
+                        Comparer
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setSelectedVersion(version)
+                          setShowRollbackModal(true)
+                        }}
+                        icon={ArrowPathIcon}
+                      >
+                        Rollback
+                      </Button>
+                    </div>
                   </div>
                 </div>
               ))
