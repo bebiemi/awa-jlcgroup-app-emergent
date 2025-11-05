@@ -1509,7 +1509,7 @@ def test_profile_completion_system():
         
         update_response = test_endpoint(
             "PUT",
-            f"{API_BASE_URL}/profiles/me",
+            f"{AUTH_BASE_URL}/profiles/me",
             data=update_data,
             headers=headers,
             expected_status=200,
