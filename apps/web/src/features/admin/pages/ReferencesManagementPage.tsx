@@ -146,18 +146,23 @@ export default function ReferencesManagementPage() {
         
         {/* Sélecteur de catégorie */}
         <Card>
-          <div className="flex gap-2 flex-wrap">
+          <div className="mb-4">
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">Catégories</h3>
+            <p className="text-sm text-gray-600">Sélectionnez une catégorie pour gérer ses références</p>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-2">
             {categories.map((cat) => (
               <button
                 key={cat.value}
                 onClick={() => setSelectedCategory(cat.value)}
-                className={`px-4 py-2 rounded-lg transition-colors ${
+                className={`px-3 py-2 rounded-lg transition-all text-sm font-medium ${
                   selectedCategory === cat.value
-                    ? 'bg-jlc-purple-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    ? 'bg-jlc-purple-600 text-white shadow-lg scale-105'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:scale-102'
                 }`}
               >
-                {cat.label}
+                <div className="text-lg mb-1">{cat.icon}</div>
+                <div className="text-xs">{cat.label}</div>
               </button>
             ))}
           </div>
