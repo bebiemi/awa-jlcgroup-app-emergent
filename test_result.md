@@ -185,6 +185,19 @@ backend:
         agent: "testing"
         comment: "✅ MISSION WORKFLOW TEST ACCOUNTS SUCCESSFULLY CREATED AND VERIFIED: Created 3 test accounts as requested for mission workflow testing using POST /api/auth/security/users endpoint. ACCOUNTS: 1) Company Account (entreprise.test@jlcgroup.com / entreprise_test / Entreprise2025!) with 'company' role, 2) Commercial Account (commercial.test@jlcgroup.com / commercial_test / Commercial2025!) with 'commercial' and 'admin' roles, 3) Second Interim Account (interim2.test@jlcgroup.com / interim_test2 / Interim2025!) with 'interim' role. CRITICAL BUG FIXED: Discovered password hash field mismatch - user creation stored as 'hashed_password' but login expected 'password_hash'. Fixed security_routes.py line 339 and updated 9 existing users in MongoDB. LOGIN TESTING: All 3 accounts verified working correctly - successful login, proper JWT tokens, correct role assignment, valid user data returned. All accounts have 'active' status and send_invitation set to false as requested. Admin credentials (admin/awana2025) confirmed working for account management. Test accounts ready for mission workflow testing."
 
+  - task: "Email Notification System"
+    implemented: true
+    working: "pending_test"
+    file: "/app/auth-microservice/email_routes.py"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+      - working: "pending_test"
+        agent: "main"
+        comment: "Email notification system implemented. Router registered in main.py. Endpoints: GET /api/emails/config (super-admin), GET /api/emails/status (admin), POST /api/emails/test (super-admin), POST /api/emails/test-rollback-notification (super-admin). Integration with version rollback via BackgroundTasks. Needs comprehensive testing."
+
+
 frontend:
   - task: "Registration Form UI"
     implemented: true
