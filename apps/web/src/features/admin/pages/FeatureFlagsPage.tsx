@@ -27,8 +27,11 @@ export default function FeatureFlagsPage() {
   const [typeFilter, setTypeFilter] = useState<string>('')
   const [showModal, setShowModal] = useState(false)
   const [showRolloutModal, setShowRolloutModal] = useState(false)
+  const [showImportModal, setShowImportModal] = useState(false)
   const [editingFlag, setEditingFlag] = useState<FeatureFlag | null>(null)
   const [selectedFlag, setSelectedFlag] = useState<FeatureFlag | null>(null)
+  const [importFile, setImportFile] = useState<File | null>(null)
+  const [overwriteExisting, setOverwriteExisting] = useState(false)
 
   // Form state
   const [formData, setFormData] = useState<CreateFeatureFlagRequest>({
