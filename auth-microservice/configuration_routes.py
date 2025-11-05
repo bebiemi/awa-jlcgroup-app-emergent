@@ -62,6 +62,91 @@ async def get_references(
     return {"references": references}
 
 
+@router.get("/all")
+async def get_all_config(
+    db: AsyncIOMotorDatabase = Depends(get_database)
+):
+    """
+    Récupérer toute la configuration structurée pour le frontend
+    Public (utilisé par useAppConfig)
+    Optimisé avec cache
+    """
+    from awana_auth.core.config_manager import get_config
+    config_manager = get_config()
+    
+    # Charger les rôles depuis la configuration YAML
+    roles = {
+        "admin": config_manager.get("security.roles.admin"),
+        "super_admin": config_manager.get("security.roles.super_admin"),
+        "company": config_manager.get("security.roles.company"),
+        "interim": config_manager.get("security.roles.interim"),
+        "agency": config_manager.get("security.roles.agency"),
+        "commercial": config_manager.get("security.roles.commercial"),
+        "validator": config_manager.get("security.roles.validator"),
+        "all": config_manager.get("security.roles.all")
+    }
+    
+    # Charger les statuts utilisateur
+    user_statuses = {
+        "active": config_manager.get("security.user_statuses.active"),
+        "pending": config_manager.get("security.user_statuses.pending"),
+        "suspended": config_manager.get("security.user_statuses.suspended"),
+        "deleted": config_manager.get("security.user_statuses.deleted"),
+        "blocked": config_manager.get("security.user_statuses.blocked"),
+        "all": config_manager.get("security.user_statuses.all")
+    }
+    
+    # Charger les référentiels dynamiques depuis la BD
+    mission_statuses_refs = await db.system_references.find(
+        {"category": "mission_statuses", "is_active": True}
+    ).sort("order", 1).to_list(length=None)
+    
+    application_statuses_refs = await db.system_references.find(
+        {"category": "application_statuses", "is_active": True}
+    ).sort("order", 1).to_list(length=None)
+    
+    validation_statuses_refs = await db.system_references.find(
+        {"category": "validation_statuses", "is_active": True}
+    ).sort("order", 1).to_list(length=None)
+    
+    validation_types_refs = await db.system_references.find(
+        {"category": "validation_types", "is_active": True}
+    ).sort("order", 1).to_list(length=None)
+    
+    contract_types_refs = await db.system_references.find(
+        {"category": "contract_types", "is_active": True}
+    ).sort("order", 1).to_list(length=None)
+    
+    # Structurer la réponse
+    return {
+        "roles": roles,
+        "user_statuses": user_statuses,
+        "mission_statuses": [ref["code"] for ref in mission_statuses_refs],
+        "application_statuses": [ref["code"] for ref in application_statuses_refs],
+        "validation_statuses": [ref["code"] for ref in validation_statuses_refs],
+        "validation_types": [ref["code"] for ref in validation_types_refs],
+        "contract_types": [ref["code"] for ref in contract_types_refs],
+        "permissions": {
+            "mission": {
+                "create": config_manager.get("workflows.mission.permissions.create"),
+                "view_all": config_manager.get("workflows.mission.permissions.view_all"),
+                "publish": config_manager.get("workflows.mission.permissions.publish"),
+                "edit": config_manager.get("workflows.mission.permissions.edit"),
+                "delete": config_manager.get("workflows.mission.permissions.delete"),
+            },
+            "application": {
+                "view_all": config_manager.get("workflows.application.permissions.view_all"),
+                "manage": config_manager.get("workflows.application.permissions.manage"),
+                "view_own": config_manager.get("workflows.application.permissions.view_own"),
+            },
+            "validation": {
+                "validator_roles": config_manager.get("workflows.validation.permissions.validator_roles"),
+                "view_all": config_manager.get("workflows.validation.permissions.view_all"),
+            }
+        }
+    }
+
+
 @router.post("/references", dependencies=[Depends(require_admin)])
 async def create_reference(
     ref: CreateReferenceRequest,
