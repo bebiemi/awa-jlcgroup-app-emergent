@@ -16,6 +16,7 @@ import clsx from 'clsx'
 export default function InterimDashboard() {
   const { data: profile, isLoading: profileLoading } = useGetMyProfileQuery()
   const { data: validation } = useGetMyValidationQuery()
+  const userStatuses = useUserStatuses()
 
   if (profileLoading) {
     return (
