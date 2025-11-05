@@ -17,7 +17,7 @@ export const applicationApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: API_URL,
     prepareHeaders: (headers) => {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('access_token');
       if (token) {
         headers.set('Authorization', `Bearer ${token}`);
       }
