@@ -20,6 +20,7 @@ import {
   ShieldCheckIcon,
   MapPinIcon,
   ClockIcon,
+  FlagIcon,
 } from '@heroicons/react/24/outline'
 
 interface NavSection {
