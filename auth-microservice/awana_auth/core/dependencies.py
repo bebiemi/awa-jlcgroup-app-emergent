@@ -51,6 +51,11 @@ def get_database() -> AsyncIOMotorDatabase:
 get_db = get_database
 
 
+def get_configuration():
+    """Dependency to inject ConfigManager in routes"""
+    return get_config()
+
+
 def get_jwt_manager() -> JWTManager:
     """Get JWT manager instance"""
     global _jwt_manager
