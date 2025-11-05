@@ -29,7 +29,16 @@ async def get_references(
     """
     Récupérer les référentiels
     Public (utilisé côté frontend)
+    Avec cache de 30 minutes
     """
+    # Tenter de récupérer depuis le cache (seulement si category est fournie)
+    if category and parent_id is None:
+        cache_key = get_cache_key(category, is_active)
+        cached_data = await reference_cache.get(cache_key)
+        if cached_data is not None:
+            return {"references": cached_data}
+    
+    # Si pas en cache, récupérer depuis la BD
     query = {}
     if category:
         query["category"] = category
@@ -44,6 +53,11 @@ async def get_references(
     for ref in references:
         if "_id" in ref:
             ref["_id"] = str(ref["_id"])
+    
+    # Mettre en cache si category fournie
+    if category and parent_id is None:
+        cache_key = get_cache_key(category, is_active)
+        await reference_cache.set(cache_key, references)
     
     return {"references": references}
 
