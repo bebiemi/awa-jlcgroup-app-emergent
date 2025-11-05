@@ -13,6 +13,7 @@ import uuid
 import os
 from datetime import datetime, timezone
 import mimetypes
+from awana_auth.utils.config_helpers import cfg
 
 profile_router = APIRouter(prefix="/profiles", tags=["Profiles"])
 
@@ -73,7 +74,7 @@ async def get_my_profile(
 ):
     """Get current user's profile based on their role"""
     # Determine profile collection based on role
-    if "interim" in current_user.roles:
+    if cfg.get_interim_role() in current_user.roles:
         profile = await db.interim_profiles.find_one({"user_id": current_user.id}, {"_id": 0})
         if not profile:
             # Create default profile
@@ -94,9 +95,9 @@ async def get_my_profile(
                 "updated_at": datetime.now(timezone.utc).isoformat()
             }
             await db.interim_profiles.insert_one(profile)
-        return {"profile_type": "interim", "profile": profile}
+        return {"profile_type": cfg.get_interim_role(), "profile": profile}
     
-    elif "company" in current_user.roles:
+    elif cfg.get_company_role() in current_user.roles:
         profile = await db.company_manager_profiles.find_one({"user_id": current_user.id}, {"_id": 0})
         if not profile:
             profile = {
@@ -106,7 +107,7 @@ async def get_my_profile(
                 "updated_at": datetime.now(timezone.utc).isoformat()
             }
             await db.company_manager_profiles.insert_one(profile)
-        return {"profile_type": "company", "profile": profile}
+        return {"profile_type": cfg.get_company_role(), "profile": profile}
     
     else:
         # Collaborator or other roles
@@ -132,12 +133,12 @@ async def update_my_profile(
     update_data["updated_at"] = datetime.now(timezone.utc).isoformat()
     
     # Determine collection based on role
-    if "interim" in current_user.roles:
+    if cfg.get_interim_role() in current_user.roles:
         collection = db.interim_profiles
-        profile_type = "interim"
-    elif "company" in current_user.roles:
+        profile_type = cfg.get_interim_role()
+    elif cfg.get_company_role() in current_user.roles:
         collection = db.company_manager_profiles
-        profile_type = "company"
+        profile_type = cfg.get_company_role()
     else:
         collection = db.collaborator_profiles
         profile_type = "collaborator"
@@ -213,9 +214,9 @@ async def upload_document(
     await db.documents.insert_one(document)
     
     # Update profile with document ID
-    if "interim" in current_user.roles:
+    if cfg.get_interim_role() in current_user.roles:
         collection = db.interim_profiles
-    elif "company" in current_user.roles:
+    elif cfg.get_company_role() in current_user.roles:
         collection = db.company_manager_profiles
     else:
         collection = db.collaborator_profiles
@@ -281,9 +282,9 @@ async def delete_document(
     await db.documents.delete_one({"id": document_id})
     
     # Remove from profile
-    if "interim" in current_user.roles:
+    if cfg.get_interim_role() in current_user.roles:
         collection = db.interim_profiles
-    elif "company" in current_user.roles:
+    elif cfg.get_company_role() in current_user.roles:
         collection = db.company_manager_profiles
     else:
         collection = db.collaborator_profiles

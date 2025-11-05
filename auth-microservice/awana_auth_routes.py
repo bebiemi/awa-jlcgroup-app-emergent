@@ -645,8 +645,8 @@ async def entraid_token_login(
             
             # Ensure admin role if email is in admin list
             admin_emails = auth_config.admin_emails
-            if email in admin_emails and "admin" not in user.roles:
-                user.roles.append("admin")
+            if email in admin_emails and cfg.get_admin_role() not in user.roles:
+                user.roles.append(cfg.get_admin_role())
             
             await db.users.update_one(
                 {"id": user.id},
@@ -672,7 +672,7 @@ async def entraid_token_login(
             # Create new user
             # Check if user email is in admin list
             admin_emails = auth_config.admin_emails
-            user_roles = ["admin"] if email in admin_emails else ["user"]
+            user_roles = [cfg.get_admin_role()] if email in admin_emails else ["user"]
             
             user = User(
                 username=email.split('@')[0],
@@ -882,8 +882,8 @@ async def local_login(
                 user.updated_at = datetime.now(timezone.utc)
                 
                 # Ensure admin role
-                if "admin" not in user.roles:
-                    user.roles.append("admin")
+                if cfg.get_admin_role() not in user.roles:
+                    user.roles.append(cfg.get_admin_role())
                 
                 await db.users.update_one(
                     {"id": user.id},
@@ -904,7 +904,7 @@ async def local_login(
                     provider=AuthProviderEnum.LOCAL,
                     provider_user_id=f"local_{login_data.username}",
                     status=UserStatus.ACTIVE,
-                    roles=["admin"]
+                    roles=[cfg.get_admin_role()]
                 )
                 
                 user_dict = user.dict()
@@ -916,7 +916,7 @@ async def local_login(
                 
                 # Grant admin role in RBAC system
                 try:
-                    await rbac_manager.grant_role(user.id, "admin", granted_by="system")
+                    await rbac_manager.grant_role(user.id, cfg.get_admin_role(), granted_by="system")
                 except ValueError as e:
                     logger.warning(f"Could not grant admin role: {e}")
             
@@ -1472,11 +1472,11 @@ async def get_admin_stats(
         suspended_users = await db.users.count_documents({"status": "suspended"})
         
         # Users by role
-        admin_users = await db.users.count_documents({"roles": "admin"})
-        super_admin_users = await db.users.count_documents({"roles": "super_admin"})
-        interim_users = await db.users.count_documents({"roles": "interim"})
-        company_users = await db.users.count_documents({"roles": "company"})
-        agency_users = await db.users.count_documents({"roles": "agency"})
+        admin_users = await db.users.count_documents({"roles": cfg.get_admin_role()})
+        super_admin_users = await db.users.count_documents({"roles": cfg.get_super_admin_role()})
+        interim_users = await db.users.count_documents({"roles": cfg.get_interim_role()})
+        company_users = await db.users.count_documents({"roles": cfg.get_company_role()})
+        agency_users = await db.users.count_documents({"roles": cfg.get_agency_role()})
         
         # Users by provider
         local_users = await db.users.count_documents({"provider": "local"})

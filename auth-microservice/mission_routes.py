@@ -19,6 +19,7 @@ from awana_auth.core.mission_models import (
     MedicalStatus, ContractStatus
 )
 from awana_auth.core.dependencies import get_current_user as get_user_dep
+from awana_auth.utils.config_helpers import cfg
 
 router = APIRouter(prefix="/api/missions", tags=["missions"])
 
@@ -156,7 +157,7 @@ async def create_mission(
     """
     # Vérifier les permissions
     user_roles = current_user.get("roles", [])
-    if not any(role in user_roles for role in ["admin", "super_admin", "company", "commercial"]):
+    if not any(role in user_roles for role in [cfg.get_admin_role(), cfg.get_super_admin_role(), cfg.get_company_role(), cfg.get_commercial_role()]):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Vous n'avez pas la permission de créer une mission"
@@ -213,17 +214,17 @@ async def get_missions(
     user_id = current_user.get("sub")
     
     # Filtrer selon le rôle
-    if "interim" in user_roles:
+    if cfg.get_interim_role() in user_roles:
         # Les intérimaires ne voient que les missions publiées
         query["status"] = MissionStatus.PUBLISHED
-    elif "company" in user_roles:
+    elif cfg.get_company_role() in user_roles:
         # Les entreprises voient leurs missions
         query["company_id"] = user_id
     
     # Appliquer les filtres supplémentaires
     if status:
         query["status"] = status
-    if company_id and ("admin" in user_roles or "super_admin" in user_roles):
+    if company_id and (cfg.get_admin_role() in user_roles or cfg.get_super_admin_role() in user_roles):
         query["company_id"] = company_id
     if commercial_id:
         query["commercial_id"] = commercial_id
@@ -254,13 +255,13 @@ async def get_mission(
     user_roles = current_user.get("roles", [])
     user_id = current_user.get("sub")
     
-    if "interim" in user_roles and mission["status"] != MissionStatus.PUBLISHED:
+    if cfg.get_interim_role() in user_roles and mission["status"] != MissionStatus.PUBLISHED:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Mission non accessible"
         )
     
-    if "company" in user_roles and mission["company_id"] != user_id:
+    if cfg.get_company_role() in user_roles and mission["company_id"] != user_id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Vous ne pouvez voir que vos missions"
@@ -293,8 +294,8 @@ async def update_mission(
     user_id = current_user.get("sub")
     
     can_update = (
-        "admin" in user_roles or
-        "super_admin" in user_roles or
+        cfg.get_admin_role() in user_roles or
+        cfg.get_super_admin_role() in user_roles or
         mission["created_by"] == user_id or
         mission.get("commercial_id") == user_id
     )
@@ -348,8 +349,8 @@ async def delete_mission(
     user_id = current_user.get("sub")
     
     can_delete = (
-        "admin" in user_roles or
-        "super_admin" in user_roles or
+        cfg.get_admin_role() in user_roles or
+        cfg.get_super_admin_role() in user_roles or
         mission["created_by"] == user_id
     )
     
@@ -386,7 +387,7 @@ async def publish_mission(
     
     # Vérifier permissions
     user_roles = current_user.get("roles", [])
-    can_publish = "admin" in user_roles or "super_admin" in user_roles or "commercial" in user_roles
+    can_publish = cfg.get_admin_role() in user_roles or cfg.get_super_admin_role() in user_roles or cfg.get_commercial_role() in user_roles
     
     if not can_publish:
         raise HTTPException(
@@ -425,7 +426,7 @@ async def apply_to_mission(
     """
     # Vérifier que c'est un intérimaire
     user_roles = current_user.get("roles", [])
-    if "interim" not in user_roles:
+    if cfg.get_interim_role() not in user_roles:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Seuls les intérimaires peuvent postuler"
@@ -506,10 +507,10 @@ async def get_mission_applications(
     user_id = current_user.get("sub")
     
     can_view = (
-        "admin" in user_roles or
-        "super_admin" in user_roles or
-        "commercial" in user_roles or
-        (mission["company_id"] == user_id and "company" in user_roles)
+        cfg.get_admin_role() in user_roles or
+        cfg.get_super_admin_role() in user_roles or
+        cfg.get_commercial_role() in user_roles or
+        (mission["company_id"] == user_id and cfg.get_company_role() in user_roles)
     )
     
     if not can_view:
@@ -564,7 +565,7 @@ async def update_application(
     
     # Vérifier permissions
     user_roles = current_user.get("roles", [])
-    can_update = "admin" in user_roles or "super_admin" in user_roles or "commercial" in user_roles
+    can_update = cfg.get_admin_role() in user_roles or cfg.get_super_admin_role() in user_roles or cfg.get_commercial_role() in user_roles
     
     if not can_update:
         raise HTTPException(

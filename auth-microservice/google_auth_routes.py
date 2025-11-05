@@ -24,6 +24,7 @@ from awana_auth.rbac.manager import RBACManager
 from awana_auth.audit.logger import AuditLogger
 from awana_auth.audit.models import AuditAction
 from awana_auth.utils.helpers import get_client_ip, get_user_agent
+from awana_auth.utils.config_helpers import cfg
 
 logger = logging.getLogger(__name__)
 
@@ -312,7 +313,7 @@ async def google_callback(
                 user_id=user_id,
                 email=auth_result.user.email,
                 full_name=auth_result.user.full_name,
-                profile_type=roles[0] if roles else "interim",
+                profile_type=roles[0] if roles else cfg.get_interim_role(),
                 picture=auth_result.metadata.get("picture")
             )
         
@@ -340,11 +341,11 @@ async def google_callback(
             
             # Assign default role (interim by default for new Google users)
             try:
-                await rbac_manager.grant_role(user_id, "interim", granted_by="system")
+                await rbac_manager.grant_role(user_id, cfg.get_interim_role(), granted_by="system")
             except ValueError as e:
                 logger.warning(f"Could not grant interim role: {e}")
             
-            roles = ["interim"]
+            roles = [cfg.get_interim_role()]
             
             logger.info(f"New Google user registered: {auth_result.user.email}")
             
@@ -354,7 +355,7 @@ async def google_callback(
                 user_id=user_id,
                 email=auth_result.user.email,
                 full_name=auth_result.user.full_name,
-                profile_type=roles[0] if roles else "interim",
+                profile_type=roles[0] if roles else cfg.get_interim_role(),
                 picture=auth_result.metadata.get("picture")
             )
         
@@ -566,7 +567,7 @@ async def complete_google_registration(
         try:
             # Remove old interim role if it exists
             try:
-                await rbac_manager.revoke_role(user_id, "interim")
+                await rbac_manager.revoke_role(user_id, cfg.get_interim_role())
             except:
                 pass
             

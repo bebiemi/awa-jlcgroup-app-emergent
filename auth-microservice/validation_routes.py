@@ -11,6 +11,7 @@ from awana_auth.core.location_models import Validation, ValidationStatus
 from awana_auth.core.models import User, UserStatus
 from awana_auth.core.dependencies import require_admin, get_database, get_current_user
 from pydantic import BaseModel
+from awana_auth.utils.config_helpers import cfg
 
 validation_router = APIRouter(prefix="/validations", tags=["Validations"])
 
@@ -74,8 +75,8 @@ async def get_validation_stats(
 ):
     """Get validation statistics"""
     total_pending = await db.validations.count_documents({"status": "pending"})
-    pending_interim = await db.validations.count_documents({"status": "pending", "validation_type": "interim"})
-    pending_company = await db.validations.count_documents({"status": "pending", "validation_type": "company"})
+    pending_interim = await db.validations.count_documents({"status": "pending", "validation_type": cfg.get_interim_role()})
+    pending_company = await db.validations.count_documents({"status": "pending", "validation_type": cfg.get_company_role()})
     pending_collaborator = await db.validations.count_documents({"status": "pending", "validation_type": "collaborator"})
     
     with_warnings = await db.validations.count_documents({
@@ -145,7 +146,7 @@ async def approve_validation(
             detail="Validation not found"
         )
     
-    if validation["status"] != "pending":
+    if validation["status"] != cfg.get_pending_status():
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Validation already processed"
@@ -197,7 +198,7 @@ async def reject_validation(
             detail="Validation not found"
         )
     
-    if validation["status"] != "pending":
+    if validation["status"] != cfg.get_pending_status():
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Validation already processed"
@@ -253,7 +254,7 @@ async def assign_validation(
     
     # Check if validator has admin or commercial role
     validator_roles = validator.get("roles", [])
-    if not any(role in validator_roles for role in ["admin", "super_admin", "commercial"]):
+    if not any(role in validator_roles for role in [cfg.get_admin_role(), cfg.get_super_admin_role(), cfg.get_commercial_role()]):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="User does not have validator role (admin, super_admin, or commercial)"
