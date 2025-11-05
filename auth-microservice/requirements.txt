@@ -21,3 +21,4 @@ pyyaml
 python-dotenv
 cryptography
 boto3
+cryptography
