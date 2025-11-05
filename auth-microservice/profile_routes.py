@@ -127,6 +127,9 @@ async def get_my_profile(
             profile["profile_completed"] = completion >= 80
             
             await db.interim_profiles.insert_one(profile)
+            
+            # Reload profile without _id
+            profile = await db.interim_profiles.find_one({"user_id": current_user.id}, {"_id": 0})
         else:
             # Ensure basic user info is synced from user object if missing in profile
             needs_update = False
