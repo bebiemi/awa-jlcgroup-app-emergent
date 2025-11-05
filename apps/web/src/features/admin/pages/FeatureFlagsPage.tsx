@@ -175,6 +175,69 @@ export default function FeatureFlagsPage() {
     }
   }
 
+  const handleExport = async () => {
+    try {
+      const token = localStorage.getItem('token')
+      const response = await fetch('/auth-api/feature-flags/export', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      })
+      
+      if (!response.ok) throw new Error('Export failed')
+      
+      const blob = await response.blob()
+      const url = window.URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `feature_flags_export_${new Date().toISOString().split('T')[0]}.json`
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      window.URL.revokeObjectURL(url)
+      
+      toast.success('Feature flags exportés avec succès')
+    } catch (error) {
+      toast.error('Erreur lors de l\'export')
+    }
+  }
+
+  const handleImport = async () => {
+    if (!importFile) {
+      toast.error('Veuillez sélectionner un fichier')
+      return
+    }
+
+    try {
+      const fileContent = await importFile.text()
+      const importData = JSON.parse(fileContent)
+      
+      const token = localStorage.getItem('token')
+      const response = await fetch(`/auth-api/feature-flags/import?overwrite=${overwriteExisting}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify(importData),
+      })
+      
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.detail || 'Import failed')
+      }
+      
+      const result = await response.json()
+      toast.success(result.message)
+      setShowImportModal(false)
+      setImportFile(null)
+      setOverwriteExisting(false)
+      refetch()
+    } catch (error: any) {
+      toast.error(error.message || 'Erreur lors de l\'import')
+    }
+  }
+
   const getTypeBadgeColor = (type: string) => {
     switch (type) {
       case 'GLOBAL':
