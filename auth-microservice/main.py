@@ -31,6 +31,7 @@ from profile_routes import profile_router
 from mission_routes import router as mission_router
 from document_routes import router as document_router
 from configuration_routes import router as configuration_router
+from config_api_routes import router as config_api_router
 from rate_limit import limiter
 
 client = None
