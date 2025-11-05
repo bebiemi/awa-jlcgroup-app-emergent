@@ -5,11 +5,12 @@ Gestion complète du processus de missions d'intérim
 
 from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File, Form
 from typing import List, Optional, Dict, Any
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from motor.motor_asyncio import AsyncIOMotorDatabase
 import uuid
 
-from awana_auth.core.dependencies import get_database
+from awana_auth.core.dependencies import get_database, get_configuration
+from awana_auth.core.config_manager import ConfigManager
 from awana_auth.core.models import User
 from awana_auth.core.mission_models import (
     Mission, MissionCreate, MissionUpdate, MissionStatus,
