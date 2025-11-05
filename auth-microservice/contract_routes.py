@@ -39,7 +39,7 @@ async def get_my_contracts(
     status_filter: Optional[str] = Query(None, description="Filtrer par statut (active, completed, cancelled)"),
     include_ended: bool = Query(False, description="Inclure les contrats terminés"),
     current_user: User = Depends(get_current_user),
-    db: AsyncIOMotorDatabase = Depends(get_database)
+    db: AsyncIOMotorDatabase = Depends(get_jlc_database)
 ):
     """
     Récupérer les contrats de l'utilisateur connecté (intérimaire)
