@@ -61,6 +61,72 @@ async def get_valid_statuses(db: AsyncIOMotorDatabase, category: str) -> List[st
     return [ref["code"] for ref in references]
 
 
+async def check_application_restrictions(
+    db: AsyncIOMotorDatabase,
+    config: ConfigManager,
+    candidate_id: str,
+    mission_id: str
+) -> None:
+    """
+    Vérifier les restrictions de candidature selon la configuration
+    
+    Raises:
+        HTTPException: Si une restriction n'est pas respectée
+    """
+    # Vérifier le nombre max de candidatures par candidat
+    max_applications = config.get("workflows.application.restrictions.max_applications_per_candidate", default=10)
+    candidate_apps_count = await db.applications.count_documents({"candidate_id": candidate_id})
+    
+    if candidate_apps_count >= max_applications:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Vous avez atteint la limite de {max_applications} candidatures"
+        )
+    
+    # Vérifier le délai minimum entre candidatures
+    min_days_between = config.get("workflows.application.restrictions.min_days_between_applications", default=1)
+    if min_days_between > 0:
+        cutoff_date = datetime.now(timezone.utc) - timedelta(days=min_days_between)
+        recent_app = await db.applications.find_one({
+            "candidate_id": candidate_id,
+            "created_at": {"$gte": cutoff_date}
+        })
+        
+        if recent_app:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Veuillez attendre {min_days_between} jour(s) entre deux candidatures"
+            )
+    
+    # Vérifier si déjà candidaté à cette mission
+    existing_app = await db.applications.find_one({
+        "candidate_id": candidate_id,
+        "mission_id": mission_id
+    })
+    
+    if existing_app:
+        # Vérifier si peut re-candidater après rejet
+        if existing_app["status"] in ["rejected", "rejected_initial"]:
+            allow_reapply_days = config.get(
+                "workflows.application.restrictions.allow_reapplication_after_rejection_days",
+                default=30
+            )
+            rejection_date = existing_app.get("updated_at")
+            if isinstance(rejection_date, str):
+                rejection_date = datetime.fromisoformat(rejection_date)
+            
+            if datetime.now(timezone.utc) - rejection_date < timedelta(days=allow_reapply_days):
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=f"Vous pourrez re-candidater à cette mission après {allow_reapply_days} jours"
+                )
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Vous avez déjà candidaté à cette mission"
+            )
+
+
 # Custom dependency to get user as dict
 async def get_current_user(user: User = Depends(get_user_dep)) -> dict:
     """Get current user as dict"""
