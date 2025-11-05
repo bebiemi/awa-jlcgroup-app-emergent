@@ -1,31 +1,31 @@
 # 🔍 Audit des Valeurs en Dur - Rapport Complet
 
-**Date**: 2025-11-05 02:39:10
+**Date**: 2025-11-05 02:49:31
 
 ---
 
 ## 📊 Résumé Exécutif
 
-**Total de valeurs en dur trouvées**: 766
+**Total de valeurs en dur trouvées**: 753
 
 ### Par Sévérité
 
 | Sévérité | Nombre | Pourcentage |
 |----------|--------|-------------|
-| 🔴 CRITICAL | 408 | 53.3% |
-| 🟠 HIGH | 84 | 11.0% |
-| 🟡 MEDIUM | 90 | 11.7% |
-| 🟢 LOW | 184 | 24.0% |
+| 🔴 CRITICAL | 403 | 53.5% |
+| 🟠 HIGH | 76 | 10.1% |
+| 🟡 MEDIUM | 90 | 12.0% |
+| 🟢 LOW | 184 | 24.4% |
 
 ### Par Catégorie
 
 | Catégorie | Nombre |
 |-----------|--------|
-| roles | 228 |
+| roles | 223 |
 | messages | 168 |
 | validation_types | 129 |
-| user_status | 68 |
 | contract_types | 62 |
+| user_status | 60 |
 | application_status | 51 |
 | delays_days | 17 |
 | numeric_limits | 16 |
@@ -36,18 +36,18 @@
 
 | Fichier | Nombre de valeurs en dur |
 |---------|--------------------------|
-| `auth-microservice/awana_auth_routes.py` | 80 |
+| `auth-microservice/awana_auth_routes.py` | 77 |
 | `apps/web/src/features/admin/pages/ValidationsPage.tsx` | 76 |
 | `apps/web/src/App.tsx` | 70 |
 | `auth-microservice/google_auth_routes.py` | 32 |
 | `auth-microservice/scripts/seed_mission_references.py` | 32 |
 | `apps/web/src/features/auth/pages/RegisterPage.tsx` | 32 |
 | `auth-microservice/mission_routes.py` | 26 |
-| `auth-microservice/validation_routes.py` | 22 |
 | `apps/web/src/features/auth/pages/RoleSelectionPage.tsx` | 20 |
 | `auth-microservice/mfa_routes.py` | 19 |
 | `auth-microservice/awana_auth/rbac/models.py` | 18 |
 | `apps/web/src/features/admin/pages/ValidationsList.tsx` | 18 |
+| `auth-microservice/validation_routes.py` | 17 |
 | `apps/web/src/types/index.ts` | 17 |
 | `auth-microservice/security_routes.py` | 16 |
 | `apps/web/src/components/Sidebar.tsx` | 16 |
@@ -56,7 +56,7 @@
 
 ## 🔴 Sévérité: CRITICAL
 
-**Total**: 408 occurrences
+**Total**: 403 occurrences
 
 ### 📄 `apps/web/src/App.tsx`
 
@@ -2896,49 +2896,6 @@ detail="Invalid role. Must be 'interim' or 'company'"
 **Valeur en dur**: `"agency"`
 
 
-### 📄 `auth-microservice/document_routes.py`
-
-**1. Ligne 155** | Catégorie: `roles`
-
-```
-is_admin = any(role in user_roles for role in ["admin", "super_admin", "commercial"])
-```
-
-**Valeur en dur**: `"admin"`
-
-**2. Ligne 155** | Catégorie: `roles`
-
-```
-is_admin = any(role in user_roles for role in ["admin", "super_admin", "commercial"])
-```
-
-**Valeur en dur**: `"super_admin"`
-
-**3. Ligne 155** | Catégorie: `roles`
-
-```
-is_admin = any(role in user_roles for role in ["admin", "super_admin", "commercial"])
-```
-
-**Valeur en dur**: `"commercial"`
-
-**4. Ligne 219** | Catégorie: `roles`
-
-```
-is_admin = any(role in user_roles for role in ["admin", "super_admin"])
-```
-
-**Valeur en dur**: `"admin"`
-
-**5. Ligne 219** | Catégorie: `roles`
-
-```
-is_admin = any(role in user_roles for role in ["admin", "super_admin"])
-```
-
-**Valeur en dur**: `"super_admin"`
-
-
 ### 📄 `auth-microservice/google_auth_routes.py`
 
 **1. Ligne 155** | Catégorie: `roles`
@@ -3426,7 +3383,7 @@ profile_type = "collaborator"
 **1. Ligne 80** | Catégorie: `validation_types`
 
 ```
-pending_collaborator = await db.validations.count_documents({"status": "pending", "validation_type": "collaborator"})
+pending_collaborator = await db.validations.count_documents({"status": cfg.get_pending_status(), "validation_type": "collaborator"})
 ```
 
 **Valeur en dur**: `"collaborator"`
@@ -3450,7 +3407,7 @@ total_rejected = await db.validations.count_documents({"status": "rejected"})
 
 ## 🟠 Sévérité: HIGH
 
-**Total**: 84 occurrences
+**Total**: 76 occurrences
 
 ### 📄 `apps/web/src/components/ActionButton.tsx`
 
@@ -4037,31 +3994,7 @@ status="active",
 
 ### 📄 `auth-microservice/awana_auth_routes.py`
 
-**1. Ligne 181** | Catégorie: `user_status`
-
-```
-"status": "pending",
-```
-
-**Valeur en dur**: `"pending"`
-
-**2. Ligne 1470** | Catégorie: `user_status`
-
-```
-active_users = await db.users.count_documents({"status": "active"})
-```
-
-**Valeur en dur**: `"active"`
-
-**3. Ligne 1471** | Catégorie: `user_status`
-
-```
-pending_users = await db.users.count_documents({"status": "pending"})
-```
-
-**Valeur en dur**: `"pending"`
-
-**4. Ligne 1472** | Catégorie: `user_status`
+**1. Ligne 1472** | Catégorie: `user_status`
 
 ```
 suspended_users = await db.users.count_documents({"status": "suspended"})
@@ -4069,7 +4002,7 @@ suspended_users = await db.users.count_documents({"status": "suspended"})
 
 **Valeur en dur**: `"suspended"`
 
-**5. Ligne 1505** | Catégorie: `user_status`
+**2. Ligne 1505** | Catégorie: `user_status`
 
 ```
 "active": active_users,
@@ -4077,7 +4010,7 @@ suspended_users = await db.users.count_documents({"status": "suspended"})
 
 **Valeur en dur**: `"active"`
 
-**6. Ligne 1506** | Catégorie: `user_status`
+**3. Ligne 1506** | Catégorie: `user_status`
 
 ```
 "pending": pending_users,
@@ -4085,7 +4018,7 @@ suspended_users = await db.users.count_documents({"status": "suspended"})
 
 **Valeur en dur**: `"pending"`
 
-**7. Ligne 1507** | Catégorie: `user_status`
+**4. Ligne 1507** | Catégorie: `user_status`
 
 ```
 "suspended": suspended_users
@@ -4151,49 +4084,6 @@ status=updated_user_doc.get("status", "pending"),
 
 ```
 "code": "pending",
-```
-
-**Valeur en dur**: `"pending"`
-
-
-### 📄 `auth-microservice/validation_routes.py`
-
-**1. Ligne 77** | Catégorie: `user_status`
-
-```
-total_pending = await db.validations.count_documents({"status": "pending"})
-```
-
-**Valeur en dur**: `"pending"`
-
-**2. Ligne 78** | Catégorie: `user_status`
-
-```
-pending_interim = await db.validations.count_documents({"status": "pending", "validation_type": cfg.get_interim_role()})
-```
-
-**Valeur en dur**: `"pending"`
-
-**3. Ligne 79** | Catégorie: `user_status`
-
-```
-pending_company = await db.validations.count_documents({"status": "pending", "validation_type": cfg.get_company_role()})
-```
-
-**Valeur en dur**: `"pending"`
-
-**4. Ligne 80** | Catégorie: `user_status`
-
-```
-pending_collaborator = await db.validations.count_documents({"status": "pending", "validation_type": "collaborator"})
-```
-
-**Valeur en dur**: `"pending"`
-
-**5. Ligne 83** | Catégorie: `user_status`
-
-```
-"status": "pending",
 ```
 
 **Valeur en dur**: `"pending"`
@@ -5724,7 +5614,7 @@ raise HTTPException(status_code=404, detail="Paramètre non trouvé")
 
 ### 📄 `auth-microservice/document_routes.py`
 
-**1. Ligne 54** | Catégorie: `numeric_limits`
+**1. Ligne 55** | Catégorie: `numeric_limits`
 
 ```
 max_file_size_mb = config.get("storage.uploads.max_file_size_mb", default=10)
@@ -5732,7 +5622,7 @@ max_file_size_mb = config.get("storage.uploads.max_file_size_mb", default=10)
 
 **Valeur en dur**: `max_file_size_mb = config.get("storage.uploads.max_file_size_mb", default=10`
 
-**2. Ligne 150** | Catégorie: `messages`
+**2. Ligne 151** | Catégorie: `messages`
 
 ```
 detail="Document non trouvé"
@@ -5740,7 +5630,7 @@ detail="Document non trouvé"
 
 **Valeur en dur**: `detail="Document non trouvé"`
 
-**3. Ligne 161** | Catégorie: `messages`
+**3. Ligne 162** | Catégorie: `messages`
 
 ```
 detail="Vous n'avez pas accès à ce document"
@@ -5748,7 +5638,7 @@ detail="Vous n'avez pas accès à ce document"
 
 **Valeur en dur**: `detail="Vous n'avez pas accès à ce document"`
 
-**4. Ligne 168** | Catégorie: `messages`
+**4. Ligne 169** | Catégorie: `messages`
 
 ```
 detail="Fichier non trouvé sur le serveur"
@@ -5756,7 +5646,7 @@ detail="Fichier non trouvé sur le serveur"
 
 **Valeur en dur**: `detail="Fichier non trouvé sur le serveur"`
 
-**5. Ligne 214** | Catégorie: `messages`
+**5. Ligne 215** | Catégorie: `messages`
 
 ```
 detail="Document non trouvé"
@@ -5764,7 +5654,7 @@ detail="Document non trouvé"
 
 **Valeur en dur**: `detail="Document non trouvé"`
 
-**6. Ligne 225** | Catégorie: `messages`
+**6. Ligne 226** | Catégorie: `messages`
 
 ```
 detail="Vous ne pouvez supprimer que vos propres documents"
