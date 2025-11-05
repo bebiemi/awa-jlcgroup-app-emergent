@@ -4,8 +4,9 @@ Gestion complète du processus de missions d'intérim
 """
 
 from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File, Form
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 from datetime import datetime, timezone
+from motor.motor_asyncio import AsyncIOMotorDatabase
 import uuid
 
 from awana_auth.core.dependencies import get_database
@@ -19,6 +20,44 @@ from awana_auth.core.mission_models import (
 from awana_auth.core.dependencies import get_current_user as get_user_dep
 
 router = APIRouter(prefix="/api/missions", tags=["missions"])
+
+
+# ==================== VALIDATION HELPERS ====================
+
+async def validate_status(
+    db: AsyncIOMotorDatabase, 
+    category: str, 
+    status_code: str
+) -> bool:
+    """Valider qu'un statut existe et est actif dans les référentiels"""
+    ref = await db.system_references.find_one({
+        "category": category,
+        "code": status_code,
+        "is_active": True
+    })
+    return ref is not None
+
+
+async def get_status_metadata(
+    db: AsyncIOMotorDatabase,
+    category: str,
+    status_code: str
+) -> Dict[str, Any]:
+    """Récupérer les métadonnées d'un statut"""
+    ref = await db.system_references.find_one({
+        "category": category,
+        "code": status_code
+    })
+    return ref.get("metadata", {}) if ref else {}
+
+
+async def get_valid_statuses(db: AsyncIOMotorDatabase, category: str) -> List[str]:
+    """Récupérer la liste des codes de statuts valides"""
+    references = await db.system_references.find({
+        "category": category,
+        "is_active": True
+    }).to_list(length=None)
+    return [ref["code"] for ref in references]
 
 
 # Custom dependency to get user as dict
