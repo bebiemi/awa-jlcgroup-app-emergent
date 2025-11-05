@@ -90,14 +90,23 @@ async def get_my_profile(
     # Determine profile collection based on role
     if cfg.get_interim_role() in current_user.roles:
         profile = await db.interim_profiles.find_one({"user_id": current_user.id}, {"_id": 0})
+        
+        # Parse full_name into first_name and last_name if available
+        first_name = None
+        last_name = None
+        if current_user.full_name:
+            name_parts = current_user.full_name.strip().split(None, 1)
+            first_name = name_parts[0] if len(name_parts) > 0 else None
+            last_name = name_parts[1] if len(name_parts) > 1 else None
+        
         if not profile:
             # Create default profile with user's basic info
             profile = {
                 "user_id": current_user.id,
-                "first_name": current_user.first_name,
-                "last_name": current_user.last_name,
+                "first_name": first_name,
+                "last_name": last_name,
                 "email": current_user.email,
-                "phone": current_user.phone if hasattr(current_user, 'phone') else None,
+                "phone": current_user.phone_number if hasattr(current_user, 'phone_number') and current_user.phone_number else None,
                 "sectors": [],
                 "skills": [],
                 "languages": [],
@@ -123,17 +132,17 @@ async def get_my_profile(
             needs_update = False
             updates = {}
             
-            if not profile.get("first_name") and current_user.first_name:
-                updates["first_name"] = current_user.first_name
+            if not profile.get("first_name") and first_name:
+                updates["first_name"] = first_name
                 needs_update = True
-            if not profile.get("last_name") and current_user.last_name:
-                updates["last_name"] = current_user.last_name
+            if not profile.get("last_name") and last_name:
+                updates["last_name"] = last_name
                 needs_update = True
             if not profile.get("email") and current_user.email:
                 updates["email"] = current_user.email
                 needs_update = True
-            if not profile.get("phone") and hasattr(current_user, 'phone') and current_user.phone:
-                updates["phone"] = current_user.phone
+            if not profile.get("phone") and hasattr(current_user, 'phone_number') and current_user.phone_number:
+                updates["phone"] = current_user.phone_number
                 needs_update = True
             
             if needs_update:
