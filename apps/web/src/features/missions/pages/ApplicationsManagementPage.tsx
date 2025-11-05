@@ -116,6 +116,13 @@ export default function ApplicationsManagementPage() {
       : applications.filter(a => a.status === filter.value).length
   }))
 
+  // Helper pour vérifier si une transition de statut est autorisée
+  const canTransitionTo = (currentStatus: string, newStatus: string): boolean => {
+    const metadata = getApplicationMetadata(currentStatus)
+    const allowedTransitions = metadata.next_possible_statuses || []
+    return allowedTransitions.includes(newStatus)
+  }
+
   const handleShortlist = async (appId: string) => {
     try {
       await shortlistApplication(appId).unwrap()
