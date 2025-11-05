@@ -90,6 +90,7 @@ export default function Sidebar() {
         title: 'Paramètres',
         items: [
           { label: 'Référentiels', path: '/admin/references', icon: Cog6ToothIcon },
+          { label: 'Règles Métier', path: '/admin/rules', icon: Cog6ToothIcon },
           { label: 'Profils & Permissions', path: '/admin/profiles', icon: ShieldCheckIcon },
         ],
       },
