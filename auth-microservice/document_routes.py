@@ -12,13 +12,15 @@ import os
 import shutil
 
 from awana_auth.core.dependencies import get_database
+from awana_auth.core.config_manager import get_config
 from awana_auth.core.models import User
 from awana_auth.core.dependencies import get_current_user as get_user_dep
 
 router = APIRouter(prefix="/api/documents", tags=["documents"])
 
-# Upload directory
-UPLOAD_DIR = "/app/uploads"
+# Upload directory - Chargé depuis ConfigManager
+config = get_config()
+UPLOAD_DIR = config.get("storage.uploads.base_path", default="/app/uploads")
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 # Custom dependency to get user as dict
