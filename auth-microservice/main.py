@@ -71,6 +71,11 @@ async def lifespan(app: FastAPI):
     await rbac_manager.initialize_default_roles()
     logger.info("✅ AWANA Auth initialized")
     
+    # Initialiser le service email avec la base de données
+    from awana_auth.services.email_service_v2 import init_email_service
+    init_email_service(db)
+    logger.info("✅ Email service initialized")
+    
     yield
     
     if client:
