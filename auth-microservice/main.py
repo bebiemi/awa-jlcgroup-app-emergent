@@ -3,11 +3,23 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 import os
-from dotenv import load_dotenv
 import logging
 from contextlib import asynccontextmanager
 
-load_dotenv()
+# Initialiser la configuration AVANT tout le reste
+from awana_auth.core.config_manager import init_config, get_config
+
+# Déterminer l'environnement
+env = os.getenv("APP_ENV", "local")
+config = init_config(env=env)
+
+# Configuration du logging depuis la config
+log_level = config.get("monitoring.logging.level", default="INFO")
+logging.basicConfig(
+    level=getattr(logging, log_level),
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
 
 from awana_auth_routes import auth_router, users_router, roles_router
 from google_auth_routes import google_router
@@ -20,9 +32,6 @@ from mission_routes import router as mission_router
 from document_routes import router as document_router
 from configuration_routes import router as configuration_router
 from rate_limit import limiter
-
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
 
 client = None
 db = None
