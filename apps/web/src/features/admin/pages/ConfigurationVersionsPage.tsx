@@ -36,7 +36,7 @@ export default function ConfigurationVersionsPage() {
   const loadVersions = async () => {
     setLoading(true)
     try {
-      const response = await fetch(`${import.meta.env.REACT_APP_BACKEND_URL}/api/versions/list`)
+      const response = await fetch(`${import.meta.env.VITE_AUTH_SERVICE_URL}/api/versions/list`)
       const data = await response.json()
       setVersions(data.versions)
     } catch (error) {
