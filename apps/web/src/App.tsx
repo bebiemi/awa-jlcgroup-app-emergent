@@ -19,6 +19,7 @@ import LocationManagementPage from './features/admin/pages/LocationManagementPag
 import ReferencesManagementPage from './features/admin/pages/ReferencesManagementPage'
 import BusinessRulesPage from './features/admin/pages/BusinessRulesPage'
 import ConfigurationVersionsPage from './features/admin/pages/ConfigurationVersionsPage'
+import FeatureFlagsPage from './features/admin/pages/FeatureFlagsPage'
 import InterimDashboard from './features/interim/pages/InterimDashboard'
 import ProfilePage from './features/profile/pages/ProfilePage'
 import SecuritySettingsPage from './pages/SecuritySettingsPage'
