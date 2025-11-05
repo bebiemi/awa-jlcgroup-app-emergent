@@ -15,29 +15,51 @@ class HardcodedValuesFixer:
         self.root_dir = Path(root_dir)
         self.fixes_applied = 0
         
-        # Mappings de remplacement
+        # Mappings de remplacement - Ordre important !
         self.replacements = {
-            # Rôles
-            r'"admin"(?!\s*:)': 'cfg.get_admin_role()',
-            r'"super_admin"(?!\s*:)': 'cfg.get_super_admin_role()',
-            r'"company"(?!\s*:)': 'cfg.get_company_role()',
-            r'"interim"(?!\s*:)': 'cfg.get_interim_role()',
-            r'"commercial"(?!\s*:)': 'cfg.get_commercial_role()',
-            r'"agency"(?!\s*:)': 'cfg.get_agency_role()',
-            r'"validator"(?!\s*:)': 'cfg.get_validator_role()',
-            
-            # Statuts utilisateur (uniquement les comparaisons, pas les définitions JSON)
-            r'== "active"': f'== cfg.get_active_status()',
-            r'!= "active"': f'!= cfg.get_active_status()',
-            r'== "pending"': f'== cfg.get_pending_status()',
-            r'!= "pending"': f'!= cfg.get_pending_status()',
-            r'== "suspended"': f'== cfg.get_suspended_status()',
-            r'!= "suspended"': f'!= cfg.get_suspended_status()',
-            
-            # Listes de statuts hardcodées
-            r'\["active", "pending", "suspended", "deleted"\]': 'cfg.get_all_user_statuses()',
+            # Listes de rôles (à traiter en premier pour éviter les remplacements partiels)
             r'\["admin", "super_admin", "interim", "company", "agency", "commercial", "validator"\]': 'cfg.get_all_roles()',
             r'\["admin", "super_admin", "commercial"\]': 'cfg.get_validator_roles()',
+            r'\["admin", "super_admin", "company", "commercial"\]': 'cfg.get_mission_permission_roles("create")',
+            r'\["admin", "super_admin"\]': '[cfg.get_admin_role(), cfg.get_super_admin_role()]',
+            
+            # Listes de statuts
+            r'\["active", "pending", "suspended", "deleted", "blocked"\]': 'cfg.get_all_user_statuses()',
+            r'\["active", "pending", "suspended", "deleted"\]': 'cfg.get_all_user_statuses()',
+            
+            # Rôles individuels dans les comparaisons "in"
+            r'"admin"\s+in\s+user_roles': 'cfg.get_admin_role() in user_roles',
+            r'"super_admin"\s+in\s+user_roles': 'cfg.get_super_admin_role() in user_roles',
+            r'"company"\s+in\s+user_roles': 'cfg.get_company_role() in user_roles',
+            r'"interim"\s+in\s+user_roles': 'cfg.get_interim_role() in user_roles',
+            r'"commercial"\s+in\s+user_roles': 'cfg.get_commercial_role() in user_roles',
+            r'"agency"\s+in\s+user_roles': 'cfg.get_agency_role() in user_roles',
+            
+            # Rôles individuels (si pas déjà remplacés)
+            r'"admin"(?!\s*:)(?!\.)': 'cfg.get_admin_role()',
+            r'"super_admin"(?!\s*:)(?!\.)': 'cfg.get_super_admin_role()',
+            r'"company"(?!\s*:)(?!\.)': 'cfg.get_company_role()',
+            r'"interim"(?!\s*:)(?!\.)': 'cfg.get_interim_role()',
+            r'"commercial"(?!\s*:)(?!\.)': 'cfg.get_commercial_role()',
+            r'"agency"(?!\s*:)(?!\.)': 'cfg.get_agency_role()',
+            r'"validator"(?!\s*:)(?!\.)': 'cfg.get_validator_role()',
+            
+            # Statuts utilisateur dans comparaisons
+            r'== "active"': '== cfg.get_active_status()',
+            r'!= "active"': '!= cfg.get_active_status()',
+            r'== "pending"': '== cfg.get_pending_status()',
+            r'!= "pending"': '!= cfg.get_pending_status()',
+            r'== "suspended"': '== cfg.get_suspended_status()',
+            r'!= "suspended"': '!= cfg.get_suspended_status()',
+            r'== "deleted"': '== cfg.get_deleted_status()',
+            
+            # Statuts dans accès direct (status: "pending")
+            r'"status":\s*"pending"': '"status": cfg.get_pending_status()',
+            r'"status":\s*"active"': '"status": cfg.get_active_status()',
+            
+            # Types de validation
+            r'"validation_type":\s*"interim"': '"validation_type": cfg.get_validation_type("interim")',
+            r'"validation_type":\s*"company"': '"validation_type": cfg.get_validation_type("company")',
         }
     
     def should_skip_line(self, line: str) -> bool:
