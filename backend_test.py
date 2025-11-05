@@ -1623,9 +1623,15 @@ def test_mongodb_skill_verification():
         mongo_url = os.getenv('MONGO_URL', 'mongodb://localhost:27017')
         client = MongoClient(mongo_url)
         
-        # Check jlc_db.system_references
+        # Check both auth_db and jlc_db for system_references
+        auth_db = client['auth_db']
         jlc_db = client['jlc_db']
-        references_collection = jlc_db.system_references
+        
+        # Try auth_db first (where auth-microservice stores data)
+        references_collection = auth_db.system_references
+        if references_collection.count_documents({}) == 0:
+            # If no references in auth_db, try jlc_db
+            references_collection = jlc_db.system_references
         
         # Look for the unique skill we added
         skill_code = "gestion_de_projet_2025"
