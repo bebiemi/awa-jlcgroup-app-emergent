@@ -190,7 +190,7 @@ async def get_active_contract(
 async def get_contract_details(
     contract_id: str,
     current_user: User = Depends(get_current_user),
-    db: AsyncIOMotorDatabase = Depends(get_database)
+    db: AsyncIOMotorDatabase = Depends(get_jlc_database)
 ):
     """
     Récupérer les détails d'un contrat spécifique
