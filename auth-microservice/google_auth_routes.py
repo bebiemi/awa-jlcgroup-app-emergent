@@ -444,7 +444,7 @@ async def google_callback(
                 "full_name": auth_result.user.full_name,
                 "provider": "google",
                 "provider_user_id": auth_result.metadata["google_id"],
-                "status": existing_user["status"] if existing_user else "pending",
+                "status": existing_user["status"] if existing_user else cfg.get_pending_status(),
                 "is_verified": auth_result.user.is_verified,
                 "roles": roles,
                 "picture": auth_result.metadata.get("picture"),
