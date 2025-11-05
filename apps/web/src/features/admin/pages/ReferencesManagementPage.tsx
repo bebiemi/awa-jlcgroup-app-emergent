@@ -168,13 +168,78 @@ export default function ReferencesManagementPage() {
           </div>
         </Card>
         
+        {/* Statistiques */}
+        {!isLoading && data && (
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <Card>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Total</p>
+                  <p className="text-2xl font-bold text-gray-900">{data.references.length}</p>
+                </div>
+                <div className="text-3xl">📊</div>
+              </div>
+            </Card>
+            <Card>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Actifs</p>
+                  <p className="text-2xl font-bold text-green-600">
+                    {data.references.filter((r: any) => r.is_active).length}
+                  </p>
+                </div>
+                <div className="text-3xl">✅</div>
+              </div>
+            </Card>
+            <Card>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Inactifs</p>
+                  <p className="text-2xl font-bold text-red-600">
+                    {data.references.filter((r: any) => !r.is_active).length}
+                  </p>
+                </div>
+                <div className="text-3xl">❌</div>
+              </div>
+            </Card>
+            <Card>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Système</p>
+                  <p className="text-2xl font-bold text-blue-600">
+                    {data.references.filter((r: any) => r.is_system).length}
+                  </p>
+                </div>
+                <div className="text-3xl">🔒</div>
+              </div>
+            </Card>
+          </div>
+        )}
+        
         {/* Liste des référentiels */}
         <Card>
           {isLoading ? (
-            <p>Chargement...</p>
+            <div className="text-center py-12">
+              <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-jlc-purple-600"></div>
+              <p className="mt-4 text-gray-600">Chargement...</p>
+            </div>
           ) : data?.references.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
-              Aucun référentiel dans cette catégorie
+            <div className="text-center py-12">
+              <div className="text-6xl mb-4">📭</div>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">Aucun référentiel</h3>
+              <p className="text-gray-500 mb-4">
+                Cette catégorie ne contient aucun référentiel pour le moment.
+              </p>
+              <button
+                onClick={() => {
+                  resetForm()
+                  setShowModal(true)
+                }}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-jlc-purple-600 text-white rounded-lg hover:bg-jlc-purple-700"
+              >
+                <PlusIcon className="h-5 w-5" />
+                Créer le premier référentiel
+              </button>
             </div>
           ) : (
             <div className="overflow-x-auto">
