@@ -50,13 +50,40 @@ async def upload_document(
     Upload un document
     Types: cv, cover_letter, medical_certificate, contract, id_document, other
     """
-    # Validate file size (max 10MB)
+    # Récupérer les limites depuis la configuration
+    max_file_size_mb = config.get("storage.uploads.max_file_size_mb", default=10)
+    max_file_size_bytes = max_file_size_mb * 1024 * 1024
+    
+    # Récupérer les extensions autorisées
+    allowed_extensions = config.get("storage.uploads.allowed_extensions", default=["pdf", "doc", "docx", "jpg", "png"])
+    
+    # Valider l'extension
+    file_extension = os.path.splitext(file.filename)[1].lower().lstrip('.')
+    if file_extension not in allowed_extensions:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Extension de fichier non autorisée. Autorisées: {', '.join(allowed_extensions)}"
+        )
+    
+    # Vérifier les limites spécifiques au type de document
+    if document_type in config.get("storage.uploads.document_types", default={}):
+        doc_config = config.get(f"storage.uploads.document_types.{document_type}")
+        max_file_size_mb = doc_config.get("max_size_mb", max_file_size_mb)
+        max_file_size_bytes = max_file_size_mb * 1024 * 1024
+        type_allowed_formats = doc_config.get("allowed_formats", allowed_extensions)
+        
+        if file_extension not in type_allowed_formats:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Format non autorisé pour {document_type}. Autorisés: {', '.join(type_allowed_formats)}"
+            )
+    
+    # Validate file size
     file_size = 0
     chunk_size = 1024 * 1024  # 1MB chunks
     
     # Generate unique filename
-    file_extension = os.path.splitext(file.filename)[1]
-    unique_filename = f"{uuid.uuid4()}{file_extension}"
+    unique_filename = f"{uuid.uuid4()}.{file_extension}"
     file_path = os.path.join(UPLOAD_DIR, unique_filename)
     
     # Save file
@@ -64,11 +91,11 @@ async def upload_document(
         with open(file_path, "wb") as buffer:
             while chunk := await file.read(chunk_size):
                 file_size += len(chunk)
-                if file_size > 10 * 1024 * 1024:  # 10MB limit
+                if file_size > max_file_size_bytes:
                     os.remove(file_path)
                     raise HTTPException(
                         status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
-                        detail="Fichier trop volumineux (max 10MB)"
+                        detail=f"Fichier trop volumineux (max {max_file_size_mb}MB)"
                     )
                 buffer.write(chunk)
     except Exception as e:
