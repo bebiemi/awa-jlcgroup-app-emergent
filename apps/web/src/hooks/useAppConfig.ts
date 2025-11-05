@@ -1,8 +1,8 @@
 /**
  * Hook pour accéder à la configuration de l'application
- * Retourne les valeurs de configuration par défaut
- * TODO: Charger depuis l'API backend quand les référentiels sont initialisés
+ * Charge depuis l'API backend avec fallback sur valeurs par défaut
  */
+import { useGetAllConfigQuery } from '@/features/admin/api/configurationApi'
 
 export interface AppConfig {
   roles: {
@@ -26,6 +26,31 @@ export interface AppConfig {
   validationStatuses: string[]
   validationTypes: string[]
   contractTypes: string[]
+}
+
+// Valeurs par défaut (fallback si API échoue)
+const DEFAULT_CONFIG: AppConfig = {
+  roles: {
+    admin: 'admin',
+    super_admin: 'super_admin',
+    company: 'company',
+    interim: 'interim',
+    agency: 'agency',
+    commercial: 'commercial',
+    validator: 'validator'
+  },
+  userStatuses: {
+    active: 'active',
+    pending: 'pending',
+    suspended: 'suspended',
+    deleted: 'deleted',
+    blocked: 'blocked'
+  },
+  missionStatuses: ['draft', 'published', 'closed', 'cancelled', 'archived'],
+  applicationStatuses: ['submitted', 'review', 'interview_scheduled', 'interviewed', 'selected', 'rejected', 'medical_pending', 'medical_completed', 'contract_pending', 'contract_signed'],
+  validationStatuses: ['pending', 'approved', 'rejected'],
+  validationTypes: ['interim', 'company', 'collaborator'],
+  contractTypes: ['cdi', 'cdd', 'interim', 'freelance', 'stage'],
 }
 
 /**
