@@ -42,10 +42,10 @@ export default function InterimDashboard() {
     if (!profile?.profile) return []
     const p = profile.profile
     const missing = []
-    if (!profile.first_name) missing.push('Prénom')
-    if (!profile.last_name) missing.push('Nom')
-    if (!profile.phone) missing.push('Téléphone')
-    if (!profile.avatar_url) missing.push('Photo de profil')
+    if (!p.first_name) missing.push('Prénom')
+    if (!p.last_name) missing.push('Nom')
+    if (!p.phone) missing.push('Téléphone')
+    if (!p.photo_url) missing.push('Photo de profil')
     if (!profile.interim_data?.skills?.length) missing.push('Compétences')
     if (!profile.interim_data?.experience_years) missing.push('Années d’expérience')
     if (!profile.interim_data?.resume_url) missing.push('CV')
