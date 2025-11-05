@@ -3,6 +3,7 @@ import Card from '@/components/Card'
 import Button from '@/components/Button'
 import { useGetMyProfileQuery } from '@/features/profile/api/profileApi'
 import { useGetMyValidationQuery } from '@/features/admin/api/validationApi'
+import { useGetActiveContractQuery } from '@/features/contracts/api/contractApi'
 import { useUserStatuses } from '@/hooks/useAppConfig'
 import { Link } from 'react-router-dom'
 import {
@@ -10,6 +11,9 @@ import {
   ClockIcon,
   DocumentTextIcon,
   UserCircleIcon,
+  BriefcaseIcon,
+  MagnifyingGlassIcon,
+  ExclamationTriangleIcon,
 } from '@heroicons/react/24/outline'
 import clsx from 'clsx'
 
