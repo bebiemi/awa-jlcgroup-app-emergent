@@ -259,8 +259,16 @@ export default function Sidebar() {
         ))}
       </nav>
 
-      {/* User Info & Logout */}
+      {/* Language Switcher & User Info */}
       <div className="p-4 border-t border-jlc-purple-700">
+        {/* Language Switcher */}
+        {!isCollapsed && (
+          <div className="mb-3">
+            <LanguageSwitcher />
+          </div>
+        )}
+        
+        {/* User Info */}
         <div className="flex items-center gap-3 mb-3">
           <div className="h-10 w-10 rounded-full bg-gradient-to-br from-jlc-accent-yellow to-yellow-500 flex items-center justify-center text-jlc-purple-900 font-bold flex-shrink-0">
             {user.full_name?.charAt(0) || user.username.charAt(0)}
@@ -272,13 +280,15 @@ export default function Sidebar() {
             </div>
           )}
         </div>
+        
+        {/* Logout Button */}
         <button
           onClick={handleLogout}
           className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-jlc-purple-200 hover:bg-red-600/20 hover:text-red-300 transition-all"
-          title={isCollapsed ? 'Déconnexion' : undefined}
+          title={isCollapsed ? t('common.logout') : undefined}
         >
           <ArrowRightOnRectangleIcon className="h-5 w-5 flex-shrink-0" />
-          {!isCollapsed && <span className="text-sm font-medium">Déconnexion</span>}
+          {!isCollapsed && <span className="text-sm font-medium">{t('common.logout')}</span>}
         </button>
       </div>
     </div>
