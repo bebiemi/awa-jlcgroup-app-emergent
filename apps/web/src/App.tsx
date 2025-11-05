@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { useAppSelector } from './store/hooks'
 import { useInactivityLogout } from './hooks/useInactivityLogout'
+import { useRoles } from './hooks/useAppConfig'
 import LandingPage from './pages/LandingPage'
 import LoginPage from './features/auth/pages/LoginPage'
 import RegisterPage from './features/auth/pages/RegisterPage'
