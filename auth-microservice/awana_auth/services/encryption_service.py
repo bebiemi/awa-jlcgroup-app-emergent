@@ -40,7 +40,7 @@ class EncryptionService:
         salt = os.getenv('ENCRYPTION_SALT', 'jlc-email-encryption-salt').encode()
         
         # Dériver une clé de 32 bytes depuis le secret
-        kdf = PBKDF2(
+        kdf = PBKDF2HMAC(
             algorithm=hashes.SHA256(),
             length=32,
             salt=salt,
