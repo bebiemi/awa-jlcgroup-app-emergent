@@ -2156,36 +2156,59 @@ def run_authentication_fix_test():
     return test_results
 
 if __name__ == "__main__":
-    print(f"{Colors.BOLD}🧪 AWANA Auth Microservice - Email Notification System Testing{Colors.ENDC}")
-    print(f"{Colors.BLUE}Testing URL: {AUTH_BASE_URL}{Colors.ENDC}")
-    print("=" * 80)
+    print(f"{Colors.BOLD}🚀 Starting Profile Completion Testing{Colors.ENDC}")
+    print(f"Testing Auth Service: {AUTH_BASE_URL}")
+    print(f"Testing JLC API Service: {API_BASE_URL}")
     
     # Test auth service health first
     if not test_auth_service_health():
-        print(f"\n{Colors.RED}❌ Auth service is not running. Please start the service first.{Colors.ENDC}")
+        print(f"\n{Colors.RED}❌ Auth service is not running. Please start it first.{Colors.ENDC}")
         sys.exit(1)
     
-    # Test Email Notification System
-    print(f"\n{Colors.BOLD}📧 Testing Email Notification System{Colors.ENDC}")
-    email_system_results = test_email_notification_system()
+    # Initialize test results
+    all_tests_passed = True
     
-    # Test Email Rollback Integration
-    print(f"\n{Colors.BOLD}🔄 Testing Email Rollback Integration{Colors.ENDC}")
-    email_rollback_results = test_email_rollback_integration()
+    try:
+        # Test 1: Profile Completion System
+        print(f"\n{Colors.BLUE}📊 Testing Profile Completion System{Colors.ENDC}")
+        profile_completion_success = test_profile_completion_system()
+        
+        # Test 2: MongoDB Skill Verification
+        print(f"\n{Colors.BLUE}🗄️ Testing MongoDB Skill References{Colors.ENDC}")
+        mongodb_skill_success = test_mongodb_skill_verification()
+        
+    except KeyboardInterrupt:
+        print(f"\n{Colors.YELLOW}⚠️ Testing interrupted by user{Colors.ENDC}")
+        sys.exit(1)
+    except Exception as e:
+        print(f"\n{Colors.RED}❌ Unexpected error during testing: {str(e)}{Colors.ENDC}")
+        all_tests_passed = False
     
     # Summary
-    print(f"\n{Colors.BOLD}📊 EMAIL NOTIFICATION SYSTEM TEST SUMMARY{Colors.ENDC}")
-    print("=" * 80)
+    print(f"\n{Colors.BOLD}📊 TESTING SUMMARY{Colors.ENDC}")
+    print("=" * 50)
     
-    print(f"Email System Tests: {'✅ PASS' if email_system_results else '❌ FAIL'}")
-    print(f"Email Rollback Integration: {'✅ PASS' if email_rollback_results else '❌ FAIL'}")
+    # Individual test results
+    test_status = [
+        ("Profile Completion System", profile_completion_success),
+        ("MongoDB Skill References", mongodb_skill_success)
+    ]
     
-    print(f"\n{Colors.BOLD}🎯 Email notification system testing completed!{Colors.ENDC}")
+    for test_name, success in test_status:
+        status = "✅ PASS" if success else "❌ FAIL"
+        print(f"{status} {test_name}")
     
-    # Exit with appropriate code
-    if email_system_results and email_rollback_results:
-        print(f"{Colors.GREEN}✅ All email notification tests passed!{Colors.ENDC}")
+    # Overall result
+    overall_success = all(success for _, success in test_status)
+    
+    if overall_success:
+        print(f"\n{Colors.GREEN}🎉 ALL PROFILE COMPLETION TESTS PASSED!{Colors.ENDC}")
+        print(f"\n{Colors.BOLD}Key Results:{Colors.ENDC}")
+        print("✅ Profile completion calculation working correctly")
+        print("✅ Profile updates increase completion percentage")
+        print("✅ New skills are added to system references")
+        print("✅ User 'paf' authentication working")
         sys.exit(0)
     else:
-        print(f"{Colors.YELLOW}⚠️ Some email notification tests failed.{Colors.ENDC}")
+        print(f"\n{Colors.RED}❌ SOME PROFILE COMPLETION TESTS FAILED{Colors.ENDC}")
         sys.exit(1)
