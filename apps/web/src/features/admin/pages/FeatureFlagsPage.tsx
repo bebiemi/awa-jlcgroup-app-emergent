@@ -673,6 +673,73 @@ export default function FeatureFlagsPage() {
           </div>
         </div>
       )}
+
+      {/* Modal Import */}
+      {showImportModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full">
+            <h2 className="text-xl font-bold mb-4">Importer Feature Flags</h2>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Fichier JSON
+                </label>
+                <input
+                  type="file"
+                  accept=".json"
+                  onChange={(e) => setImportFile(e.target.files?.[0] || null)}
+                  className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-jlc-purple-50 file:text-jlc-purple-700 hover:file:bg-jlc-purple-100"
+                />
+              </div>
+
+              <div>
+                <label className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={overwriteExisting}
+                    onChange={(e) => setOverwriteExisting(e.target.checked)}
+                    className="rounded border-gray-300"
+                  />
+                  <span className="text-sm text-gray-700">
+                    Écraser les flags existants
+                  </span>
+                </label>
+                <p className="mt-1 text-xs text-gray-500">
+                  Si décoché, les flags existants seront ignorés
+                </p>
+              </div>
+
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                <p className="text-xs text-yellow-800">
+                  ⚠️ Cette action va importer des feature flags. Assurez-vous que le fichier provient d'une source fiable.
+                </p>
+              </div>
+
+              <div className="flex gap-2 justify-end pt-4">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowImportModal(false)
+                    setImportFile(null)
+                    setOverwriteExisting(false)
+                  }}
+                  className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+                >
+                  Annuler
+                </button>
+                <button
+                  onClick={handleImport}
+                  disabled={!importFile}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Importer
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </Layout>
   )
 }
