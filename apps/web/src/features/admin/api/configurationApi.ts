@@ -43,6 +43,26 @@ export const configurationApi = createApi({
   }),
   tagTypes: ['References', 'Settings'],
   endpoints: (builder) => ({
+    // CONFIGURATION GLOBALE
+    getAllConfig: builder.query<{
+      roles: Record<string, string>
+      user_statuses: Record<string, string>
+      mission_statuses: string[]
+      application_statuses: string[]
+      validation_statuses: string[]
+      validation_types: string[]
+      contract_types: string[]
+      permissions: {
+        mission: Record<string, string[]>
+        application: Record<string, string[]>
+        validation: Record<string, string[]>
+      }
+    }, void>({
+      query: () => '/all',
+      // Cache pendant 5 minutes
+      keepUnusedDataFor: 300,
+    }),
+    
     // RÉFÉRENTIELS
     getReferences: builder.query<{ references: SystemReference[] }, {
       category?: string
