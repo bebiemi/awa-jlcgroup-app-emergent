@@ -91,9 +91,13 @@ async def get_my_profile(
     if cfg.get_interim_role() in current_user.roles:
         profile = await db.interim_profiles.find_one({"user_id": current_user.id}, {"_id": 0})
         if not profile:
-            # Create default profile
+            # Create default profile with user's basic info
             profile = {
                 "user_id": current_user.id,
+                "first_name": current_user.first_name,
+                "last_name": current_user.last_name,
+                "email": current_user.email,
+                "phone": current_user.phone if hasattr(current_user, 'phone') else None,
                 "sectors": [],
                 "skills": [],
                 "languages": [],
@@ -108,7 +112,51 @@ async def get_my_profile(
                 "profile_completion_percentage": 0,
                 "updated_at": datetime.now(timezone.utc).isoformat()
             }
+            # Calculate initial completion
+            completion = calculate_profile_completion(profile, cfg.get_interim_role())
+            profile["profile_completion_percentage"] = completion
+            profile["profile_completed"] = completion >= 80
+            
             await db.interim_profiles.insert_one(profile)
+        else:
+            # Ensure basic user info is synced from user object if missing in profile
+            needs_update = False
+            updates = {}
+            
+            if not profile.get("first_name") and current_user.first_name:
+                updates["first_name"] = current_user.first_name
+                needs_update = True
+            if not profile.get("last_name") and current_user.last_name:
+                updates["last_name"] = current_user.last_name
+                needs_update = True
+            if not profile.get("email") and current_user.email:
+                updates["email"] = current_user.email
+                needs_update = True
+            if not profile.get("phone") and hasattr(current_user, 'phone') and current_user.phone:
+                updates["phone"] = current_user.phone
+                needs_update = True
+            
+            if needs_update:
+                updates["updated_at"] = datetime.now(timezone.utc).isoformat()
+                await db.interim_profiles.update_one(
+                    {"user_id": current_user.id},
+                    {"$set": updates}
+                )
+                # Reload profile with updates
+                profile = await db.interim_profiles.find_one({"user_id": current_user.id}, {"_id": 0})
+                
+                # Recalculate completion with synced data
+                completion = calculate_profile_completion(profile, cfg.get_interim_role())
+                await db.interim_profiles.update_one(
+                    {"user_id": current_user.id},
+                    {"$set": {
+                        "profile_completion_percentage": completion,
+                        "profile_completed": completion >= 80
+                    }}
+                )
+                profile["profile_completion_percentage"] = completion
+                profile["profile_completed"] = completion >= 80
+        
         return {"profile_type": cfg.get_interim_role(), "profile": profile}
     
     elif cfg.get_company_role() in current_user.roles:
