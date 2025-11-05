@@ -60,13 +60,75 @@ export default function InterimDashboard() {
       <div className="space-y-6">
         {/* Welcome Header */}
         <div className="bg-gradient-to-r from-jlc-purple-600 to-jlc-purple-700 rounded-lg shadow-lg p-8 text-white">
-          <h1 className="text-3xl font-bold">
-            Bonjour, {profile?.first_name || 'Intérimaire'} 👋
-          </h1>
-          <p className="mt-2 text-purple-100">
-            Bienvenue sur votre tableau de bord JLC Group
-          </p>
+          <div className="flex items-start justify-between">
+            <div className="flex-1">
+              <h1 className="text-3xl font-bold">
+                Bonjour, {profile?.first_name || 'Intérimaire'} 👋
+              </h1>
+              <p className="mt-2 text-purple-100">
+                Bienvenue sur votre tableau de bord JLC Group
+              </p>
+            </div>
+            <div className="ml-4">
+              {activeContract ? (
+                <div className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-green-500 text-white shadow-lg">
+                  <BriefcaseIcon className="h-5 w-5 mr-2" />
+                  En mission
+                </div>
+              ) : (
+                <div className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-blue-500 text-white shadow-lg">
+                  <MagnifyingGlassIcon className="h-5 w-5 mr-2" />
+                  En recherche
+                </div>
+              )}
+            </div>
+          </div>
+          
+          {/* Mission active info */}
+          {activeContract && (
+            <div className="mt-4 bg-white bg-opacity-20 rounded-lg p-4">
+              <p className="text-sm font-medium text-white">Mission actuelle</p>
+              <p className="text-lg font-bold text-white mt-1">{activeContract.mission_title}</p>
+              <p className="text-sm text-purple-100 mt-1">
+                {activeContract.company_name} • {activeContract.location}
+              </p>
+            </div>
+          )}
         </div>
+
+        {/* Alerte fin de mission J-14 */}
+        {upcomingEnd && upcomingEnd.days_remaining <= 14 && (
+          <Card className="border-l-4 border-orange-500 bg-orange-50">
+            <div className="flex">
+              <div className="flex-shrink-0">
+                <ExclamationTriangleIcon className="h-6 w-6 text-orange-600" />
+              </div>
+              <div className="ml-3 flex-1">
+                <h3 className="text-sm font-semibold text-orange-900">
+                  ⚠️ Fin de mission approchante
+                </h3>
+                <div className="mt-2 text-sm text-orange-700">
+                  <p>
+                    Votre mission <strong>{upcomingEnd.mission_title}</strong> se termine dans{' '}
+                    <strong className="text-orange-900">{upcomingEnd.days_remaining} jour{upcomingEnd.days_remaining > 1 ? 's' : ''}</strong>{' '}
+                    (le {new Date(upcomingEnd.end_date).toLocaleDateString('fr-FR')}).
+                  </p>
+                  <p className="mt-2">
+                    💡 C'est le moment de consulter les nouvelles offres disponibles !
+                  </p>
+                </div>
+                <div className="mt-4">
+                  <Link
+                    to="/offres"
+                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-orange-600 hover:bg-orange-700"
+                  >
+                    Voir les offres disponibles
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </Card>
+        )}
 
         {/* Validation Status Banner */}
         {validation && (
