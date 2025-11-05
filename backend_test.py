@@ -1650,8 +1650,11 @@ def test_mongodb_skill_verification():
             log_test("Skill Reference Not Found", "FAIL", f"Skill '{skill_code}' not found in system_references")
         
         # Count total skills in references
-        total_skills = references_collection.count_documents({"category": "skills"})
-        log_test("Total Skills in References", "PASS", f"Found {total_skills} skills in system_references")
+        total_skills_auth = auth_db.system_references.count_documents({"category": "skills"})
+        total_skills_jlc = jlc_db.system_references.count_documents({"category": "skills"})
+        
+        log_test("Total Skills in auth_db", "PASS", f"Found {total_skills_auth} skills in auth_db.system_references")
+        log_test("Total Skills in jlc_db", "PASS", f"Found {total_skills_jlc} skills in jlc_db.system_references")
         
         client.close()
         return skill_ref is not None
