@@ -51,7 +51,10 @@ export const store = configureStore({
       .concat(locationApi.middleware)
       .concat(missionApi.middleware)
       .concat(configurationApi.middleware)
-      .concat(featureFlagApi.middleware),
+      .concat(featureFlagApi.middleware)
+      .concat(emailSettingsApi.middleware)
+      .concat(emailHistoryApi.middleware)
+      .concat(emailTemplatesApi.middleware),
 })
 
 export type RootState = ReturnType<typeof store.getState>
