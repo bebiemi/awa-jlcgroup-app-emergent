@@ -132,6 +132,36 @@ async def update_my_profile(
     update_data = {k: v for k, v in update_data.items() if v is not None}
     update_data["updated_at"] = datetime.now(timezone.utc).isoformat()
     
+    # If skills are being updated, add new ones to system references
+    if "skills" in update_data and isinstance(update_data["skills"], list):
+        for skill in update_data["skills"]:
+            skill_name = skill if isinstance(skill, str) else skill.get("name")
+            if skill_name:
+                # Check if skill exists in references
+                existing_skill = await db.system_references.find_one({
+                    "category": "skills",
+                    "code": skill_name.lower().replace(" ", "_")
+                })
+                
+                if not existing_skill:
+                    # Add new skill to references
+                    new_skill_ref = {
+                        "id": str(uuid.uuid4()),
+                        "category": "skills",
+                        "code": skill_name.lower().replace(" ", "_"),
+                        "label_fr": skill_name,
+                        "label_en": skill_name,
+                        "description": f"Compétence: {skill_name}",
+                        "is_active": True,
+                        "metadata": {
+                            "added_by": "user",
+                            "user_id": current_user.id
+                        },
+                        "created_at": datetime.now(timezone.utc).isoformat(),
+                        "updated_at": datetime.now(timezone.utc).isoformat()
+                    }
+                    await db.system_references.insert_one(new_skill_ref)
+    
     # Determine collection based on role
     if cfg.get_interim_role() in current_user.roles:
         collection = db.interim_profiles
