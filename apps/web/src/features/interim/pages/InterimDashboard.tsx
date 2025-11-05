@@ -50,7 +50,6 @@ export default function InterimDashboard() {
     if (!p.years_of_experience) missing.push('Années d’expérience')
     if (!p.cv_document_id) missing.push('CV')
     if (!p.available_immediately && !p.available_from_date) missing.push('Disponibilité')
-    if (!profile.interim_data?.bio) missing.push('Biographie')
     return missing
   }
 
