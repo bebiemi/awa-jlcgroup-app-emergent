@@ -256,7 +256,7 @@ export default function MissionsPage() {
                         {mission.job_type}
                       </div>
                       <div>📍 {mission.location}</div>
-                      <div>💼 {mission.contract_type}</div>
+                      <div>💼 {getContractTypeLabel(mission.contract_type)}</div>
                       {mission.salary_range && <div>💰 {mission.salary_range}</div>}
                     </div>
 
