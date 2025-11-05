@@ -89,6 +89,11 @@ async def create_reference(
     ref_dict = reference.dict()
     await db.system_references.insert_one(ref_dict)
     
+    # Invalider le cache pour cette catégorie
+    await reference_cache.invalidate(f"refs:{ref.category}")
+    await reference_cache.invalidate(f"refs:{ref.category}:active=True")
+    await reference_cache.invalidate(f"refs:{ref.category}:active=False")
+    
     # Remove MongoDB _id
     if "_id" in ref_dict:
         del ref_dict["_id"]
