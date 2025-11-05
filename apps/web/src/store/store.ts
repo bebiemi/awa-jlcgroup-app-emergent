@@ -33,6 +33,9 @@ export const store = configureStore({
     [missionApi.reducerPath]: missionApi.reducer,
     [configurationApi.reducerPath]: configurationApi.reducer,
     [featureFlagApi.reducerPath]: featureFlagApi.reducer,
+    [emailSettingsApi.reducerPath]: emailSettingsApi.reducer,
+    [emailHistoryApi.reducerPath]: emailHistoryApi.reducer,
+    [emailTemplatesApi.reducerPath]: emailTemplatesApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
