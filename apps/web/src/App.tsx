@@ -125,6 +125,14 @@ function App() {
           </ProtectedRoute>
         }
       />
+      <Route
+        path="/admin/rules"
+        element={
+          <ProtectedRoute requiredRoles={['admin', 'super_admin']}>
+            <BusinessRulesPage />
+          </ProtectedRoute>
+        }
+      />
       
       {/* Routes Missions - Admin & Commercial */}
       <Route
