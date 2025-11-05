@@ -171,6 +171,14 @@ async def delete_reference(
             )
     
     await db.system_references.delete_one({"id": ref_id})
+    
+    # Invalider le cache pour cette catégorie
+    category = ref.get("category")
+    if category:
+        await reference_cache.invalidate(f"refs:{category}")
+        await reference_cache.invalidate(f"refs:{category}:active=True")
+        await reference_cache.invalidate(f"refs:{category}:active=False")
+    
     return {"message": "Référentiel supprimé"}
 
 
