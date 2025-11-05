@@ -167,7 +167,7 @@ async def get_my_contracts(
 @router.get("/active")
 async def get_active_contract(
     current_user: User = Depends(get_current_user),
-    db: AsyncIOMotorDatabase = Depends(get_database)
+    db: AsyncIOMotorDatabase = Depends(get_jlc_database)
 ):
     """
     Récupérer le contrat actif de l'utilisateur (s'il existe)
