@@ -32,9 +32,9 @@ export interface ApplicationSetting {
 export const configurationApi = createApi({
   reducerPath: 'configurationApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: `${BACKEND_URL}/api/auth/config`,
-    prepareHeaders: (headers) => {
-      const token = localStorage.getItem('token')
+    baseUrl: '/auth-api/auth/config',
+    prepareHeaders: (headers, { getState }) => {
+      const token = (getState() as RootState).auth.token
       if (token) {
         headers.set('authorization', `Bearer ${token}`)
       }
