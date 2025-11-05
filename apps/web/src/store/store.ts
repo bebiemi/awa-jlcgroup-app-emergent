@@ -10,6 +10,7 @@ import { securityApi } from '@/features/admin/api/securityApi'
 import { locationsApi } from '@/features/admin/api/locationsApi'
 import { locationApi } from '@/features/admin/api/locationApi'
 import { missionApi } from '@/features/missions/api/missionApi'
+import { configurationApi } from '@/features/admin/api/configurationApi'
 import authReducer from '@/features/auth/slices/authSlice'
 
 export const store = configureStore({
