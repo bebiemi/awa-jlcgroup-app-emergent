@@ -150,13 +150,11 @@ export default function MissionDetailPage() {
           <div className="flex items-start justify-between mb-6">
             <div className="flex-1">
               <h1 className="text-3xl font-bold text-gray-900 mb-2">{mission.title}</h1>
-              <span className={`px-3 py-1 text-sm font-medium rounded-full ${
-                mission.status === 'published' ? 'bg-green-100 text-green-800' :
-                mission.status === 'draft' ? 'bg-gray-100 text-gray-800' :
-                'bg-blue-100 text-blue-800'
-              }`}>
-                {STATUS_LABELS[mission.status] || mission.status}
-              </span>
+              <StatusBadge
+                category="mission_statuses"
+                status={mission.status}
+                showIcon
+              />
             </div>
           </div>
 
