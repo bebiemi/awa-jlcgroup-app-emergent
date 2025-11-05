@@ -255,6 +255,47 @@ workflows:
         - "admin"
         - "super_admin"
 
+# Profiles Configuration
+profiles:
+  types:
+    interim: "interim"
+    company: "company"
+    agency: "agency"
+    all:
+      - "interim"
+      - "company"
+      - "agency"
+
+# Contract Types Configuration
+contracts:
+  types:
+    cdi: "cdi"
+    cdd: "cdd"
+    interim: "interim"
+    freelance: "freelance"
+    stage: "stage"
+    all:
+      - "cdi"
+      - "cdd"
+      - "interim"
+      - "freelance"
+      - "stage"
+
+# Document Types Configuration
+documents:
+  types:
+    cv: "cv"
+    medical_certificate: "medical_certificate"
+    contract: "contract"
+    identity_document: "identity_document"
+    diploma: "diploma"
+    all:
+      - "cv"
+      - "medical_certificate"
+      - "contract"
+      - "identity_document"
+      - "diploma"
+
 notifications:
   # Email Configuration
   email:
