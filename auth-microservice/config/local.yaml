@@ -1,0 +1,70 @@
+# Configuration locale - Environnement de développement local
+
+app:
+  debug: true
+
+server:
+  reload: true
+  log_level: "debug"
+
+database:
+  # DB locale - credentials dans .env
+  pool_size: 5
+  max_pool_size: 10
+
+security:
+  jwt:
+    access_token_expire_minutes: 60  # Plus long en dev
+    
+  cors:
+    allow_origins:
+      - "http://localhost:3000"
+      - "http://localhost:3001"
+      - "http://127.0.0.1:3000"
+      
+  rate_limit:
+    enabled: false  # Désactivé en local pour faciliter le dev
+
+workflows:
+  mission:
+    auto_publish: true  # Auto-publish en dev
+    
+  application:
+    delays:
+      interview_scheduling: 1  # Délais réduits pour tests
+      interview_to_decision: 1
+      medical_check: 2
+      contract_preparation: 1
+
+notifications:
+  email:
+    enabled: false  # Désactivé en local pour éviter l'envoi réel
+    
+  sms:
+    enabled: false
+
+storage:
+  uploads:
+    base_path: "/app/uploads"
+    max_file_size_mb: 50  # Plus permissif en dev
+    
+  cloud:
+    enabled: false
+
+cache:
+  references:
+    ttl_minutes: 5  # Cache court pour voir les changements rapidement
+
+features:
+  mfa:
+    enabled: false  # Simplifie le dev
+    
+  ai_features:
+    enabled: true  # Pour tester
+    cv_parsing: true
+    candidate_scoring: true
+
+monitoring:
+  logging:
+    level: "DEBUG"
+    format: "text"  # Plus lisible en console
