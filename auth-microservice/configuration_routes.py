@@ -221,6 +221,9 @@ async def update_setting(
     )
     
     updated = await db.application_settings.find_one({"key": key})
+    if updated and "_id" in updated:
+        updated["_id"] = str(updated["_id"])
+    
     return {"setting": updated}
 
 
