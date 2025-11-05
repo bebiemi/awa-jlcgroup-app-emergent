@@ -2094,10 +2094,36 @@ def run_authentication_fix_test():
     return test_results
 
 if __name__ == "__main__":
-    results = run_authentication_fix_test()
+    print(f"{Colors.BOLD}🧪 AWANA Auth Microservice - Email Notification System Testing{Colors.ENDC}")
+    print(f"{Colors.BLUE}Testing URL: {AUTH_BASE_URL}{Colors.ENDC}")
+    print("=" * 80)
     
-    # Exit with error code if tests failed
-    if results["failed_tests"] > 0:
+    # Test auth service health first
+    if not test_auth_service_health():
+        print(f"\n{Colors.RED}❌ Auth service is not running. Please start the service first.{Colors.ENDC}")
         sys.exit(1)
-    else:
+    
+    # Test Email Notification System
+    print(f"\n{Colors.BOLD}📧 Testing Email Notification System{Colors.ENDC}")
+    email_system_results = test_email_notification_system()
+    
+    # Test Email Rollback Integration
+    print(f"\n{Colors.BOLD}🔄 Testing Email Rollback Integration{Colors.ENDC}")
+    email_rollback_results = test_email_rollback_integration()
+    
+    # Summary
+    print(f"\n{Colors.BOLD}📊 EMAIL NOTIFICATION SYSTEM TEST SUMMARY{Colors.ENDC}")
+    print("=" * 80)
+    
+    print(f"Email System Tests: {'✅ PASS' if email_system_results else '❌ FAIL'}")
+    print(f"Email Rollback Integration: {'✅ PASS' if email_rollback_results else '❌ FAIL'}")
+    
+    print(f"\n{Colors.BOLD}🎯 Email notification system testing completed!{Colors.ENDC}")
+    
+    # Exit with appropriate code
+    if email_system_results and email_rollback_results:
+        print(f"{Colors.GREEN}✅ All email notification tests passed!{Colors.ENDC}")
         sys.exit(0)
+    else:
+        print(f"{Colors.YELLOW}⚠️ Some email notification tests failed.{Colors.ENDC}")
+        sys.exit(1)
