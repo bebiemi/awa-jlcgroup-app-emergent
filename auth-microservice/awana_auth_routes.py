@@ -1540,10 +1540,16 @@ async def get_all_users(
     limit: int = 100,
     status: Optional[UserStatus] = None,
     provider: Optional[AuthProviderEnum] = None,
+    include_super_admin: bool = Query(False, description="Include super-admin users (super-admin only)"),
     current_user: User = Depends(require_admin),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
-    """Get all users (admin only)"""
+    """
+    Get all users (admin only)
+    
+    By default, super-admin users are hidden from regular admins.
+    Only super-admins can see all users by setting include_super_admin=true.
+    """
     query = {}
     
     if status:
@@ -1551,6 +1557,22 @@ async def get_all_users(
     
     if provider:
         query["provider"] = provider.value
+    
+    # Filter out super-admins unless caller is super-admin AND explicitly requests them
+    is_super_admin = "super_admin" in current_user.roles
+    
+    if not is_super_admin or not include_super_admin:
+        # Get hidden roles from system_references
+        hidden_roles = await db.system_references.find(
+            {"category": "roles", "is_hidden_from_admins": True},
+            {"_id": 0, "code": 1}
+        ).to_list(length=None)
+        
+        hidden_role_codes = [role["code"] for role in hidden_roles]
+        
+        if hidden_role_codes:
+            # Exclude users who have ANY hidden role
+            query["roles"] = {"$not": {"$elemMatch": {"$in": hidden_role_codes}}}
     
     users_docs = await db.users.find(query, {"_id": 0}).skip(skip).limit(limit).to_list(length=None)
     return [User(**doc) for doc in users_docs]
