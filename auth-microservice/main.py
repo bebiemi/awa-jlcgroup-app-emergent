@@ -75,6 +75,7 @@ app.include_router(validation_router, prefix="/api")
 app.include_router(profile_router, prefix="/api")
 app.include_router(mission_router)
 app.include_router(document_router)
+app.include_router(configuration_router, prefix="/api/auth")
 
 @app.get("/health")
 async def health_check():
