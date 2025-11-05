@@ -296,7 +296,7 @@ export default function InterimDashboard() {
                   <div className="flex justify-between">
                     <dt className="text-sm text-gray-600">Téléphone:</dt>
                     <dd className="text-sm font-medium text-gray-900">
-                      {profile.phone || 'Non renseigné'}
+                      {profile.profile.phone || 'Non renseigné'}
                     </dd>
                   </div>
                 </dl>
