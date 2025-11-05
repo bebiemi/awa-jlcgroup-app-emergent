@@ -1,31 +1,31 @@
 # 🔍 Audit des Valeurs en Dur - Rapport Complet
 
-**Date**: 2025-11-05 02:20:30
+**Date**: 2025-11-05 02:39:10
 
 ---
 
 ## 📊 Résumé Exécutif
 
-**Total de valeurs en dur trouvées**: 886
+**Total de valeurs en dur trouvées**: 766
 
 ### Par Sévérité
 
 | Sévérité | Nombre | Pourcentage |
 |----------|--------|-------------|
-| 🔴 CRITICAL | 504 | 56.9% |
-| 🟠 HIGH | 90 | 10.2% |
-| 🟡 MEDIUM | 107 | 12.1% |
-| 🟢 LOW | 185 | 20.9% |
+| 🔴 CRITICAL | 408 | 53.3% |
+| 🟠 HIGH | 84 | 11.0% |
+| 🟡 MEDIUM | 90 | 11.7% |
+| 🟢 LOW | 184 | 24.0% |
 
 ### Par Catégorie
 
 | Catégorie | Nombre |
 |-----------|--------|
-| roles | 294 |
-| messages | 169 |
-| validation_types | 159 |
-| contract_types | 79 |
-| user_status | 74 |
+| roles | 228 |
+| messages | 168 |
+| validation_types | 129 |
+| user_status | 68 |
+| contract_types | 62 |
 | application_status | 51 |
 | delays_days | 17 |
 | numeric_limits | 16 |
@@ -36,27 +36,27 @@
 
 | Fichier | Nombre de valeurs en dur |
 |---------|--------------------------|
-| `auth-microservice/awana_auth_routes.py` | 110 |
+| `auth-microservice/awana_auth_routes.py` | 80 |
 | `apps/web/src/features/admin/pages/ValidationsPage.tsx` | 76 |
 | `apps/web/src/App.tsx` | 70 |
-| `auth-microservice/mission_routes.py` | 61 |
-| `auth-microservice/google_auth_routes.py` | 47 |
-| `auth-microservice/profile_routes.py` | 42 |
-| `auth-microservice/validation_routes.py` | 32 |
+| `auth-microservice/google_auth_routes.py` | 32 |
 | `auth-microservice/scripts/seed_mission_references.py` | 32 |
 | `apps/web/src/features/auth/pages/RegisterPage.tsx` | 32 |
+| `auth-microservice/mission_routes.py` | 26 |
+| `auth-microservice/validation_routes.py` | 22 |
 | `apps/web/src/features/auth/pages/RoleSelectionPage.tsx` | 20 |
 | `auth-microservice/mfa_routes.py` | 19 |
 | `auth-microservice/awana_auth/rbac/models.py` | 18 |
 | `apps/web/src/features/admin/pages/ValidationsList.tsx` | 18 |
 | `apps/web/src/types/index.ts` | 17 |
 | `auth-microservice/security_routes.py` | 16 |
+| `apps/web/src/components/Sidebar.tsx` | 16 |
 
 ---
 
 ## 🔴 Sévérité: CRITICAL
 
-**Total**: 504 occurrences
+**Total**: 408 occurrences
 
 ### 📄 `apps/web/src/App.tsx`
 
@@ -2711,7 +2711,7 @@ name="admin",
 
 ### 📄 `auth-microservice/awana_auth_routes.py`
 
-**1. Ligne 170** | Catégorie: `validation_types`
+**1. Ligne 171** | Catégorie: `validation_types`
 
 ```
 validation_type = "collaborator"
@@ -2719,7 +2719,7 @@ validation_type = "collaborator"
 
 **Valeur en dur**: `"collaborator"`
 
-**2. Ligne 313** | Catégorie: `roles`
+**2. Ligne 314** | Catégorie: `roles`
 
 ```
 if profile_type == 'interim':
@@ -2727,7 +2727,7 @@ if profile_type == 'interim':
 
 **Valeur en dur**: `'interim'`
 
-**3. Ligne 313** | Catégorie: `validation_types`
+**3. Ligne 314** | Catégorie: `validation_types`
 
 ```
 if profile_type == 'interim':
@@ -2735,7 +2735,7 @@ if profile_type == 'interim':
 
 **Valeur en dur**: `'interim'`
 
-**4. Ligne 327** | Catégorie: `roles`
+**4. Ligne 328** | Catégorie: `roles`
 
 ```
 elif profile_type == 'company':
@@ -2743,7 +2743,7 @@ elif profile_type == 'company':
 
 **Valeur en dur**: `'company'`
 
-**5. Ligne 327** | Catégorie: `validation_types`
+**5. Ligne 328** | Catégorie: `validation_types`
 
 ```
 elif profile_type == 'company':
@@ -2751,7 +2751,7 @@ elif profile_type == 'company':
 
 **Valeur en dur**: `'company'`
 
-**6. Ligne 342** | Catégorie: `roles`
+**6. Ligne 343** | Catégorie: `roles`
 
 ```
 elif profile_type in ['admin', 'super_admin']:
@@ -2759,7 +2759,7 @@ elif profile_type in ['admin', 'super_admin']:
 
 **Valeur en dur**: `'admin'`
 
-**7. Ligne 342** | Catégorie: `roles`
+**7. Ligne 343** | Catégorie: `roles`
 
 ```
 elif profile_type in ['admin', 'super_admin']:
@@ -2767,31 +2767,7 @@ elif profile_type in ['admin', 'super_admin']:
 
 **Valeur en dur**: `'super_admin'`
 
-**8. Ligne 647** | Catégorie: `roles`
-
-```
-if email in admin_emails and "admin" not in user.roles:
-```
-
-**Valeur en dur**: `"admin"`
-
-**9. Ligne 648** | Catégorie: `roles`
-
-```
-user.roles.append("admin")
-```
-
-**Valeur en dur**: `"admin"`
-
-**10. Ligne 674** | Catégorie: `roles`
-
-```
-user_roles = ["admin"] if email in admin_emails else ["user"]
-```
-
-**Valeur en dur**: `"admin"`
-
-**11. Ligne 782** | Catégorie: `roles`
+**8. Ligne 783** | Catégorie: `roles`
 
 ```
 admin_username = os.environ.get('ADMIN_USERNAME', 'admin')
@@ -2799,39 +2775,7 @@ admin_username = os.environ.get('ADMIN_USERNAME', 'admin')
 
 **Valeur en dur**: `'admin'`
 
-**12. Ligne 884** | Catégorie: `roles`
-
-```
-if "admin" not in user.roles:
-```
-
-**Valeur en dur**: `"admin"`
-
-**13. Ligne 885** | Catégorie: `roles`
-
-```
-user.roles.append("admin")
-```
-
-**Valeur en dur**: `"admin"`
-
-**14. Ligne 906** | Catégorie: `roles`
-
-```
-roles=["admin"]
-```
-
-**Valeur en dur**: `"admin"`
-
-**15. Ligne 918** | Catégorie: `roles`
-
-```
-await rbac_manager.grant_role(user.id, "admin", granted_by="system")
-```
-
-**Valeur en dur**: `"admin"`
-
-**16. Ligne 1156** | Catégorie: `roles`
+**9. Ligne 1157** | Catégorie: `roles`
 
 ```
 if register_data.role not in ['interim', 'company']:
@@ -2839,7 +2783,7 @@ if register_data.role not in ['interim', 'company']:
 
 **Valeur en dur**: `'company'`
 
-**17. Ligne 1156** | Catégorie: `roles`
+**10. Ligne 1157** | Catégorie: `roles`
 
 ```
 if register_data.role not in ['interim', 'company']:
@@ -2847,7 +2791,7 @@ if register_data.role not in ['interim', 'company']:
 
 **Valeur en dur**: `'interim'`
 
-**18. Ligne 1156** | Catégorie: `validation_types`
+**11. Ligne 1157** | Catégorie: `validation_types`
 
 ```
 if register_data.role not in ['interim', 'company']:
@@ -2855,7 +2799,7 @@ if register_data.role not in ['interim', 'company']:
 
 **Valeur en dur**: `'interim'`
 
-**19. Ligne 1156** | Catégorie: `validation_types`
+**12. Ligne 1157** | Catégorie: `validation_types`
 
 ```
 if register_data.role not in ['interim', 'company']:
@@ -2863,7 +2807,7 @@ if register_data.role not in ['interim', 'company']:
 
 **Valeur en dur**: `'company'`
 
-**20. Ligne 1159** | Catégorie: `roles`
+**13. Ligne 1160** | Catégorie: `roles`
 
 ```
 detail="Invalid role. Must be 'interim' or 'company'"
@@ -2871,7 +2815,7 @@ detail="Invalid role. Must be 'interim' or 'company'"
 
 **Valeur en dur**: `'company'`
 
-**21. Ligne 1159** | Catégorie: `roles`
+**14. Ligne 1160** | Catégorie: `roles`
 
 ```
 detail="Invalid role. Must be 'interim' or 'company'"
@@ -2879,7 +2823,7 @@ detail="Invalid role. Must be 'interim' or 'company'"
 
 **Valeur en dur**: `'interim'`
 
-**22. Ligne 1159** | Catégorie: `validation_types`
+**15. Ligne 1160** | Catégorie: `validation_types`
 
 ```
 detail="Invalid role. Must be 'interim' or 'company'"
@@ -2887,7 +2831,7 @@ detail="Invalid role. Must be 'interim' or 'company'"
 
 **Valeur en dur**: `'interim'`
 
-**23. Ligne 1159** | Catégorie: `validation_types`
+**16. Ligne 1160** | Catégorie: `validation_types`
 
 ```
 detail="Invalid role. Must be 'interim' or 'company'"
@@ -2895,63 +2839,7 @@ detail="Invalid role. Must be 'interim' or 'company'"
 
 **Valeur en dur**: `'company'`
 
-**24. Ligne 1474** | Catégorie: `roles`
-
-```
-admin_users = await db.users.count_documents({"roles": "admin"})
-```
-
-**Valeur en dur**: `"admin"`
-
-**25. Ligne 1475** | Catégorie: `roles`
-
-```
-super_admin_users = await db.users.count_documents({"roles": "super_admin"})
-```
-
-**Valeur en dur**: `"super_admin"`
-
-**26. Ligne 1476** | Catégorie: `roles`
-
-```
-interim_users = await db.users.count_documents({"roles": "interim"})
-```
-
-**Valeur en dur**: `"interim"`
-
-**27. Ligne 1476** | Catégorie: `validation_types`
-
-```
-interim_users = await db.users.count_documents({"roles": "interim"})
-```
-
-**Valeur en dur**: `"interim"`
-
-**28. Ligne 1477** | Catégorie: `roles`
-
-```
-company_users = await db.users.count_documents({"roles": "company"})
-```
-
-**Valeur en dur**: `"company"`
-
-**29. Ligne 1477** | Catégorie: `validation_types`
-
-```
-company_users = await db.users.count_documents({"roles": "company"})
-```
-
-**Valeur en dur**: `"company"`
-
-**30. Ligne 1478** | Catégorie: `roles`
-
-```
-agency_users = await db.users.count_documents({"roles": "agency"})
-```
-
-**Valeur en dur**: `"agency"`
-
-**31. Ligne 1509** | Catégorie: `roles`
+**17. Ligne 1510** | Catégorie: `roles`
 
 ```
 "admin": admin_users,
@@ -2959,7 +2847,7 @@ agency_users = await db.users.count_documents({"roles": "agency"})
 
 **Valeur en dur**: `"admin"`
 
-**32. Ligne 1510** | Catégorie: `roles`
+**18. Ligne 1511** | Catégorie: `roles`
 
 ```
 "super_admin": super_admin_users,
@@ -2967,7 +2855,7 @@ agency_users = await db.users.count_documents({"roles": "agency"})
 
 **Valeur en dur**: `"super_admin"`
 
-**33. Ligne 1511** | Catégorie: `roles`
+**19. Ligne 1512** | Catégorie: `roles`
 
 ```
 "interim": interim_users,
@@ -2975,7 +2863,7 @@ agency_users = await db.users.count_documents({"roles": "agency"})
 
 **Valeur en dur**: `"interim"`
 
-**34. Ligne 1511** | Catégorie: `validation_types`
+**20. Ligne 1512** | Catégorie: `validation_types`
 
 ```
 "interim": interim_users,
@@ -2983,7 +2871,7 @@ agency_users = await db.users.count_documents({"roles": "agency"})
 
 **Valeur en dur**: `"interim"`
 
-**35. Ligne 1512** | Catégorie: `roles`
+**21. Ligne 1513** | Catégorie: `roles`
 
 ```
 "company": company_users,
@@ -2991,7 +2879,7 @@ agency_users = await db.users.count_documents({"roles": "agency"})
 
 **Valeur en dur**: `"company"`
 
-**36. Ligne 1512** | Catégorie: `validation_types`
+**22. Ligne 1513** | Catégorie: `validation_types`
 
 ```
 "company": company_users,
@@ -2999,85 +2887,13 @@ agency_users = await db.users.count_documents({"roles": "agency"})
 
 **Valeur en dur**: `"company"`
 
-**37. Ligne 1513** | Catégorie: `roles`
+**23. Ligne 1514** | Catégorie: `roles`
 
 ```
 "agency": agency_users
 ```
 
 **Valeur en dur**: `"agency"`
-
-**38. Ligne 2068** | Catégorie: `roles`
-
-```
-valid_roles = ["admin", "super_admin", "interim", "company", "agency", "commercial", "validator"]
-```
-
-**Valeur en dur**: `"admin"`
-
-**39. Ligne 2068** | Catégorie: `roles`
-
-```
-valid_roles = ["admin", "super_admin", "interim", "company", "agency", "commercial", "validator"]
-```
-
-**Valeur en dur**: `"super_admin"`
-
-**40. Ligne 2068** | Catégorie: `roles`
-
-```
-valid_roles = ["admin", "super_admin", "interim", "company", "agency", "commercial", "validator"]
-```
-
-**Valeur en dur**: `"company"`
-
-**41. Ligne 2068** | Catégorie: `roles`
-
-```
-valid_roles = ["admin", "super_admin", "interim", "company", "agency", "commercial", "validator"]
-```
-
-**Valeur en dur**: `"interim"`
-
-**42. Ligne 2068** | Catégorie: `roles`
-
-```
-valid_roles = ["admin", "super_admin", "interim", "company", "agency", "commercial", "validator"]
-```
-
-**Valeur en dur**: `"agency"`
-
-**43. Ligne 2068** | Catégorie: `roles`
-
-```
-valid_roles = ["admin", "super_admin", "interim", "company", "agency", "commercial", "validator"]
-```
-
-**Valeur en dur**: `"commercial"`
-
-**44. Ligne 2068** | Catégorie: `roles`
-
-```
-valid_roles = ["admin", "super_admin", "interim", "company", "agency", "commercial", "validator"]
-```
-
-**Valeur en dur**: `"validator"`
-
-**45. Ligne 2068** | Catégorie: `validation_types`
-
-```
-valid_roles = ["admin", "super_admin", "interim", "company", "agency", "commercial", "validator"]
-```
-
-**Valeur en dur**: `"interim"`
-
-**46. Ligne 2068** | Catégorie: `validation_types`
-
-```
-valid_roles = ["admin", "super_admin", "interim", "company", "agency", "commercial", "validator"]
-```
-
-**Valeur en dur**: `"company"`
 
 
 ### 📄 `auth-microservice/document_routes.py`
@@ -3125,7 +2941,7 @@ is_admin = any(role in user_roles for role in ["admin", "super_admin"])
 
 ### 📄 `auth-microservice/google_auth_routes.py`
 
-**1. Ligne 154** | Catégorie: `roles`
+**1. Ligne 155** | Catégorie: `roles`
 
 ```
 if profile_type == 'interim':
@@ -3133,7 +2949,7 @@ if profile_type == 'interim':
 
 **Valeur en dur**: `'interim'`
 
-**2. Ligne 154** | Catégorie: `validation_types`
+**2. Ligne 155** | Catégorie: `validation_types`
 
 ```
 if profile_type == 'interim':
@@ -3141,7 +2957,7 @@ if profile_type == 'interim':
 
 **Valeur en dur**: `'interim'`
 
-**3. Ligne 168** | Catégorie: `roles`
+**3. Ligne 169** | Catégorie: `roles`
 
 ```
 elif profile_type == 'company':
@@ -3149,7 +2965,7 @@ elif profile_type == 'company':
 
 **Valeur en dur**: `'company'`
 
-**4. Ligne 168** | Catégorie: `validation_types`
+**4. Ligne 169** | Catégorie: `validation_types`
 
 ```
 elif profile_type == 'company':
@@ -3157,7 +2973,7 @@ elif profile_type == 'company':
 
 **Valeur en dur**: `'company'`
 
-**5. Ligne 183** | Catégorie: `roles`
+**5. Ligne 184** | Catégorie: `roles`
 
 ```
 elif profile_type in ['admin', 'super_admin']:
@@ -3165,7 +2981,7 @@ elif profile_type in ['admin', 'super_admin']:
 
 **Valeur en dur**: `'admin'`
 
-**6. Ligne 183** | Catégorie: `roles`
+**6. Ligne 184** | Catégorie: `roles`
 
 ```
 elif profile_type in ['admin', 'super_admin']:
@@ -3173,71 +2989,7 @@ elif profile_type in ['admin', 'super_admin']:
 
 **Valeur en dur**: `'super_admin'`
 
-**7. Ligne 315** | Catégorie: `roles`
-
-```
-profile_type=roles[0] if roles else "interim",
-```
-
-**Valeur en dur**: `"interim"`
-
-**8. Ligne 315** | Catégorie: `validation_types`
-
-```
-profile_type=roles[0] if roles else "interim",
-```
-
-**Valeur en dur**: `"interim"`
-
-**9. Ligne 343** | Catégorie: `roles`
-
-```
-await rbac_manager.grant_role(user_id, "interim", granted_by="system")
-```
-
-**Valeur en dur**: `"interim"`
-
-**10. Ligne 343** | Catégorie: `validation_types`
-
-```
-await rbac_manager.grant_role(user_id, "interim", granted_by="system")
-```
-
-**Valeur en dur**: `"interim"`
-
-**11. Ligne 347** | Catégorie: `roles`
-
-```
-roles = ["interim"]
-```
-
-**Valeur en dur**: `"interim"`
-
-**12. Ligne 347** | Catégorie: `validation_types`
-
-```
-roles = ["interim"]
-```
-
-**Valeur en dur**: `"interim"`
-
-**13. Ligne 357** | Catégorie: `roles`
-
-```
-profile_type=roles[0] if roles else "interim",
-```
-
-**Valeur en dur**: `"interim"`
-
-**14. Ligne 357** | Catégorie: `validation_types`
-
-```
-profile_type=roles[0] if roles else "interim",
-```
-
-**Valeur en dur**: `"interim"`
-
-**15. Ligne 538** | Catégorie: `roles`
+**7. Ligne 539** | Catégorie: `roles`
 
 ```
 if registration_data.role not in ['interim', 'company']:
@@ -3245,7 +2997,7 @@ if registration_data.role not in ['interim', 'company']:
 
 **Valeur en dur**: `'company'`
 
-**16. Ligne 538** | Catégorie: `roles`
+**8. Ligne 539** | Catégorie: `roles`
 
 ```
 if registration_data.role not in ['interim', 'company']:
@@ -3253,7 +3005,7 @@ if registration_data.role not in ['interim', 'company']:
 
 **Valeur en dur**: `'interim'`
 
-**17. Ligne 538** | Catégorie: `validation_types`
+**9. Ligne 539** | Catégorie: `validation_types`
 
 ```
 if registration_data.role not in ['interim', 'company']:
@@ -3261,7 +3013,7 @@ if registration_data.role not in ['interim', 'company']:
 
 **Valeur en dur**: `'interim'`
 
-**18. Ligne 538** | Catégorie: `validation_types`
+**10. Ligne 539** | Catégorie: `validation_types`
 
 ```
 if registration_data.role not in ['interim', 'company']:
@@ -3269,7 +3021,7 @@ if registration_data.role not in ['interim', 'company']:
 
 **Valeur en dur**: `'company'`
 
-**19. Ligne 541** | Catégorie: `roles`
+**11. Ligne 542** | Catégorie: `roles`
 
 ```
 detail="Invalid role. Must be 'interim' or 'company'"
@@ -3277,7 +3029,7 @@ detail="Invalid role. Must be 'interim' or 'company'"
 
 **Valeur en dur**: `'company'`
 
-**20. Ligne 541** | Catégorie: `roles`
+**12. Ligne 542** | Catégorie: `roles`
 
 ```
 detail="Invalid role. Must be 'interim' or 'company'"
@@ -3285,7 +3037,7 @@ detail="Invalid role. Must be 'interim' or 'company'"
 
 **Valeur en dur**: `'interim'`
 
-**21. Ligne 541** | Catégorie: `validation_types`
+**13. Ligne 542** | Catégorie: `validation_types`
 
 ```
 detail="Invalid role. Must be 'interim' or 'company'"
@@ -3293,29 +3045,13 @@ detail="Invalid role. Must be 'interim' or 'company'"
 
 **Valeur en dur**: `'interim'`
 
-**22. Ligne 541** | Catégorie: `validation_types`
+**14. Ligne 542** | Catégorie: `validation_types`
 
 ```
 detail="Invalid role. Must be 'interim' or 'company'"
 ```
 
 **Valeur en dur**: `'company'`
-
-**23. Ligne 569** | Catégorie: `roles`
-
-```
-await rbac_manager.revoke_role(user_id, "interim")
-```
-
-**Valeur en dur**: `"interim"`
-
-**24. Ligne 569** | Catégorie: `validation_types`
-
-```
-await rbac_manager.revoke_role(user_id, "interim")
-```
-
-**Valeur en dur**: `"interim"`
 
 
 ### 📄 `auth-microservice/init_permissions.py`
@@ -3355,7 +3091,7 @@ await rbac_manager.revoke_role(user_id, "interim")
 
 ### 📄 `auth-microservice/mission_routes.py`
 
-**1. Ligne 109** | Catégorie: `application_status`
+**1. Ligne 110** | Catégorie: `application_status`
 
 ```
 if existing_app["status"] in ["rejected", "rejected_initial"]:
@@ -3363,266 +3099,10 @@ if existing_app["status"] in ["rejected", "rejected_initial"]:
 
 **Valeur en dur**: `"rejected"`
 
-**2. Ligne 159** | Catégorie: `roles`
-
-```
-if not any(role in user_roles for role in ["admin", "super_admin", "company", "commercial"]):
-```
-
-**Valeur en dur**: `"admin"`
-
-**3. Ligne 159** | Catégorie: `roles`
-
-```
-if not any(role in user_roles for role in ["admin", "super_admin", "company", "commercial"]):
-```
-
-**Valeur en dur**: `"super_admin"`
-
-**4. Ligne 159** | Catégorie: `roles`
-
-```
-if not any(role in user_roles for role in ["admin", "super_admin", "company", "commercial"]):
-```
-
-**Valeur en dur**: `"company"`
-
-**5. Ligne 159** | Catégorie: `roles`
-
-```
-if not any(role in user_roles for role in ["admin", "super_admin", "company", "commercial"]):
-```
-
-**Valeur en dur**: `"commercial"`
-
-**6. Ligne 159** | Catégorie: `validation_types`
-
-```
-if not any(role in user_roles for role in ["admin", "super_admin", "company", "commercial"]):
-```
-
-**Valeur en dur**: `"company"`
-
-**7. Ligne 216** | Catégorie: `roles`
-
-```
-if "interim" in user_roles:
-```
-
-**Valeur en dur**: `"interim"`
-
-**8. Ligne 216** | Catégorie: `validation_types`
-
-```
-if "interim" in user_roles:
-```
-
-**Valeur en dur**: `"interim"`
-
-**9. Ligne 219** | Catégorie: `roles`
-
-```
-elif "company" in user_roles:
-```
-
-**Valeur en dur**: `"company"`
-
-**10. Ligne 219** | Catégorie: `validation_types`
-
-```
-elif "company" in user_roles:
-```
-
-**Valeur en dur**: `"company"`
-
-**11. Ligne 226** | Catégorie: `roles`
-
-```
-if company_id and ("admin" in user_roles or "super_admin" in user_roles):
-```
-
-**Valeur en dur**: `"admin"`
-
-**12. Ligne 226** | Catégorie: `roles`
-
-```
-if company_id and ("admin" in user_roles or "super_admin" in user_roles):
-```
-
-**Valeur en dur**: `"super_admin"`
-
-**13. Ligne 257** | Catégorie: `roles`
-
-```
-if "interim" in user_roles and mission["status"] != MissionStatus.PUBLISHED:
-```
-
-**Valeur en dur**: `"interim"`
-
-**14. Ligne 257** | Catégorie: `validation_types`
-
-```
-if "interim" in user_roles and mission["status"] != MissionStatus.PUBLISHED:
-```
-
-**Valeur en dur**: `"interim"`
-
-**15. Ligne 263** | Catégorie: `roles`
-
-```
-if "company" in user_roles and mission["company_id"] != user_id:
-```
-
-**Valeur en dur**: `"company"`
-
-**16. Ligne 263** | Catégorie: `validation_types`
-
-```
-if "company" in user_roles and mission["company_id"] != user_id:
-```
-
-**Valeur en dur**: `"company"`
-
-**17. Ligne 296** | Catégorie: `roles`
-
-```
-"admin" in user_roles or
-```
-
-**Valeur en dur**: `"admin"`
-
-**18. Ligne 297** | Catégorie: `roles`
-
-```
-"super_admin" in user_roles or
-```
-
-**Valeur en dur**: `"super_admin"`
-
-**19. Ligne 351** | Catégorie: `roles`
-
-```
-"admin" in user_roles or
-```
-
-**Valeur en dur**: `"admin"`
-
-**20. Ligne 352** | Catégorie: `roles`
-
-```
-"super_admin" in user_roles or
-```
-
-**Valeur en dur**: `"super_admin"`
-
-**21. Ligne 389** | Catégorie: `roles`
-
-```
-can_publish = "admin" in user_roles or "super_admin" in user_roles or "commercial" in user_roles
-```
-
-**Valeur en dur**: `"admin"`
-
-**22. Ligne 389** | Catégorie: `roles`
-
-```
-can_publish = "admin" in user_roles or "super_admin" in user_roles or "commercial" in user_roles
-```
-
-**Valeur en dur**: `"super_admin"`
-
-**23. Ligne 389** | Catégorie: `roles`
-
-```
-can_publish = "admin" in user_roles or "super_admin" in user_roles or "commercial" in user_roles
-```
-
-**Valeur en dur**: `"commercial"`
-
-**24. Ligne 428** | Catégorie: `roles`
-
-```
-if "interim" not in user_roles:
-```
-
-**Valeur en dur**: `"interim"`
-
-**25. Ligne 428** | Catégorie: `validation_types`
-
-```
-if "interim" not in user_roles:
-```
-
-**Valeur en dur**: `"interim"`
-
-**26. Ligne 509** | Catégorie: `roles`
-
-```
-"admin" in user_roles or
-```
-
-**Valeur en dur**: `"admin"`
-
-**27. Ligne 510** | Catégorie: `roles`
-
-```
-"super_admin" in user_roles or
-```
-
-**Valeur en dur**: `"super_admin"`
-
-**28. Ligne 511** | Catégorie: `roles`
-
-```
-"commercial" in user_roles or
-```
-
-**Valeur en dur**: `"commercial"`
-
-**29. Ligne 512** | Catégorie: `roles`
-
-```
-(mission["company_id"] == user_id and "company" in user_roles)
-```
-
-**Valeur en dur**: `"company"`
-
-**30. Ligne 512** | Catégorie: `validation_types`
-
-```
-(mission["company_id"] == user_id and "company" in user_roles)
-```
-
-**Valeur en dur**: `"company"`
-
-**31. Ligne 567** | Catégorie: `roles`
-
-```
-can_update = "admin" in user_roles or "super_admin" in user_roles or "commercial" in user_roles
-```
-
-**Valeur en dur**: `"admin"`
-
-**32. Ligne 567** | Catégorie: `roles`
-
-```
-can_update = "admin" in user_roles or "super_admin" in user_roles or "commercial" in user_roles
-```
-
-**Valeur en dur**: `"super_admin"`
-
-**33. Ligne 567** | Catégorie: `roles`
-
-```
-can_update = "admin" in user_roles or "super_admin" in user_roles or "commercial" in user_roles
-```
-
-**Valeur en dur**: `"commercial"`
-
 
 ### 📄 `auth-microservice/profile_routes.py`
 
-**1. Ligne 39** | Catégorie: `roles`
+**1. Ligne 40** | Catégorie: `roles`
 
 ```
 if profile_type == "interim":
@@ -3630,7 +3110,7 @@ if profile_type == "interim":
 
 **Valeur en dur**: `"interim"`
 
-**2. Ligne 39** | Catégorie: `validation_types`
+**2. Ligne 40** | Catégorie: `validation_types`
 
 ```
 if profile_type == "interim":
@@ -3638,7 +3118,7 @@ if profile_type == "interim":
 
 **Valeur en dur**: `"interim"`
 
-**3. Ligne 59** | Catégorie: `roles`
+**3. Ligne 60** | Catégorie: `roles`
 
 ```
 elif profile_type == "company":
@@ -3646,7 +3126,7 @@ elif profile_type == "company":
 
 **Valeur en dur**: `"company"`
 
-**4. Ligne 59** | Catégorie: `validation_types`
+**4. Ligne 60** | Catégorie: `validation_types`
 
 ```
 elif profile_type == "company":
@@ -3654,71 +3134,7 @@ elif profile_type == "company":
 
 **Valeur en dur**: `"company"`
 
-**5. Ligne 76** | Catégorie: `roles`
-
-```
-if "interim" in current_user.roles:
-```
-
-**Valeur en dur**: `"interim"`
-
-**6. Ligne 76** | Catégorie: `validation_types`
-
-```
-if "interim" in current_user.roles:
-```
-
-**Valeur en dur**: `"interim"`
-
-**7. Ligne 97** | Catégorie: `roles`
-
-```
-return {"profile_type": "interim", "profile": profile}
-```
-
-**Valeur en dur**: `"interim"`
-
-**8. Ligne 97** | Catégorie: `validation_types`
-
-```
-return {"profile_type": "interim", "profile": profile}
-```
-
-**Valeur en dur**: `"interim"`
-
-**9. Ligne 99** | Catégorie: `roles`
-
-```
-elif "company" in current_user.roles:
-```
-
-**Valeur en dur**: `"company"`
-
-**10. Ligne 99** | Catégorie: `validation_types`
-
-```
-elif "company" in current_user.roles:
-```
-
-**Valeur en dur**: `"company"`
-
-**11. Ligne 109** | Catégorie: `roles`
-
-```
-return {"profile_type": "company", "profile": profile}
-```
-
-**Valeur en dur**: `"company"`
-
-**12. Ligne 109** | Catégorie: `validation_types`
-
-```
-return {"profile_type": "company", "profile": profile}
-```
-
-**Valeur en dur**: `"company"`
-
-**13. Ligne 120** | Catégorie: `validation_types`
+**5. Ligne 121** | Catégorie: `validation_types`
 
 ```
 return {"profile_type": "collaborator", "profile": profile}
@@ -3726,141 +3142,13 @@ return {"profile_type": "collaborator", "profile": profile}
 
 **Valeur en dur**: `"collaborator"`
 
-**14. Ligne 135** | Catégorie: `roles`
-
-```
-if "interim" in current_user.roles:
-```
-
-**Valeur en dur**: `"interim"`
-
-**15. Ligne 135** | Catégorie: `validation_types`
-
-```
-if "interim" in current_user.roles:
-```
-
-**Valeur en dur**: `"interim"`
-
-**16. Ligne 137** | Catégorie: `roles`
-
-```
-profile_type = "interim"
-```
-
-**Valeur en dur**: `"interim"`
-
-**17. Ligne 137** | Catégorie: `validation_types`
-
-```
-profile_type = "interim"
-```
-
-**Valeur en dur**: `"interim"`
-
-**18. Ligne 138** | Catégorie: `roles`
-
-```
-elif "company" in current_user.roles:
-```
-
-**Valeur en dur**: `"company"`
-
-**19. Ligne 138** | Catégorie: `validation_types`
-
-```
-elif "company" in current_user.roles:
-```
-
-**Valeur en dur**: `"company"`
-
-**20. Ligne 140** | Catégorie: `roles`
-
-```
-profile_type = "company"
-```
-
-**Valeur en dur**: `"company"`
-
-**21. Ligne 140** | Catégorie: `validation_types`
-
-```
-profile_type = "company"
-```
-
-**Valeur en dur**: `"company"`
-
-**22. Ligne 143** | Catégorie: `validation_types`
+**6. Ligne 144** | Catégorie: `validation_types`
 
 ```
 profile_type = "collaborator"
 ```
 
 **Valeur en dur**: `"collaborator"`
-
-**23. Ligne 216** | Catégorie: `roles`
-
-```
-if "interim" in current_user.roles:
-```
-
-**Valeur en dur**: `"interim"`
-
-**24. Ligne 216** | Catégorie: `validation_types`
-
-```
-if "interim" in current_user.roles:
-```
-
-**Valeur en dur**: `"interim"`
-
-**25. Ligne 218** | Catégorie: `roles`
-
-```
-elif "company" in current_user.roles:
-```
-
-**Valeur en dur**: `"company"`
-
-**26. Ligne 218** | Catégorie: `validation_types`
-
-```
-elif "company" in current_user.roles:
-```
-
-**Valeur en dur**: `"company"`
-
-**27. Ligne 284** | Catégorie: `roles`
-
-```
-if "interim" in current_user.roles:
-```
-
-**Valeur en dur**: `"interim"`
-
-**28. Ligne 284** | Catégorie: `validation_types`
-
-```
-if "interim" in current_user.roles:
-```
-
-**Valeur en dur**: `"interim"`
-
-**29. Ligne 286** | Catégorie: `roles`
-
-```
-elif "company" in current_user.roles:
-```
-
-**Valeur en dur**: `"company"`
-
-**30. Ligne 286** | Catégorie: `validation_types`
-
-```
-elif "company" in current_user.roles:
-```
-
-**Valeur en dur**: `"company"`
 
 
 ### 📄 `auth-microservice/scripts/seed_additional_references.py`
@@ -4135,39 +3423,7 @@ elif "company" in current_user.roles:
 
 ### 📄 `auth-microservice/validation_routes.py`
 
-**1. Ligne 77** | Catégorie: `roles`
-
-```
-pending_interim = await db.validations.count_documents({"status": "pending", "validation_type": "interim"})
-```
-
-**Valeur en dur**: `"interim"`
-
-**2. Ligne 77** | Catégorie: `validation_types`
-
-```
-pending_interim = await db.validations.count_documents({"status": "pending", "validation_type": "interim"})
-```
-
-**Valeur en dur**: `"interim"`
-
-**3. Ligne 78** | Catégorie: `roles`
-
-```
-pending_company = await db.validations.count_documents({"status": "pending", "validation_type": "company"})
-```
-
-**Valeur en dur**: `"company"`
-
-**4. Ligne 78** | Catégorie: `validation_types`
-
-```
-pending_company = await db.validations.count_documents({"status": "pending", "validation_type": "company"})
-```
-
-**Valeur en dur**: `"company"`
-
-**5. Ligne 79** | Catégorie: `validation_types`
+**1. Ligne 80** | Catégorie: `validation_types`
 
 ```
 pending_collaborator = await db.validations.count_documents({"status": "pending", "validation_type": "collaborator"})
@@ -4175,7 +3431,7 @@ pending_collaborator = await db.validations.count_documents({"status": "pending"
 
 **Valeur en dur**: `"collaborator"`
 
-**6. Ligne 87** | Catégorie: `application_status`
+**2. Ligne 88** | Catégorie: `application_status`
 
 ```
 total_rejected = await db.validations.count_documents({"status": "rejected"})
@@ -4183,7 +3439,7 @@ total_rejected = await db.validations.count_documents({"status": "rejected"})
 
 **Valeur en dur**: `"rejected"`
 
-**7. Ligne 222** | Catégorie: `application_status`
+**3. Ligne 223** | Catégorie: `application_status`
 
 ```
 "status": "rejected",
@@ -4191,34 +3447,10 @@ total_rejected = await db.validations.count_documents({"status": "rejected"})
 
 **Valeur en dur**: `"rejected"`
 
-**8. Ligne 256** | Catégorie: `roles`
-
-```
-if not any(role in validator_roles for role in ["admin", "super_admin", "commercial"]):
-```
-
-**Valeur en dur**: `"admin"`
-
-**9. Ligne 256** | Catégorie: `roles`
-
-```
-if not any(role in validator_roles for role in ["admin", "super_admin", "commercial"]):
-```
-
-**Valeur en dur**: `"super_admin"`
-
-**10. Ligne 256** | Catégorie: `roles`
-
-```
-if not any(role in validator_roles for role in ["admin", "super_admin", "commercial"]):
-```
-
-**Valeur en dur**: `"commercial"`
-
 
 ## 🟠 Sévérité: HIGH
 
-**Total**: 90 occurrences
+**Total**: 84 occurrences
 
 ### 📄 `apps/web/src/components/ActionButton.tsx`
 
@@ -4805,7 +4037,7 @@ status="active",
 
 ### 📄 `auth-microservice/awana_auth_routes.py`
 
-**1. Ligne 180** | Catégorie: `user_status`
+**1. Ligne 181** | Catégorie: `user_status`
 
 ```
 "status": "pending",
@@ -4813,7 +4045,7 @@ status="active",
 
 **Valeur en dur**: `"pending"`
 
-**2. Ligne 1469** | Catégorie: `user_status`
+**2. Ligne 1470** | Catégorie: `user_status`
 
 ```
 active_users = await db.users.count_documents({"status": "active"})
@@ -4821,7 +4053,7 @@ active_users = await db.users.count_documents({"status": "active"})
 
 **Valeur en dur**: `"active"`
 
-**3. Ligne 1470** | Catégorie: `user_status`
+**3. Ligne 1471** | Catégorie: `user_status`
 
 ```
 pending_users = await db.users.count_documents({"status": "pending"})
@@ -4829,7 +4061,7 @@ pending_users = await db.users.count_documents({"status": "pending"})
 
 **Valeur en dur**: `"pending"`
 
-**4. Ligne 1471** | Catégorie: `user_status`
+**4. Ligne 1472** | Catégorie: `user_status`
 
 ```
 suspended_users = await db.users.count_documents({"status": "suspended"})
@@ -4837,7 +4069,7 @@ suspended_users = await db.users.count_documents({"status": "suspended"})
 
 **Valeur en dur**: `"suspended"`
 
-**5. Ligne 1504** | Catégorie: `user_status`
+**5. Ligne 1505** | Catégorie: `user_status`
 
 ```
 "active": active_users,
@@ -4845,7 +4077,7 @@ suspended_users = await db.users.count_documents({"status": "suspended"})
 
 **Valeur en dur**: `"active"`
 
-**6. Ligne 1505** | Catégorie: `user_status`
+**6. Ligne 1506** | Catégorie: `user_status`
 
 ```
 "pending": pending_users,
@@ -4853,7 +4085,7 @@ suspended_users = await db.users.count_documents({"status": "suspended"})
 
 **Valeur en dur**: `"pending"`
 
-**7. Ligne 1506** | Catégorie: `user_status`
+**7. Ligne 1507** | Catégorie: `user_status`
 
 ```
 "suspended": suspended_users
@@ -4861,42 +4093,10 @@ suspended_users = await db.users.count_documents({"status": "suspended"})
 
 **Valeur en dur**: `"suspended"`
 
-**8. Ligne 1967** | Catégorie: `user_status`
-
-```
-if new_status not in ["active", "pending", "suspended", "deleted"]:
-```
-
-**Valeur en dur**: `"active"`
-
-**9. Ligne 1967** | Catégorie: `user_status`
-
-```
-if new_status not in ["active", "pending", "suspended", "deleted"]:
-```
-
-**Valeur en dur**: `"pending"`
-
-**10. Ligne 1967** | Catégorie: `user_status`
-
-```
-if new_status not in ["active", "pending", "suspended", "deleted"]:
-```
-
-**Valeur en dur**: `"suspended"`
-
-**11. Ligne 1967** | Catégorie: `user_status`
-
-```
-if new_status not in ["active", "pending", "suspended", "deleted"]:
-```
-
-**Valeur en dur**: `"deleted"`
-
 
 ### 📄 `auth-microservice/google_auth_routes.py`
 
-**1. Ligne 384** | Catégorie: `user_status`
+**1. Ligne 385** | Catégorie: `user_status`
 
 ```
 status=user_doc.get("status", "pending"),
@@ -4904,7 +4104,7 @@ status=user_doc.get("status", "pending"),
 
 **Valeur en dur**: `"pending"`
 
-**2. Ligne 446** | Catégorie: `user_status`
+**2. Ligne 447** | Catégorie: `user_status`
 
 ```
 "status": existing_user["status"] if existing_user else "pending",
@@ -4912,7 +4112,7 @@ status=user_doc.get("status", "pending"),
 
 **Valeur en dur**: `"pending"`
 
-**3. Ligne 621** | Catégorie: `user_status`
+**3. Ligne 622** | Catégorie: `user_status`
 
 ```
 status=updated_user_doc.get("status", "pending"),
@@ -4958,7 +4158,7 @@ status=updated_user_doc.get("status", "pending"),
 
 ### 📄 `auth-microservice/validation_routes.py`
 
-**1. Ligne 76** | Catégorie: `user_status`
+**1. Ligne 77** | Catégorie: `user_status`
 
 ```
 total_pending = await db.validations.count_documents({"status": "pending"})
@@ -4966,23 +4166,23 @@ total_pending = await db.validations.count_documents({"status": "pending"})
 
 **Valeur en dur**: `"pending"`
 
-**2. Ligne 77** | Catégorie: `user_status`
+**2. Ligne 78** | Catégorie: `user_status`
 
 ```
-pending_interim = await db.validations.count_documents({"status": "pending", "validation_type": "interim"})
-```
-
-**Valeur en dur**: `"pending"`
-
-**3. Ligne 78** | Catégorie: `user_status`
-
-```
-pending_company = await db.validations.count_documents({"status": "pending", "validation_type": "company"})
+pending_interim = await db.validations.count_documents({"status": "pending", "validation_type": cfg.get_interim_role()})
 ```
 
 **Valeur en dur**: `"pending"`
 
-**4. Ligne 79** | Catégorie: `user_status`
+**3. Ligne 79** | Catégorie: `user_status`
+
+```
+pending_company = await db.validations.count_documents({"status": "pending", "validation_type": cfg.get_company_role()})
+```
+
+**Valeur en dur**: `"pending"`
+
+**4. Ligne 80** | Catégorie: `user_status`
 
 ```
 pending_collaborator = await db.validations.count_documents({"status": "pending", "validation_type": "collaborator"})
@@ -4990,7 +4190,7 @@ pending_collaborator = await db.validations.count_documents({"status": "pending"
 
 **Valeur en dur**: `"pending"`
 
-**5. Ligne 82** | Catégorie: `user_status`
+**5. Ligne 83** | Catégorie: `user_status`
 
 ```
 "status": "pending",
@@ -4998,26 +4198,10 @@ pending_collaborator = await db.validations.count_documents({"status": "pending"
 
 **Valeur en dur**: `"pending"`
 
-**6. Ligne 148** | Catégorie: `user_status`
-
-```
-if validation["status"] != "pending":
-```
-
-**Valeur en dur**: `"pending"`
-
-**7. Ligne 200** | Catégorie: `user_status`
-
-```
-if validation["status"] != "pending":
-```
-
-**Valeur en dur**: `"pending"`
-
 
 ## 🟡 Sévérité: MEDIUM
 
-**Total**: 107 occurrences
+**Total**: 90 occurrences
 
 ### 📄 `apps/web/src/App.tsx`
 
@@ -5601,7 +4785,7 @@ session_doc['expires_at'] = datetime.fromisoformat(session_doc['expires_at'].rep
 
 ### 📄 `auth-microservice/awana_auth_routes.py`
 
-**1. Ligne 313** | Catégorie: `contract_types`
+**1. Ligne 314** | Catégorie: `contract_types`
 
 ```
 if profile_type == 'interim':
@@ -5609,7 +4793,7 @@ if profile_type == 'interim':
 
 **Valeur en dur**: `'interim'`
 
-**2. Ligne 539** | Catégorie: `delays_days`
+**2. Ligne 540** | Catégorie: `delays_days`
 
 ```
 expires_in=auth_config.jwt_access_token_expire_minutes * 60,
@@ -5617,7 +4801,7 @@ expires_in=auth_config.jwt_access_token_expire_minutes * 60,
 
 **Valeur en dur**: `expires_in=auth_config.jwt_access_token_expire_minutes * 60`
 
-**3. Ligne 745** | Catégorie: `delays_days`
+**3. Ligne 746** | Catégorie: `delays_days`
 
 ```
 expires_in=auth_config.jwt_access_token_expire_minutes * 60,
@@ -5625,7 +4809,7 @@ expires_in=auth_config.jwt_access_token_expire_minutes * 60,
 
 **Valeur en dur**: `expires_in=auth_config.jwt_access_token_expire_minutes * 60`
 
-**4. Ligne 1014** | Catégorie: `delays_days`
+**4. Ligne 1015** | Catégorie: `delays_days`
 
 ```
 expires_in=auth_config.jwt_access_token_expire_minutes * 60,
@@ -5633,7 +4817,7 @@ expires_in=auth_config.jwt_access_token_expire_minutes * 60,
 
 **Valeur en dur**: `expires_in=auth_config.jwt_access_token_expire_minutes * 60`
 
-**5. Ligne 1122** | Catégorie: `delays_days`
+**5. Ligne 1123** | Catégorie: `delays_days`
 
 ```
 expires_in=auth_config.jwt_access_token_expire_minutes * 60,
@@ -5641,7 +4825,7 @@ expires_in=auth_config.jwt_access_token_expire_minutes * 60,
 
 **Valeur en dur**: `expires_in=auth_config.jwt_access_token_expire_minutes * 60`
 
-**6. Ligne 1156** | Catégorie: `contract_types`
+**6. Ligne 1157** | Catégorie: `contract_types`
 
 ```
 if register_data.role not in ['interim', 'company']:
@@ -5649,7 +4833,7 @@ if register_data.role not in ['interim', 'company']:
 
 **Valeur en dur**: `'interim'`
 
-**7. Ligne 1159** | Catégorie: `contract_types`
+**7. Ligne 1160** | Catégorie: `contract_types`
 
 ```
 detail="Invalid role. Must be 'interim' or 'company'"
@@ -5657,7 +4841,7 @@ detail="Invalid role. Must be 'interim' or 'company'"
 
 **Valeur en dur**: `'interim'`
 
-**8. Ligne 1323** | Catégorie: `delays_days`
+**8. Ligne 1324** | Catégorie: `delays_days`
 
 ```
 expires_in=auth_config.jwt_access_token_expire_minutes * 60,
@@ -5665,7 +4849,7 @@ expires_in=auth_config.jwt_access_token_expire_minutes * 60,
 
 **Valeur en dur**: `expires_in=auth_config.jwt_access_token_expire_minutes * 60`
 
-**9. Ligne 1435** | Catégorie: `delays_days`
+**9. Ligne 1436** | Catégorie: `delays_days`
 
 ```
 expires_in=auth_config.jwt_access_token_expire_minutes * 60,
@@ -5673,15 +4857,7 @@ expires_in=auth_config.jwt_access_token_expire_minutes * 60,
 
 **Valeur en dur**: `expires_in=auth_config.jwt_access_token_expire_minutes * 60`
 
-**10. Ligne 1476** | Catégorie: `contract_types`
-
-```
-interim_users = await db.users.count_documents({"roles": "interim"})
-```
-
-**Valeur en dur**: `"interim"`
-
-**11. Ligne 1488** | Catégorie: `delays_days`
+**10. Ligne 1489** | Catégorie: `delays_days`
 
 ```
 seven_days_ago = (datetime.now(timezone.utc) - timedelta(days=7)).isoformat()
@@ -5689,7 +4865,7 @@ seven_days_ago = (datetime.now(timezone.utc) - timedelta(days=7)).isoformat()
 
 **Valeur en dur**: `days=7`
 
-**12. Ligne 1492** | Catégorie: `delays_days`
+**11. Ligne 1493** | Catégorie: `delays_days`
 
 ```
 one_day_ago = (datetime.now(timezone.utc) - timedelta(days=1)).isoformat()
@@ -5697,7 +4873,7 @@ one_day_ago = (datetime.now(timezone.utc) - timedelta(days=1)).isoformat()
 
 **Valeur en dur**: `days=1`
 
-**13. Ligne 1511** | Catégorie: `contract_types`
+**12. Ligne 1512** | Catégorie: `contract_types`
 
 ```
 "interim": interim_users,
@@ -5705,18 +4881,10 @@ one_day_ago = (datetime.now(timezone.utc) - timedelta(days=1)).isoformat()
 
 **Valeur en dur**: `"interim"`
 
-**14. Ligne 2068** | Catégorie: `contract_types`
-
-```
-valid_roles = ["admin", "super_admin", "interim", "company", "agency", "commercial", "validator"]
-```
-
-**Valeur en dur**: `"interim"`
-
 
 ### 📄 `auth-microservice/google_auth_routes.py`
 
-**1. Ligne 92** | Catégorie: `delays_days`
+**1. Ligne 93** | Catégorie: `delays_days`
 
 ```
 "expires_at": datetime.now(timezone.utc) + timedelta(minutes=10)
@@ -5724,7 +4892,7 @@ valid_roles = ["admin", "super_admin", "interim", "company", "agency", "commerci
 
 **Valeur en dur**: `expires_at": datetime.now(timezone.utc) + timedelta(minutes=10`
 
-**2. Ligne 96** | Catégorie: `delays_days`
+**2. Ligne 97** | Catégorie: `delays_days`
 
 ```
 await db.oauth_states.create_index("expires_at", expireAfterSeconds=0)
@@ -5732,7 +4900,7 @@ await db.oauth_states.create_index("expires_at", expireAfterSeconds=0)
 
 **Valeur en dur**: `expires_at", expireAfterSeconds=0`
 
-**3. Ligne 154** | Catégorie: `contract_types`
+**3. Ligne 155** | Catégorie: `contract_types`
 
 ```
 if profile_type == 'interim':
@@ -5740,39 +4908,7 @@ if profile_type == 'interim':
 
 **Valeur en dur**: `'interim'`
 
-**4. Ligne 315** | Catégorie: `contract_types`
-
-```
-profile_type=roles[0] if roles else "interim",
-```
-
-**Valeur en dur**: `"interim"`
-
-**5. Ligne 343** | Catégorie: `contract_types`
-
-```
-await rbac_manager.grant_role(user_id, "interim", granted_by="system")
-```
-
-**Valeur en dur**: `"interim"`
-
-**6. Ligne 347** | Catégorie: `contract_types`
-
-```
-roles = ["interim"]
-```
-
-**Valeur en dur**: `"interim"`
-
-**7. Ligne 357** | Catégorie: `contract_types`
-
-```
-profile_type=roles[0] if roles else "interim",
-```
-
-**Valeur en dur**: `"interim"`
-
-**8. Ligne 538** | Catégorie: `contract_types`
+**4. Ligne 539** | Catégorie: `contract_types`
 
 ```
 if registration_data.role not in ['interim', 'company']:
@@ -5780,7 +4916,7 @@ if registration_data.role not in ['interim', 'company']:
 
 **Valeur en dur**: `'interim'`
 
-**9. Ligne 541** | Catégorie: `contract_types`
+**5. Ligne 542** | Catégorie: `contract_types`
 
 ```
 detail="Invalid role. Must be 'interim' or 'company'"
@@ -5788,15 +4924,7 @@ detail="Invalid role. Must be 'interim' or 'company'"
 
 **Valeur en dur**: `'interim'`
 
-**10. Ligne 569** | Catégorie: `contract_types`
-
-```
-await rbac_manager.revoke_role(user_id, "interim")
-```
-
-**Valeur en dur**: `"interim"`
-
-**11. Ligne 645** | Catégorie: `delays_days`
+**6. Ligne 646** | Catégorie: `delays_days`
 
 ```
 "expires_in": 1800,
@@ -5805,36 +4933,9 @@ await rbac_manager.revoke_role(user_id, "interim")
 **Valeur en dur**: `expires_in": 1800`
 
 
-### 📄 `auth-microservice/mission_routes.py`
-
-**1. Ligne 216** | Catégorie: `contract_types`
-
-```
-if "interim" in user_roles:
-```
-
-**Valeur en dur**: `"interim"`
-
-**2. Ligne 257** | Catégorie: `contract_types`
-
-```
-if "interim" in user_roles and mission["status"] != MissionStatus.PUBLISHED:
-```
-
-**Valeur en dur**: `"interim"`
-
-**3. Ligne 428** | Catégorie: `contract_types`
-
-```
-if "interim" not in user_roles:
-```
-
-**Valeur en dur**: `"interim"`
-
-
 ### 📄 `auth-microservice/profile_routes.py`
 
-**1. Ligne 39** | Catégorie: `contract_types`
+**1. Ligne 40** | Catégorie: `contract_types`
 
 ```
 if profile_type == "interim":
@@ -5842,47 +4943,7 @@ if profile_type == "interim":
 
 **Valeur en dur**: `"interim"`
 
-**2. Ligne 76** | Catégorie: `contract_types`
-
-```
-if "interim" in current_user.roles:
-```
-
-**Valeur en dur**: `"interim"`
-
-**3. Ligne 97** | Catégorie: `contract_types`
-
-```
-return {"profile_type": "interim", "profile": profile}
-```
-
-**Valeur en dur**: `"interim"`
-
-**4. Ligne 135** | Catégorie: `contract_types`
-
-```
-if "interim" in current_user.roles:
-```
-
-**Valeur en dur**: `"interim"`
-
-**5. Ligne 137** | Catégorie: `contract_types`
-
-```
-profile_type = "interim"
-```
-
-**Valeur en dur**: `"interim"`
-
-**6. Ligne 216** | Catégorie: `contract_types`
-
-```
-if "interim" in current_user.roles:
-```
-
-**Valeur en dur**: `"interim"`
-
-**7. Ligne 223** | Catégorie: `document_types`
+**2. Ligne 224** | Catégorie: `document_types`
 
 ```
 if document_type == "cv":
@@ -5890,15 +4951,7 @@ if document_type == "cv":
 
 **Valeur en dur**: `"cv"`
 
-**8. Ligne 284** | Catégorie: `contract_types`
-
-```
-if "interim" in current_user.roles:
-```
-
-**Valeur en dur**: `"interim"`
-
-**9. Ligne 291** | Catégorie: `document_types`
+**3. Ligne 292** | Catégorie: `document_types`
 
 ```
 if document["type"] == "cv":
@@ -5969,20 +5022,9 @@ if document["type"] == "cv":
 **Valeur en dur**: `"interim"`
 
 
-### 📄 `auth-microservice/validation_routes.py`
-
-**1. Ligne 77** | Catégorie: `contract_types`
-
-```
-pending_interim = await db.validations.count_documents({"status": "pending", "validation_type": "interim"})
-```
-
-**Valeur en dur**: `"interim"`
-
-
 ## 🟢 Sévérité: LOW
 
-**Total**: 185 occurrences
+**Total**: 184 occurrences
 
 ### 📄 `auth-microservice/awana_auth/core/config.py`
 
@@ -6332,7 +5374,7 @@ Permission(name="*:*", resource="*", action="*", description="All permissions"),
 
 ### 📄 `auth-microservice/awana_auth_routes.py`
 
-**1. Ligne 578** | Catégorie: `messages`
+**1. Ligne 579** | Catégorie: `messages`
 
 ```
 detail="ID token is required"
@@ -6340,7 +5382,7 @@ detail="ID token is required"
 
 **Valeur en dur**: `detail="ID token is required"`
 
-**2. Ligne 619** | Catégorie: `messages`
+**2. Ligne 620** | Catégorie: `messages`
 
 ```
 detail="Invalid Microsoft token"
@@ -6348,7 +5390,7 @@ detail="Invalid Microsoft token"
 
 **Valeur en dur**: `detail="Invalid Microsoft token"`
 
-**3. Ligne 630** | Catégorie: `messages`
+**3. Ligne 631** | Catégorie: `messages`
 
 ```
 detail="Missing required user information from Microsoft"
@@ -6356,7 +5398,7 @@ detail="Missing required user information from Microsoft"
 
 **Valeur en dur**: `detail="Missing required user information from Microsoft"`
 
-**4. Ligne 830** | Catégorie: `messages`
+**4. Ligne 831** | Catégorie: `messages`
 
 ```
 detail="Account is not active"
@@ -6364,7 +5406,7 @@ detail="Account is not active"
 
 **Valeur en dur**: `detail="Account is not active"`
 
-**5. Ligne 863** | Catégorie: `messages`
+**5. Ligne 864** | Catégorie: `messages`
 
 ```
 detail="Incorrect username or password"
@@ -6372,7 +5414,7 @@ detail="Incorrect username or password"
 
 **Valeur en dur**: `detail="Incorrect username or password"`
 
-**6. Ligne 1055** | Catégorie: `messages`
+**6. Ligne 1056** | Catégorie: `messages`
 
 ```
 detail="Session MFA invalide ou expirée"
@@ -6380,7 +5422,7 @@ detail="Session MFA invalide ou expirée"
 
 **Valeur en dur**: `detail="Session MFA invalide ou expirée"`
 
-**7. Ligne 1061** | Catégorie: `messages`
+**7. Ligne 1062** | Catégorie: `messages`
 
 ```
 detail="MFA n'a pas été vérifiée"
@@ -6388,7 +5430,7 @@ detail="MFA n'a pas été vérifiée"
 
 **Valeur en dur**: `detail="MFA n'a pas été vérifiée"`
 
-**8. Ligne 1069** | Catégorie: `messages`
+**8. Ligne 1070** | Catégorie: `messages`
 
 ```
 detail="Utilisateur non trouvé"
@@ -6396,7 +5438,7 @@ detail="Utilisateur non trouvé"
 
 **Valeur en dur**: `detail="Utilisateur non trouvé"`
 
-**9. Ligne 1159** | Catégorie: `messages`
+**9. Ligne 1160** | Catégorie: `messages`
 
 ```
 detail="Invalid role. Must be 'interim' or 'company'"
@@ -6404,7 +5446,7 @@ detail="Invalid role. Must be 'interim' or 'company'"
 
 **Valeur en dur**: `detail="Invalid role. Must be 'interim' or 'company'"`
 
-**10. Ligne 1170** | Catégorie: `messages`
+**10. Ligne 1171** | Catégorie: `messages`
 
 ```
 detail="Ce nom d'utilisateur est déjà utilisé"
@@ -6412,7 +5454,7 @@ detail="Ce nom d'utilisateur est déjà utilisé"
 
 **Valeur en dur**: `detail="Ce nom d'utilisateur est déjà utilisé"`
 
-**11. Ligne 1181** | Catégorie: `messages`
+**11. Ligne 1182** | Catégorie: `messages`
 
 ```
 detail="Cet email est déjà utilisé"
@@ -6420,7 +5462,7 @@ detail="Cet email est déjà utilisé"
 
 **Valeur en dur**: `detail="Cet email est déjà utilisé"`
 
-**12. Ligne 1373** | Catégorie: `messages`
+**12. Ligne 1374** | Catégorie: `messages`
 
 ```
 detail="Logout failed"
@@ -6428,7 +5470,7 @@ detail="Logout failed"
 
 **Valeur en dur**: `detail="Logout failed"`
 
-**13. Ligne 1398** | Catégorie: `messages`
+**13. Ligne 1399** | Catégorie: `messages`
 
 ```
 detail="Session not found or expired"
@@ -6436,7 +5478,7 @@ detail="Session not found or expired"
 
 **Valeur en dur**: `detail="Session not found or expired"`
 
-**14. Ligne 1407** | Catégorie: `messages`
+**14. Ligne 1408** | Catégorie: `messages`
 
 ```
 detail="User not found"
@@ -6444,7 +5486,7 @@ detail="User not found"
 
 **Valeur en dur**: `detail="User not found"`
 
-**15. Ligne 1445** | Catégorie: `messages`
+**15. Ligne 1446** | Catégorie: `messages`
 
 ```
 detail="Token refresh failed"
@@ -6452,7 +5494,7 @@ detail="Token refresh failed"
 
 **Valeur en dur**: `detail="Token refresh failed"`
 
-**16. Ligne 1530** | Catégorie: `messages`
+**16. Ligne 1531** | Catégorie: `messages`
 
 ```
 detail="Error retrieving statistics"
@@ -6460,7 +5502,7 @@ detail="Error retrieving statistics"
 
 **Valeur en dur**: `detail="Error retrieving statistics"`
 
-**17. Ligne 1570** | Catégorie: `messages`
+**17. Ligne 1571** | Catégorie: `messages`
 
 ```
 detail="User not found"
@@ -6468,7 +5510,7 @@ detail="User not found"
 
 **Valeur en dur**: `detail="User not found"`
 
-**18. Ligne 1592** | Catégorie: `messages`
+**18. Ligne 1593** | Catégorie: `messages`
 
 ```
 detail="User not found"
@@ -6476,7 +5518,7 @@ detail="User not found"
 
 **Valeur en dur**: `detail="User not found"`
 
-**19. Ligne 1657** | Catégorie: `messages`
+**19. Ligne 1658** | Catégorie: `messages`
 
 ```
 detail="User not found"
@@ -6484,7 +5526,7 @@ detail="User not found"
 
 **Valeur en dur**: `detail="User not found"`
 
-**20. Ligne 1666** | Catégorie: `messages`
+**20. Ligne 1667** | Catégorie: `messages`
 
 ```
 detail="Cannot delete your own account"
@@ -6492,7 +5534,7 @@ detail="Cannot delete your own account"
 
 **Valeur en dur**: `detail="Cannot delete your own account"`
 
-**21. Ligne 1712** | Catégorie: `messages`
+**21. Ligne 1713** | Catégorie: `messages`
 
 ```
 detail="User not found"
@@ -6500,7 +5542,7 @@ detail="User not found"
 
 **Valeur en dur**: `detail="User not found"`
 
-**22. Ligne 1721** | Catégorie: `messages`
+**22. Ligne 1722** | Catégorie: `messages`
 
 ```
 detail="Cannot reset your own MFA through admin endpoint. Use the profile settings."
@@ -6508,7 +5550,7 @@ detail="Cannot reset your own MFA through admin endpoint. Use the profile settin
 
 **Valeur en dur**: `detail="Cannot reset your own MFA through admin endpoint. Use the profile settings."`
 
-**23. Ligne 1728** | Catégorie: `messages`
+**23. Ligne 1729** | Catégorie: `messages`
 
 ```
 detail="User does not have MFA enabled"
@@ -6516,7 +5558,7 @@ detail="User does not have MFA enabled"
 
 **Valeur en dur**: `detail="User does not have MFA enabled"`
 
-**24. Ligne 1803** | Catégorie: `messages`
+**24. Ligne 1804** | Catégorie: `messages`
 
 ```
 detail="User not found"
@@ -6524,7 +5566,7 @@ detail="User not found"
 
 **Valeur en dur**: `detail="User not found"`
 
-**25. Ligne 1856** | Catégorie: `messages`
+**25. Ligne 1857** | Catégorie: `messages`
 
 ```
 detail="User not found"
@@ -6532,7 +5574,7 @@ detail="User not found"
 
 **Valeur en dur**: `detail="User not found"`
 
-**26. Ligne 1948** | Catégorie: `messages`
+**26. Ligne 1949** | Catégorie: `messages`
 
 ```
 detail="Erreur lors de la récupération des utilisateurs"
@@ -6540,15 +5582,7 @@ detail="Erreur lors de la récupération des utilisateurs"
 
 **Valeur en dur**: `detail="Erreur lors de la récupération des utilisateurs"`
 
-**27. Ligne 1970** | Catégorie: `messages`
-
-```
-detail="Status invalide. Valeurs autorisées: active, pending, suspended, deleted"
-```
-
-**Valeur en dur**: `detail="Status invalide. Valeurs autorisées: active, pending, suspended, deleted"`
-
-**28. Ligne 1979** | Catégorie: `messages`
+**27. Ligne 1981** | Catégorie: `messages`
 
 ```
 detail="Utilisateur non trouvé"
@@ -6556,7 +5590,7 @@ detail="Utilisateur non trouvé"
 
 **Valeur en dur**: `detail="Utilisateur non trouvé"`
 
-**29. Ligne 2019** | Catégorie: `messages`
+**28. Ligne 2021** | Catégorie: `messages`
 
 ```
 detail="Erreur lors de la mise à jour du statut"
@@ -6564,7 +5598,7 @@ detail="Erreur lors de la mise à jour du statut"
 
 **Valeur en dur**: `detail="Erreur lors de la mise à jour du statut"`
 
-**30. Ligne 2042** | Catégorie: `messages`
+**29. Ligne 2044** | Catégorie: `messages`
 
 ```
 detail="Utilisateur non trouvé"
@@ -6572,7 +5606,7 @@ detail="Utilisateur non trouvé"
 
 **Valeur en dur**: `detail="Utilisateur non trouvé"`
 
-**31. Ligne 2062** | Catégorie: `messages`
+**30. Ligne 2064** | Catégorie: `messages`
 
 ```
 detail="Cet email est déjà utilisé par un autre utilisateur"
@@ -6580,7 +5614,7 @@ detail="Cet email est déjà utilisé par un autre utilisateur"
 
 **Valeur en dur**: `detail="Cet email est déjà utilisé par un autre utilisateur"`
 
-**32. Ligne 2073** | Catégorie: `messages`
+**31. Ligne 2075** | Catégorie: `messages`
 
 ```
 detail="Les rôles doivent être une liste"
@@ -6588,7 +5622,7 @@ detail="Les rôles doivent être une liste"
 
 **Valeur en dur**: `detail="Les rôles doivent être une liste"`
 
-**33. Ligne 2086** | Catégorie: `messages`
+**32. Ligne 2088** | Catégorie: `messages`
 
 ```
 detail="Aucune donnée à mettre à jour"
@@ -6596,7 +5630,7 @@ detail="Aucune donnée à mettre à jour"
 
 **Valeur en dur**: `detail="Aucune donnée à mettre à jour"`
 
-**34. Ligne 2123** | Catégorie: `messages`
+**33. Ligne 2125** | Catégorie: `messages`
 
 ```
 detail="Erreur lors de la mise à jour de l'utilisateur"
@@ -6604,7 +5638,7 @@ detail="Erreur lors de la mise à jour de l'utilisateur"
 
 **Valeur en dur**: `detail="Erreur lors de la mise à jour de l'utilisateur"`
 
-**35. Ligne 2209** | Catégorie: `messages`
+**34. Ligne 2211** | Catégorie: `messages`
 
 ```
 detail="Erreur lors de l'envoi de l'email"
@@ -6612,7 +5646,7 @@ detail="Erreur lors de l'envoi de l'email"
 
 **Valeur en dur**: `detail="Erreur lors de l'envoi de l'email"`
 
-**36. Ligne 2238** | Catégorie: `messages`
+**35. Ligne 2240** | Catégorie: `messages`
 
 ```
 detail="Token invalide ou déjà utilisé"
@@ -6620,7 +5654,7 @@ detail="Token invalide ou déjà utilisé"
 
 **Valeur en dur**: `detail="Token invalide ou déjà utilisé"`
 
-**37. Ligne 2255** | Catégorie: `messages`
+**36. Ligne 2257** | Catégorie: `messages`
 
 ```
 detail="Le token a expiré. Veuillez demander un nouveau lien"
@@ -6628,7 +5662,7 @@ detail="Le token a expiré. Veuillez demander un nouveau lien"
 
 **Valeur en dur**: `detail="Le token a expiré. Veuillez demander un nouveau lien"`
 
-**38. Ligne 2262** | Catégorie: `messages`
+**37. Ligne 2264** | Catégorie: `messages`
 
 ```
 detail="Le mot de passe doit contenir au moins 8 caractères"
@@ -6636,7 +5670,7 @@ detail="Le mot de passe doit contenir au moins 8 caractères"
 
 **Valeur en dur**: `detail="Le mot de passe doit contenir au moins 8 caractères"`
 
-**39. Ligne 2320** | Catégorie: `messages`
+**38. Ligne 2322** | Catégorie: `messages`
 
 ```
 detail="Erreur lors de la réinitialisation du mot de passe"
@@ -6741,7 +5775,7 @@ detail="Vous ne pouvez supprimer que vos propres documents"
 
 ### 📄 `auth-microservice/google_auth_routes.py`
 
-**1. Ligne 58** | Catégorie: `messages`
+**1. Ligne 59** | Catégorie: `messages`
 
 ```
 detail="Google OAuth est désactivé"
@@ -6749,7 +5783,7 @@ detail="Google OAuth est désactivé"
 
 **Valeur en dur**: `detail="Google OAuth est désactivé"`
 
-**2. Ligne 68** | Catégorie: `messages`
+**2. Ligne 69** | Catégorie: `messages`
 
 ```
 detail="Google OAuth is not configured. Please set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET"
@@ -6757,7 +5791,7 @@ detail="Google OAuth is not configured. Please set GOOGLE_CLIENT_ID and GOOGLE_C
 
 **Valeur en dur**: `detail="Google OAuth is not configured. Please set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET"`
 
-**3. Ligne 243** | Catégorie: `messages`
+**3. Ligne 244** | Catégorie: `messages`
 
 ```
 detail="Failed to initiate Google login"
@@ -6765,7 +5799,7 @@ detail="Failed to initiate Google login"
 
 **Valeur en dur**: `detail="Failed to initiate Google login"`
 
-**4. Ligne 268** | Catégorie: `messages`
+**4. Ligne 269** | Catégorie: `messages`
 
 ```
 detail="Invalid or expired state parameter"
@@ -6773,7 +5807,7 @@ detail="Invalid or expired state parameter"
 
 **Valeur en dur**: `detail="Invalid or expired state parameter"`
 
-**5. Ligne 372** | Catégorie: `messages`
+**5. Ligne 373** | Catégorie: `messages`
 
 ```
 detail="User not found after creation"
@@ -6781,7 +5815,7 @@ detail="User not found after creation"
 
 **Valeur en dur**: `detail="User not found after creation"`
 
-**6. Ligne 521** | Catégorie: `messages`
+**6. Ligne 522** | Catégorie: `messages`
 
 ```
 detail="Missing or invalid authorization header"
@@ -6789,7 +5823,7 @@ detail="Missing or invalid authorization header"
 
 **Valeur en dur**: `detail="Missing or invalid authorization header"`
 
-**7. Ligne 534** | Catégorie: `messages`
+**7. Ligne 535** | Catégorie: `messages`
 
 ```
 detail="Invalid or expired token"
@@ -6797,7 +5831,7 @@ detail="Invalid or expired token"
 
 **Valeur en dur**: `detail="Invalid or expired token"`
 
-**8. Ligne 541** | Catégorie: `messages`
+**8. Ligne 542** | Catégorie: `messages`
 
 ```
 detail="Invalid role. Must be 'interim' or 'company'"
@@ -6805,7 +5839,7 @@ detail="Invalid role. Must be 'interim' or 'company'"
 
 **Valeur en dur**: `detail="Invalid role. Must be 'interim' or 'company'"`
 
-**9. Ligne 551** | Catégorie: `messages`
+**9. Ligne 552** | Catégorie: `messages`
 
 ```
 detail="User not found"
@@ -7033,7 +6067,7 @@ detail="Code invalide"
 
 ### 📄 `auth-microservice/mission_routes.py`
 
-**1. Ligne 77** | Catégorie: `numeric_limits`
+**1. Ligne 78** | Catégorie: `numeric_limits`
 
 ```
 max_applications = config.get("workflows.application.restrictions.max_applications_per_candidate", default=10)
@@ -7041,7 +6075,7 @@ max_applications = config.get("workflows.application.restrictions.max_applicatio
 
 **Valeur en dur**: `max_applications = config.get("workflows.application.restrictions.max_applications_per_candidate", default=10`
 
-**2. Ligne 87** | Catégorie: `numeric_limits`
+**2. Ligne 88** | Catégorie: `numeric_limits`
 
 ```
 min_days_between = config.get("workflows.application.restrictions.min_days_between_applications", default=1)
@@ -7049,7 +6083,7 @@ min_days_between = config.get("workflows.application.restrictions.min_days_betwe
 
 **Valeur en dur**: `min_days_between = config.get("workflows.application.restrictions.min_days_between_applications", default=1`
 
-**3. Ligne 126** | Catégorie: `messages`
+**3. Ligne 127** | Catégorie: `messages`
 
 ```
 detail="Vous avez déjà candidaté à cette mission"
@@ -7057,7 +6091,7 @@ detail="Vous avez déjà candidaté à cette mission"
 
 **Valeur en dur**: `detail="Vous avez déjà candidaté à cette mission"`
 
-**4. Ligne 162** | Catégorie: `messages`
+**4. Ligne 163** | Catégorie: `messages`
 
 ```
 detail="Vous n'avez pas la permission de créer une mission"
@@ -7065,7 +6099,7 @@ detail="Vous n'avez pas la permission de créer une mission"
 
 **Valeur en dur**: `detail="Vous n'avez pas la permission de créer une mission"`
 
-**5. Ligne 250** | Catégorie: `messages`
+**5. Ligne 251** | Catégorie: `messages`
 
 ```
 detail="Mission non trouvée"
@@ -7073,7 +6107,7 @@ detail="Mission non trouvée"
 
 **Valeur en dur**: `detail="Mission non trouvée"`
 
-**6. Ligne 260** | Catégorie: `messages`
+**6. Ligne 261** | Catégorie: `messages`
 
 ```
 detail="Mission non accessible"
@@ -7081,7 +6115,7 @@ detail="Mission non accessible"
 
 **Valeur en dur**: `detail="Mission non accessible"`
 
-**7. Ligne 266** | Catégorie: `messages`
+**7. Ligne 267** | Catégorie: `messages`
 
 ```
 detail="Vous ne pouvez voir que vos missions"
@@ -7089,7 +6123,7 @@ detail="Vous ne pouvez voir que vos missions"
 
 **Valeur en dur**: `detail="Vous ne pouvez voir que vos missions"`
 
-**8. Ligne 288** | Catégorie: `messages`
+**8. Ligne 289** | Catégorie: `messages`
 
 ```
 detail="Mission non trouvée"
@@ -7097,7 +6131,7 @@ detail="Mission non trouvée"
 
 **Valeur en dur**: `detail="Mission non trouvée"`
 
-**9. Ligne 305** | Catégorie: `messages`
+**9. Ligne 306** | Catégorie: `messages`
 
 ```
 detail="Vous n'avez pas la permission de modifier cette mission"
@@ -7105,7 +6139,7 @@ detail="Vous n'avez pas la permission de modifier cette mission"
 
 **Valeur en dur**: `detail="Vous n'avez pas la permission de modifier cette mission"`
 
-**10. Ligne 343** | Catégorie: `messages`
+**10. Ligne 344** | Catégorie: `messages`
 
 ```
 detail="Mission non trouvée"
@@ -7113,7 +6147,7 @@ detail="Mission non trouvée"
 
 **Valeur en dur**: `detail="Mission non trouvée"`
 
-**11. Ligne 359** | Catégorie: `messages`
+**11. Ligne 360** | Catégorie: `messages`
 
 ```
 detail="Vous n'avez pas la permission de supprimer cette mission"
@@ -7121,7 +6155,7 @@ detail="Vous n'avez pas la permission de supprimer cette mission"
 
 **Valeur en dur**: `detail="Vous n'avez pas la permission de supprimer cette mission"`
 
-**12. Ligne 384** | Catégorie: `messages`
+**12. Ligne 385** | Catégorie: `messages`
 
 ```
 detail="Mission non trouvée"
@@ -7129,7 +6163,7 @@ detail="Mission non trouvée"
 
 **Valeur en dur**: `detail="Mission non trouvée"`
 
-**13. Ligne 394** | Catégorie: `messages`
+**13. Ligne 395** | Catégorie: `messages`
 
 ```
 detail="Seuls les commerciaux et admins peuvent publier"
@@ -7137,7 +6171,7 @@ detail="Seuls les commerciaux et admins peuvent publier"
 
 **Valeur en dur**: `detail="Seuls les commerciaux et admins peuvent publier"`
 
-**14. Ligne 431** | Catégorie: `messages`
+**14. Ligne 432** | Catégorie: `messages`
 
 ```
 detail="Seuls les intérimaires peuvent postuler"
@@ -7145,7 +6179,7 @@ detail="Seuls les intérimaires peuvent postuler"
 
 **Valeur en dur**: `detail="Seuls les intérimaires peuvent postuler"`
 
-**15. Ligne 439** | Catégorie: `messages`
+**15. Ligne 440** | Catégorie: `messages`
 
 ```
 detail="Mission non trouvée"
@@ -7153,7 +6187,7 @@ detail="Mission non trouvée"
 
 **Valeur en dur**: `detail="Mission non trouvée"`
 
-**16. Ligne 445** | Catégorie: `messages`
+**16. Ligne 446** | Catégorie: `messages`
 
 ```
 detail="Cette mission n'accepte plus de candidatures"
@@ -7161,7 +6195,7 @@ detail="Cette mission n'accepte plus de candidatures"
 
 **Valeur en dur**: `detail="Cette mission n'accepte plus de candidatures"`
 
-**17. Ligne 457** | Catégorie: `messages`
+**17. Ligne 458** | Catégorie: `messages`
 
 ```
 detail="Vous avez déjà postulé à cette mission"
@@ -7169,7 +6203,7 @@ detail="Vous avez déjà postulé à cette mission"
 
 **Valeur en dur**: `detail="Vous avez déjà postulé à cette mission"`
 
-**18. Ligne 501** | Catégorie: `messages`
+**18. Ligne 502** | Catégorie: `messages`
 
 ```
 detail="Mission non trouvée"
@@ -7177,7 +6211,7 @@ detail="Mission non trouvée"
 
 **Valeur en dur**: `detail="Mission non trouvée"`
 
-**19. Ligne 518** | Catégorie: `messages`
+**19. Ligne 519** | Catégorie: `messages`
 
 ```
 detail="Vous n'avez pas accès aux candidatures"
@@ -7185,7 +6219,7 @@ detail="Vous n'avez pas accès aux candidatures"
 
 **Valeur en dur**: `detail="Vous n'avez pas accès aux candidatures"`
 
-**20. Ligne 562** | Catégorie: `messages`
+**20. Ligne 563** | Catégorie: `messages`
 
 ```
 detail="Candidature non trouvée"
@@ -7193,7 +6227,7 @@ detail="Candidature non trouvée"
 
 **Valeur en dur**: `detail="Candidature non trouvée"`
 
-**21. Ligne 572** | Catégorie: `messages`
+**21. Ligne 573** | Catégorie: `messages`
 
 ```
 detail="Permission insuffisante"
@@ -7201,7 +6235,7 @@ detail="Permission insuffisante"
 
 **Valeur en dur**: `detail="Permission insuffisante"`
 
-**22. Ligne 632** | Catégorie: `messages`
+**22. Ligne 633** | Catégorie: `messages`
 
 ```
 detail="Candidature non trouvée"
@@ -7209,7 +6243,7 @@ detail="Candidature non trouvée"
 
 **Valeur en dur**: `detail="Candidature non trouvée"`
 
-**23. Ligne 673** | Catégorie: `messages`
+**23. Ligne 674** | Catégorie: `messages`
 
 ```
 detail="Candidature non trouvée"
@@ -7217,7 +6251,7 @@ detail="Candidature non trouvée"
 
 **Valeur en dur**: `detail="Candidature non trouvée"`
 
-**24. Ligne 680** | Catégorie: `messages`
+**24. Ligne 681** | Catégorie: `messages`
 
 ```
 detail="Vous ne pouvez modifier que vos propres candidatures"
@@ -7225,7 +6259,7 @@ detail="Vous ne pouvez modifier que vos propres candidatures"
 
 **Valeur en dur**: `detail="Vous ne pouvez modifier que vos propres candidatures"`
 
-**25. Ligne 715** | Catégorie: `messages`
+**25. Ligne 716** | Catégorie: `messages`
 
 ```
 detail="Mission non trouvée"
@@ -7236,7 +6270,7 @@ detail="Mission non trouvée"
 
 ### 📄 `auth-microservice/profile_routes.py`
 
-**1. Ligne 184** | Catégorie: `messages`
+**1. Ligne 185** | Catégorie: `messages`
 
 ```
 raise HTTPException(status_code=400, detail="File too large. Maximum size: 5MB")
@@ -7244,7 +6278,7 @@ raise HTTPException(status_code=400, detail="File too large. Maximum size: 5MB")
 
 **Valeur en dur**: `detail="File too large. Maximum size: 5MB"`
 
-**2. Ligne 239** | Catégorie: `messages`
+**2. Ligne 240** | Catégorie: `messages`
 
 ```
 message="Document uploadé avec succès"
@@ -7252,7 +6286,7 @@ message="Document uploadé avec succès"
 
 **Valeur en dur**: `message="Document uploadé avec succès"`
 
-**3. Ligne 271** | Catégorie: `messages`
+**3. Ligne 272** | Catégorie: `messages`
 
 ```
 raise HTTPException(status_code=404, detail="Document not found")
@@ -7405,7 +6439,7 @@ raise HTTPException(status_code=400, detail="Email already registered")
 
 ### 📄 `auth-microservice/validation_routes.py`
 
-**1. Ligne 36** | Catégorie: `messages`
+**1. Ligne 37** | Catégorie: `messages`
 
 ```
 validation_type: Optional[str] = Query(None, description="Filter by type: interim or company"),
@@ -7413,7 +6447,7 @@ validation_type: Optional[str] = Query(None, description="Filter by type: interi
 
 **Valeur en dur**: `description="Filter by type: interim or company"`
 
-**2. Ligne 37** | Catégorie: `messages`
+**2. Ligne 38** | Catégorie: `messages`
 
 ```
 status: Optional[ValidationStatus] = Query(None, description="Filter by status"),
@@ -7421,7 +6455,7 @@ status: Optional[ValidationStatus] = Query(None, description="Filter by status")
 
 **Valeur en dur**: `description="Filter by status"`
 
-**3. Ligne 38** | Catégorie: `messages`
+**3. Ligne 39** | Catégorie: `messages`
 
 ```
 has_location_warning: Optional[bool] = Query(None, description="Filter by location warning"),
@@ -7429,7 +6463,7 @@ has_location_warning: Optional[bool] = Query(None, description="Filter by locati
 
 **Valeur en dur**: `description="Filter by location warning"`
 
-**4. Ligne 39** | Catégorie: `messages`
+**4. Ligne 40** | Catégorie: `messages`
 
 ```
 assigned_to: Optional[str] = Query(None, description="Filter by assigned validator"),
@@ -7437,7 +6471,7 @@ assigned_to: Optional[str] = Query(None, description="Filter by assigned validat
 
 **Valeur en dur**: `description="Filter by assigned validator"`
 
-**5. Ligne 128** | Catégorie: `messages`
+**5. Ligne 129** | Catégorie: `messages`
 
 ```
 detail="Validation not found"
@@ -7445,7 +6479,7 @@ detail="Validation not found"
 
 **Valeur en dur**: `detail="Validation not found"`
 
-**6. Ligne 145** | Catégorie: `messages`
+**6. Ligne 146** | Catégorie: `messages`
 
 ```
 detail="Validation not found"
@@ -7453,7 +6487,7 @@ detail="Validation not found"
 
 **Valeur en dur**: `detail="Validation not found"`
 
-**7. Ligne 151** | Catégorie: `messages`
+**7. Ligne 152** | Catégorie: `messages`
 
 ```
 detail="Validation already processed"
@@ -7461,7 +6495,7 @@ detail="Validation already processed"
 
 **Valeur en dur**: `detail="Validation already processed"`
 
-**8. Ligne 197** | Catégorie: `messages`
+**8. Ligne 198** | Catégorie: `messages`
 
 ```
 detail="Validation not found"
@@ -7469,7 +6503,7 @@ detail="Validation not found"
 
 **Valeur en dur**: `detail="Validation not found"`
 
-**9. Ligne 203** | Catégorie: `messages`
+**9. Ligne 204** | Catégorie: `messages`
 
 ```
 detail="Validation already processed"
@@ -7477,7 +6511,7 @@ detail="Validation already processed"
 
 **Valeur en dur**: `detail="Validation already processed"`
 
-**10. Ligne 251** | Catégorie: `messages`
+**10. Ligne 252** | Catégorie: `messages`
 
 ```
 detail="Validator not found"
@@ -7485,7 +6519,7 @@ detail="Validator not found"
 
 **Valeur en dur**: `detail="Validator not found"`
 
-**11. Ligne 259** | Catégorie: `messages`
+**11. Ligne 260** | Catégorie: `messages`
 
 ```
 detail="User does not have validator role (admin, super_admin, or commercial)"
@@ -7493,7 +6527,7 @@ detail="User does not have validator role (admin, super_admin, or commercial)"
 
 **Valeur en dur**: `detail="User does not have validator role (admin, super_admin, or commercial)"`
 
-**12. Ligne 276** | Catégorie: `messages`
+**12. Ligne 277** | Catégorie: `messages`
 
 ```
 detail="Validation not found"
@@ -7501,7 +6535,7 @@ detail="Validation not found"
 
 **Valeur en dur**: `detail="Validation not found"`
 
-**13. Ligne 296** | Catégorie: `messages`
+**13. Ligne 297** | Catégorie: `messages`
 
 ```
 detail="Validation not found"
@@ -7509,7 +6543,7 @@ detail="Validation not found"
 
 **Valeur en dur**: `detail="Validation not found"`
 
-**14. Ligne 302** | Catégorie: `messages`
+**14. Ligne 303** | Catégorie: `messages`
 
 ```
 detail="No missing country to add"
