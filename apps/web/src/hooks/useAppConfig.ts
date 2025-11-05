@@ -55,20 +55,17 @@ const DEFAULT_CONFIG: AppConfig = {
 
 /**
  * Hook pour accéder aux rôles de l'application
- * Retourne les valeurs configurées depuis le backend
+ * Charge depuis l'API backend avec fallback
  */
 export const useRoles = () => {
-  // Valeurs de configuration par défaut
-  // Ces valeurs correspondent à celles définies dans base.yaml
-  return {
-    admin: 'admin',
-    super_admin: 'super_admin',
-    company: 'company',
-    interim: 'interim',
-    agency: 'agency',
-    commercial: 'commercial',
-    validator: 'validator'
+  const { data, isLoading, isError } = useGetAllConfigQuery()
+  
+  // Si chargement ou erreur, utiliser valeurs par défaut
+  if (isLoading || isError || !data) {
+    return DEFAULT_CONFIG.roles
   }
+  
+  return data.roles
 }
 
 /**
