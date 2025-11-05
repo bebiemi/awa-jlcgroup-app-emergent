@@ -2067,7 +2067,7 @@ async def update_user(
         
         if "roles" in user_update:
             # Validate roles
-            valid_roles = ["admin", "super_admin", "interim", "company", "agency", "commercial", "validator"]
+            valid_roles = cfg.get_all_roles()
             roles = user_update["roles"]
             if not isinstance(roles, list):
                 raise HTTPException(
