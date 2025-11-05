@@ -48,20 +48,37 @@ class GoogleCallbackRequest(BaseModel):
 # ===== Helper: Get Google Provider =====
 
 def get_google_provider() -> GoogleAuthProvider:
-    """Get configured Google OAuth provider"""
-    config = {
-        "client_id": os.getenv("GOOGLE_CLIENT_ID"),
-        "client_secret": os.getenv("GOOGLE_CLIENT_SECRET"),
-        "redirect_uri": os.getenv("GOOGLE_REDIRECT_URI", "http://localhost:3000/auth/google/callback")
-    }
+    """Get configured Google OAuth provider from ConfigManager"""
+    app_config = get_config()
     
-    if not config["client_id"] or not config["client_secret"]:
+    # Vérifier si OAuth Google est activé
+    if not app_config.get("security.oauth.google.enabled", default=True):
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Google OAuth est désactivé"
+        )
+    
+    # Charger les credentials depuis ConfigManager
+    client_id = app_config.get_secret("GOOGLE_CLIENT_ID", required=False)
+    client_secret = app_config.get_secret("GOOGLE_CLIENT_SECRET", required=False)
+    
+    if not client_id or not client_secret:
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             detail="Google OAuth is not configured. Please set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET"
         )
     
-    return GoogleAuthProvider(config)
+    # Construire redirect URI (peut être surchargé par env var)
+    redirect_uri_path = app_config.get("security.oauth.google.redirect_uri_path", default="/api/auth/google/callback")
+    redirect_uri = app_config.get_secret("GOOGLE_REDIRECT_URI", default=f"http://localhost:3000{redirect_uri_path}")
+    
+    provider_config = {
+        "client_id": client_id,
+        "client_secret": client_secret,
+        "redirect_uri": redirect_uri
+    }
+    
+    return GoogleAuthProvider(provider_config)
 
 
 # ===== Helper: State Storage in MongoDB =====
