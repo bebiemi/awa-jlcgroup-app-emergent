@@ -34,6 +34,7 @@ interface NavItem {
 }
 
 export default function Sidebar() {
+  const { t } = useTranslation()
   const roles = useRoles()
 
   const [isCollapsed, setIsCollapsed] = useState(false)
