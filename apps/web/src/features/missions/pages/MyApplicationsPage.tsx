@@ -217,11 +217,11 @@ export default function MyApplicationsPage() {
                               <h3 className="text-lg font-semibold text-gray-900">
                                 Mission #{app.mission_id.slice(0, 8)}
                               </h3>
-                              <span className={`px-3 py-1 text-xs font-medium rounded-full border ${
-                                STATUS_COLORS[app.status] || 'bg-gray-100 text-gray-800 border-gray-200'
-                              }`}>
-                                {STATUS_LABELS[app.status]}
-                              </span>
+                              <StatusBadge
+                                category="application_statuses"
+                                status={app.status}
+                                showIcon
+                              />
                             </div>
 
                             <div className="mb-3 p-4 bg-blue-50 border-l-4 border-blue-400 rounded">
