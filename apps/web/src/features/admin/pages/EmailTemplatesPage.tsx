@@ -70,7 +70,7 @@ export const EmailTemplatesPage: React.FC = () => {
             </div>
 
             <div className="flex items-center justify-between">
-              <span className={\`text-sm \${template.is_active ? 'text-green-600' : 'text-gray-500'}\`}>
+              <span className={`text-sm ${template.is_active ? 'text-green-600' : 'text-gray-500'}`}>
                 {template.is_active ? 'Actif' : 'Inactif'}
               </span>
               <span className="text-xs text-gray-500">
