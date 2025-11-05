@@ -290,7 +290,7 @@ export default function InterimDashboard() {
                   <div className="flex justify-between">
                     <dt className="text-sm text-gray-600">Nom complet:</dt>
                     <dd className="text-sm font-medium text-gray-900">
-                      {profile.first_name} {profile.last_name}
+                      {profile.profile.first_name} {profile.profile.last_name}
                     </dd>
                   </div>
                   <div className="flex justify-between">
