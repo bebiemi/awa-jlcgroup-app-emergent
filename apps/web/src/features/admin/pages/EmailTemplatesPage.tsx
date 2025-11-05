@@ -10,7 +10,7 @@ export const EmailTemplatesPage: React.FC = () => {
       await initDefaults().unwrap();
       alert('Templates par défaut créés avec succès !');
     } catch (err: any) {
-      alert(\`Erreur: \${err.data?.detail || 'Erreur inconnue'}\`);
+      alert(`Erreur: ${err.data?.detail || 'Erreur inconnue'}`);
     }
   };
 
