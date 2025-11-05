@@ -116,6 +116,14 @@ function App() {
           </ProtectedRoute>
         }
       />
+      <Route
+        path="/admin/references"
+        element={
+          <ProtectedRoute requiredRoles={['admin', 'super_admin']}>
+            <ReferencesManagementPage />
+          </ProtectedRoute>
+        }
+      />
       
       {/* Routes Missions - Admin & Commercial */}
       <Route
