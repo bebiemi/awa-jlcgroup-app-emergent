@@ -66,7 +66,7 @@ function App() {
       <Route
         path="/admin"
         element={
-          <ProtectedRoute requiredRoles={['admin']}>
+          <ProtectedRoute requiredRoles={[roles.admin]}>
             <AdminDashboard />
           </ProtectedRoute>
         }
@@ -74,7 +74,7 @@ function App() {
       <Route
         path="/admin/validations"
         element={
-          <ProtectedRoute requiredRoles={['admin']}>
+          <ProtectedRoute requiredRoles={[roles.admin]}>
             <ValidationsPage />
           </ProtectedRoute>
         }
@@ -82,7 +82,7 @@ function App() {
       <Route
         path="/admin/users"
         element={
-          <ProtectedRoute requiredRoles={['admin', 'super_admin']}>
+          <ProtectedRoute requiredRoles={[roles.admin, roles.super_admin]}>
             <UserManagementPage />
           </ProtectedRoute>
         }
@@ -90,7 +90,7 @@ function App() {
       <Route
         path="/admin/users/new"
         element={
-          <ProtectedRoute requiredRoles={['admin', 'super_admin']}>
+          <ProtectedRoute requiredRoles={[roles.admin, roles.super_admin]}>
             <CreateUserPage />
           </ProtectedRoute>
         }
@@ -98,7 +98,7 @@ function App() {
       <Route
         path="/admin/groups"
         element={
-          <ProtectedRoute requiredRoles={['admin', 'super_admin']}>
+          <ProtectedRoute requiredRoles={[roles.admin, roles.super_admin]}>
             <GroupsPage />
           </ProtectedRoute>
         }
@@ -106,7 +106,7 @@ function App() {
       <Route
         path="/admin/profiles"
         element={
-          <ProtectedRoute requiredRoles={['admin', 'super_admin']}>
+          <ProtectedRoute requiredRoles={[roles.admin, roles.super_admin]}>
             <ProfilesPage />
           </ProtectedRoute>
         }
@@ -114,7 +114,7 @@ function App() {
       <Route
         path="/admin/locations"
         element={
-          <ProtectedRoute requiredRoles={['admin', 'super_admin']}>
+          <ProtectedRoute requiredRoles={[roles.admin, roles.super_admin]}>
             <LocationManagementPage />
           </ProtectedRoute>
         }
@@ -122,7 +122,7 @@ function App() {
       <Route
         path="/admin/references"
         element={
-          <ProtectedRoute requiredRoles={['admin', 'super_admin']}>
+          <ProtectedRoute requiredRoles={[roles.admin, roles.super_admin]}>
             <ReferencesManagementPage />
           </ProtectedRoute>
         }
@@ -130,7 +130,7 @@ function App() {
       <Route
         path="/admin/rules"
         element={
-          <ProtectedRoute requiredRoles={['admin', 'super_admin']}>
+          <ProtectedRoute requiredRoles={[roles.admin, roles.super_admin]}>
             <BusinessRulesPage />
           </ProtectedRoute>
         }
@@ -140,7 +140,7 @@ function App() {
       <Route
         path="/missions"
         element={
-          <ProtectedRoute requiredRoles={['admin', 'super_admin', 'commercial', 'company']}>
+          <ProtectedRoute requiredRoles={[roles.admin, roles.super_admin, roles.commercial, roles.company]}>
             <MissionsPage />
           </ProtectedRoute>
         }
@@ -148,7 +148,7 @@ function App() {
       <Route
         path="/missions/create"
         element={
-          <ProtectedRoute requiredRoles={['admin', 'super_admin', 'commercial', 'company']}>
+          <ProtectedRoute requiredRoles={[roles.admin, roles.super_admin, roles.commercial, roles.company]}>
             <CreateMissionPage />
           </ProtectedRoute>
         }
