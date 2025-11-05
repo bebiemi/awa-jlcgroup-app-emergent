@@ -167,8 +167,10 @@ async def get_settings(
     
     settings = await db.application_settings.find(query).to_list(length=None)
     
-    # Convertir les valeurs en types appropriés
+    # Convertir les valeurs en types appropriés et ObjectId
     for setting in settings:
+        if "_id" in setting:
+            setting["_id"] = str(setting["_id"])
         setting_obj = ApplicationSetting(**setting)
         setting["typed_value"] = setting_obj.get_typed_value()
     
