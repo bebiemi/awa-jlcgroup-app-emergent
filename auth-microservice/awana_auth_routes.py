@@ -1917,11 +1917,15 @@ async def list_users(
     search: Optional[str] = None,
     status: Optional[str] = None,
     role: Optional[str] = None,
+    include_super_admin: bool = Query(False, description="Include super-admin users (super-admin only)"),
     current_user: User = Depends(require_admin),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """
     List all users with pagination and filters (Admin only)
+    
+    By default, super-admin users are hidden from regular admins.
+    Only super-admins can see all users by setting include_super_admin=true.
     """
     try:
         users_collection = db.users
@@ -1940,6 +1944,22 @@ async def list_users(
         
         if role:
             query["roles"] = role
+        
+        # Filter out super-admins unless caller is super-admin AND explicitly requests them
+        is_super_admin = "super_admin" in current_user.roles
+        
+        if not is_super_admin or not include_super_admin:
+            # Get hidden roles from system_references
+            hidden_roles = await db.system_references.find(
+                {"category": "roles", "is_hidden_from_admins": True},
+                {"_id": 0, "code": 1}
+            ).to_list(length=None)
+            
+            hidden_role_codes = [role["code"] for role in hidden_roles]
+            
+            if hidden_role_codes:
+                # Exclude users who have ANY hidden role
+                query["roles"] = {"$not": {"$elemMatch": {"$in": hidden_role_codes}}}
         
         # Count total
         total = await users_collection.count_documents(query)
