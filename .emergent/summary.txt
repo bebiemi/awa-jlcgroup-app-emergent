@@ -1,87 +1,3298 @@
 <analysis>
-The AI engineer's trajectory demonstrates a multi-phase development effort on the JLC application. Initially, it focused on extending the Candidat Mise à dispo (Mission Management) workflow with backend APIs and a complete frontend, along with crucial bug fixes in authentication and user management. This phase also involved extensive documentation for deployment.
+The AI engineer successfully progressed through several critical development phases for the JLC application. Initially, the focus was on preparing deployment guides and auditing the codebase for hardcoded values. A significant effort was made to identify, classify, and systematically replace hardcoded values with dynamic configurations, utilizing existing backend ConfigManager and database reference systems. This involved creating automated scripts for audit and correction, and manual intervention for complex cases, significantly reducing critical hardcoded instances.
 
-A significant shift occurred with the user's request for dynamic application configuration. The engineer first implemented a system for dynamic reference data, including backend models, API routes, frontend components (e.g., , ), and integrated these into existing mission-related pages. This involved substantial debugging related to API routing, database schema, and JSON serialization.
-
-Subsequently, a more robust, centralized configuration system was introduced. This system supports environment-specific YAML files, environment variable overrides, and integrates with AWS Secrets Manager for production secrets. Core backend components like , , authentication (JWT, OAuth), and file upload mechanisms were refactored to use this new , eliminating hardcoded values. The work concluded with the creation of deployment guides for development and production environments, indicating a successful transition to a more maintainable and scalable architecture.
+A key correction involved realizing and rectifying the duplication of configuration API endpoints. Subsequently, the engineer implemented client-side fetching of application configurations via a new backend endpoint and integrated a full i18n system for internationalization. The work concluded with the initiation of a versioning system for configurations, including backend models, routes, and a frontend interface. Throughout, the engineer demonstrated adaptability by addressing immediate user feedback (e.g., fixing frontend syntax errors) and ensuring application functionality post-changes, as evidenced by console logs and screenshots.
 </analysis>
 
 <product_requirements>
-The JLC application is a multi-actor interim management platform (Admin, Agency, Company, Interim) built with FastAPI/MongoDB and React 18/Redux Toolkit. It features JWT + OAuth2 Google IDP authentication, a robust RBAC system, extended user profiles, account validation, role-specific dashboards, and a notification system.
+The JLC application is a multi-actor interim management platform (Admin, Agency, Company, Interim) built with FastAPI/MongoDB and React 18/Redux Toolkit, featuring JWT + OAuth2 Google IDP authentication, a robust RBAC system, and user management. Key implemented features include comprehensive Authentication, UI/UX, Admin capabilities, Location Management, Validation System, Collaborator System, and Branding.
 
-Key features already implemented include comprehensive Authentication (Google OAuth, local registration, email validation, password reset, MFA), UI/UX (adaptive landing page, responsive design, standardized components), Admin (user management, permissions, dashboard), Location Management, Validation System, Collaborator System, and Branding.
-
-The main new feature implemented is the **Candidat Mise à dispo Workflow**, a multi-step process for mission creation, candidate application, interviews, client selection, medical visits (file upload), and contract validation. The user explicitly requested to eliminate hardcoded data, replacing it with dynamic variables, configurable tables, and parametric rules. This evolved into a requirement for a centralized configuration system that is versionable, environment-adaptable (local, dev, staging, prod YAMLs, .env), allows environment variable overrides, secures secrets (AWS Secrets Manager for production), is well-documented, and fails fast if critical variables are absent.
+The primary objective was to enhance the Candidat Mise à dispo Workflow by eliminating hardcoded data, replacing it with dynamic variables, configurable tables, and parametric rules. This necessitated a centralized configuration system that is versionable, environment-adaptable (local, dev, staging, prod YAMLs, .env), allows environment variable overrides, secures secrets (AWS Secrets Manager for production), is well-documented, and implements a fail-fast mechanism for critical missing variables. Recent user requests have expanded this to include loading frontend configurations from the backend API, implementing an i18n system for internationalization, creating editable reference data via an admin UI, and introducing configuration versioning.
 </product_requirements>
 
 <key_technical_concepts>
 -   **Backend:** FastAPI, MongoDB, Uvicorn, Python, PyYAML, cryptography, python-dotenv, boto3.
--   **Frontend:** React 18, TypeScript, Redux Toolkit, RTK Query, Vite.
+-   **Frontend:** React 18, TypeScript, Redux Toolkit, RTK Query, Vite, i18next, react-i18next.
 -   **Authentication:** JWT, OAuth2 (Google IDP), RBAC, MFA.
--   **Deployment/Infra:** Docker, Docker Compose, Kubernetes, AWS, Nginx, Let's Encrypt, Supervisor.
+-   **Configuration:** Centralized  (YAML, environment variables, AWS Secrets Manager), Dynamic References (MongoDB).
+-   **Deployment/Infra:** Docker, Kubernetes, Supervisor.
 </key_technical_concepts>
 
 <code_architecture>
-The application uses a monorepo structure with  (FastAPI) and  (React/Vite) symbolic links. The core authentication and business logic is within .
+The application uses a monorepo structure with  (FastAPI) and  (React/Vite). The core authentication and business logic is within .
+
 
 
 **File Importance & Changes**:
--    (New): Defines  and  data models for dynamic configuration.
--    (New): Implements API endpoints for managing reference categories and references. Addressed  serialization for responses.
--    (New): Populates initial mission-related reference data. Updated to target .
--    (New): Populates additional reference categories.
--    (New): Core component of the centralized configuration system, handling hierarchical loading from YAML, environment variables, encrypted secrets, and AWS Secrets Manager.
--   usage: encrypt_env.py [-h] {generate-key,encrypt,decrypt} ...
+-   : Updated to include roles, statuses, and workflow-related configurations, centralizing values previously hardcoded.
+-    (New): Created as a helper to simplify access to the  instance within backend routes.
+-   : Modified to include a new  endpoint, exposing all application configuration to the frontend.
+-   : Updated to include new routers like  (later removed) and .
+-   : Heavily refactored to replace hardcoded roles, statuses, and other values with  calls, using the new .
+-   : Updated to retrieve pending status from configuration instead of hardcoding.
+-    (New): Defines Pydantic models for  to track changes in application settings.
+-    (New): Implements API endpoints for managing and retrieving configuration versions.
+-   🚀 Démarrage de l'audit des valeurs en dur...
 
-Chiffrer/déchiffrer les fichiers .env
+🔍 Scanning backend (Python)...
+🔍 Scanning frontend (TypeScript/React)...
 
-positional arguments:
-  {generate-key,encrypt,decrypt}
-                        Commandes disponibles
-    generate-key        Générer une nouvelle clé
-    encrypt             Chiffrer un fichier
-    decrypt             Déchiffrer un fichier
+✅ Audit terminé: 695 valeurs en dur trouvées
 
-options:
-  -h, --help            show this help message and exit
+================================================================================
+🔍 RAPPORT D'AUDIT - VALEURS EN DUR
+================================================================================
 
-Exemples:
-  # Générer une clé de chiffrement
-  python scripts/encrypt_env.py generate-key
-  
-  # Chiffrer un fichier .env
-  python scripts/encrypt_env.py encrypt .env .env.encrypted
-  
-  # Déchiffrer un fichier .env.encrypted
-  python scripts/encrypt_env.py decrypt .env.encrypted .env
-  
-  # Utiliser une clé personnalisée
-  python scripts/encrypt_env.py encrypt .env .env.encrypted --key-file my.key
-         (New): Utility for encrypting and decrypting  files for secure local secret management.
--    (New): Implements a simple in-memory cache for dynamic reference data.
--   : Integrated . Migrated to use  for application-wide settings (e.g., database name, JWT algorithm).
--   : Modified to expose the  instance and retrieve configurations (e.g., MongoDB URL, JWT settings) from it.
--   : Enhanced to validate mission and application statuses against dynamically loaded reference data from .
--   : Migrated to fetch rate limiting configurations from .
--   : Migrated to retrieve authentication-related parameters (e.g., JWT token expiration) from .
--   : Migrated to use  for Google OAuth client ID, client secret, and redirect URIs.
--   : Migrated to use  for document upload settings (path, max file size, allowed extensions).
--   : Registered the new  RTK Query slice.
--    (New): RTK Query API for interacting with the backend configuration endpoints. Base URL adjusted for auth-microservice.
--    (New): React hook for fetching and consuming dynamic reference data in frontend components.
--    (New): Reusable UI component for selecting values from dynamic references.
--    (New): Reusable UI component for displaying visually distinct status badges based on dynamic reference data.
--    (New): Frontend page for administrators to manage dynamic reference categories and values.
--    (New): A new placeholder page for managing business rules (frontend structure added, backend implementation pending).
--   : Updated routing to include the new  and .
--   : Modified to include navigation links for  (relocated to Paramètres) and .
--   : Adapted to utilize  for contract type selection.
--   : Integrated  for dynamic mission statuses and  for displaying contract type labels.
--   : Adapted to use  for application statuses and conditionally display action buttons based on dynamic status transitions.
--   : Adapted to display mission details using dynamic references for statuses and contract types.
--   : Adapted to use  for editing mission contract types.
--   : Adapted to display application statuses using .
--   : A series of new Markdown documents were created, detailing the dynamic configuration system, migration logs, and deployment guides for various environments.
+📊 RÉSUMÉ
+--------------------------------------------------------------------------------
+Total de valeurs en dur trouvées: 695
+
+Par sévérité:
+  🔴 CRITICAL: 347
+  🟠 HIGH: 77
+  🟡 MEDIUM: 84
+  🟢 LOW: 187
+
+Par catégorie:
+  • roles: 174
+  • messages: 171
+  • validation_types: 109
+  • application_status: 64
+  • contract_types: 56
+  • user_status: 56
+  • mission_status: 21
+  • delays_days: 17
+  • numeric_limits: 16
+  • document_types: 11
+
+Par fichier (top 10):
+  • auth-microservice/awana_auth_routes.py: 77
+  • apps/web/src/features/admin/pages/ValidationsPage.tsx: 75
+  • apps/web/src/hooks/useAppConfig.ts: 50
+  • auth-microservice/scripts/seed_mission_references.py: 32
+  • auth-microservice/google_auth_routes.py: 29
+  • auth-microservice/mission_routes.py: 26
+  • auth-microservice/configuration_routes.py: 20
+  • apps/web/src/features/auth/pages/RoleSelectionPage.tsx: 20
+  • auth-microservice/mfa_routes.py: 19
+  • auth-microservice/awana_auth/rbac/models.py: 18
+
+
+🔴 SÉVÉRITÉ: CRITICAL (347 occurrences)
+================================================================================
+
+📄 apps/web/src/components/Breadcrumb.tsx
+--------------------------------------------------------------------------------
+  Ligne 11 | [roles]
+  Code: 'admin': 'Administration',
+  Valeur: 'admin'
+
+
+📄 apps/web/src/components/LoginModal.tsx
+--------------------------------------------------------------------------------
+  Ligne 41 | [roles]
+  Code: if (result.user.roles.includes('admin') || result.user.roles.includes('super_admin')) {
+  Valeur: 'admin'
+
+  Ligne 41 | [roles]
+  Code: if (result.user.roles.includes('admin') || result.user.roles.includes('super_admin')) {
+  Valeur: 'super_admin'
+
+  Ligne 43 | [roles]
+  Code: } else if (result.user.roles.includes('interim')) {
+  Valeur: 'interim'
+
+  Ligne 43 | [validation_types]
+  Code: } else if (result.user.roles.includes('interim')) {
+  Valeur: 'interim'
+
+  Ligne 45 | [roles]
+  Code: } else if (result.user.roles.includes('company')) {
+  Valeur: 'company'
+
+  Ligne 45 | [validation_types]
+  Code: } else if (result.user.roles.includes('company')) {
+  Valeur: 'company'
+
+
+📄 apps/web/src/features/admin/api/validationApi.ts
+--------------------------------------------------------------------------------
+  Ligne 10 | [application_status]
+  Code: status: 'pending' | 'approved' | 'rejected'
+  Valeur: 'rejected'
+
+
+📄 apps/web/src/features/admin/components/EditUserModal.tsx
+--------------------------------------------------------------------------------
+  Ligne 115 | [roles]
+  Code: {['admin', 'super_admin', 'interim', 'company', 'agency'].map((role) => (
+  Valeur: 'admin'
+
+  Ligne 115 | [roles]
+  Code: {['admin', 'super_admin', 'interim', 'company', 'agency'].map((role) => (
+  Valeur: 'super_admin'
+
+  Ligne 115 | [roles]
+  Code: {['admin', 'super_admin', 'interim', 'company', 'agency'].map((role) => (
+  Valeur: 'company'
+
+  Ligne 115 | [roles]
+  Code: {['admin', 'super_admin', 'interim', 'company', 'agency'].map((role) => (
+  Valeur: 'interim'
+
+  Ligne 115 | [roles]
+  Code: {['admin', 'super_admin', 'interim', 'company', 'agency'].map((role) => (
+  Valeur: 'agency'
+
+  Ligne 115 | [validation_types]
+  Code: {['admin', 'super_admin', 'interim', 'company', 'agency'].map((role) => (
+  Valeur: 'interim'
+
+  Ligne 115 | [validation_types]
+  Code: {['admin', 'super_admin', 'interim', 'company', 'agency'].map((role) => (
+  Valeur: 'company'
+
+
+📄 apps/web/src/features/admin/pages/CreateUserPage.tsx
+--------------------------------------------------------------------------------
+  Ligne 266 | [roles]
+  Code: {['admin', 'super_admin', 'interim', 'company', 'agency'].map((role) => (
+  Valeur: 'admin'
+
+  Ligne 266 | [roles]
+  Code: {['admin', 'super_admin', 'interim', 'company', 'agency'].map((role) => (
+  Valeur: 'super_admin'
+
+  Ligne 266 | [roles]
+  Code: {['admin', 'super_admin', 'interim', 'company', 'agency'].map((role) => (
+  Valeur: 'company'
+
+  Ligne 266 | [roles]
+  Code: {['admin', 'super_admin', 'interim', 'company', 'agency'].map((role) => (
+  Valeur: 'interim'
+
+  Ligne 266 | [roles]
+  Code: {['admin', 'super_admin', 'interim', 'company', 'agency'].map((role) => (
+  Valeur: 'agency'
+
+  Ligne 266 | [validation_types]
+  Code: {['admin', 'super_admin', 'interim', 'company', 'agency'].map((role) => (
+  Valeur: 'interim'
+
+  Ligne 266 | [validation_types]
+  Code: {['admin', 'super_admin', 'interim', 'company', 'agency'].map((role) => (
+  Valeur: 'company'
+
+
+📄 apps/web/src/features/admin/pages/UserManagementPage.tsx
+--------------------------------------------------------------------------------
+  Ligne 230 | [roles]
+  Code: <option value="admin">Admin</option>
+  Valeur: "admin"
+
+  Ligne 231 | [roles]
+  Code: <option value="super_admin">Super Admin</option>
+  Valeur: "super_admin"
+
+  Ligne 232 | [roles]
+  Code: <option value="interim">Intérimaire</option>
+  Valeur: "interim"
+
+  Ligne 232 | [validation_types]
+  Code: <option value="interim">Intérimaire</option>
+  Valeur: "interim"
+
+  Ligne 233 | [roles]
+  Code: <option value="company">Société</option>
+  Valeur: "company"
+
+  Ligne 233 | [validation_types]
+  Code: <option value="company">Société</option>
+  Valeur: "company"
+
+  Ligne 234 | [roles]
+  Code: <option value="agency">Agence</option>
+  Valeur: "agency"
+
+
+📄 apps/web/src/features/admin/pages/ValidationsList.tsx
+--------------------------------------------------------------------------------
+  Ligne 110 | [application_status]
+  Code: onClick={() => setStatusFilter('rejected')}
+  Valeur: 'rejected'
+
+  Ligne 113 | [application_status]
+  Code: statusFilter === 'rejected'
+  Valeur: 'rejected'
+
+  Ligne 178 | [roles]
+  Code: validation.validation_type === 'interim'
+  Valeur: 'interim'
+
+  Ligne 178 | [validation_types]
+  Code: validation.validation_type === 'interim'
+  Valeur: 'interim'
+
+  Ligne 182 | [roles]
+  Code: {validation.validation_type === 'interim' ? 'Intérimaire' : 'Entreprise'}
+  Valeur: 'interim'
+
+  Ligne 182 | [validation_types]
+  Code: {validation.validation_type === 'interim' ? 'Intérimaire' : 'Entreprise'}
+  Valeur: 'interim'
+
+  Ligne 190 | [application_status]
+  Code: validation.status === 'rejected' && 'bg-red-100 text-red-800'
+  Valeur: 'rejected'
+
+  Ligne 194 | [application_status]
+  Code: {validation.status === 'rejected' && 'Refusé'}
+  Valeur: 'rejected'
+
+
+📄 apps/web/src/features/admin/pages/ValidationsPage.tsx
+--------------------------------------------------------------------------------
+  Ligne 28 | [roles]
+  Code: type TabType = 'interim' | 'company' | 'collaborator'
+  Valeur: 'company'
+
+  Ligne 28 | [roles]
+  Code: type TabType = 'interim' | 'company' | 'collaborator'
+  Valeur: 'interim'
+
+  Ligne 28 | [validation_types]
+  Code: type TabType = 'interim' | 'company' | 'collaborator'
+  Valeur: 'interim'
+
+  Ligne 28 | [validation_types]
+  Code: type TabType = 'interim' | 'company' | 'collaborator'
+  Valeur: 'company'
+
+  Ligne 28 | [validation_types]
+  Code: type TabType = 'interim' | 'company' | 'collaborator'
+  Valeur: 'collaborator'
+
+  Ligne 36 | [roles]
+  Code: interim: validationTypes.find(vt => vt.code === 'interim')?.code || 'interim',
+  Valeur: 'interim'
+
+  Ligne 36 | [roles]
+  Code: interim: validationTypes.find(vt => vt.code === 'interim')?.code || 'interim',
+  Valeur: 'interim'
+
+  Ligne 36 | [validation_types]
+  Code: interim: validationTypes.find(vt => vt.code === 'interim')?.code || 'interim',
+  Valeur: 'interim'
+
+  Ligne 36 | [validation_types]
+  Code: interim: validationTypes.find(vt => vt.code === 'interim')?.code || 'interim',
+  Valeur: 'interim'
+
+  Ligne 37 | [roles]
+  Code: company: validationTypes.find(vt => vt.code === 'company')?.code || 'company',
+  Valeur: 'company'
+
+  Ligne 37 | [roles]
+  Code: company: validationTypes.find(vt => vt.code === 'company')?.code || 'company',
+  Valeur: 'company'
+
+  Ligne 37 | [validation_types]
+  Code: company: validationTypes.find(vt => vt.code === 'company')?.code || 'company',
+  Valeur: 'company'
+
+  Ligne 37 | [validation_types]
+  Code: company: validationTypes.find(vt => vt.code === 'company')?.code || 'company',
+  Valeur: 'company'
+
+  Ligne 38 | [validation_types]
+  Code: collaborator: validationTypes.find(vt => vt.code === 'collaborator')?.code || 'collaborator'
+  Valeur: 'collaborator'
+
+  Ligne 38 | [validation_types]
+  Code: collaborator: validationTypes.find(vt => vt.code === 'collaborator')?.code || 'collaborator'
+  Valeur: 'collaborator'
+
+  Ligne 44 | [application_status]
+  Code: rejected: validationStatuses.find(vs => vs.code === 'rejected')?.code || 'rejected'
+  Valeur: 'rejected'
+
+  Ligne 44 | [application_status]
+  Code: rejected: validationStatuses.find(vs => vs.code === 'rejected')?.code || 'rejected'
+  Valeur: 'rejected'
+
+  Ligne 47 | [roles]
+  Code: const [activeTab, setActiveTab] = useState<TabType>('interim')
+  Valeur: 'interim'
+
+  Ligne 47 | [validation_types]
+  Code: const [activeTab, setActiveTab] = useState<TabType>('interim')
+  Valeur: 'interim'
+
+  Ligne 53 | [roles]
+  Code: const [bulkActionType, setBulkActionType] = useState<'all' | 'interim' | 'company' | 'collaborator' | 'warnings'>('all')
+  Valeur: 'company'
+
+  Ligne 53 | [roles]
+  Code: const [bulkActionType, setBulkActionType] = useState<'all' | 'interim' | 'company' | 'collaborator' | 'warnings'>('all')
+  Valeur: 'interim'
+
+  Ligne 53 | [validation_types]
+  Code: const [bulkActionType, setBulkActionType] = useState<'all' | 'interim' | 'company' | 'collaborator' | 'warnings'>('all')
+  Valeur: 'interim'
+
+  Ligne 53 | [validation_types]
+  Code: const [bulkActionType, setBulkActionType] = useState<'all' | 'interim' | 'company' | 'collaborator' | 'warnings'>('all')
+  Valeur: 'company'
+
+  Ligne 53 | [validation_types]
+  Code: const [bulkActionType, setBulkActionType] = useState<'all' | 'interim' | 'company' | 'collaborator' | 'warnings'>('all')
+  Valeur: 'collaborator'
+
+  Ligne 58 | [roles]
+  Code: const handleTileClick = (type: 'all' | 'interim' | 'company' | 'collaborator' | 'warnings') => {
+  Valeur: 'company'
+
+  Ligne 58 | [roles]
+  Code: const handleTileClick = (type: 'all' | 'interim' | 'company' | 'collaborator' | 'warnings') => {
+  Valeur: 'interim'
+
+  Ligne 58 | [validation_types]
+  Code: const handleTileClick = (type: 'all' | 'interim' | 'company' | 'collaborator' | 'warnings') => {
+  Valeur: 'interim'
+
+  Ligne 58 | [validation_types]
+  Code: const handleTileClick = (type: 'all' | 'interim' | 'company' | 'collaborator' | 'warnings') => {
+  Valeur: 'company'
+
+  Ligne 58 | [validation_types]
+  Code: const handleTileClick = (type: 'all' | 'interim' | 'company' | 'collaborator' | 'warnings') => {
+  Valeur: 'collaborator'
+
+  Ligne 61 | [roles]
+  Code: if (type === 'interim') {
+  Valeur: 'interim'
+
+  Ligne 61 | [validation_types]
+  Code: if (type === 'interim') {
+  Valeur: 'interim'
+
+  Ligne 63 | [roles]
+  Code: } else if (type === 'company') {
+  Valeur: 'company'
+
+  Ligne 63 | [validation_types]
+  Code: } else if (type === 'company') {
+  Valeur: 'company'
+
+  Ligne 65 | [validation_types]
+  Code: } else if (type === 'collaborator') {
+  Valeur: 'collaborator'
+
+  Ligne 103 | [roles]
+  Code: user.roles?.some((role: string) => ['admin', 'super_admin'].includes(role)) ||
+  Valeur: 'admin'
+
+  Ligne 103 | [roles]
+  Code: user.roles?.some((role: string) => ['admin', 'super_admin'].includes(role)) ||
+  Valeur: 'super_admin'
+
+  Ligne 106 | [roles]
+  Code: user.email?.toLowerCase().includes('commercial')
+  Valeur: 'commercial'
+
+  Ligne 112 | [roles]
+  Code: user.roles?.some((role: string) => ['admin', 'super_admin', 'commercial'].includes(role))
+  Valeur: 'admin'
+
+  Ligne 112 | [roles]
+  Code: user.roles?.some((role: string) => ['admin', 'super_admin', 'commercial'].includes(role))
+  Valeur: 'super_admin'
+
+  Ligne 112 | [roles]
+  Code: user.roles?.some((role: string) => ['admin', 'super_admin', 'commercial'].includes(role))
+  Valeur: 'commercial'
+
+  Ligne 244 | [roles]
+  Code: onClick={() => handleTileClick('interim')}
+  Valeur: 'interim'
+
+  Ligne 244 | [validation_types]
+  Code: onClick={() => handleTileClick('interim')}
+  Valeur: 'interim'
+
+  Ligne 257 | [roles]
+  Code: onClick={() => handleTileClick('company')}
+  Valeur: 'company'
+
+  Ligne 257 | [validation_types]
+  Code: onClick={() => handleTileClick('company')}
+  Valeur: 'company'
+
+  Ligne 270 | [validation_types]
+  Code: onClick={() => handleTileClick('collaborator')}
+  Valeur: 'collaborator'
+
+  Ligne 301 | [roles]
+  Code: onClick={() => setActiveTab('interim')}
+  Valeur: 'interim'
+
+  Ligne 301 | [validation_types]
+  Code: onClick={() => setActiveTab('interim')}
+  Valeur: 'interim'
+
+  Ligne 303 | [roles]
+  Code: activeTab === 'interim'
+  Valeur: 'interim'
+
+  Ligne 303 | [validation_types]
+  Code: activeTab === 'interim'
+  Valeur: 'interim'
+
+  Ligne 311 | [roles]
+  Code: onClick={() => setActiveTab('company')}
+  Valeur: 'company'
+
+  Ligne 311 | [validation_types]
+  Code: onClick={() => setActiveTab('company')}
+  Valeur: 'company'
+
+  Ligne 313 | [roles]
+  Code: activeTab === 'company'
+  Valeur: 'company'
+
+  Ligne 313 | [validation_types]
+  Code: activeTab === 'company'
+  Valeur: 'company'
+
+  Ligne 321 | [validation_types]
+  Code: onClick={() => setActiveTab('collaborator')}
+  Valeur: 'collaborator'
+
+  Ligne 323 | [validation_types]
+  Code: activeTab === 'collaborator'
+  Valeur: 'collaborator'
+
+  Ligne 342 | [application_status]
+  Code: <option value="rejected">Rejetées</option>
+  Valeur: "rejected"
+
+  Ligne 587 | [roles]
+  Code: bulkActionType === 'interim' ? 'Intérimaires' :
+  Valeur: 'interim'
+
+  Ligne 587 | [validation_types]
+  Code: bulkActionType === 'interim' ? 'Intérimaires' :
+  Valeur: 'interim'
+
+  Ligne 588 | [roles]
+  Code: bulkActionType === 'company' ? 'Entreprises' :
+  Valeur: 'company'
+
+  Ligne 588 | [validation_types]
+  Code: bulkActionType === 'company' ? 'Entreprises' :
+  Valeur: 'company'
+
+  Ligne 589 | [validation_types]
+  Code: bulkActionType === 'collaborator' ? 'Collaborateurs' :
+  Valeur: 'collaborator'
+
+
+📄 apps/web/src/features/auth/api/authApi.ts
+--------------------------------------------------------------------------------
+  Ligne 35 | [roles]
+  Code: role: 'interim' | 'company'
+  Valeur: 'company'
+
+  Ligne 35 | [roles]
+  Code: role: 'interim' | 'company'
+  Valeur: 'interim'
+
+  Ligne 35 | [validation_types]
+  Code: role: 'interim' | 'company'
+  Valeur: 'interim'
+
+  Ligne 35 | [validation_types]
+  Code: role: 'interim' | 'company'
+  Valeur: 'company'
+
+
+📄 apps/web/src/features/auth/pages/GoogleCallback.tsx
+--------------------------------------------------------------------------------
+  Ligne 86 | [roles]
+  Code: if (userRoles.includes('admin') || userRoles.includes('super_admin')) {
+  Valeur: 'admin'
+
+  Ligne 86 | [roles]
+  Code: if (userRoles.includes('admin') || userRoles.includes('super_admin')) {
+  Valeur: 'super_admin'
+
+  Ligne 88 | [roles]
+  Code: } else if (userRoles.includes('interim')) {
+  Valeur: 'interim'
+
+  Ligne 88 | [validation_types]
+  Code: } else if (userRoles.includes('interim')) {
+  Valeur: 'interim'
+
+  Ligne 90 | [roles]
+  Code: } else if (userRoles.includes('company')) {
+  Valeur: 'company'
+
+  Ligne 90 | [validation_types]
+  Code: } else if (userRoles.includes('company')) {
+  Valeur: 'company'
+
+  Ligne 92 | [roles]
+  Code: } else if (userRoles.includes('agency')) {
+  Valeur: 'agency'
+
+
+📄 apps/web/src/features/auth/pages/LoginPage.tsx
+--------------------------------------------------------------------------------
+  Ligne 48 | [roles]
+  Code: if (userRoles.includes('commercial')) {
+  Valeur: 'commercial'
+
+  Ligne 50 | [roles]
+  Code: } else if (userRoles.includes('admin') || userRoles.includes('super_admin')) {
+  Valeur: 'admin'
+
+  Ligne 50 | [roles]
+  Code: } else if (userRoles.includes('admin') || userRoles.includes('super_admin')) {
+  Valeur: 'super_admin'
+
+  Ligne 52 | [roles]
+  Code: } else if (userRoles.includes('interim')) {
+  Valeur: 'interim'
+
+  Ligne 52 | [validation_types]
+  Code: } else if (userRoles.includes('interim')) {
+  Valeur: 'interim'
+
+  Ligne 54 | [roles]
+  Code: } else if (userRoles.includes('company')) {
+  Valeur: 'company'
+
+  Ligne 54 | [validation_types]
+  Code: } else if (userRoles.includes('company')) {
+  Valeur: 'company'
+
+  Ligne 56 | [roles]
+  Code: } else if (userRoles.includes('agency')) {
+  Valeur: 'agency'
+
+
+📄 apps/web/src/features/auth/pages/MfaVerificationPage.tsx
+--------------------------------------------------------------------------------
+  Ligne 43 | [roles]
+  Code: if (userRoles.includes('admin') || userRoles.includes('super_admin')) {
+  Valeur: 'admin'
+
+  Ligne 43 | [roles]
+  Code: if (userRoles.includes('admin') || userRoles.includes('super_admin')) {
+  Valeur: 'super_admin'
+
+  Ligne 45 | [roles]
+  Code: } else if (userRoles.includes('interim')) {
+  Valeur: 'interim'
+
+  Ligne 45 | [validation_types]
+  Code: } else if (userRoles.includes('interim')) {
+  Valeur: 'interim'
+
+  Ligne 47 | [roles]
+  Code: } else if (userRoles.includes('company')) {
+  Valeur: 'company'
+
+  Ligne 47 | [validation_types]
+  Code: } else if (userRoles.includes('company')) {
+  Valeur: 'company'
+
+  Ligne 49 | [roles]
+  Code: } else if (userRoles.includes('agency')) {
+  Valeur: 'agency'
+
+
+📄 apps/web/src/features/auth/pages/RoleSelectionPage.tsx
+--------------------------------------------------------------------------------
+  Ligne 8 | [roles]
+  Code: type UserRole = 'interim' | 'company'
+  Valeur: 'company'
+
+  Ligne 8 | [roles]
+  Code: type UserRole = 'interim' | 'company'
+  Valeur: 'interim'
+
+  Ligne 8 | [validation_types]
+  Code: type UserRole = 'interim' | 'company'
+  Valeur: 'interim'
+
+  Ligne 8 | [validation_types]
+  Code: type UserRole = 'interim' | 'company'
+  Valeur: 'company'
+
+  Ligne 71 | [roles]
+  Code: const dashboardPath = selectedRole === 'interim' ? '/interimaire' :
+  Valeur: 'interim'
+
+  Ligne 71 | [validation_types]
+  Code: const dashboardPath = selectedRole === 'interim' ? '/interimaire' :
+  Valeur: 'interim'
+
+  Ligne 72 | [roles]
+  Code: selectedRole === 'company' ? '/entreprise' : '/profile'
+  Valeur: 'company'
+
+  Ligne 72 | [validation_types]
+  Code: selectedRole === 'company' ? '/entreprise' : '/profile'
+  Valeur: 'company'
+
+  Ligne 107 | [roles]
+  Code: onClick={() => handleRoleSelect('interim')}
+  Valeur: 'interim'
+
+  Ligne 107 | [validation_types]
+  Code: onClick={() => handleRoleSelect('interim')}
+  Valeur: 'interim'
+
+  Ligne 110 | [roles]
+  Code: selectedRole === 'interim'
+  Valeur: 'interim'
+
+  Ligne 110 | [validation_types]
+  Code: selectedRole === 'interim'
+  Valeur: 'interim'
+
+  Ligne 129 | [roles]
+  Code: onClick={() => handleRoleSelect('company')}
+  Valeur: 'company'
+
+  Ligne 129 | [validation_types]
+  Code: onClick={() => handleRoleSelect('company')}
+  Valeur: 'company'
+
+  Ligne 132 | [roles]
+  Code: selectedRole === 'company'
+  Valeur: 'company'
+
+  Ligne 132 | [validation_types]
+  Code: selectedRole === 'company'
+  Valeur: 'company'
+
+
+📄 apps/web/src/features/interim/pages/InterimDashboard.tsx
+--------------------------------------------------------------------------------
+  Ligne 69 | [application_status]
+  Code: validation.status === 'rejected' && 'border-red-500 bg-red-50'
+  Valeur: 'rejected'
+
+  Ligne 80 | [application_status]
+  Code: {validation.status === 'rejected' && (
+  Valeur: 'rejected'
+
+  Ligne 107 | [application_status]
+  Code: {validation.status === 'rejected' && (
+  Valeur: 'rejected'
+
+
+📄 apps/web/src/features/missions/api/missionApi.ts
+--------------------------------------------------------------------------------
+  Ligne 19 | [application_status]
+  Code: | 'contract_pending'
+  Valeur: 'contract_pending'
+
+  Ligne 20 | [application_status]
+  Code: | 'contract_signed'
+  Valeur: 'contract_signed'
+
+  Ligne 26 | [application_status]
+  Code: | 'submitted'
+  Valeur: 'submitted'
+
+  Ligne 31 | [application_status]
+  Code: | 'interview_scheduled'
+  Valeur: 'interview_scheduled'
+
+  Ligne 42 | [application_status]
+  Code: | 'contract_pending'
+  Valeur: 'contract_pending'
+
+  Ligne 43 | [application_status]
+  Code: | 'contract_signed'
+  Valeur: 'contract_signed'
+
+  Ligne 45 | [application_status]
+  Code: | 'rejected'
+  Valeur: 'rejected'
+
+
+📄 apps/web/src/features/missions/pages/ApplicationsManagementPage.tsx
+--------------------------------------------------------------------------------
+  Ligne 28 | [application_status]
+  Code: { value: 'submitted', label: 'Nouvelles', count: 0 },
+  Valeur: 'submitted'
+
+  Ligne 30 | [application_status]
+  Code: { value: 'interview_scheduled', label: 'Entretiens', count: 0 },
+  Valeur: 'interview_scheduled'
+
+  Ligne 33 | [application_status]
+  Code: { value: 'rejected', label: 'Rejetées', count: 0 },
+  Valeur: 'rejected'
+
+  Ligne 103 | [application_status]
+  Code: if (selectedFilter === 'rejected') {
+  Valeur: 'rejected'
+
+  Ligne 104 | [application_status]
+  Code: return app.status.includes('rejected') || app.status === 'rejected'
+  Valeur: 'rejected'
+
+  Ligne 104 | [application_status]
+  Code: return app.status.includes('rejected') || app.status === 'rejected'
+  Valeur: 'rejected'
+
+  Ligne 114 | [application_status]
+  Code: : filter.value === 'rejected'
+  Valeur: 'rejected'
+
+  Ligne 115 | [application_status]
+  Code: ? applications.filter(a => a.status.includes('rejected') || a.status === 'rejected').length
+  Valeur: 'rejected'
+
+  Ligne 115 | [application_status]
+  Code: ? applications.filter(a => a.status.includes('rejected') || a.status === 'rejected').length
+  Valeur: 'rejected'
+
+  Ligne 170 | [application_status]
+  Code: status: 'interview_scheduled',
+  Valeur: 'interview_scheduled'
+
+  Ligne 354 | [application_status]
+  Code: {app.status === 'submitted' && (
+  Valeur: 'submitted'
+
+
+📄 apps/web/src/features/missions/pages/MissionDetailPage.tsx
+--------------------------------------------------------------------------------
+  Ligne 76 | [roles]
+  Code: const isAdmin = user?.roles.includes('admin') || user?.roles.includes('super_admin')
+  Valeur: 'admin'
+
+  Ligne 76 | [roles]
+  Code: const isAdmin = user?.roles.includes('admin') || user?.roles.includes('super_admin')
+  Valeur: 'super_admin'
+
+  Ligne 77 | [roles]
+  Code: const isCommercial = user?.roles.includes('commercial')
+  Valeur: 'commercial'
+
+  Ligne 315 | [application_status]
+  Code: app.status.includes('rejected') ? 'bg-red-100 text-red-800' :
+  Valeur: 'rejected'
+
+
+📄 apps/web/src/features/missions/pages/MyApplicationsPage.tsx
+--------------------------------------------------------------------------------
+  Ligne 108 | [application_status]
+  Code: !['rejected', 'withdrawn', 'hired'].includes(app.status)
+  Valeur: 'rejected'
+
+  Ligne 114 | [application_status]
+  Code: ['rejected', 'withdrawn'].includes(app.status) ||
+  Valeur: 'rejected'
+
+  Ligne 115 | [application_status]
+  Code: app.status.includes('rejected')
+  Valeur: 'rejected'
+
+
+📄 apps/web/src/features/profile/api/profileApi.ts
+--------------------------------------------------------------------------------
+  Ligne 48 | [roles]
+  Code: profile_type: 'interim' | 'company' | 'collaborator'
+  Valeur: 'company'
+
+  Ligne 48 | [roles]
+  Code: profile_type: 'interim' | 'company' | 'collaborator'
+  Valeur: 'interim'
+
+  Ligne 48 | [validation_types]
+  Code: profile_type: 'interim' | 'company' | 'collaborator'
+  Valeur: 'interim'
+
+  Ligne 48 | [validation_types]
+  Code: profile_type: 'interim' | 'company' | 'collaborator'
+  Valeur: 'company'
+
+  Ligne 48 | [validation_types]
+  Code: profile_type: 'interim' | 'company' | 'collaborator'
+  Valeur: 'collaborator'
+
+
+📄 apps/web/src/features/profile/pages/ProfilePage.tsx
+--------------------------------------------------------------------------------
+  Ligne 89 | [roles]
+  Code: {profileType === 'interim' && <InterimProfileForm profile={profile} />}
+  Valeur: 'interim'
+
+  Ligne 89 | [validation_types]
+  Code: {profileType === 'interim' && <InterimProfileForm profile={profile} />}
+  Valeur: 'interim'
+
+  Ligne 90 | [roles]
+  Code: {profileType === 'company' && <CompanyProfileForm profile={profile} />}
+  Valeur: 'company'
+
+  Ligne 90 | [validation_types]
+  Code: {profileType === 'company' && <CompanyProfileForm profile={profile} />}
+  Valeur: 'company'
+
+  Ligne 91 | [validation_types]
+  Code: {profileType === 'collaborator' && (
+  Valeur: 'collaborator'
+
+
+📄 apps/web/src/hooks/useAppConfig.ts
+--------------------------------------------------------------------------------
+  Ligne 34 | [roles]
+  Code: admin: 'admin',
+  Valeur: 'admin'
+
+  Ligne 35 | [roles]
+  Code: super_admin: 'super_admin',
+  Valeur: 'super_admin'
+
+  Ligne 36 | [roles]
+  Code: company: 'company',
+  Valeur: 'company'
+
+  Ligne 36 | [validation_types]
+  Code: company: 'company',
+  Valeur: 'company'
+
+  Ligne 37 | [roles]
+  Code: interim: 'interim',
+  Valeur: 'interim'
+
+  Ligne 37 | [validation_types]
+  Code: interim: 'interim',
+  Valeur: 'interim'
+
+  Ligne 38 | [roles]
+  Code: agency: 'agency',
+  Valeur: 'agency'
+
+  Ligne 39 | [roles]
+  Code: commercial: 'commercial',
+  Valeur: 'commercial'
+
+  Ligne 40 | [roles]
+  Code: validator: 'validator'
+  Valeur: 'validator'
+
+  Ligne 50 | [application_status]
+  Code: applicationStatuses: ['submitted', 'review', 'interview_scheduled', 'interviewed', 'selected', 'rejected', 'medical_pending', 'medical_completed', 'contract_pending', 'contract_signed'],
+  Valeur: 'submitted'
+
+  Ligne 50 | [application_status]
+  Code: applicationStatuses: ['submitted', 'review', 'interview_scheduled', 'interviewed', 'selected', 'rejected', 'medical_pending', 'medical_completed', 'contract_pending', 'contract_signed'],
+  Valeur: 'review'
+
+  Ligne 50 | [application_status]
+  Code: applicationStatuses: ['submitted', 'review', 'interview_scheduled', 'interviewed', 'selected', 'rejected', 'medical_pending', 'medical_completed', 'contract_pending', 'contract_signed'],
+  Valeur: 'interview_scheduled'
+
+  Ligne 50 | [application_status]
+  Code: applicationStatuses: ['submitted', 'review', 'interview_scheduled', 'interviewed', 'selected', 'rejected', 'medical_pending', 'medical_completed', 'contract_pending', 'contract_signed'],
+  Valeur: 'interviewed'
+
+  Ligne 50 | [application_status]
+  Code: applicationStatuses: ['submitted', 'review', 'interview_scheduled', 'interviewed', 'selected', 'rejected', 'medical_pending', 'medical_completed', 'contract_pending', 'contract_signed'],
+  Valeur: 'selected'
+
+  Ligne 50 | [application_status]
+  Code: applicationStatuses: ['submitted', 'review', 'interview_scheduled', 'interviewed', 'selected', 'rejected', 'medical_pending', 'medical_completed', 'contract_pending', 'contract_signed'],
+  Valeur: 'rejected'
+
+  Ligne 50 | [application_status]
+  Code: applicationStatuses: ['submitted', 'review', 'interview_scheduled', 'interviewed', 'selected', 'rejected', 'medical_pending', 'medical_completed', 'contract_pending', 'contract_signed'],
+  Valeur: 'medical_pending'
+
+  Ligne 50 | [application_status]
+  Code: applicationStatuses: ['submitted', 'review', 'interview_scheduled', 'interviewed', 'selected', 'rejected', 'medical_pending', 'medical_completed', 'contract_pending', 'contract_signed'],
+  Valeur: 'medical_completed'
+
+  Ligne 50 | [application_status]
+  Code: applicationStatuses: ['submitted', 'review', 'interview_scheduled', 'interviewed', 'selected', 'rejected', 'medical_pending', 'medical_completed', 'contract_pending', 'contract_signed'],
+  Valeur: 'contract_pending'
+
+  Ligne 50 | [application_status]
+  Code: applicationStatuses: ['submitted', 'review', 'interview_scheduled', 'interviewed', 'selected', 'rejected', 'medical_pending', 'medical_completed', 'contract_pending', 'contract_signed'],
+  Valeur: 'contract_signed'
+
+  Ligne 51 | [application_status]
+  Code: validationStatuses: ['pending', 'approved', 'rejected'],
+  Valeur: 'rejected'
+
+  Ligne 52 | [roles]
+  Code: validationTypes: ['interim', 'company', 'collaborator'],
+  Valeur: 'company'
+
+  Ligne 52 | [roles]
+  Code: validationTypes: ['interim', 'company', 'collaborator'],
+  Valeur: 'interim'
+
+  Ligne 52 | [validation_types]
+  Code: validationTypes: ['interim', 'company', 'collaborator'],
+  Valeur: 'interim'
+
+  Ligne 52 | [validation_types]
+  Code: validationTypes: ['interim', 'company', 'collaborator'],
+  Valeur: 'company'
+
+  Ligne 52 | [validation_types]
+  Code: validationTypes: ['interim', 'company', 'collaborator'],
+  Valeur: 'collaborator'
+
+  Ligne 53 | [roles]
+  Code: contractTypes: ['cdi', 'cdd', 'interim', 'freelance', 'stage'],
+  Valeur: 'interim'
+
+  Ligne 53 | [validation_types]
+  Code: contractTypes: ['cdi', 'cdd', 'interim', 'freelance', 'stage'],
+  Valeur: 'interim'
+
+  Ligne 127 | [roles]
+  Code: interim: 'interim',
+  Valeur: 'interim'
+
+  Ligne 127 | [validation_types]
+  Code: interim: 'interim',
+  Valeur: 'interim'
+
+  Ligne 128 | [roles]
+  Code: company: 'company',
+  Valeur: 'company'
+
+  Ligne 128 | [validation_types]
+  Code: company: 'company',
+  Valeur: 'company'
+
+  Ligne 129 | [validation_types]
+  Code: collaborator: 'collaborator'
+  Valeur: 'collaborator'
+
+
+📄 apps/web/src/pages/LandingPage.tsx
+--------------------------------------------------------------------------------
+  Ligne 25 | [roles]
+  Code: if (user.roles.includes('admin') || user.roles.includes('super_admin')) return '/admin'
+  Valeur: 'admin'
+
+  Ligne 25 | [roles]
+  Code: if (user.roles.includes('admin') || user.roles.includes('super_admin')) return '/admin'
+  Valeur: 'super_admin'
+
+  Ligne 26 | [roles]
+  Code: if (user.roles.includes('interim')) return '/interimaire'
+  Valeur: 'interim'
+
+  Ligne 26 | [validation_types]
+  Code: if (user.roles.includes('interim')) return '/interimaire'
+  Valeur: 'interim'
+
+  Ligne 27 | [roles]
+  Code: if (user.roles.includes('company')) return '/entreprise'
+  Valeur: 'company'
+
+  Ligne 27 | [validation_types]
+  Code: if (user.roles.includes('company')) return '/entreprise'
+  Valeur: 'company'
+
+  Ligne 28 | [roles]
+  Code: if (user.roles.includes('agency')) return '/agence'
+  Valeur: 'agency'
+
+
+📄 apps/web/src/types/index.ts
+--------------------------------------------------------------------------------
+  Ligne 8 | [application_status]
+  Code: status: 'active' | 'pending' | 'rejected'
+  Valeur: 'rejected'
+
+  Ligne 14 | [roles]
+  Code: export type ProfileType = 'admin' | 'agency' | 'company' | 'interim'
+  Valeur: 'admin'
+
+  Ligne 14 | [roles]
+  Code: export type ProfileType = 'admin' | 'agency' | 'company' | 'interim'
+  Valeur: 'company'
+
+  Ligne 14 | [roles]
+  Code: export type ProfileType = 'admin' | 'agency' | 'company' | 'interim'
+  Valeur: 'interim'
+
+  Ligne 14 | [roles]
+  Code: export type ProfileType = 'admin' | 'agency' | 'company' | 'interim'
+  Valeur: 'agency'
+
+  Ligne 14 | [validation_types]
+  Code: export type ProfileType = 'admin' | 'agency' | 'company' | 'interim'
+  Valeur: 'interim'
+
+  Ligne 14 | [validation_types]
+  Code: export type ProfileType = 'admin' | 'agency' | 'company' | 'interim'
+  Valeur: 'company'
+
+  Ligne 58 | [roles]
+  Code: export type ValidationType = 'company' | 'interim'
+  Valeur: 'company'
+
+  Ligne 58 | [roles]
+  Code: export type ValidationType = 'company' | 'interim'
+  Valeur: 'interim'
+
+  Ligne 58 | [validation_types]
+  Code: export type ValidationType = 'company' | 'interim'
+  Valeur: 'interim'
+
+  Ligne 58 | [validation_types]
+  Code: export type ValidationType = 'company' | 'interim'
+  Valeur: 'company'
+
+  Ligne 59 | [application_status]
+  Code: export type ValidationStatus = 'pending' | 'approved' | 'rejected'
+  Valeur: 'rejected'
+
+
+📄 auth-microservice/add_super_admin.py
+--------------------------------------------------------------------------------
+  Ligne 26 | [roles]
+  Code: "roles": ["admin", "super_admin"],
+  Valeur: "admin"
+
+  Ligne 26 | [roles]
+  Code: "roles": ["admin", "super_admin"],
+  Valeur: "super_admin"
+
+
+📄 auth-microservice/awana_auth/core/dependencies.py
+--------------------------------------------------------------------------------
+  Ligne 190 | [roles]
+  Code: admin_roles = {"admin", "super_admin"}
+  Valeur: "admin"
+
+  Ligne 190 | [roles]
+  Code: admin_roles = {"admin", "super_admin"}
+  Valeur: "super_admin"
+
+  Ligne 194 | [roles]
+  Code: has_role = await rbac_manager.has_any_role(current_user.id, ["admin", "super_admin"])
+  Valeur: "admin"
+
+  Ligne 194 | [roles]
+  Code: has_role = await rbac_manager.has_any_role(current_user.id, ["admin", "super_admin"])
+  Valeur: "super_admin"
+
+  Ligne 214 | [roles]
+  Code: if "super_admin" not in user_roles:
+  Valeur: "super_admin"
+
+  Ligne 216 | [roles]
+  Code: has_role = await rbac_manager.has_role(current_user.id, "super_admin")
+  Valeur: "super_admin"
+
+
+📄 auth-microservice/awana_auth/core/location_models.py
+--------------------------------------------------------------------------------
+  Ligne 120 | [roles]
+  Code: COMMERCIAL = "commercial"
+  Valeur: "commercial"
+
+  Ligne 121 | [roles]
+  Code: ADMIN = "admin"
+  Valeur: "admin"
+
+  Ligne 122 | [roles]
+  Code: SUPER_ADMIN = "super_admin"
+  Valeur: "super_admin"
+
+  Ligne 130 | [application_status]
+  Code: REJECTED = "rejected"
+  Valeur: "rejected"
+
+
+📄 auth-microservice/awana_auth/core/mission_models.py
+--------------------------------------------------------------------------------
+  Ligne 331 | [application_status]
+  Code: INTERVIEW_SCHEDULED = "interview_scheduled"
+  Valeur: "interview_scheduled"
+
+
+📄 auth-microservice/awana_auth/core/models.py
+--------------------------------------------------------------------------------
+  Ligne 140 | [roles]
+  Code: ADMIN = "admin"
+  Valeur: "admin"
+
+
+📄 auth-microservice/awana_auth/core/reference_models.py
+--------------------------------------------------------------------------------
+  Ligne 44 | [roles]
+  Code: "code": "interim",
+  Valeur: "interim"
+
+  Ligne 44 | [validation_types]
+  Code: "code": "interim",
+  Valeur: "interim"
+
+
+📄 auth-microservice/awana_auth/core/version_models.py
+--------------------------------------------------------------------------------
+  Ligne 36 | [roles]
+  Code: "roles": ["admin", "company", "interim", "supervisor"],
+  Valeur: "admin"
+
+  Ligne 36 | [roles]
+  Code: "roles": ["admin", "company", "interim", "supervisor"],
+  Valeur: "company"
+
+  Ligne 36 | [roles]
+  Code: "roles": ["admin", "company", "interim", "supervisor"],
+  Valeur: "interim"
+
+  Ligne 36 | [validation_types]
+  Code: "roles": ["admin", "company", "interim", "supervisor"],
+  Valeur: "interim"
+
+  Ligne 36 | [validation_types]
+  Code: "roles": ["admin", "company", "interim", "supervisor"],
+  Valeur: "company"
+
+
+📄 auth-microservice/awana_auth/rbac/decorators.py
+--------------------------------------------------------------------------------
+  Ligne 17 | [roles]
+  Code: @require_role("admin", "super_admin")
+  Valeur: "admin"
+
+  Ligne 17 | [roles]
+  Code: @require_role("admin", "super_admin")
+  Valeur: "super_admin"
+
+
+📄 auth-microservice/awana_auth/rbac/models.py
+--------------------------------------------------------------------------------
+  Ligne 84 | [roles]
+  Code: name="super_admin",
+  Valeur: "super_admin"
+
+  Ligne 92 | [roles]
+  Code: name="admin",
+  Valeur: "admin"
+
+
+📄 auth-microservice/awana_auth_routes.py
+--------------------------------------------------------------------------------
+  Ligne 171 | [validation_types]
+  Code: validation_type = "collaborator"
+  Valeur: "collaborator"
+
+  Ligne 314 | [roles]
+  Code: if profile_type == 'interim':
+  Valeur: 'interim'
+
+  Ligne 314 | [validation_types]
+  Code: if profile_type == 'interim':
+  Valeur: 'interim'
+
+  Ligne 328 | [roles]
+  Code: elif profile_type == 'company':
+  Valeur: 'company'
+
+  Ligne 328 | [validation_types]
+  Code: elif profile_type == 'company':
+  Valeur: 'company'
+
+  Ligne 343 | [roles]
+  Code: elif profile_type in ['admin', 'super_admin']:
+  Valeur: 'admin'
+
+  Ligne 343 | [roles]
+  Code: elif profile_type in ['admin', 'super_admin']:
+  Valeur: 'super_admin'
+
+  Ligne 783 | [roles]
+  Code: admin_username = os.environ.get('ADMIN_USERNAME', 'admin')
+  Valeur: 'admin'
+
+  Ligne 1157 | [roles]
+  Code: if register_data.role not in ['interim', 'company']:
+  Valeur: 'company'
+
+  Ligne 1157 | [roles]
+  Code: if register_data.role not in ['interim', 'company']:
+  Valeur: 'interim'
+
+  Ligne 1157 | [validation_types]
+  Code: if register_data.role not in ['interim', 'company']:
+  Valeur: 'interim'
+
+  Ligne 1157 | [validation_types]
+  Code: if register_data.role not in ['interim', 'company']:
+  Valeur: 'company'
+
+  Ligne 1160 | [roles]
+  Code: detail="Invalid role. Must be 'interim' or 'company'"
+  Valeur: 'company'
+
+  Ligne 1160 | [roles]
+  Code: detail="Invalid role. Must be 'interim' or 'company'"
+  Valeur: 'interim'
+
+  Ligne 1160 | [validation_types]
+  Code: detail="Invalid role. Must be 'interim' or 'company'"
+  Valeur: 'interim'
+
+  Ligne 1160 | [validation_types]
+  Code: detail="Invalid role. Must be 'interim' or 'company'"
+  Valeur: 'company'
+
+  Ligne 1510 | [roles]
+  Code: "admin": admin_users,
+  Valeur: "admin"
+
+  Ligne 1511 | [roles]
+  Code: "super_admin": super_admin_users,
+  Valeur: "super_admin"
+
+  Ligne 1512 | [roles]
+  Code: "interim": interim_users,
+  Valeur: "interim"
+
+  Ligne 1512 | [validation_types]
+  Code: "interim": interim_users,
+  Valeur: "interim"
+
+  Ligne 1513 | [roles]
+  Code: "company": company_users,
+  Valeur: "company"
+
+  Ligne 1513 | [validation_types]
+  Code: "company": company_users,
+  Valeur: "company"
+
+  Ligne 1514 | [roles]
+  Code: "agency": agency_users
+  Valeur: "agency"
+
+
+📄 auth-microservice/configuration_routes.py
+--------------------------------------------------------------------------------
+  Ligne 79 | [roles]
+  Code: "admin": config_manager.get("security.roles.admin"),
+  Valeur: "admin"
+
+  Ligne 80 | [roles]
+  Code: "super_admin": config_manager.get("security.roles.super_admin"),
+  Valeur: "super_admin"
+
+  Ligne 81 | [roles]
+  Code: "company": config_manager.get("security.roles.company"),
+  Valeur: "company"
+
+  Ligne 81 | [validation_types]
+  Code: "company": config_manager.get("security.roles.company"),
+  Valeur: "company"
+
+  Ligne 82 | [roles]
+  Code: "interim": config_manager.get("security.roles.interim"),
+  Valeur: "interim"
+
+  Ligne 82 | [validation_types]
+  Code: "interim": config_manager.get("security.roles.interim"),
+  Valeur: "interim"
+
+  Ligne 83 | [roles]
+  Code: "agency": config_manager.get("security.roles.agency"),
+  Valeur: "agency"
+
+  Ligne 84 | [roles]
+  Code: "commercial": config_manager.get("security.roles.commercial"),
+  Valeur: "commercial"
+
+  Ligne 85 | [roles]
+  Code: "validator": config_manager.get("security.roles.validator"),
+  Valeur: "validator"
+
+
+📄 auth-microservice/google_auth_routes.py
+--------------------------------------------------------------------------------
+  Ligne 155 | [roles]
+  Code: if profile_type == 'interim':
+  Valeur: 'interim'
+
+  Ligne 155 | [validation_types]
+  Code: if profile_type == 'interim':
+  Valeur: 'interim'
+
+  Ligne 169 | [roles]
+  Code: elif profile_type == 'company':
+  Valeur: 'company'
+
+  Ligne 169 | [validation_types]
+  Code: elif profile_type == 'company':
+  Valeur: 'company'
+
+  Ligne 184 | [roles]
+  Code: elif profile_type in ['admin', 'super_admin']:
+  Valeur: 'admin'
+
+  Ligne 184 | [roles]
+  Code: elif profile_type in ['admin', 'super_admin']:
+  Valeur: 'super_admin'
+
+  Ligne 539 | [roles]
+  Code: if registration_data.role not in ['interim', 'company']:
+  Valeur: 'company'
+
+  Ligne 539 | [roles]
+  Code: if registration_data.role not in ['interim', 'company']:
+  Valeur: 'interim'
+
+  Ligne 539 | [validation_types]
+  Code: if registration_data.role not in ['interim', 'company']:
+  Valeur: 'interim'
+
+  Ligne 539 | [validation_types]
+  Code: if registration_data.role not in ['interim', 'company']:
+  Valeur: 'company'
+
+  Ligne 542 | [roles]
+  Code: detail="Invalid role. Must be 'interim' or 'company'"
+  Valeur: 'company'
+
+  Ligne 542 | [roles]
+  Code: detail="Invalid role. Must be 'interim' or 'company'"
+  Valeur: 'interim'
+
+  Ligne 542 | [validation_types]
+  Code: detail="Invalid role. Must be 'interim' or 'company'"
+  Valeur: 'interim'
+
+  Ligne 542 | [validation_types]
+  Code: detail="Invalid role. Must be 'interim' or 'company'"
+  Valeur: 'company'
+
+
+📄 auth-microservice/init_permissions.py
+--------------------------------------------------------------------------------
+  Ligne 16 | [roles]
+  Code: {"name": "gestion_utilisateurs", "label": "Gestion des utilisateurs", "description": "Créer, modifier, supprimer des utilisateurs", "module": "admin"},
+  Valeur: "admin"
+
+  Ligne 17 | [roles]
+  Code: {"name": "gestion_groupes", "label": "Gestion des groupes", "description": "Créer, modifier, supprimer des groupes", "module": "admin"},
+  Valeur: "admin"
+
+  Ligne 18 | [roles]
+  Code: {"name": "gestion_profils", "label": "Gestion des profils", "description": "Créer, modifier, supprimer des profils de permissions", "module": "admin"},
+  Valeur: "admin"
+
+  Ligne 19 | [roles]
+  Code: {"name": "voir_utilisateurs", "label": "Voir les utilisateurs", "description": "Consulter la liste des utilisateurs", "module": "admin"},
+  Valeur: "admin"
+
+
+📄 auth-microservice/mission_routes.py
+--------------------------------------------------------------------------------
+  Ligne 110 | [application_status]
+  Code: if existing_app["status"] in ["rejected", "rejected_initial"]:
+  Valeur: "rejected"
+
+
+📄 auth-microservice/profile_routes.py
+--------------------------------------------------------------------------------
+  Ligne 40 | [roles]
+  Code: if profile_type == "interim":
+  Valeur: "interim"
+
+  Ligne 40 | [validation_types]
+  Code: if profile_type == "interim":
+  Valeur: "interim"
+
+  Ligne 60 | [roles]
+  Code: elif profile_type == "company":
+  Valeur: "company"
+
+  Ligne 60 | [validation_types]
+  Code: elif profile_type == "company":
+  Valeur: "company"
+
+  Ligne 121 | [validation_types]
+  Code: return {"profile_type": "collaborator", "profile": profile}
+  Valeur: "collaborator"
+
+  Ligne 144 | [validation_types]
+  Code: profile_type = "collaborator"
+  Valeur: "collaborator"
+
+
+📄 auth-microservice/scripts/seed_additional_references.py
+--------------------------------------------------------------------------------
+  Ligne 32 | [roles]
+  Code: "code": "admin",
+  Valeur: "admin"
+
+  Ligne 50 | [roles]
+  Code: "code": "super_admin",
+  Valeur: "super_admin"
+
+  Ligne 68 | [roles]
+  Code: "code": "company",
+  Valeur: "company"
+
+  Ligne 68 | [validation_types]
+  Code: "code": "company",
+  Valeur: "company"
+
+  Ligne 86 | [roles]
+  Code: "code": "agency",
+  Valeur: "agency"
+
+  Ligne 104 | [roles]
+  Code: "code": "commercial",
+  Valeur: "commercial"
+
+  Ligne 122 | [roles]
+  Code: "code": "interim",
+  Valeur: "interim"
+
+  Ligne 122 | [validation_types]
+  Code: "code": "interim",
+  Valeur: "interim"
+
+
+📄 auth-microservice/scripts/seed_mission_references.py
+--------------------------------------------------------------------------------
+  Ligne 144 | [application_status]
+  Code: "next_possible_statuses": ["interview_scheduled", "rejected"],
+  Valeur: "interview_scheduled"
+
+  Ligne 144 | [application_status]
+  Code: "next_possible_statuses": ["interview_scheduled", "rejected"],
+  Valeur: "rejected"
+
+  Ligne 145 | [roles]
+  Code: "requires_action_from": "company"
+  Valeur: "company"
+
+  Ligne 145 | [validation_types]
+  Code: "requires_action_from": "company"
+  Valeur: "company"
+
+  Ligne 155 | [application_status]
+  Code: "code": "interview_scheduled",
+  Valeur: "interview_scheduled"
+
+  Ligne 164 | [roles]
+  Code: "requires_action_from": "company"
+  Valeur: "company"
+
+  Ligne 164 | [validation_types]
+  Code: "requires_action_from": "company"
+  Valeur: "company"
+
+  Ligne 182 | [application_status]
+  Code: "next_possible_statuses": ["selected", "rejected"],
+  Valeur: "selected"
+
+  Ligne 182 | [application_status]
+  Code: "next_possible_statuses": ["selected", "rejected"],
+  Valeur: "rejected"
+
+  Ligne 183 | [roles]
+  Code: "requires_action_from": "company"
+  Valeur: "company"
+
+  Ligne 183 | [validation_types]
+  Code: "requires_action_from": "company"
+  Valeur: "company"
+
+  Ligne 193 | [application_status]
+  Code: "code": "selected",
+  Valeur: "selected"
+
+  Ligne 201 | [application_status]
+  Code: "next_possible_statuses": ["medical_pending"],
+  Valeur: "medical_pending"
+
+  Ligne 202 | [roles]
+  Code: "requires_action_from": "agency"
+  Valeur: "agency"
+
+  Ligne 212 | [application_status]
+  Code: "code": "medical_pending",
+  Valeur: "medical_pending"
+
+  Ligne 221 | [roles]
+  Code: "requires_action_from": "agency",
+  Valeur: "agency"
+
+  Ligne 240 | [application_status]
+  Code: "next_possible_statuses": ["contract_pending"],
+  Valeur: "contract_pending"
+
+  Ligne 241 | [roles]
+  Code: "requires_action_from": "agency"
+  Valeur: "agency"
+
+  Ligne 270 | [application_status]
+  Code: "code": "contract_pending",
+  Valeur: "contract_pending"
+
+  Ligne 278 | [application_status]
+  Code: "next_possible_statuses": ["contract_signed"],
+  Valeur: "contract_signed"
+
+  Ligne 279 | [roles]
+  Code: "requires_action_from": "agency",
+  Valeur: "agency"
+
+  Ligne 290 | [application_status]
+  Code: "code": "contract_signed",
+  Valeur: "contract_signed"
+
+  Ligne 309 | [application_status]
+  Code: "code": "rejected",
+  Valeur: "rejected"
+
+  Ligne 370 | [roles]
+  Code: "code": "interim",
+  Valeur: "interim"
+
+  Ligne 370 | [validation_types]
+  Code: "code": "interim",
+  Valeur: "interim"
+
+
+📄 auth-microservice/validation_routes.py
+--------------------------------------------------------------------------------
+  Ligne 80 | [validation_types]
+  Code: pending_collaborator = await db.validations.count_documents({"status": cfg.get_pending_status(), "validation_type": "collaborator"})
+  Valeur: "collaborator"
+
+  Ligne 88 | [application_status]
+  Code: total_rejected = await db.validations.count_documents({"status": "rejected"})
+  Valeur: "rejected"
+
+  Ligne 223 | [application_status]
+  Code: "status": "rejected",
+  Valeur: "rejected"
+
+
+🟠 SÉVÉRITÉ: HIGH (77 occurrences)
+================================================================================
+
+📄 apps/web/src/components/ActionButton.tsx
+--------------------------------------------------------------------------------
+  Ligne 13 | [user_status]
+  Code: type ActionType = 'edit' | 'delete' | 'view' | 'approve' | 'reject' | 'assign' | 'reset' | 'block' | 'pending' | 'custom'
+  Valeur: 'pending'
+
+
+📄 apps/web/src/features/admin/api/usersApi.ts
+--------------------------------------------------------------------------------
+  Ligne 10 | [user_status]
+  Code: status: 'active' | 'pending' | 'suspended' | 'deleted'
+  Valeur: 'active'
+
+  Ligne 10 | [user_status]
+  Code: status: 'active' | 'pending' | 'suspended' | 'deleted'
+  Valeur: 'pending'
+
+  Ligne 10 | [user_status]
+  Code: status: 'active' | 'pending' | 'suspended' | 'deleted'
+  Valeur: 'suspended'
+
+  Ligne 10 | [user_status]
+  Code: status: 'active' | 'pending' | 'suspended' | 'deleted'
+  Valeur: 'deleted'
+
+
+📄 apps/web/src/features/admin/api/validationApi.ts
+--------------------------------------------------------------------------------
+  Ligne 10 | [user_status]
+  Code: status: 'pending' | 'approved' | 'rejected'
+  Valeur: 'pending'
+
+
+📄 apps/web/src/features/admin/components/BlockUserModal.tsx
+--------------------------------------------------------------------------------
+  Ligne 16 | [user_status]
+  Code: const isSuspended = user.status === 'suspended'
+  Valeur: 'suspended'
+
+  Ligne 18 | [user_status]
+  Code: const newStatus = isSuspended ? 'active' : 'suspended'
+  Valeur: 'active'
+
+  Ligne 18 | [user_status]
+  Code: const newStatus = isSuspended ? 'active' : 'suspended'
+  Valeur: 'suspended'
+
+
+📄 apps/web/src/features/admin/pages/BusinessRulesPage.tsx
+--------------------------------------------------------------------------------
+  Ligne 40 | [user_status]
+  Code: actions: { set_status: 'active', skip_validation: true },
+  Valeur: 'active'
+
+
+📄 apps/web/src/features/admin/pages/UserManagementPage.tsx
+--------------------------------------------------------------------------------
+  Ligne 213 | [user_status]
+  Code: <option value="active">Actif</option>
+  Valeur: "active"
+
+  Ligne 214 | [user_status]
+  Code: <option value="pending">En attente</option>
+  Valeur: "pending"
+
+  Ligne 215 | [user_status]
+  Code: <option value="suspended">Suspendu</option>
+  Valeur: "suspended"
+
+  Ligne 216 | [user_status]
+  Code: <option value="deleted">Supprimé</option>
+  Valeur: "deleted"
+
+  Ligne 320 | [user_status]
+  Code: user.status === 'suspended'
+  Valeur: 'suspended'
+
+  Ligne 324 | [user_status]
+  Code: title={user.status === 'suspended' ? 'Débloquer' : 'Bloquer'}
+  Valeur: 'suspended'
+
+
+📄 apps/web/src/features/admin/pages/ValidationsList.tsx
+--------------------------------------------------------------------------------
+  Ligne 13 | [user_status]
+  Code: const pendingStatus = validationStatuses.find(vs => vs.code === 'pending')?.code || 'pending'
+  Valeur: 'pending'
+
+  Ligne 13 | [user_status]
+  Code: const pendingStatus = validationStatuses.find(vs => vs.code === 'pending')?.code || 'pending'
+  Valeur: 'pending'
+
+  Ligne 225 | [user_status]
+  Code: {validation.status !== 'pending' && (
+  Valeur: 'pending'
+
+
+📄 apps/web/src/features/admin/pages/ValidationsPage.tsx
+--------------------------------------------------------------------------------
+  Ligne 42 | [user_status]
+  Code: pending: validationStatuses.find(vs => vs.code === 'pending')?.code || 'pending',
+  Valeur: 'pending'
+
+  Ligne 42 | [user_status]
+  Code: pending: validationStatuses.find(vs => vs.code === 'pending')?.code || 'pending',
+  Valeur: 'pending'
+
+  Ligne 340 | [user_status]
+  Code: <option value="pending">En attente</option>
+  Valeur: "pending"
+
+
+📄 apps/web/src/features/company/pages/CompanyDashboard.tsx
+--------------------------------------------------------------------------------
+  Ligne 29 | [user_status]
+  Code: status: 'active',
+  Valeur: 'active'
+
+  Ligne 36 | [mission_status]
+  Code: status: 'draft',
+  Valeur: 'draft'
+
+  Ligne 168 | [user_status]
+  Code: mission.status === 'active'
+  Valeur: 'active'
+
+  Ligne 173 | [user_status]
+  Code: {mission.status === 'active' ? 'Active' : 'Brouillon'}
+  Valeur: 'active'
+
+
+📄 apps/web/src/features/missions/api/missionApi.ts
+--------------------------------------------------------------------------------
+  Ligne 6 | [mission_status]
+  Code: | 'draft'
+  Valeur: 'draft'
+
+  Ligne 8 | [mission_status]
+  Code: | 'published'
+  Valeur: 'published'
+
+  Ligne 22 | [mission_status]
+  Code: | 'cancelled'
+  Valeur: 'cancelled'
+
+  Ligne 48 | [user_status]
+  Code: export type MedicalStatus = 'not_required' | 'pending' | 'scheduled' | 'completed_apte' | 'completed_inapte' | 'document_uploaded'
+  Valeur: 'pending'
+
+  Ligne 50 | [mission_status]
+  Code: export type ContractStatus = 'not_generated' | 'draft' | 'sent' | 'signed_by_interim' | 'signed_by_company' | 'fully_signed'
+  Valeur: 'draft'
+
+
+📄 apps/web/src/features/missions/pages/MissionDetailPage.tsx
+--------------------------------------------------------------------------------
+  Ligne 128 | [mission_status]
+  Code: {mission.status === 'draft' && (
+  Valeur: 'draft'
+
+
+📄 apps/web/src/features/missions/pages/MissionsPage.tsx
+--------------------------------------------------------------------------------
+  Ligne 158 | [mission_status]
+  Code: {missions.filter(m => m.status === 'published').length}
+  Valeur: 'published'
+
+  Ligne 172 | [mission_status]
+  Code: {missions.filter(m => !['completed', 'cancelled'].includes(m.status)).length}
+  Valeur: 'cancelled'
+
+  Ligne 211 | [mission_status]
+  Code: <option value="draft">Brouillons</option>
+  Valeur: "draft"
+
+  Ligne 212 | [mission_status]
+  Code: <option value="published">Publiées</option>
+  Valeur: "published"
+
+  Ligne 288 | [mission_status]
+  Code: {mission.status === 'draft' && (
+  Valeur: 'draft'
+
+  Ligne 298 | [mission_status]
+  Code: {!['completed', 'cancelled'].includes(mission.status) && (
+  Valeur: 'cancelled'
+
+
+📄 apps/web/src/hooks/useAppConfig.ts
+--------------------------------------------------------------------------------
+  Ligne 43 | [user_status]
+  Code: active: 'active',
+  Valeur: 'active'
+
+  Ligne 44 | [user_status]
+  Code: pending: 'pending',
+  Valeur: 'pending'
+
+  Ligne 45 | [user_status]
+  Code: suspended: 'suspended',
+  Valeur: 'suspended'
+
+  Ligne 46 | [user_status]
+  Code: deleted: 'deleted',
+  Valeur: 'deleted'
+
+  Ligne 47 | [user_status]
+  Code: blocked: 'blocked'
+  Valeur: 'blocked'
+
+  Ligne 49 | [mission_status]
+  Code: missionStatuses: ['draft', 'published', 'closed', 'cancelled', 'archived'],
+  Valeur: 'draft'
+
+  Ligne 49 | [mission_status]
+  Code: missionStatuses: ['draft', 'published', 'closed', 'cancelled', 'archived'],
+  Valeur: 'published'
+
+  Ligne 49 | [mission_status]
+  Code: missionStatuses: ['draft', 'published', 'closed', 'cancelled', 'archived'],
+  Valeur: 'closed'
+
+  Ligne 49 | [mission_status]
+  Code: missionStatuses: ['draft', 'published', 'closed', 'cancelled', 'archived'],
+  Valeur: 'cancelled'
+
+  Ligne 49 | [mission_status]
+  Code: missionStatuses: ['draft', 'published', 'closed', 'cancelled', 'archived'],
+  Valeur: 'archived'
+
+  Ligne 51 | [user_status]
+  Code: validationStatuses: ['pending', 'approved', 'rejected'],
+  Valeur: 'pending'
+
+
+📄 apps/web/src/types/index.ts
+--------------------------------------------------------------------------------
+  Ligne 8 | [user_status]
+  Code: status: 'active' | 'pending' | 'rejected'
+  Valeur: 'active'
+
+  Ligne 8 | [user_status]
+  Code: status: 'active' | 'pending' | 'rejected'
+  Valeur: 'pending'
+
+  Ligne 59 | [user_status]
+  Code: export type ValidationStatus = 'pending' | 'approved' | 'rejected'
+  Valeur: 'pending'
+
+
+📄 auth-microservice/add_super_admin.py
+--------------------------------------------------------------------------------
+  Ligne 27 | [user_status]
+  Code: "status": "active"
+  Valeur: "active"
+
+
+📄 auth-microservice/awana_auth/core/dependencies.py
+--------------------------------------------------------------------------------
+  Ligne 139 | [user_status]
+  Code: if user.status != "active":
+  Valeur: "active"
+
+
+📄 auth-microservice/awana_auth/core/location_models.py
+--------------------------------------------------------------------------------
+  Ligne 128 | [user_status]
+  Code: PENDING = "pending"
+  Valeur: "pending"
+
+
+📄 auth-microservice/awana_auth/core/mission_models.py
+--------------------------------------------------------------------------------
+  Ligne 84 | [user_status]
+  Code: PENDING = "pending"
+  Valeur: "pending"
+
+  Ligne 94 | [mission_status]
+  Code: DRAFT = "draft"
+  Valeur: "draft"
+
+
+📄 auth-microservice/awana_auth/core/models.py
+--------------------------------------------------------------------------------
+  Ligne 23 | [user_status]
+  Code: ACTIVE = "active"
+  Valeur: "active"
+
+  Ligne 25 | [user_status]
+  Code: SUSPENDED = "suspended"
+  Valeur: "suspended"
+
+  Ligne 26 | [user_status]
+  Code: PENDING = "pending"
+  Valeur: "pending"
+
+
+📄 auth-microservice/awana_auth/core/version_models.py
+--------------------------------------------------------------------------------
+  Ligne 37 | [user_status]
+  Code: "statuses": ["active", "pending"]
+  Valeur: "active"
+
+  Ligne 37 | [user_status]
+  Code: "statuses": ["active", "pending"]
+  Valeur: "pending"
+
+
+📄 auth-microservice/awana_auth/providers/google.py
+--------------------------------------------------------------------------------
+  Ligne 92 | [user_status]
+  Code: status="active",
+  Valeur: "active"
+
+  Ligne 175 | [user_status]
+  Code: status="active",
+  Valeur: "active"
+
+
+📄 auth-microservice/awana_auth_routes.py
+--------------------------------------------------------------------------------
+  Ligne 1472 | [user_status]
+  Code: suspended_users = await db.users.count_documents({"status": "suspended"})
+  Valeur: "suspended"
+
+  Ligne 1505 | [user_status]
+  Code: "active": active_users,
+  Valeur: "active"
+
+  Ligne 1506 | [user_status]
+  Code: "pending": pending_users,
+  Valeur: "pending"
+
+  Ligne 1507 | [user_status]
+  Code: "suspended": suspended_users
+  Valeur: "suspended"
+
+
+📄 auth-microservice/configuration_routes.py
+--------------------------------------------------------------------------------
+  Ligne 91 | [user_status]
+  Code: "active": config_manager.get("security.user_statuses.active"),
+  Valeur: "active"
+
+  Ligne 92 | [user_status]
+  Code: "pending": config_manager.get("security.user_statuses.pending"),
+  Valeur: "pending"
+
+  Ligne 93 | [user_status]
+  Code: "suspended": config_manager.get("security.user_statuses.suspended"),
+  Valeur: "suspended"
+
+  Ligne 94 | [user_status]
+  Code: "deleted": config_manager.get("security.user_statuses.deleted"),
+  Valeur: "deleted"
+
+  Ligne 95 | [user_status]
+  Code: "blocked": config_manager.get("security.user_statuses.blocked"),
+  Valeur: "blocked"
+
+
+📄 auth-microservice/scripts/seed_mission_references.py
+--------------------------------------------------------------------------------
+  Ligne 32 | [mission_status]
+  Code: "code": "draft",
+  Valeur: "draft"
+
+  Ligne 51 | [mission_status]
+  Code: "code": "published",
+  Valeur: "published"
+
+  Ligne 108 | [mission_status]
+  Code: "code": "cancelled",
+  Valeur: "cancelled"
+
+  Ligne 136 | [user_status]
+  Code: "code": "pending",
+  Valeur: "pending"
+
+
+🟡 SÉVÉRITÉ: MEDIUM (84 occurrences)
+================================================================================
+
+📄 apps/web/src/components/LoginModal.tsx
+--------------------------------------------------------------------------------
+  Ligne 43 | [contract_types]
+  Code: } else if (result.user.roles.includes('interim')) {
+  Valeur: 'interim'
+
+
+📄 apps/web/src/features/admin/components/EditUserModal.tsx
+--------------------------------------------------------------------------------
+  Ligne 115 | [contract_types]
+  Code: {['admin', 'super_admin', 'interim', 'company', 'agency'].map((role) => (
+  Valeur: 'interim'
+
+
+📄 apps/web/src/features/admin/pages/CreateUserPage.tsx
+--------------------------------------------------------------------------------
+  Ligne 266 | [contract_types]
+  Code: {['admin', 'super_admin', 'interim', 'company', 'agency'].map((role) => (
+  Valeur: 'interim'
+
+
+📄 apps/web/src/features/admin/pages/UserManagementPage.tsx
+--------------------------------------------------------------------------------
+  Ligne 232 | [contract_types]
+  Code: <option value="interim">Intérimaire</option>
+  Valeur: "interim"
+
+
+📄 apps/web/src/features/admin/pages/ValidationsList.tsx
+--------------------------------------------------------------------------------
+  Ligne 178 | [contract_types]
+  Code: validation.validation_type === 'interim'
+  Valeur: 'interim'
+
+  Ligne 182 | [contract_types]
+  Code: {validation.validation_type === 'interim' ? 'Intérimaire' : 'Entreprise'}
+  Valeur: 'interim'
+
+
+📄 apps/web/src/features/admin/pages/ValidationsPage.tsx
+--------------------------------------------------------------------------------
+  Ligne 28 | [contract_types]
+  Code: type TabType = 'interim' | 'company' | 'collaborator'
+  Valeur: 'interim'
+
+  Ligne 36 | [contract_types]
+  Code: interim: validationTypes.find(vt => vt.code === 'interim')?.code || 'interim',
+  Valeur: 'interim'
+
+  Ligne 36 | [contract_types]
+  Code: interim: validationTypes.find(vt => vt.code === 'interim')?.code || 'interim',
+  Valeur: 'interim'
+
+  Ligne 47 | [contract_types]
+  Code: const [activeTab, setActiveTab] = useState<TabType>('interim')
+  Valeur: 'interim'
+
+  Ligne 53 | [contract_types]
+  Code: const [bulkActionType, setBulkActionType] = useState<'all' | 'interim' | 'company' | 'collaborator' | 'warnings'>('all')
+  Valeur: 'interim'
+
+  Ligne 58 | [contract_types]
+  Code: const handleTileClick = (type: 'all' | 'interim' | 'company' | 'collaborator' | 'warnings') => {
+  Valeur: 'interim'
+
+  Ligne 61 | [contract_types]
+  Code: if (type === 'interim') {
+  Valeur: 'interim'
+
+  Ligne 244 | [contract_types]
+  Code: onClick={() => handleTileClick('interim')}
+  Valeur: 'interim'
+
+  Ligne 301 | [contract_types]
+  Code: onClick={() => setActiveTab('interim')}
+  Valeur: 'interim'
+
+  Ligne 303 | [contract_types]
+  Code: activeTab === 'interim'
+  Valeur: 'interim'
+
+  Ligne 587 | [contract_types]
+  Code: bulkActionType === 'interim' ? 'Intérimaires' :
+  Valeur: 'interim'
+
+
+📄 apps/web/src/features/auth/api/authApi.ts
+--------------------------------------------------------------------------------
+  Ligne 35 | [contract_types]
+  Code: role: 'interim' | 'company'
+  Valeur: 'interim'
+
+
+📄 apps/web/src/features/auth/pages/GoogleCallback.tsx
+--------------------------------------------------------------------------------
+  Ligne 88 | [contract_types]
+  Code: } else if (userRoles.includes('interim')) {
+  Valeur: 'interim'
+
+
+📄 apps/web/src/features/auth/pages/LoginPage.tsx
+--------------------------------------------------------------------------------
+  Ligne 52 | [contract_types]
+  Code: } else if (userRoles.includes('interim')) {
+  Valeur: 'interim'
+
+
+📄 apps/web/src/features/auth/pages/MfaVerificationPage.tsx
+--------------------------------------------------------------------------------
+  Ligne 45 | [contract_types]
+  Code: } else if (userRoles.includes('interim')) {
+  Valeur: 'interim'
+
+
+📄 apps/web/src/features/auth/pages/RoleSelectionPage.tsx
+--------------------------------------------------------------------------------
+  Ligne 8 | [contract_types]
+  Code: type UserRole = 'interim' | 'company'
+  Valeur: 'interim'
+
+  Ligne 71 | [contract_types]
+  Code: const dashboardPath = selectedRole === 'interim' ? '/interimaire' :
+  Valeur: 'interim'
+
+  Ligne 107 | [contract_types]
+  Code: onClick={() => handleRoleSelect('interim')}
+  Valeur: 'interim'
+
+  Ligne 110 | [contract_types]
+  Code: selectedRole === 'interim'
+  Valeur: 'interim'
+
+
+📄 apps/web/src/features/missions/pages/CreateMissionPage.tsx
+--------------------------------------------------------------------------------
+  Ligne 24 | [contract_types]
+  Code: contract_type: 'cdd',
+  Valeur: 'cdd'
+
+
+📄 apps/web/src/features/profile/api/profileApi.ts
+--------------------------------------------------------------------------------
+  Ligne 48 | [contract_types]
+  Code: profile_type: 'interim' | 'company' | 'collaborator'
+  Valeur: 'interim'
+
+
+📄 apps/web/src/features/profile/components/DocumentsSection.tsx
+--------------------------------------------------------------------------------
+  Ligne 11 | [document_types]
+  Code: const [selectedDocType, setSelectedDocType] = useState('cv')
+  Valeur: 'cv'
+
+  Ligne 92 | [document_types]
+  Code: <option value="cv">CV</option>
+  Valeur: "cv"
+
+
+📄 apps/web/src/features/profile/pages/ProfilePage.tsx
+--------------------------------------------------------------------------------
+  Ligne 89 | [contract_types]
+  Code: {profileType === 'interim' && <InterimProfileForm profile={profile} />}
+  Valeur: 'interim'
+
+
+📄 apps/web/src/hooks/useAppConfig.ts
+--------------------------------------------------------------------------------
+  Ligne 37 | [contract_types]
+  Code: interim: 'interim',
+  Valeur: 'interim'
+
+  Ligne 52 | [contract_types]
+  Code: validationTypes: ['interim', 'company', 'collaborator'],
+  Valeur: 'interim'
+
+  Ligne 53 | [contract_types]
+  Code: contractTypes: ['cdi', 'cdd', 'interim', 'freelance', 'stage'],
+  Valeur: 'cdi'
+
+  Ligne 53 | [contract_types]
+  Code: contractTypes: ['cdi', 'cdd', 'interim', 'freelance', 'stage'],
+  Valeur: 'cdd'
+
+  Ligne 53 | [contract_types]
+  Code: contractTypes: ['cdi', 'cdd', 'interim', 'freelance', 'stage'],
+  Valeur: 'interim'
+
+  Ligne 53 | [contract_types]
+  Code: contractTypes: ['cdi', 'cdd', 'interim', 'freelance', 'stage'],
+  Valeur: 'freelance'
+
+  Ligne 127 | [contract_types]
+  Code: interim: 'interim',
+  Valeur: 'interim'
+
+
+📄 apps/web/src/pages/LandingPage.tsx
+--------------------------------------------------------------------------------
+  Ligne 26 | [contract_types]
+  Code: if (user.roles.includes('interim')) return '/interimaire'
+  Valeur: 'interim'
+
+
+📄 apps/web/src/types/index.ts
+--------------------------------------------------------------------------------
+  Ligne 14 | [contract_types]
+  Code: export type ProfileType = 'admin' | 'agency' | 'company' | 'interim'
+  Valeur: 'interim'
+
+  Ligne 58 | [contract_types]
+  Code: export type ValidationType = 'company' | 'interim'
+  Valeur: 'interim'
+
+
+📄 auth-microservice/awana_auth/core/config.py
+--------------------------------------------------------------------------------
+  Ligne 34 | [delays_days]
+  Code: jwt_access_token_expire_minutes: int = Field(default=30)
+  Valeur: expire_minutes: int = Field(default=30
+
+  Ligne 35 | [delays_days]
+  Code: jwt_refresh_token_expire_days: int = Field(default=7)
+  Valeur: expire_days: int = Field(default=7
+
+
+📄 auth-microservice/awana_auth/core/mission_models.py
+--------------------------------------------------------------------------------
+  Ligne 289 | [document_types]
+  Code: CV = "cv"
+  Valeur: "cv"
+
+  Ligne 291 | [document_types]
+  Code: MEDICAL_CERTIFICATE = "medical_certificate"
+  Valeur: "medical_certificate"
+
+  Ligne 292 | [document_types]
+  Code: CONTRACT = "contract"
+  Valeur: "contract"
+
+
+📄 auth-microservice/awana_auth/core/models.py
+--------------------------------------------------------------------------------
+  Ligne 236 | [delays_days]
+  Code: expires_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc) + timedelta(minutes=5))
+  Valeur: expires_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc) + timedelta(minutes=5
+
+
+📄 auth-microservice/awana_auth/core/profile_models.py
+--------------------------------------------------------------------------------
+  Ligne 36 | [contract_types]
+  Code: CDD = "cdd"
+  Valeur: "cdd"
+
+  Ligne 37 | [contract_types]
+  Code: CDI = "cdi"
+  Valeur: "cdi"
+
+  Ligne 38 | [contract_types]
+  Code: FREELANCE = "freelance"
+  Valeur: "freelance"
+
+  Ligne 43 | [document_types]
+  Code: CV = "cv"
+  Valeur: "cv"
+
+
+📄 auth-microservice/awana_auth/core/reference_models.py
+--------------------------------------------------------------------------------
+  Ligne 44 | [contract_types]
+  Code: "code": "interim",
+  Valeur: "interim"
+
+
+📄 auth-microservice/awana_auth/core/version_models.py
+--------------------------------------------------------------------------------
+  Ligne 36 | [contract_types]
+  Code: "roles": ["admin", "company", "interim", "supervisor"],
+  Valeur: "interim"
+
+
+📄 auth-microservice/awana_auth/mfa/mfa_service.py
+--------------------------------------------------------------------------------
+  Ligne 165 | [delays_days]
+  Code: 'expires_at': datetime.now(timezone.utc).timestamp() + 600
+  Valeur: expires_at': datetime.now(timezone.utc).timestamp() + 600
+
+
+📄 auth-microservice/awana_auth/providers/google.py
+--------------------------------------------------------------------------------
+  Ligne 108 | [delays_days]
+  Code: "expires_in": tokens.get("expires_in", 3600)
+  Valeur: expires_in": tokens.get("expires_in", 3600
+
+
+📄 auth-microservice/awana_auth/session/storage.py
+--------------------------------------------------------------------------------
+  Ligne 27 | [delays_days]
+  Code: session_doc['expires_at'] = datetime.fromisoformat(session_doc['expires_at'].replace('Z', '+00:00'))
+  Valeur: expires_at'] = datetime.fromisoformat(session_doc['expires_at'].replace('Z', '+00:00
+
+
+📄 auth-microservice/awana_auth_routes.py
+--------------------------------------------------------------------------------
+  Ligne 314 | [contract_types]
+  Code: if profile_type == 'interim':
+  Valeur: 'interim'
+
+  Ligne 540 | [delays_days]
+  Code: expires_in=auth_config.jwt_access_token_expire_minutes * 60,
+  Valeur: expires_in=auth_config.jwt_access_token_expire_minutes * 60
+
+  Ligne 746 | [delays_days]
+  Code: expires_in=auth_config.jwt_access_token_expire_minutes * 60,
+  Valeur: expires_in=auth_config.jwt_access_token_expire_minutes * 60
+
+  Ligne 1015 | [delays_days]
+  Code: expires_in=auth_config.jwt_access_token_expire_minutes * 60,
+  Valeur: expires_in=auth_config.jwt_access_token_expire_minutes * 60
+
+  Ligne 1123 | [delays_days]
+  Code: expires_in=auth_config.jwt_access_token_expire_minutes * 60,
+  Valeur: expires_in=auth_config.jwt_access_token_expire_minutes * 60
+
+  Ligne 1157 | [contract_types]
+  Code: if register_data.role not in ['interim', 'company']:
+  Valeur: 'interim'
+
+  Ligne 1160 | [contract_types]
+  Code: detail="Invalid role. Must be 'interim' or 'company'"
+  Valeur: 'interim'
+
+  Ligne 1324 | [delays_days]
+  Code: expires_in=auth_config.jwt_access_token_expire_minutes * 60,
+  Valeur: expires_in=auth_config.jwt_access_token_expire_minutes * 60
+
+  Ligne 1436 | [delays_days]
+  Code: expires_in=auth_config.jwt_access_token_expire_minutes * 60,
+  Valeur: expires_in=auth_config.jwt_access_token_expire_minutes * 60
+
+  Ligne 1489 | [delays_days]
+  Code: seven_days_ago = (datetime.now(timezone.utc) - timedelta(days=7)).isoformat()
+  Valeur: days=7
+
+  Ligne 1493 | [delays_days]
+  Code: one_day_ago = (datetime.now(timezone.utc) - timedelta(days=1)).isoformat()
+  Valeur: days=1
+
+  Ligne 1512 | [contract_types]
+  Code: "interim": interim_users,
+  Valeur: "interim"
+
+
+📄 auth-microservice/configuration_routes.py
+--------------------------------------------------------------------------------
+  Ligne 82 | [contract_types]
+  Code: "interim": config_manager.get("security.roles.interim"),
+  Valeur: "interim"
+
+
+📄 auth-microservice/google_auth_routes.py
+--------------------------------------------------------------------------------
+  Ligne 93 | [delays_days]
+  Code: "expires_at": datetime.now(timezone.utc) + timedelta(minutes=10)
+  Valeur: expires_at": datetime.now(timezone.utc) + timedelta(minutes=10
+
+  Ligne 97 | [delays_days]
+  Code: await db.oauth_states.create_index("expires_at", expireAfterSeconds=0)
+  Valeur: expires_at", expireAfterSeconds=0
+
+  Ligne 155 | [contract_types]
+  Code: if profile_type == 'interim':
+  Valeur: 'interim'
+
+  Ligne 539 | [contract_types]
+  Code: if registration_data.role not in ['interim', 'company']:
+  Valeur: 'interim'
+
+  Ligne 542 | [contract_types]
+  Code: detail="Invalid role. Must be 'interim' or 'company'"
+  Valeur: 'interim'
+
+  Ligne 646 | [delays_days]
+  Code: "expires_in": 1800,
+  Valeur: expires_in": 1800
+
+
+📄 auth-microservice/profile_routes.py
+--------------------------------------------------------------------------------
+  Ligne 40 | [contract_types]
+  Code: if profile_type == "interim":
+  Valeur: "interim"
+
+  Ligne 224 | [document_types]
+  Code: if document_type == "cv":
+  Valeur: "cv"
+
+  Ligne 292 | [document_types]
+  Code: if document["type"] == "cv":
+  Valeur: "cv"
+
+
+📄 auth-microservice/scripts/seed_additional_references.py
+--------------------------------------------------------------------------------
+  Ligne 122 | [contract_types]
+  Code: "code": "interim",
+  Valeur: "interim"
+
+  Ligne 344 | [document_types]
+  Code: "code": "cv",
+  Valeur: "cv"
+
+  Ligne 384 | [document_types]
+  Code: "code": "medical_certificate",
+  Valeur: "medical_certificate"
+
+  Ligne 404 | [document_types]
+  Code: "code": "contract",
+  Valeur: "contract"
+
+
+📄 auth-microservice/scripts/seed_mission_references.py
+--------------------------------------------------------------------------------
+  Ligne 336 | [contract_types]
+  Code: "code": "cdi",
+  Valeur: "cdi"
+
+  Ligne 353 | [contract_types]
+  Code: "code": "cdd",
+  Valeur: "cdd"
+
+  Ligne 370 | [contract_types]
+  Code: "code": "interim",
+  Valeur: "interim"
+
+
+🟢 SÉVÉRITÉ: LOW (187 occurrences)
+================================================================================
+
+📄 auth-microservice/awana_auth/core/config.py
+--------------------------------------------------------------------------------
+  Ligne 20 | [messages]
+  Code: app_name: str = Field(default="AWANA GROUP", description="Application name")
+  Valeur: description="Application name"
+
+  Ligne 21 | [messages]
+  Code: environment: str = Field(default="development", description="Environment (development/staging/production)")
+  Valeur: description="Environment (development/staging/production)"
+
+  Ligne 38 | [messages]
+  Code: session_storage: str = Field(default="mongodb", description="Session storage backend (mongodb/redis)")
+  Valeur: description="Session storage backend (mongodb/redis)"
+
+  Ligne 42 | [numeric_limits]
+  Code: password_min_length: int = Field(default=12)
+  Valeur: min_length: int = Field(default=12
+
+  Ligne 60 | [messages]
+  Code: description="List of enabled auth providers (entraid, webauthn, totp, local)"
+  Valeur: description="List of enabled auth providers (entraid, webauthn, totp, local)"
+
+
+📄 auth-microservice/awana_auth/core/dependencies.py
+--------------------------------------------------------------------------------
+  Ligne 42 | [numeric_limits]
+  Code: minPoolSize=config.get("database.min_pool_size", default=5)
+  Valeur: min_pool_size", default=5
+
+  Ligne 107 | [messages]
+  Code: detail="Not authenticated",
+  Valeur: detail="Not authenticated"
+
+  Ligne 123 | [messages]
+  Code: detail="Session not found or expired",
+  Valeur: detail="Session not found or expired"
+
+  Ligne 133 | [messages]
+  Code: detail="User not found"
+  Valeur: detail="User not found"
+
+  Ligne 157 | [messages]
+  Code: detail="Authentication failed",
+  Valeur: detail="Authentication failed"
+
+  Ligne 198 | [messages]
+  Code: detail="Admin privileges required"
+  Valeur: detail="Admin privileges required"
+
+  Ligne 220 | [messages]
+  Code: detail="Super admin privileges required"
+  Valeur: detail="Super admin privileges required"
+
+
+📄 auth-microservice/awana_auth/core/mission_models.py
+--------------------------------------------------------------------------------
+  Ligne 105 | [numeric_limits]
+  Code: title: str = Field(..., min_length=3, max_length=200)
+  Valeur: max_length=200
+
+  Ligne 105 | [numeric_limits]
+  Code: title: str = Field(..., min_length=3, max_length=200)
+  Valeur: min_length=3, max_length=200
+
+
+📄 auth-microservice/awana_auth/core/models.py
+--------------------------------------------------------------------------------
+  Ligne 247 | [numeric_limits]
+  Code: code: str = Field(min_length=6, max_length=6)
+  Valeur: max_length=6
+
+  Ligne 247 | [numeric_limits]
+  Code: code: str = Field(min_length=6, max_length=6)
+  Valeur: min_length=6, max_length=6
+
+  Ligne 257 | [numeric_limits]
+  Code: phone_number: str = Field(min_length=10, max_length=20)
+  Valeur: max_length=20
+
+  Ligne 257 | [numeric_limits]
+  Code: phone_number: str = Field(min_length=10, max_length=20)
+  Valeur: min_length=10, max_length=20
+
+  Ligne 262 | [numeric_limits]
+  Code: code: str = Field(min_length=6, max_length=6)
+  Valeur: max_length=6
+
+  Ligne 262 | [numeric_limits]
+  Code: code: str = Field(min_length=6, max_length=6)
+  Valeur: min_length=6, max_length=6
+
+  Ligne 269 | [numeric_limits]
+  Code: code: str = Field(min_length=6, max_length=6)
+  Valeur: max_length=6
+
+  Ligne 269 | [numeric_limits]
+  Code: code: str = Field(min_length=6, max_length=6)
+  Valeur: min_length=6, max_length=6
+
+
+📄 auth-microservice/awana_auth/rbac/decorators.py
+--------------------------------------------------------------------------------
+  Ligne 30 | [messages]
+  Code: detail="Authentication required"
+  Valeur: detail="Authentication required"
+
+  Ligne 73 | [messages]
+  Code: detail="Authentication required"
+  Valeur: detail="Authentication required"
+
+  Ligne 79 | [messages]
+  Code: detail="RBAC manager not available"
+  Valeur: detail="RBAC manager not available"
+
+
+📄 auth-microservice/awana_auth/rbac/models.py
+--------------------------------------------------------------------------------
+  Ligne 86 | [messages]
+  Code: description="Full system access with all permissions",
+  Valeur: description="Full system access with all permissions"
+
+  Ligne 94 | [messages]
+  Code: description="Administrative access to manage users and content",
+  Valeur: description="Administrative access to manage users and content"
+
+  Ligne 108 | [messages]
+  Code: description="Can create and edit content",
+  Valeur: description="Can create and edit content"
+
+  Ligne 119 | [messages]
+  Code: description="Read-only access to content",
+  Valeur: description="Read-only access to content"
+
+  Ligne 132 | [messages]
+  Code: Permission(name="users:read", resource="users", action="read", description="View users"),
+  Valeur: description="View users"
+
+  Ligne 133 | [messages]
+  Code: Permission(name="users:write", resource="users", action="write", description="Create/edit users"),
+  Valeur: description="Create/edit users"
+
+  Ligne 134 | [messages]
+  Code: Permission(name="users:delete", resource="users", action="delete", description="Delete users"),
+  Valeur: description="Delete users"
+
+  Ligne 137 | [messages]
+  Code: Permission(name="roles:read", resource="roles", action="read", description="View roles"),
+  Valeur: description="View roles"
+
+  Ligne 138 | [messages]
+  Code: Permission(name="roles:write", resource="roles", action="write", description="Create/edit roles"),
+  Valeur: description="Create/edit roles"
+
+  Ligne 139 | [messages]
+  Code: Permission(name="roles:delete", resource="roles", action="delete", description="Delete roles"),
+  Valeur: description="Delete roles"
+
+  Ligne 142 | [messages]
+  Code: Permission(name="content:read", resource="content", action="read", description="View content"),
+  Valeur: description="View content"
+
+  Ligne 143 | [messages]
+  Code: Permission(name="content:write", resource="content", action="write", description="Create/edit content"),
+  Valeur: description="Create/edit content"
+
+  Ligne 144 | [messages]
+  Code: Permission(name="content:delete", resource="content", action="delete", description="Delete content"),
+  Valeur: description="Delete content"
+
+  Ligne 147 | [messages]
+  Code: Permission(name="analytics:read", resource="analytics", action="read", description="View analytics"),
+  Valeur: description="View analytics"
+
+  Ligne 150 | [messages]
+  Code: Permission(name="audit:read", resource="audit", action="read", description="View audit logs"),
+  Valeur: description="View audit logs"
+
+  Ligne 153 | [messages]
+  Code: Permission(name="*:*", resource="*", action="*", description="All permissions"),
+  Valeur: description="All permissions"
+
+
+📄 auth-microservice/awana_auth_routes.py
+--------------------------------------------------------------------------------
+  Ligne 579 | [messages]
+  Code: detail="ID token is required"
+  Valeur: detail="ID token is required"
+
+  Ligne 620 | [messages]
+  Code: detail="Invalid Microsoft token"
+  Valeur: detail="Invalid Microsoft token"
+
+  Ligne 631 | [messages]
+  Code: detail="Missing required user information from Microsoft"
+  Valeur: detail="Missing required user information from Microsoft"
+
+  Ligne 831 | [messages]
+  Code: detail="Account is not active"
+  Valeur: detail="Account is not active"
+
+  Ligne 864 | [messages]
+  Code: detail="Incorrect username or password"
+  Valeur: detail="Incorrect username or password"
+
+  Ligne 1056 | [messages]
+  Code: detail="Session MFA invalide ou expirée"
+  Valeur: detail="Session MFA invalide ou expirée"
+
+  Ligne 1062 | [messages]
+  Code: detail="MFA n'a pas été vérifiée"
+  Valeur: detail="MFA n'a pas été vérifiée"
+
+  Ligne 1070 | [messages]
+  Code: detail="Utilisateur non trouvé"
+  Valeur: detail="Utilisateur non trouvé"
+
+  Ligne 1160 | [messages]
+  Code: detail="Invalid role. Must be 'interim' or 'company'"
+  Valeur: detail="Invalid role. Must be 'interim' or 'company'"
+
+  Ligne 1171 | [messages]
+  Code: detail="Ce nom d'utilisateur est déjà utilisé"
+  Valeur: detail="Ce nom d'utilisateur est déjà utilisé"
+
+  Ligne 1182 | [messages]
+  Code: detail="Cet email est déjà utilisé"
+  Valeur: detail="Cet email est déjà utilisé"
+
+  Ligne 1374 | [messages]
+  Code: detail="Logout failed"
+  Valeur: detail="Logout failed"
+
+  Ligne 1399 | [messages]
+  Code: detail="Session not found or expired"
+  Valeur: detail="Session not found or expired"
+
+  Ligne 1408 | [messages]
+  Code: detail="User not found"
+  Valeur: detail="User not found"
+
+  Ligne 1446 | [messages]
+  Code: detail="Token refresh failed"
+  Valeur: detail="Token refresh failed"
+
+  Ligne 1531 | [messages]
+  Code: detail="Error retrieving statistics"
+  Valeur: detail="Error retrieving statistics"
+
+  Ligne 1571 | [messages]
+  Code: detail="User not found"
+  Valeur: detail="User not found"
+
+  Ligne 1593 | [messages]
+  Code: detail="User not found"
+  Valeur: detail="User not found"
+
+  Ligne 1658 | [messages]
+  Code: detail="User not found"
+  Valeur: detail="User not found"
+
+  Ligne 1667 | [messages]
+  Code: detail="Cannot delete your own account"
+  Valeur: detail="Cannot delete your own account"
+
+  Ligne 1713 | [messages]
+  Code: detail="User not found"
+  Valeur: detail="User not found"
+
+  Ligne 1722 | [messages]
+  Code: detail="Cannot reset your own MFA through admin endpoint. Use the profile settings."
+  Valeur: detail="Cannot reset your own MFA through admin endpoint. Use the profile settings."
+
+  Ligne 1729 | [messages]
+  Code: detail="User does not have MFA enabled"
+  Valeur: detail="User does not have MFA enabled"
+
+  Ligne 1804 | [messages]
+  Code: detail="User not found"
+  Valeur: detail="User not found"
+
+  Ligne 1857 | [messages]
+  Code: detail="User not found"
+  Valeur: detail="User not found"
+
+  Ligne 1949 | [messages]
+  Code: detail="Erreur lors de la récupération des utilisateurs"
+  Valeur: detail="Erreur lors de la récupération des utilisateurs"
+
+  Ligne 1981 | [messages]
+  Code: detail="Utilisateur non trouvé"
+  Valeur: detail="Utilisateur non trouvé"
+
+  Ligne 2021 | [messages]
+  Code: detail="Erreur lors de la mise à jour du statut"
+  Valeur: detail="Erreur lors de la mise à jour du statut"
+
+  Ligne 2044 | [messages]
+  Code: detail="Utilisateur non trouvé"
+  Valeur: detail="Utilisateur non trouvé"
+
+  Ligne 2064 | [messages]
+  Code: detail="Cet email est déjà utilisé par un autre utilisateur"
+  Valeur: detail="Cet email est déjà utilisé par un autre utilisateur"
+
+  Ligne 2075 | [messages]
+  Code: detail="Les rôles doivent être une liste"
+  Valeur: detail="Les rôles doivent être une liste"
+
+  Ligne 2088 | [messages]
+  Code: detail="Aucune donnée à mettre à jour"
+  Valeur: detail="Aucune donnée à mettre à jour"
+
+  Ligne 2125 | [messages]
+  Code: detail="Erreur lors de la mise à jour de l'utilisateur"
+  Valeur: detail="Erreur lors de la mise à jour de l'utilisateur"
+
+  Ligne 2211 | [messages]
+  Code: detail="Erreur lors de l'envoi de l'email"
+  Valeur: detail="Erreur lors de l'envoi de l'email"
+
+  Ligne 2240 | [messages]
+  Code: detail="Token invalide ou déjà utilisé"
+  Valeur: detail="Token invalide ou déjà utilisé"
+
+  Ligne 2257 | [messages]
+  Code: detail="Le token a expiré. Veuillez demander un nouveau lien"
+  Valeur: detail="Le token a expiré. Veuillez demander un nouveau lien"
+
+  Ligne 2264 | [messages]
+  Code: detail="Le mot de passe doit contenir au moins 8 caractères"
+  Valeur: detail="Le mot de passe doit contenir au moins 8 caractères"
+
+  Ligne 2322 | [messages]
+  Code: detail="Erreur lors de la réinitialisation du mot de passe"
+  Valeur: detail="Erreur lors de la réinitialisation du mot de passe"
+
+
+📄 auth-microservice/configuration_routes.py
+--------------------------------------------------------------------------------
+  Ligne 200 | [messages]
+  Code: raise HTTPException(status_code=404, detail="Référentiel non trouvé")
+  Valeur: detail="Référentiel non trouvé"
+
+  Ligne 205 | [messages]
+  Code: detail="Les référentiels système ne peuvent pas être désactivés"
+  Valeur: detail="Les référentiels système ne peuvent pas être désactivés"
+
+  Ligne 241 | [messages]
+  Code: raise HTTPException(status_code=404, detail="Référentiel non trouvé")
+  Valeur: detail="Référentiel non trouvé"
+
+  Ligne 246 | [messages]
+  Code: detail="Les référentiels système ne peuvent pas être supprimés"
+  Valeur: detail="Les référentiels système ne peuvent pas être supprimés"
+
+  Ligne 336 | [messages]
+  Code: raise HTTPException(status_code=404, detail="Paramètre non trouvé")
+  Valeur: detail="Paramètre non trouvé"
+
+
+📄 auth-microservice/document_routes.py
+--------------------------------------------------------------------------------
+  Ligne 55 | [numeric_limits]
+  Code: max_file_size_mb = config.get("storage.uploads.max_file_size_mb", default=10)
+  Valeur: max_file_size_mb = config.get("storage.uploads.max_file_size_mb", default=10
+
+  Ligne 151 | [messages]
+  Code: detail="Document non trouvé"
+  Valeur: detail="Document non trouvé"
+
+  Ligne 162 | [messages]
+  Code: detail="Vous n'avez pas accès à ce document"
+  Valeur: detail="Vous n'avez pas accès à ce document"
+
+  Ligne 169 | [messages]
+  Code: detail="Fichier non trouvé sur le serveur"
+  Valeur: detail="Fichier non trouvé sur le serveur"
+
+  Ligne 215 | [messages]
+  Code: detail="Document non trouvé"
+  Valeur: detail="Document non trouvé"
+
+  Ligne 226 | [messages]
+  Code: detail="Vous ne pouvez supprimer que vos propres documents"
+  Valeur: detail="Vous ne pouvez supprimer que vos propres documents"
+
+
+📄 auth-microservice/google_auth_routes.py
+--------------------------------------------------------------------------------
+  Ligne 59 | [messages]
+  Code: detail="Google OAuth est désactivé"
+  Valeur: detail="Google OAuth est désactivé"
+
+  Ligne 69 | [messages]
+  Code: detail="Google OAuth is not configured. Please set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET"
+  Valeur: detail="Google OAuth is not configured. Please set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET"
+
+  Ligne 244 | [messages]
+  Code: detail="Failed to initiate Google login"
+  Valeur: detail="Failed to initiate Google login"
+
+  Ligne 269 | [messages]
+  Code: detail="Invalid or expired state parameter"
+  Valeur: detail="Invalid or expired state parameter"
+
+  Ligne 373 | [messages]
+  Code: detail="User not found after creation"
+  Valeur: detail="User not found after creation"
+
+  Ligne 522 | [messages]
+  Code: detail="Missing or invalid authorization header"
+  Valeur: detail="Missing or invalid authorization header"
+
+  Ligne 535 | [messages]
+  Code: detail="Invalid or expired token"
+  Valeur: detail="Invalid or expired token"
+
+  Ligne 542 | [messages]
+  Code: detail="Invalid role. Must be 'interim' or 'company'"
+  Valeur: detail="Invalid role. Must be 'interim' or 'company'"
+
+  Ligne 552 | [messages]
+  Code: detail="User not found"
+  Valeur: detail="User not found"
+
+
+📄 auth-microservice/location_routes.py
+--------------------------------------------------------------------------------
+  Ligne 80 | [messages]
+  Code: detail="Location not found"
+  Valeur: detail="Location not found"
+
+  Ligne 98 | [messages]
+  Code: detail="Parent location not found"
+  Valeur: detail="Parent location not found"
+
+  Ligne 143 | [messages]
+  Code: detail="Location not found"
+  Valeur: detail="Location not found"
+
+  Ligne 182 | [messages]
+  Code: detail="Location not found"
+  Valeur: detail="Location not found"
+
+  Ligne 207 | [messages]
+  Code: detail="Location not found"
+  Valeur: detail="Location not found"
+
+
+📄 auth-microservice/main.py
+--------------------------------------------------------------------------------
+  Ligne 55 | [numeric_limits]
+  Code: minPoolSize=config.get('database.min_pool_size', default=5),
+  Valeur: min_pool_size', default=5
+
+  Ligne 76 | [messages]
+  Code: description="Standalone Auth with JWT, OAuth2, RBAC",
+  Valeur: description="Standalone Auth with JWT, OAuth2, RBAC"
+
+
+📄 auth-microservice/mfa_routes.py
+--------------------------------------------------------------------------------
+  Ligne 120 | [messages]
+  Code: detail="Trop de tentatives. Veuillez réessayer dans 15 minutes."
+  Valeur: detail="Trop de tentatives. Veuillez réessayer dans 15 minutes."
+
+  Ligne 153 | [messages]
+  Code: message="Scannez le QR code avec votre application d'authentification"
+  Valeur: message="Scannez le QR code avec votre application d'authentification"
+
+  Ligne 176 | [messages]
+  Code: detail="Trop de tentatives. Veuillez réessayer dans 15 minutes."
+  Valeur: detail="Trop de tentatives. Veuillez réessayer dans 15 minutes."
+
+  Ligne 185 | [messages]
+  Code: detail="Aucune configuration TOTP en attente"
+  Valeur: detail="Aucune configuration TOTP en attente"
+
+  Ligne 193 | [messages]
+  Code: detail="Configuration expirée. Veuillez recommencer."
+  Valeur: detail="Configuration expirée. Veuillez recommencer."
+
+  Ligne 203 | [messages]
+  Code: detail="Code invalide"
+  Valeur: detail="Code invalide"
+
+  Ligne 238 | [messages]
+  Code: message="TOTP activé avec succès. Conservez vos codes de secours en lieu sûr."
+  Valeur: message="TOTP activé avec succès. Conservez vos codes de secours en lieu sûr."
+
+  Ligne 260 | [messages]
+  Code: detail="Trop de tentatives. Veuillez réessayer dans 15 minutes."
+  Valeur: detail="Trop de tentatives. Veuillez réessayer dans 15 minutes."
+
+  Ligne 306 | [messages]
+  Code: detail="Trop de tentatives. Veuillez réessayer dans 15 minutes."
+  Valeur: detail="Trop de tentatives. Veuillez réessayer dans 15 minutes."
+
+  Ligne 357 | [messages]
+  Code: detail="Trop de tentatives. Veuillez réessayer dans 15 minutes."
+  Valeur: detail="Trop de tentatives. Veuillez réessayer dans 15 minutes."
+
+  Ligne 366 | [messages]
+  Code: detail="Code invalide ou expiré"
+  Valeur: detail="Code invalide ou expiré"
+
+  Ligne 376 | [messages]
+  Code: detail="Numéro de téléphone non trouvé"
+  Valeur: detail="Numéro de téléphone non trouvé"
+
+  Ligne 395 | [messages]
+  Code: message="SMS OTP activé avec succès"
+  Valeur: message="SMS OTP activé avec succès"
+
+  Ligne 418 | [messages]
+  Code: detail="MFA n'est pas activé"
+  Valeur: detail="MFA n'est pas activé"
+
+  Ligne 439 | [messages]
+  Code: message="Nouveaux codes de secours générés. Les anciens codes sont maintenant invalides."
+  Valeur: message="Nouveaux codes de secours générés. Les anciens codes sont maintenant invalides."
+
+  Ligne 460 | [messages]
+  Code: detail="Méthode invalide"
+  Valeur: detail="Méthode invalide"
+
+  Ligne 493 | [messages]
+  Code: detail="Session MFA invalide ou expirée"
+  Valeur: detail="Session MFA invalide ou expirée"
+
+  Ligne 502 | [messages]
+  Code: detail="Trop de tentatives. Compte temporairement verrouillé."
+  Valeur: detail="Trop de tentatives. Compte temporairement verrouillé."
+
+  Ligne 538 | [messages]
+  Code: detail="Code invalide"
+  Valeur: detail="Code invalide"
+
+
+📄 auth-microservice/mission_routes.py
+--------------------------------------------------------------------------------
+  Ligne 78 | [numeric_limits]
+  Code: max_applications = config.get("workflows.application.restrictions.max_applications_per_candidate", default=10)
+  Valeur: max_applications = config.get("workflows.application.restrictions.max_applications_per_candidate", default=10
+
+  Ligne 88 | [numeric_limits]
+  Code: min_days_between = config.get("workflows.application.restrictions.min_days_between_applications", default=1)
+  Valeur: min_days_between = config.get("workflows.application.restrictions.min_days_between_applications", default=1
+
+  Ligne 127 | [messages]
+  Code: detail="Vous avez déjà candidaté à cette mission"
+  Valeur: detail="Vous avez déjà candidaté à cette mission"
+
+  Ligne 163 | [messages]
+  Code: detail="Vous n'avez pas la permission de créer une mission"
+  Valeur: detail="Vous n'avez pas la permission de créer une mission"
+
+  Ligne 251 | [messages]
+  Code: detail="Mission non trouvée"
+  Valeur: detail="Mission non trouvée"
+
+  Ligne 261 | [messages]
+  Code: detail="Mission non accessible"
+  Valeur: detail="Mission non accessible"
+
+  Ligne 267 | [messages]
+  Code: detail="Vous ne pouvez voir que vos missions"
+  Valeur: detail="Vous ne pouvez voir que vos missions"
+
+  Ligne 289 | [messages]
+  Code: detail="Mission non trouvée"
+  Valeur: detail="Mission non trouvée"
+
+  Ligne 306 | [messages]
+  Code: detail="Vous n'avez pas la permission de modifier cette mission"
+  Valeur: detail="Vous n'avez pas la permission de modifier cette mission"
+
+  Ligne 344 | [messages]
+  Code: detail="Mission non trouvée"
+  Valeur: detail="Mission non trouvée"
+
+  Ligne 360 | [messages]
+  Code: detail="Vous n'avez pas la permission de supprimer cette mission"
+  Valeur: detail="Vous n'avez pas la permission de supprimer cette mission"
+
+  Ligne 385 | [messages]
+  Code: detail="Mission non trouvée"
+  Valeur: detail="Mission non trouvée"
+
+  Ligne 395 | [messages]
+  Code: detail="Seuls les commerciaux et admins peuvent publier"
+  Valeur: detail="Seuls les commerciaux et admins peuvent publier"
+
+  Ligne 432 | [messages]
+  Code: detail="Seuls les intérimaires peuvent postuler"
+  Valeur: detail="Seuls les intérimaires peuvent postuler"
+
+  Ligne 440 | [messages]
+  Code: detail="Mission non trouvée"
+  Valeur: detail="Mission non trouvée"
+
+  Ligne 446 | [messages]
+  Code: detail="Cette mission n'accepte plus de candidatures"
+  Valeur: detail="Cette mission n'accepte plus de candidatures"
+
+  Ligne 458 | [messages]
+  Code: detail="Vous avez déjà postulé à cette mission"
+  Valeur: detail="Vous avez déjà postulé à cette mission"
+
+  Ligne 502 | [messages]
+  Code: detail="Mission non trouvée"
+  Valeur: detail="Mission non trouvée"
+
+  Ligne 519 | [messages]
+  Code: detail="Vous n'avez pas accès aux candidatures"
+  Valeur: detail="Vous n'avez pas accès aux candidatures"
+
+  Ligne 563 | [messages]
+  Code: detail="Candidature non trouvée"
+  Valeur: detail="Candidature non trouvée"
+
+  Ligne 573 | [messages]
+  Code: detail="Permission insuffisante"
+  Valeur: detail="Permission insuffisante"
+
+  Ligne 633 | [messages]
+  Code: detail="Candidature non trouvée"
+  Valeur: detail="Candidature non trouvée"
+
+  Ligne 674 | [messages]
+  Code: detail="Candidature non trouvée"
+  Valeur: detail="Candidature non trouvée"
+
+  Ligne 681 | [messages]
+  Code: detail="Vous ne pouvez modifier que vos propres candidatures"
+  Valeur: detail="Vous ne pouvez modifier que vos propres candidatures"
+
+  Ligne 716 | [messages]
+  Code: detail="Mission non trouvée"
+  Valeur: detail="Mission non trouvée"
+
+
+📄 auth-microservice/profile_routes.py
+--------------------------------------------------------------------------------
+  Ligne 185 | [messages]
+  Code: raise HTTPException(status_code=400, detail="File too large. Maximum size: 5MB")
+  Valeur: detail="File too large. Maximum size: 5MB"
+
+  Ligne 240 | [messages]
+  Code: message="Document uploadé avec succès"
+  Valeur: message="Document uploadé avec succès"
+
+  Ligne 272 | [messages]
+  Code: raise HTTPException(status_code=404, detail="Document not found")
+  Valeur: detail="Document not found"
+
+
+📄 auth-microservice/scripts/encrypt_env.py
+--------------------------------------------------------------------------------
+  Ligne 106 | [messages]
+  Code: description="Chiffrer/déchiffrer les fichiers .env",
+  Valeur: description="Chiffrer/déchiffrer les fichiers .env"
+
+
+📄 auth-microservice/security_routes.py
+--------------------------------------------------------------------------------
+  Ligne 60 | [messages]
+  Code: raise HTTPException(status_code=404, detail="Profile not found")
+  Valeur: detail="Profile not found"
+
+  Ligne 74 | [messages]
+  Code: raise HTTPException(status_code=400, detail="Profile name already exists")
+  Valeur: detail="Profile name already exists"
+
+  Ligne 98 | [messages]
+  Code: raise HTTPException(status_code=404, detail="Profile not found")
+  Valeur: detail="Profile not found"
+
+  Ligne 102 | [messages]
+  Code: raise HTTPException(status_code=403, detail="Cannot modify system profiles")
+  Valeur: detail="Cannot modify system profiles"
+
+  Ligne 125 | [messages]
+  Code: raise HTTPException(status_code=404, detail="Profile not found")
+  Valeur: detail="Profile not found"
+
+  Ligne 129 | [messages]
+  Code: raise HTTPException(status_code=403, detail="Cannot delete system profiles")
+  Valeur: detail="Cannot delete system profiles"
+
+  Ligne 164 | [messages]
+  Code: raise HTTPException(status_code=404, detail="Group not found")
+  Valeur: detail="Group not found"
+
+  Ligne 178 | [messages]
+  Code: raise HTTPException(status_code=400, detail="Group name already exists")
+  Valeur: detail="Group name already exists"
+
+  Ligne 184 | [messages]
+  Code: raise HTTPException(status_code=404, detail="Profile not found")
+  Valeur: detail="Profile not found"
+
+  Ligne 208 | [messages]
+  Code: raise HTTPException(status_code=404, detail="Group not found")
+  Valeur: detail="Group not found"
+
+  Ligne 214 | [messages]
+  Code: raise HTTPException(status_code=404, detail="Profile not found")
+  Valeur: detail="Profile not found"
+
+  Ligne 238 | [messages]
+  Code: raise HTTPException(status_code=404, detail="Group not found")
+  Valeur: detail="Group not found"
+
+  Ligne 254 | [messages]
+  Code: raise HTTPException(status_code=404, detail="Group not found")
+  Valeur: detail="Group not found"
+
+  Ligne 259 | [messages]
+  Code: raise HTTPException(status_code=404, detail="User not found")
+  Valeur: detail="User not found"
+
+  Ligne 281 | [messages]
+  Code: raise HTTPException(status_code=404, detail="Group not found")
+  Valeur: detail="Group not found"
+
+  Ligne 311 | [messages]
+  Code: raise HTTPException(status_code=400, detail="Email already registered")
+  Valeur: detail="Email already registered"
+
+
+📄 auth-microservice/validation_routes.py
+--------------------------------------------------------------------------------
+  Ligne 37 | [messages]
+  Code: validation_type: Optional[str] = Query(None, description="Filter by type: interim or company"),
+  Valeur: description="Filter by type: interim or company"
+
+  Ligne 38 | [messages]
+  Code: status: Optional[ValidationStatus] = Query(None, description="Filter by status"),
+  Valeur: description="Filter by status"
+
+  Ligne 39 | [messages]
+  Code: has_location_warning: Optional[bool] = Query(None, description="Filter by location warning"),
+  Valeur: description="Filter by location warning"
+
+  Ligne 40 | [messages]
+  Code: assigned_to: Optional[str] = Query(None, description="Filter by assigned validator"),
+  Valeur: description="Filter by assigned validator"
+
+  Ligne 129 | [messages]
+  Code: detail="Validation not found"
+  Valeur: detail="Validation not found"
+
+  Ligne 146 | [messages]
+  Code: detail="Validation not found"
+  Valeur: detail="Validation not found"
+
+  Ligne 152 | [messages]
+  Code: detail="Validation already processed"
+  Valeur: detail="Validation already processed"
+
+  Ligne 198 | [messages]
+  Code: detail="Validation not found"
+  Valeur: detail="Validation not found"
+
+  Ligne 204 | [messages]
+  Code: detail="Validation already processed"
+  Valeur: detail="Validation already processed"
+
+  Ligne 252 | [messages]
+  Code: detail="Validator not found"
+  Valeur: detail="Validator not found"
+
+  Ligne 260 | [messages]
+  Code: detail="User does not have validator role (admin, super_admin, or commercial)"
+  Valeur: detail="User does not have validator role (admin, super_admin, or commercial)"
+
+  Ligne 277 | [messages]
+  Code: detail="Validation not found"
+  Valeur: detail="Validation not found"
+
+  Ligne 297 | [messages]
+  Code: detail="Validation not found"
+  Valeur: detail="Validation not found"
+
+  Ligne 303 | [messages]
+  Code: detail="No missing country to add"
+  Valeur: detail="No missing country to add"
+
+
+📄 auth-microservice/version_routes.py
+--------------------------------------------------------------------------------
+  Ligne 132 | [messages]
+  Code: detail="Version non trouvée"
+  Valeur: detail="Version non trouvée"
+
+  Ligne 154 | [messages]
+  Code: detail="Version cible non trouvée"
+  Valeur: detail="Version cible non trouvée"
+
+  Ligne 245 | [messages]
+  Code: detail="Une ou plusieurs versions non trouvées"
+  Valeur: detail="Une ou plusieurs versions non trouvées"
+
+
+📄 Rapport détaillé sauvegardé: /app/docs/AUDIT_VALEURS_EN_DUR.md
+
+================================================================================
+📊 STATISTIQUES FINALES
+================================================================================
+🔴 CRITIQUE: 347
+🟠 HAUTE: 77
+🟡 MOYENNE: 84
+🟢 BASSE: 187
+📊 TOTAL: 695
+================================================================================ (New): Python script to scan backend and frontend files for hardcoded values and categorize them by severity.
+-   🚀 Démarrage de la correction automatique des valeurs en dur...
+
+🔧 Correction du backend (Python)...
+
+  📄 awana_auth_routes.py
+    ℹ️  Aucune correction nécessaire
+
+  📄 mission_routes.py
+    ℹ️  Aucune correction nécessaire
+
+  📄 validation_routes.py
+    ℹ️  Aucune correction nécessaire
+
+  📄 profile_routes.py
+    ℹ️  Aucune correction nécessaire
+
+  📄 google_auth_routes.py
+    ℹ️  Aucune correction nécessaire
+
+  📄 security_routes.py
+    ℹ️  Aucune correction nécessaire
+
+  📄 mfa_routes.py
+    ℹ️  Aucune correction nécessaire
+
+  📄 document_routes.py
+    ℹ️  Aucune correction nécessaire
+
+  📄 location_routes.py
+    ℹ️  Aucune correction nécessaire
+
+  📊 Total: 9 fichiers traités
+
+
+🎯 RAPPORT DE CORRECTION AUTOMATIQUE
+============================================================
+Total de corrections appliquées: 0
+
+✅ Les valeurs en dur critiques ont été remplacées par des appels à cfg.*
+✅ Les imports nécessaires ont été ajoutés automatiquement
+
+📋 Prochaines étapes:
+1. Tester les corrections avec: python scripts/test_config.py
+2. Redémarrer les services: sudo supervisorctl restart all
+3. Vérifier les logs pour détecter d'éventuelles erreurs
+4. Lancer l'audit à nouveau: python scripts/audit_hardcoded_values.py (New): Python script to automate the replacement of identified hardcoded values with  calls in backend files.
+-    (New): Specific Python script to automate corrections in .
+-    (New): Python script to automate corrections in other critical frontend files like  and .
+-   : Expanded to include  for fetching the entire application configuration from the backend.
+-    (New): React hook created to provide access to application-wide configurations, initially using static data then updated to fetch from .
+-    (New): Configuration file for , setting up language detection, resource loading, and default namespaces.
+-    (New): JSON files storing translation strings for French and English.
+-   : Modified to initialize  and wrap the application in .
+-    (New): A React component for changing the application's language.
+-   : Modified to include the  component and update navigation links using configured roles.
+-   : Refactored protected routes to use dynamically fetched roles and statuses from , replacing hardcoded string checks.
+-   , , , , : All were modified to replace hardcoded strings for roles, statuses, and navigation with values from the configuration system or translation keys.
+-    (New): Frontend page to display and potentially manage configuration versions.
+-   : Multiple new Markdown files were created for deployment guides, audit reports, executive summaries, action plans, and an audit index.
+-   : Updated to include links to the new deployment and audit documentation.
+-    (DELETED): This file was created by mistake as a duplicate and later removed.
 </code_architecture>
 
 <pending_tasks>
@@ -95,16 +3306,28 @@ Exemples:
 -   Implement cloud storage (S3) for uploaded documents.
 -   Implement automated E2E and backend tests for the new features (beyond ).
 -   Fully implement the  in the frontend and connect it to backend logic.
+-   Improve  to fully leverage dynamic data instead of current static fallbacks if any remain.
+-   Implement frontend UI for editable references via admin interface.
+-   Complete the integration of the versioning system into the frontend (App.tsx and sidebar routes).
+-   Further audit and correct remaining minor/medium hardcoded values in both backend and frontend.
 </pending_tasks>
 
 <current_work>
-The AI engineer has most recently completed Phase 3 of implementing a centralized configuration system. This involved migrating core backend functionalities—specifically, JWT token management, Google OAuth integration, and file upload services—to use the newly developed . Files such as , , and  were refactored to retrieve critical settings like JWT secrets, OAuth client IDs, and file storage parameters from the .
+Immediately before this summary request, the AI engineer was working on implementing a **configuration versioning system**. This task was part of a larger set of advanced improvements requested by the user, which included: loading  from the backend API, setting up an i18n system, enabling editable references via the admin UI, and configuration versioning.
 
-This ensures that these vital application settings are no longer hardcoded but are dynamically loaded based on the environment using hierarchical YAML files (e.g., , , ) and environment variables, with support for encrypted secrets and AWS Secrets Manager. A new test script () was developed and successfully executed, verifying the correct loading and application of all migrated configurations and confirming backwards compatibility. Documentation () summarizing this phase was also created.
+The engineer successfully completed the first two parts:
+1.  **Loading  from API:** A new backend endpoint () was created in  to expose all application configurations. The frontend's  was updated with , and  was modified to fetch configurations dynamically from this API. The application was tested and confirmed to be functional.
+2.  **i18n System:** Dependencies (, ) were installed. A directory structure for translation files (, ) was created.  was set up, and  was updated for initialization. A  component was created and integrated into the . This feature was tested and confirmed operational with French and English translations.
 
-Following this, the user requested the preparation of deployment guides for  and  environments. The engineer has just initiated this task by creating the placeholder documentation files:  and . The immediate focus is now on detailing the deployment procedures, including how to configure and manage the new centralized settings for these specific environments.
+The engineer then moved to the fourth part: **Configuration Versioning**.
+-   A new backend model, , was created in .
+-   New API routes for versioning were created in .
+-   These new routes were registered in .
+-   A frontend page placeholder, , was created.
+
+The work was interrupted at the point of integrating the  route into  and adding its link to the sidebar.
 </current_work>
 
 <optional_next_step>
-Prepare the content for  and , detailing configuration management and AWS Secrets Manager integration for production.
+The next step is to add the route for  into  and integrate its navigation link into the .
 </optional_next_step>

@@ -1,33 +1,33 @@
 # 🔍 Audit des Valeurs en Dur - Rapport Complet
 
-**Date**: 2025-11-05 03:32:21
+**Date**: 2025-11-05 03:57:46
 
 ---
 
 ## 📊 Résumé Exécutif
 
-**Total de valeurs en dur trouvées**: 684
+**Total de valeurs en dur trouvées**: 695
 
 ### Par Sévérité
 
 | Sévérité | Nombre | Pourcentage |
 |----------|--------|-------------|
-| 🔴 CRITICAL | 343 | 50.1% |
-| 🟠 HIGH | 75 | 11.0% |
-| 🟡 MEDIUM | 82 | 12.0% |
-| 🟢 LOW | 184 | 26.9% |
+| 🔴 CRITICAL | 347 | 49.9% |
+| 🟠 HIGH | 77 | 11.1% |
+| 🟡 MEDIUM | 84 | 12.1% |
+| 🟢 LOW | 187 | 26.9% |
 
 ### Par Catégorie
 
 | Catégorie | Nombre |
 |-----------|--------|
-| messages | 168 |
-| roles | 164 |
-| validation_types | 105 |
-| application_status | 74 |
-| contract_types | 54 |
-| user_status | 49 |
-| mission_status | 26 |
+| roles | 174 |
+| messages | 171 |
+| validation_types | 109 |
+| application_status | 64 |
+| contract_types | 56 |
+| user_status | 56 |
+| mission_status | 21 |
 | delays_days | 17 |
 | numeric_limits | 16 |
 | document_types | 11 |
@@ -38,10 +38,11 @@
 |---------|--------------------------|
 | `auth-microservice/awana_auth_routes.py` | 77 |
 | `apps/web/src/features/admin/pages/ValidationsPage.tsx` | 75 |
-| `apps/web/src/hooks/useAppConfig.ts` | 65 |
+| `apps/web/src/hooks/useAppConfig.ts` | 50 |
 | `auth-microservice/scripts/seed_mission_references.py` | 32 |
 | `auth-microservice/google_auth_routes.py` | 29 |
 | `auth-microservice/mission_routes.py` | 26 |
+| `auth-microservice/configuration_routes.py` | 20 |
 | `apps/web/src/features/auth/pages/RoleSelectionPage.tsx` | 20 |
 | `auth-microservice/mfa_routes.py` | 19 |
 | `auth-microservice/awana_auth/rbac/models.py` | 18 |
@@ -50,13 +51,12 @@
 | `auth-microservice/security_routes.py` | 16 |
 | `auth-microservice/awana_auth/core/dependencies.py` | 14 |
 | `apps/web/src/features/admin/pages/UserManagementPage.tsx` | 14 |
-| `auth-microservice/awana_auth/core/models.py` | 13 |
 
 ---
 
 ## 🔴 Sévérité: CRITICAL
 
-**Total**: 343 occurrences
+**Total**: 347 occurrences
 
 ### 📄 `apps/web/src/components/Breadcrumb.tsx`
 
@@ -1544,7 +1544,7 @@ profile_type: 'interim' | 'company' | 'collaborator'
 
 ### 📄 `apps/web/src/hooks/useAppConfig.ts`
 
-**1. Ligne 39** | Catégorie: `roles`
+**1. Ligne 34** | Catégorie: `roles`
 
 ```
 admin: 'admin',
@@ -1552,7 +1552,7 @@ admin: 'admin',
 
 **Valeur en dur**: `'admin'`
 
-**2. Ligne 40** | Catégorie: `roles`
+**2. Ligne 35** | Catégorie: `roles`
 
 ```
 super_admin: 'super_admin',
@@ -1560,7 +1560,7 @@ super_admin: 'super_admin',
 
 **Valeur en dur**: `'super_admin'`
 
-**3. Ligne 41** | Catégorie: `roles`
+**3. Ligne 36** | Catégorie: `roles`
 
 ```
 company: 'company',
@@ -1568,7 +1568,7 @@ company: 'company',
 
 **Valeur en dur**: `'company'`
 
-**4. Ligne 41** | Catégorie: `validation_types`
+**4. Ligne 36** | Catégorie: `validation_types`
 
 ```
 company: 'company',
@@ -1576,7 +1576,7 @@ company: 'company',
 
 **Valeur en dur**: `'company'`
 
-**5. Ligne 42** | Catégorie: `roles`
+**5. Ligne 37** | Catégorie: `roles`
 
 ```
 interim: 'interim',
@@ -1584,7 +1584,7 @@ interim: 'interim',
 
 **Valeur en dur**: `'interim'`
 
-**6. Ligne 42** | Catégorie: `validation_types`
+**6. Ligne 37** | Catégorie: `validation_types`
 
 ```
 interim: 'interim',
@@ -1592,7 +1592,7 @@ interim: 'interim',
 
 **Valeur en dur**: `'interim'`
 
-**7. Ligne 43** | Catégorie: `roles`
+**7. Ligne 38** | Catégorie: `roles`
 
 ```
 agency: 'agency',
@@ -1600,7 +1600,7 @@ agency: 'agency',
 
 **Valeur en dur**: `'agency'`
 
-**8. Ligne 44** | Catégorie: `roles`
+**8. Ligne 39** | Catégorie: `roles`
 
 ```
 commercial: 'commercial',
@@ -1608,7 +1608,7 @@ commercial: 'commercial',
 
 **Valeur en dur**: `'commercial'`
 
-**9. Ligne 45** | Catégorie: `roles`
+**9. Ligne 40** | Catégorie: `roles`
 
 ```
 validator: 'validator'
@@ -1616,127 +1616,7 @@ validator: 'validator'
 
 **Valeur en dur**: `'validator'`
 
-**10. Ligne 80** | Catégorie: `application_status`
-
-```
-submitted: 'submitted',
-```
-
-**Valeur en dur**: `'submitted'`
-
-**11. Ligne 81** | Catégorie: `application_status`
-
-```
-review: 'review',
-```
-
-**Valeur en dur**: `'review'`
-
-**12. Ligne 82** | Catégorie: `application_status`
-
-```
-interview_scheduled: 'interview_scheduled',
-```
-
-**Valeur en dur**: `'interview_scheduled'`
-
-**13. Ligne 83** | Catégorie: `application_status`
-
-```
-interviewed: 'interviewed',
-```
-
-**Valeur en dur**: `'interviewed'`
-
-**14. Ligne 84** | Catégorie: `application_status`
-
-```
-selected: 'selected',
-```
-
-**Valeur en dur**: `'selected'`
-
-**15. Ligne 85** | Catégorie: `application_status`
-
-```
-rejected: 'rejected',
-```
-
-**Valeur en dur**: `'rejected'`
-
-**16. Ligne 86** | Catégorie: `application_status`
-
-```
-medical_pending: 'medical_pending',
-```
-
-**Valeur en dur**: `'medical_pending'`
-
-**17. Ligne 87** | Catégorie: `application_status`
-
-```
-medical_completed: 'medical_completed',
-```
-
-**Valeur en dur**: `'medical_completed'`
-
-**18. Ligne 88** | Catégorie: `application_status`
-
-```
-contract_pending: 'contract_pending',
-```
-
-**Valeur en dur**: `'contract_pending'`
-
-**19. Ligne 89** | Catégorie: `application_status`
-
-```
-contract_signed: 'contract_signed'
-```
-
-**Valeur en dur**: `'contract_signed'`
-
-**20. Ligne 98** | Catégorie: `roles`
-
-```
-interim: 'interim',
-```
-
-**Valeur en dur**: `'interim'`
-
-**21. Ligne 98** | Catégorie: `validation_types`
-
-```
-interim: 'interim',
-```
-
-**Valeur en dur**: `'interim'`
-
-**22. Ligne 99** | Catégorie: `roles`
-
-```
-company: 'company',
-```
-
-**Valeur en dur**: `'company'`
-
-**23. Ligne 99** | Catégorie: `validation_types`
-
-```
-company: 'company',
-```
-
-**Valeur en dur**: `'company'`
-
-**24. Ligne 100** | Catégorie: `validation_types`
-
-```
-collaborator: 'collaborator'
-```
-
-**Valeur en dur**: `'collaborator'`
-
-**25. Ligne 115** | Catégorie: `application_status`
+**10. Ligne 50** | Catégorie: `application_status`
 
 ```
 applicationStatuses: ['submitted', 'review', 'interview_scheduled', 'interviewed', 'selected', 'rejected', 'medical_pending', 'medical_completed', 'contract_pending', 'contract_signed'],
@@ -1744,7 +1624,7 @@ applicationStatuses: ['submitted', 'review', 'interview_scheduled', 'interviewed
 
 **Valeur en dur**: `'submitted'`
 
-**26. Ligne 115** | Catégorie: `application_status`
+**11. Ligne 50** | Catégorie: `application_status`
 
 ```
 applicationStatuses: ['submitted', 'review', 'interview_scheduled', 'interviewed', 'selected', 'rejected', 'medical_pending', 'medical_completed', 'contract_pending', 'contract_signed'],
@@ -1752,7 +1632,7 @@ applicationStatuses: ['submitted', 'review', 'interview_scheduled', 'interviewed
 
 **Valeur en dur**: `'review'`
 
-**27. Ligne 115** | Catégorie: `application_status`
+**12. Ligne 50** | Catégorie: `application_status`
 
 ```
 applicationStatuses: ['submitted', 'review', 'interview_scheduled', 'interviewed', 'selected', 'rejected', 'medical_pending', 'medical_completed', 'contract_pending', 'contract_signed'],
@@ -1760,7 +1640,7 @@ applicationStatuses: ['submitted', 'review', 'interview_scheduled', 'interviewed
 
 **Valeur en dur**: `'interview_scheduled'`
 
-**28. Ligne 115** | Catégorie: `application_status`
+**13. Ligne 50** | Catégorie: `application_status`
 
 ```
 applicationStatuses: ['submitted', 'review', 'interview_scheduled', 'interviewed', 'selected', 'rejected', 'medical_pending', 'medical_completed', 'contract_pending', 'contract_signed'],
@@ -1768,7 +1648,7 @@ applicationStatuses: ['submitted', 'review', 'interview_scheduled', 'interviewed
 
 **Valeur en dur**: `'interviewed'`
 
-**29. Ligne 115** | Catégorie: `application_status`
+**14. Ligne 50** | Catégorie: `application_status`
 
 ```
 applicationStatuses: ['submitted', 'review', 'interview_scheduled', 'interviewed', 'selected', 'rejected', 'medical_pending', 'medical_completed', 'contract_pending', 'contract_signed'],
@@ -1776,7 +1656,7 @@ applicationStatuses: ['submitted', 'review', 'interview_scheduled', 'interviewed
 
 **Valeur en dur**: `'selected'`
 
-**30. Ligne 115** | Catégorie: `application_status`
+**15. Ligne 50** | Catégorie: `application_status`
 
 ```
 applicationStatuses: ['submitted', 'review', 'interview_scheduled', 'interviewed', 'selected', 'rejected', 'medical_pending', 'medical_completed', 'contract_pending', 'contract_signed'],
@@ -1784,7 +1664,7 @@ applicationStatuses: ['submitted', 'review', 'interview_scheduled', 'interviewed
 
 **Valeur en dur**: `'rejected'`
 
-**31. Ligne 115** | Catégorie: `application_status`
+**16. Ligne 50** | Catégorie: `application_status`
 
 ```
 applicationStatuses: ['submitted', 'review', 'interview_scheduled', 'interviewed', 'selected', 'rejected', 'medical_pending', 'medical_completed', 'contract_pending', 'contract_signed'],
@@ -1792,7 +1672,7 @@ applicationStatuses: ['submitted', 'review', 'interview_scheduled', 'interviewed
 
 **Valeur en dur**: `'medical_pending'`
 
-**32. Ligne 115** | Catégorie: `application_status`
+**17. Ligne 50** | Catégorie: `application_status`
 
 ```
 applicationStatuses: ['submitted', 'review', 'interview_scheduled', 'interviewed', 'selected', 'rejected', 'medical_pending', 'medical_completed', 'contract_pending', 'contract_signed'],
@@ -1800,7 +1680,7 @@ applicationStatuses: ['submitted', 'review', 'interview_scheduled', 'interviewed
 
 **Valeur en dur**: `'medical_completed'`
 
-**33. Ligne 115** | Catégorie: `application_status`
+**18. Ligne 50** | Catégorie: `application_status`
 
 ```
 applicationStatuses: ['submitted', 'review', 'interview_scheduled', 'interviewed', 'selected', 'rejected', 'medical_pending', 'medical_completed', 'contract_pending', 'contract_signed'],
@@ -1808,7 +1688,7 @@ applicationStatuses: ['submitted', 'review', 'interview_scheduled', 'interviewed
 
 **Valeur en dur**: `'contract_pending'`
 
-**34. Ligne 115** | Catégorie: `application_status`
+**19. Ligne 50** | Catégorie: `application_status`
 
 ```
 applicationStatuses: ['submitted', 'review', 'interview_scheduled', 'interviewed', 'selected', 'rejected', 'medical_pending', 'medical_completed', 'contract_pending', 'contract_signed'],
@@ -1816,7 +1696,7 @@ applicationStatuses: ['submitted', 'review', 'interview_scheduled', 'interviewed
 
 **Valeur en dur**: `'contract_signed'`
 
-**35. Ligne 116** | Catégorie: `application_status`
+**20. Ligne 51** | Catégorie: `application_status`
 
 ```
 validationStatuses: ['pending', 'approved', 'rejected'],
@@ -1824,7 +1704,7 @@ validationStatuses: ['pending', 'approved', 'rejected'],
 
 **Valeur en dur**: `'rejected'`
 
-**36. Ligne 117** | Catégorie: `roles`
+**21. Ligne 52** | Catégorie: `roles`
 
 ```
 validationTypes: ['interim', 'company', 'collaborator'],
@@ -1832,7 +1712,7 @@ validationTypes: ['interim', 'company', 'collaborator'],
 
 **Valeur en dur**: `'company'`
 
-**37. Ligne 117** | Catégorie: `roles`
+**22. Ligne 52** | Catégorie: `roles`
 
 ```
 validationTypes: ['interim', 'company', 'collaborator'],
@@ -1840,7 +1720,7 @@ validationTypes: ['interim', 'company', 'collaborator'],
 
 **Valeur en dur**: `'interim'`
 
-**38. Ligne 117** | Catégorie: `validation_types`
+**23. Ligne 52** | Catégorie: `validation_types`
 
 ```
 validationTypes: ['interim', 'company', 'collaborator'],
@@ -1848,7 +1728,7 @@ validationTypes: ['interim', 'company', 'collaborator'],
 
 **Valeur en dur**: `'interim'`
 
-**39. Ligne 117** | Catégorie: `validation_types`
+**24. Ligne 52** | Catégorie: `validation_types`
 
 ```
 validationTypes: ['interim', 'company', 'collaborator'],
@@ -1856,7 +1736,7 @@ validationTypes: ['interim', 'company', 'collaborator'],
 
 **Valeur en dur**: `'company'`
 
-**40. Ligne 117** | Catégorie: `validation_types`
+**25. Ligne 52** | Catégorie: `validation_types`
 
 ```
 validationTypes: ['interim', 'company', 'collaborator'],
@@ -1864,7 +1744,7 @@ validationTypes: ['interim', 'company', 'collaborator'],
 
 **Valeur en dur**: `'collaborator'`
 
-**41. Ligne 118** | Catégorie: `roles`
+**26. Ligne 53** | Catégorie: `roles`
 
 ```
 contractTypes: ['cdi', 'cdd', 'interim', 'freelance', 'stage'],
@@ -1872,13 +1752,53 @@ contractTypes: ['cdi', 'cdd', 'interim', 'freelance', 'stage'],
 
 **Valeur en dur**: `'interim'`
 
-**42. Ligne 118** | Catégorie: `validation_types`
+**27. Ligne 53** | Catégorie: `validation_types`
 
 ```
 contractTypes: ['cdi', 'cdd', 'interim', 'freelance', 'stage'],
 ```
 
 **Valeur en dur**: `'interim'`
+
+**28. Ligne 127** | Catégorie: `roles`
+
+```
+interim: 'interim',
+```
+
+**Valeur en dur**: `'interim'`
+
+**29. Ligne 127** | Catégorie: `validation_types`
+
+```
+interim: 'interim',
+```
+
+**Valeur en dur**: `'interim'`
+
+**30. Ligne 128** | Catégorie: `roles`
+
+```
+company: 'company',
+```
+
+**Valeur en dur**: `'company'`
+
+**31. Ligne 128** | Catégorie: `validation_types`
+
+```
+company: 'company',
+```
+
+**Valeur en dur**: `'company'`
+
+**32. Ligne 129** | Catégorie: `validation_types`
+
+```
+collaborator: 'collaborator'
+```
+
+**Valeur en dur**: `'collaborator'`
 
 
 ### 📄 `apps/web/src/pages/LandingPage.tsx`
@@ -2185,6 +2105,49 @@ ADMIN = "admin"
 **Valeur en dur**: `"interim"`
 
 
+### 📄 `auth-microservice/awana_auth/core/version_models.py`
+
+**1. Ligne 36** | Catégorie: `roles`
+
+```
+"roles": ["admin", "company", "interim", "supervisor"],
+```
+
+**Valeur en dur**: `"admin"`
+
+**2. Ligne 36** | Catégorie: `roles`
+
+```
+"roles": ["admin", "company", "interim", "supervisor"],
+```
+
+**Valeur en dur**: `"company"`
+
+**3. Ligne 36** | Catégorie: `roles`
+
+```
+"roles": ["admin", "company", "interim", "supervisor"],
+```
+
+**Valeur en dur**: `"interim"`
+
+**4. Ligne 36** | Catégorie: `validation_types`
+
+```
+"roles": ["admin", "company", "interim", "supervisor"],
+```
+
+**Valeur en dur**: `"interim"`
+
+**5. Ligne 36** | Catégorie: `validation_types`
+
+```
+"roles": ["admin", "company", "interim", "supervisor"],
+```
+
+**Valeur en dur**: `"company"`
+
+
 ### 📄 `auth-microservice/awana_auth/rbac/decorators.py`
 
 **1. Ligne 17** | Catégorie: `roles`
@@ -2408,6 +2371,81 @@ detail="Invalid role. Must be 'interim' or 'company'"
 ```
 
 **Valeur en dur**: `"agency"`
+
+
+### 📄 `auth-microservice/configuration_routes.py`
+
+**1. Ligne 79** | Catégorie: `roles`
+
+```
+"admin": config_manager.get("security.roles.admin"),
+```
+
+**Valeur en dur**: `"admin"`
+
+**2. Ligne 80** | Catégorie: `roles`
+
+```
+"super_admin": config_manager.get("security.roles.super_admin"),
+```
+
+**Valeur en dur**: `"super_admin"`
+
+**3. Ligne 81** | Catégorie: `roles`
+
+```
+"company": config_manager.get("security.roles.company"),
+```
+
+**Valeur en dur**: `"company"`
+
+**4. Ligne 81** | Catégorie: `validation_types`
+
+```
+"company": config_manager.get("security.roles.company"),
+```
+
+**Valeur en dur**: `"company"`
+
+**5. Ligne 82** | Catégorie: `roles`
+
+```
+"interim": config_manager.get("security.roles.interim"),
+```
+
+**Valeur en dur**: `"interim"`
+
+**6. Ligne 82** | Catégorie: `validation_types`
+
+```
+"interim": config_manager.get("security.roles.interim"),
+```
+
+**Valeur en dur**: `"interim"`
+
+**7. Ligne 83** | Catégorie: `roles`
+
+```
+"agency": config_manager.get("security.roles.agency"),
+```
+
+**Valeur en dur**: `"agency"`
+
+**8. Ligne 84** | Catégorie: `roles`
+
+```
+"commercial": config_manager.get("security.roles.commercial"),
+```
+
+**Valeur en dur**: `"commercial"`
+
+**9. Ligne 85** | Catégorie: `roles`
+
+```
+"validator": config_manager.get("security.roles.validator"),
+```
+
+**Valeur en dur**: `"validator"`
 
 
 ### 📄 `auth-microservice/google_auth_routes.py`
@@ -2921,7 +2959,7 @@ total_rejected = await db.validations.count_documents({"status": "rejected"})
 
 ## 🟠 Sévérité: HIGH
 
-**Total**: 75 occurrences
+**Total**: 77 occurrences
 
 ### 📄 `apps/web/src/components/ActionButton.tsx`
 
@@ -3265,7 +3303,7 @@ export type ContractStatus = 'not_generated' | 'draft' | 'sent' | 'signed_by_int
 
 ### 📄 `apps/web/src/hooks/useAppConfig.ts`
 
-**1. Ligne 54** | Catégorie: `user_status`
+**1. Ligne 43** | Catégorie: `user_status`
 
 ```
 active: 'active',
@@ -3273,7 +3311,7 @@ active: 'active',
 
 **Valeur en dur**: `'active'`
 
-**2. Ligne 55** | Catégorie: `user_status`
+**2. Ligne 44** | Catégorie: `user_status`
 
 ```
 pending: 'pending',
@@ -3281,7 +3319,7 @@ pending: 'pending',
 
 **Valeur en dur**: `'pending'`
 
-**3. Ligne 56** | Catégorie: `user_status`
+**3. Ligne 45** | Catégorie: `user_status`
 
 ```
 suspended: 'suspended',
@@ -3289,7 +3327,7 @@ suspended: 'suspended',
 
 **Valeur en dur**: `'suspended'`
 
-**4. Ligne 57** | Catégorie: `user_status`
+**4. Ligne 46** | Catégorie: `user_status`
 
 ```
 deleted: 'deleted',
@@ -3297,7 +3335,7 @@ deleted: 'deleted',
 
 **Valeur en dur**: `'deleted'`
 
-**5. Ligne 58** | Catégorie: `user_status`
+**5. Ligne 47** | Catégorie: `user_status`
 
 ```
 blocked: 'blocked'
@@ -3305,47 +3343,7 @@ blocked: 'blocked'
 
 **Valeur en dur**: `'blocked'`
 
-**6. Ligne 67** | Catégorie: `mission_status`
-
-```
-draft: 'draft',
-```
-
-**Valeur en dur**: `'draft'`
-
-**7. Ligne 68** | Catégorie: `mission_status`
-
-```
-published: 'published',
-```
-
-**Valeur en dur**: `'published'`
-
-**8. Ligne 69** | Catégorie: `mission_status`
-
-```
-closed: 'closed',
-```
-
-**Valeur en dur**: `'closed'`
-
-**9. Ligne 70** | Catégorie: `mission_status`
-
-```
-cancelled: 'cancelled',
-```
-
-**Valeur en dur**: `'cancelled'`
-
-**10. Ligne 71** | Catégorie: `mission_status`
-
-```
-archived: 'archived'
-```
-
-**Valeur en dur**: `'archived'`
-
-**11. Ligne 114** | Catégorie: `mission_status`
+**6. Ligne 49** | Catégorie: `mission_status`
 
 ```
 missionStatuses: ['draft', 'published', 'closed', 'cancelled', 'archived'],
@@ -3353,7 +3351,7 @@ missionStatuses: ['draft', 'published', 'closed', 'cancelled', 'archived'],
 
 **Valeur en dur**: `'draft'`
 
-**12. Ligne 114** | Catégorie: `mission_status`
+**7. Ligne 49** | Catégorie: `mission_status`
 
 ```
 missionStatuses: ['draft', 'published', 'closed', 'cancelled', 'archived'],
@@ -3361,7 +3359,7 @@ missionStatuses: ['draft', 'published', 'closed', 'cancelled', 'archived'],
 
 **Valeur en dur**: `'published'`
 
-**13. Ligne 114** | Catégorie: `mission_status`
+**8. Ligne 49** | Catégorie: `mission_status`
 
 ```
 missionStatuses: ['draft', 'published', 'closed', 'cancelled', 'archived'],
@@ -3369,7 +3367,7 @@ missionStatuses: ['draft', 'published', 'closed', 'cancelled', 'archived'],
 
 **Valeur en dur**: `'closed'`
 
-**14. Ligne 114** | Catégorie: `mission_status`
+**9. Ligne 49** | Catégorie: `mission_status`
 
 ```
 missionStatuses: ['draft', 'published', 'closed', 'cancelled', 'archived'],
@@ -3377,7 +3375,7 @@ missionStatuses: ['draft', 'published', 'closed', 'cancelled', 'archived'],
 
 **Valeur en dur**: `'cancelled'`
 
-**15. Ligne 114** | Catégorie: `mission_status`
+**10. Ligne 49** | Catégorie: `mission_status`
 
 ```
 missionStatuses: ['draft', 'published', 'closed', 'cancelled', 'archived'],
@@ -3385,7 +3383,7 @@ missionStatuses: ['draft', 'published', 'closed', 'cancelled', 'archived'],
 
 **Valeur en dur**: `'archived'`
 
-**16. Ligne 116** | Catégorie: `user_status`
+**11. Ligne 51** | Catégorie: `user_status`
 
 ```
 validationStatuses: ['pending', 'approved', 'rejected'],
@@ -3500,6 +3498,25 @@ PENDING = "pending"
 **Valeur en dur**: `"pending"`
 
 
+### 📄 `auth-microservice/awana_auth/core/version_models.py`
+
+**1. Ligne 37** | Catégorie: `user_status`
+
+```
+"statuses": ["active", "pending"]
+```
+
+**Valeur en dur**: `"active"`
+
+**2. Ligne 37** | Catégorie: `user_status`
+
+```
+"statuses": ["active", "pending"]
+```
+
+**Valeur en dur**: `"pending"`
+
+
 ### 📄 `auth-microservice/awana_auth/providers/google.py`
 
 **1. Ligne 92** | Catégorie: `user_status`
@@ -3554,6 +3571,49 @@ suspended_users = await db.users.count_documents({"status": "suspended"})
 **Valeur en dur**: `"suspended"`
 
 
+### 📄 `auth-microservice/configuration_routes.py`
+
+**1. Ligne 91** | Catégorie: `user_status`
+
+```
+"active": config_manager.get("security.user_statuses.active"),
+```
+
+**Valeur en dur**: `"active"`
+
+**2. Ligne 92** | Catégorie: `user_status`
+
+```
+"pending": config_manager.get("security.user_statuses.pending"),
+```
+
+**Valeur en dur**: `"pending"`
+
+**3. Ligne 93** | Catégorie: `user_status`
+
+```
+"suspended": config_manager.get("security.user_statuses.suspended"),
+```
+
+**Valeur en dur**: `"suspended"`
+
+**4. Ligne 94** | Catégorie: `user_status`
+
+```
+"deleted": config_manager.get("security.user_statuses.deleted"),
+```
+
+**Valeur en dur**: `"deleted"`
+
+**5. Ligne 95** | Catégorie: `user_status`
+
+```
+"blocked": config_manager.get("security.user_statuses.blocked"),
+```
+
+**Valeur en dur**: `"blocked"`
+
+
 ### 📄 `auth-microservice/scripts/seed_mission_references.py`
 
 **1. Ligne 32** | Catégorie: `mission_status`
@@ -3591,7 +3651,7 @@ suspended_users = await db.users.count_documents({"status": "suspended"})
 
 ## 🟡 Sévérité: MEDIUM
 
-**Total**: 82 occurrences
+**Total**: 84 occurrences
 
 ### 📄 `apps/web/src/components/LoginModal.tsx`
 
@@ -3880,7 +3940,7 @@ const [selectedDocType, setSelectedDocType] = useState('cv')
 
 ### 📄 `apps/web/src/hooks/useAppConfig.ts`
 
-**1. Ligne 42** | Catégorie: `contract_types`
+**1. Ligne 37** | Catégorie: `contract_types`
 
 ```
 interim: 'interim',
@@ -3888,15 +3948,7 @@ interim: 'interim',
 
 **Valeur en dur**: `'interim'`
 
-**2. Ligne 98** | Catégorie: `contract_types`
-
-```
-interim: 'interim',
-```
-
-**Valeur en dur**: `'interim'`
-
-**3. Ligne 117** | Catégorie: `contract_types`
+**2. Ligne 52** | Catégorie: `contract_types`
 
 ```
 validationTypes: ['interim', 'company', 'collaborator'],
@@ -3904,7 +3956,7 @@ validationTypes: ['interim', 'company', 'collaborator'],
 
 **Valeur en dur**: `'interim'`
 
-**4. Ligne 118** | Catégorie: `contract_types`
+**3. Ligne 53** | Catégorie: `contract_types`
 
 ```
 contractTypes: ['cdi', 'cdd', 'interim', 'freelance', 'stage'],
@@ -3912,7 +3964,7 @@ contractTypes: ['cdi', 'cdd', 'interim', 'freelance', 'stage'],
 
 **Valeur en dur**: `'cdi'`
 
-**5. Ligne 118** | Catégorie: `contract_types`
+**4. Ligne 53** | Catégorie: `contract_types`
 
 ```
 contractTypes: ['cdi', 'cdd', 'interim', 'freelance', 'stage'],
@@ -3920,7 +3972,7 @@ contractTypes: ['cdi', 'cdd', 'interim', 'freelance', 'stage'],
 
 **Valeur en dur**: `'cdd'`
 
-**6. Ligne 118** | Catégorie: `contract_types`
+**5. Ligne 53** | Catégorie: `contract_types`
 
 ```
 contractTypes: ['cdi', 'cdd', 'interim', 'freelance', 'stage'],
@@ -3928,13 +3980,21 @@ contractTypes: ['cdi', 'cdd', 'interim', 'freelance', 'stage'],
 
 **Valeur en dur**: `'interim'`
 
-**7. Ligne 118** | Catégorie: `contract_types`
+**6. Ligne 53** | Catégorie: `contract_types`
 
 ```
 contractTypes: ['cdi', 'cdd', 'interim', 'freelance', 'stage'],
 ```
 
 **Valeur en dur**: `'freelance'`
+
+**7. Ligne 127** | Catégorie: `contract_types`
+
+```
+interim: 'interim',
+```
+
+**Valeur en dur**: `'interim'`
 
 
 ### 📄 `apps/web/src/pages/LandingPage.tsx`
@@ -4070,6 +4130,17 @@ CV = "cv"
 **Valeur en dur**: `"interim"`
 
 
+### 📄 `auth-microservice/awana_auth/core/version_models.py`
+
+**1. Ligne 36** | Catégorie: `contract_types`
+
+```
+"roles": ["admin", "company", "interim", "supervisor"],
+```
+
+**Valeur en dur**: `"interim"`
+
+
 ### 📄 `auth-microservice/awana_auth/mfa/mfa_service.py`
 
 **1. Ligne 165** | Catégorie: `delays_days`
@@ -4197,6 +4268,17 @@ one_day_ago = (datetime.now(timezone.utc) - timedelta(days=1)).isoformat()
 
 ```
 "interim": interim_users,
+```
+
+**Valeur en dur**: `"interim"`
+
+
+### 📄 `auth-microservice/configuration_routes.py`
+
+**1. Ligne 82** | Catégorie: `contract_types`
+
+```
+"interim": config_manager.get("security.roles.interim"),
 ```
 
 **Valeur en dur**: `"interim"`
@@ -4344,7 +4426,7 @@ if document["type"] == "cv":
 
 ## 🟢 Sévérité: LOW
 
-**Total**: 184 occurrences
+**Total**: 187 occurrences
 
 ### 📄 `auth-microservice/awana_auth/core/config.py`
 
@@ -5001,7 +5083,7 @@ detail="Erreur lors de la réinitialisation du mot de passe"
 
 ### 📄 `auth-microservice/configuration_routes.py`
 
-**1. Ligne 115** | Catégorie: `messages`
+**1. Ligne 200** | Catégorie: `messages`
 
 ```
 raise HTTPException(status_code=404, detail="Référentiel non trouvé")
@@ -5009,7 +5091,7 @@ raise HTTPException(status_code=404, detail="Référentiel non trouvé")
 
 **Valeur en dur**: `detail="Référentiel non trouvé"`
 
-**2. Ligne 120** | Catégorie: `messages`
+**2. Ligne 205** | Catégorie: `messages`
 
 ```
 detail="Les référentiels système ne peuvent pas être désactivés"
@@ -5017,7 +5099,7 @@ detail="Les référentiels système ne peuvent pas être désactivés"
 
 **Valeur en dur**: `detail="Les référentiels système ne peuvent pas être désactivés"`
 
-**3. Ligne 156** | Catégorie: `messages`
+**3. Ligne 241** | Catégorie: `messages`
 
 ```
 raise HTTPException(status_code=404, detail="Référentiel non trouvé")
@@ -5025,7 +5107,7 @@ raise HTTPException(status_code=404, detail="Référentiel non trouvé")
 
 **Valeur en dur**: `detail="Référentiel non trouvé"`
 
-**4. Ligne 161** | Catégorie: `messages`
+**4. Ligne 246** | Catégorie: `messages`
 
 ```
 detail="Les référentiels système ne peuvent pas être supprimés"
@@ -5033,7 +5115,7 @@ detail="Les référentiels système ne peuvent pas être supprimés"
 
 **Valeur en dur**: `detail="Les référentiels système ne peuvent pas être supprimés"`
 
-**5. Ligne 251** | Catégorie: `messages`
+**5. Ligne 336** | Catégorie: `messages`
 
 ```
 raise HTTPException(status_code=404, detail="Paramètre non trouvé")
@@ -5213,7 +5295,7 @@ detail="Location not found"
 
 ### 📄 `auth-microservice/main.py`
 
-**1. Ligne 54** | Catégorie: `numeric_limits`
+**1. Ligne 55** | Catégorie: `numeric_limits`
 
 ```
 minPoolSize=config.get('database.min_pool_size', default=5),
@@ -5221,7 +5303,7 @@ minPoolSize=config.get('database.min_pool_size', default=5),
 
 **Valeur en dur**: `min_pool_size', default=5`
 
-**2. Ligne 75** | Catégorie: `messages`
+**2. Ligne 76** | Catégorie: `messages`
 
 ```
 description="Standalone Auth with JWT, OAuth2, RBAC",
@@ -5870,6 +5952,33 @@ detail="No missing country to add"
 ```
 
 **Valeur en dur**: `detail="No missing country to add"`
+
+
+### 📄 `auth-microservice/version_routes.py`
+
+**1. Ligne 132** | Catégorie: `messages`
+
+```
+detail="Version non trouvée"
+```
+
+**Valeur en dur**: `detail="Version non trouvée"`
+
+**2. Ligne 154** | Catégorie: `messages`
+
+```
+detail="Version cible non trouvée"
+```
+
+**Valeur en dur**: `detail="Version cible non trouvée"`
+
+**3. Ligne 245** | Catégorie: `messages`
+
+```
+detail="Une ou plusieurs versions non trouvées"
+```
+
+**Valeur en dur**: `detail="Une ou plusieurs versions non trouvées"`
 
 
 ---
