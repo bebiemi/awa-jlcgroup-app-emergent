@@ -52,7 +52,7 @@ export default function Sidebar() {
     if (user.roles.includes(roles.admin) || user.roles.includes(roles.super_admin)) return '/admin'
     if (user.roles.includes(roles.interim)) return '/interimaire'
     if (user.roles.includes(roles.company)) return '/entreprise'
-    if (user.roles.includes('agency')) return '/agence'
+    if (user.roles.includes(roles.agency)) return '/agence'
     return '/profile'
   }
 
@@ -61,7 +61,7 @@ export default function Sidebar() {
   const isAdmin = user.roles.includes(roles.admin) || user.roles.includes(roles.super_admin)
   const isInterim = user.roles.includes(roles.interim)
   const isCompany = user.roles.includes(roles.company)
-  const isCommercial = user.roles.includes('commercial')
+  const isCommercial = user.roles.includes(roles.commercial)
 
   // Navigation sections based on user role
   const navigationSections: NavSection[] = []
