@@ -1,0 +1,84 @@
+# Configuration STAGING - Préproduction
+
+app:
+  debug: false
+
+server:
+  reload: false
+  log_level: "info"
+  workers: 4
+
+database:
+  pool_size: 20
+  max_pool_size: 50
+
+security:
+  jwt:
+    access_token_expire_minutes: 30
+    
+  cors:
+    allow_origins:
+      - "https://staging.jlc-platform.com"
+      - "https://staging-api.jlc-platform.com"
+      
+  rate_limit:
+    enabled: true
+    default_limit: 150
+
+workflows:
+  mission:
+    auto_publish: false
+    
+  application:
+    delays:
+      interview_scheduling: 5
+      interview_to_decision: 2
+      medical_check: 10
+      contract_preparation: 5
+
+notifications:
+  email:
+    enabled: true
+    from_email: "noreply-staging@jlc-platform.com"
+    
+  sms:
+    enabled: true
+    provider: "twilio"
+
+storage:
+  cloud:
+    enabled: true
+    provider: "s3"
+    bucket: "jlc-staging-uploads"
+    region: "eu-west-1"
+
+cache:
+  references:
+    ttl_minutes: 20
+
+features:
+  mfa:
+    enabled: true
+    methods: ["totp", "sms", "email"]
+    
+  email_verification:
+    enabled: true
+    
+  ai_features:
+    enabled: true
+    cv_parsing: true
+    candidate_scoring: true
+    skill_matching: true
+
+monitoring:
+  logging:
+    level: "INFO"
+    format: "json"
+    
+  metrics:
+    enabled: true
+    provider: "prometheus"
+    
+  tracing:
+    enabled: true
+    provider: "jaeger"
