@@ -2,16 +2,36 @@
 Routes pour la gestion des contrats
 """
 from fastapi import APIRouter, Depends, HTTPException, status, Query
-from motor.motor_asyncio import AsyncIOMotorDatabase
-from awana_auth.core.dependencies import get_database, get_current_user
+from motor.motor_asyncio import AsyncIOMotorDatabase, AsyncIOMotorClient
+from awana_auth.core.dependencies import get_current_user
 from awana_auth.core.models import User
 from datetime import datetime, timezone, timedelta
 from typing import Optional, List
 import logging
+import os
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api/contracts", tags=["contracts"])
+
+# Connexion dédiée à jlc_db (base de données métier)
+_jlc_db_client = None
+_jlc_db = None
+
+def get_jlc_database() -> AsyncIOMotorDatabase:
+    """
+    Récupérer la base de données jlc_db (données métier: missions, candidatures)
+    Séparée de auth_db qui contient les utilisateurs
+    """
+    global _jlc_db_client, _jlc_db
+    
+    if _jlc_db is None:
+        mongo_url = os.getenv('MONGO_URL', 'mongodb://localhost:27017')
+        _jlc_db_client = AsyncIOMotorClient(mongo_url)
+        _jlc_db = _jlc_db_client["jlc_db"]
+        logger.info("📊 Connected to jlc_db for contract operations")
+    
+    return _jlc_db
 
 
 @router.get("/me")
