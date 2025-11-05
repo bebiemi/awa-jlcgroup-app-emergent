@@ -63,7 +63,7 @@ export default function InterimDashboard() {
           <div className="flex items-start justify-between">
             <div className="flex-1">
               <h1 className="text-3xl font-bold">
-                Bonjour, {profile?.first_name || 'Intérimaire'} 👋
+                Bonjour, {profile?.profile?.first_name || 'Intérimaire'} 👋
               </h1>
               <p className="mt-2 text-purple-100">
                 Bienvenue sur votre tableau de bord JLC Group
