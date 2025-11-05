@@ -7,9 +7,11 @@ from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
 from fastapi import Request, Response
 from fastapi.responses import JSONResponse
+from awana_auth.core.config_manager import get_config
 import logging
 
 logger = logging.getLogger(__name__)
+config = get_config()
 
 def rate_limit_exceeded_handler(request: Request, exc: RateLimitExceeded) -> Response:
     """
