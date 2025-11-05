@@ -315,5 +315,5 @@ async def clear_cache():
     Vider le cache des configurations
     À appeler après modification des référentiels
     """
-    # Implémenter la logique de cache (Redis, mémoire, etc.)
-    return {"message": "Cache vidé"}
+    await reference_cache.clear()
+    return {"message": "Cache vidé avec succès"}
