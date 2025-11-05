@@ -71,11 +71,23 @@ python main.py
 
 ## Documentation
 
+### Architecture & Développement
+
 Voir `/docs` pour plus d'informations:
 - Architecture
 - Flow d'authentification
 - Schéma de base de données
 - API endpoints
+- Configuration dynamique
+
+### Déploiement
+
+- **[📋 Deployment Overview](/docs/DEPLOYMENT_OVERVIEW.md)** - Vue d'ensemble complète du déploiement
+- **[🚀 Quick Reference](/docs/DEPLOYMENT_QUICK_REFERENCE.md)** - Commandes essentielles et référence rapide
+- **[💻 Dev Guide](/docs/DEPLOYMENT_DEV_GUIDE.md)** - Guide de déploiement environnement dev
+- **[🏭 Production Guide](/docs/DEPLOYMENT_PROD_GUIDE.md)** - Guide de déploiement production
+- **[⚙️ Configuration System](/docs/CONFIGURATION_SYSTEM_GUIDE.md)** - Système de configuration centralisé
+- **[✅ Checklist Template](/docs/DEPLOYMENT_CHECKLIST_TEMPLATE.md)** - Template de checklist de déploiement
 
 ## Licence
 
