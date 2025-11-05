@@ -99,6 +99,7 @@ export default function Sidebar() {
         items: [
           { label: 'Référentiels', path: '/admin/references', icon: Cog6ToothIcon },
           { label: 'Règles Métier', path: '/admin/rules', icon: Cog6ToothIcon },
+          { label: 'Feature Flags', path: '/admin/feature-flags', icon: FlagIcon },
           { label: 'Versions Config', path: '/admin/versions', icon: ClockIcon },
           { label: 'Profils & Permissions', path: '/admin/profiles', icon: ShieldCheckIcon },
         ],
