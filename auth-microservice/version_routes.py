@@ -1,7 +1,7 @@
 """
 Routes pour le versioning de configuration
 """
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from awana_auth.core.dependencies import get_database, require_admin, get_current_user
 from awana_auth.core.version_models import ConfigurationSnapshot, RollbackRequest, ConfigurationDiff
