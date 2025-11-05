@@ -212,7 +212,7 @@ export default function FeatureFlagsPage() {
       const fileContent = await importFile.text()
       const importData = JSON.parse(fileContent)
       
-      const token = localStorage.getItem('token')
+      const token = localStorage.getItem('access_token')
       const response = await fetch(`/auth-api/feature-flags/import?overwrite=${overwriteExisting}`, {
         method: 'POST',
         headers: {
