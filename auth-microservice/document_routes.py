@@ -15,6 +15,7 @@ from awana_auth.core.dependencies import get_database
 from awana_auth.core.config_manager import get_config
 from awana_auth.core.models import User
 from awana_auth.core.dependencies import get_current_user as get_user_dep
+from awana_auth.utils.config_helpers import cfg
 
 router = APIRouter(prefix="/api/documents", tags=["documents"])
 
@@ -152,7 +153,7 @@ async def download_document(
     
     # Check permissions
     user_roles = current_user.get("roles", [])
-    is_admin = any(role in user_roles for role in ["admin", "super_admin", "commercial"])
+    is_admin = any(role in user_roles for role in cfg.get_validator_roles())
     is_owner = document["user_id"] == current_user["sub"]
     
     if not (is_admin or is_owner):
@@ -216,7 +217,7 @@ async def delete_document(
     
     # Check permissions
     user_roles = current_user.get("roles", [])
-    is_admin = any(role in user_roles for role in ["admin", "super_admin"])
+    is_admin = any(role in user_roles for role in [cfg.get_admin_role(), cfg.get_super_admin_role()])
     is_owner = document["user_id"] == current_user["sub"]
     
     if not (is_admin or is_owner):

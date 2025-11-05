@@ -330,7 +330,7 @@ async def google_callback(
                 "provider_user_id": auth_result.metadata["google_id"],
                 "password_hash": None,
                 "is_verified": auth_result.user.is_verified,
-                "status": "pending",  # Requires validation for interim/company
+                "status": cfg.get_pending_status(),  # Requires validation for interim/company
                 "roles": [],
                 "created_at": datetime.now(timezone.utc),
                 "updated_at": datetime.now(timezone.utc),

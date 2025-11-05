@@ -178,7 +178,7 @@ async def create_validation_record(
         "user_email": user.email,
         "user_full_name": register_data.full_name,
         "validation_type": validation_type,
-        "status": "pending",
+        "status": cfg.get_pending_status(),
         "has_location_warning": False,
         "location_warning_message": None,
         "missing_country": None,
@@ -1467,8 +1467,8 @@ async def get_admin_stats(
     try:
         # Total users by status
         total_users = await db.users.count_documents({})
-        active_users = await db.users.count_documents({"status": "active"})
-        pending_users = await db.users.count_documents({"status": "pending"})
+        active_users = await db.users.count_documents({"status": cfg.get_active_status()})
+        pending_users = await db.users.count_documents({"status": cfg.get_pending_status()})
         suspended_users = await db.users.count_documents({"status": "suspended"})
         
         # Users by role
