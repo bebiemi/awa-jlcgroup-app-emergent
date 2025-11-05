@@ -238,9 +238,11 @@ export default function MissionsPage() {
                       <h3 className="text-xl font-semibold text-gray-900">
                         {mission.title}
                       </h3>
-                      <span className={`px-3 py-1 text-xs font-medium rounded-full ${STATUS_COLORS[mission.status]}`}>
-                        {STATUS_LABELS[mission.status]}
-                      </span>
+                      <StatusBadge
+                        category="mission_statuses"
+                        status={mission.status}
+                        showIcon
+                      />
                     </div>
                     
                     <p className="text-gray-600 mt-2 line-clamp-2">
