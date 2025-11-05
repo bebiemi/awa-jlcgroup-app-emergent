@@ -1965,10 +1965,11 @@ async def update_user_status(
     try:
         new_status = status_update.get("status")
         
-        if new_status not in ["active", "pending", "suspended", "deleted"]:
+        valid_statuses = cfg.get_all_user_statuses()
+        if new_status not in valid_statuses:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Status invalide. Valeurs autorisées: active, pending, suspended, deleted"
+                detail=f"Status invalide. Valeurs autorisées: {', '.join(valid_statuses)}"
             )
         
         users_collection = db.users
