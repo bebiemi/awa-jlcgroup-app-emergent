@@ -480,11 +480,15 @@ async def google_callback(
 
 @google_router.get("/status")
 async def google_oauth_status():
-    """Check if Google OAuth is configured"""
-    client_id = os.getenv("GOOGLE_CLIENT_ID")
-    client_secret = os.getenv("GOOGLE_CLIENT_SECRET")
+    """Check if Google OAuth is configured from ConfigManager"""
+    app_config = get_config()
+    
+    enabled = app_config.get("security.oauth.google.enabled", default=True)
+    client_id = app_config.get_secret("GOOGLE_CLIENT_ID", required=False)
+    client_secret = app_config.get_secret("GOOGLE_CLIENT_SECRET", required=False)
     
     return {
+        "enabled": enabled,
         "configured": bool(client_id and client_secret),
         "client_id": client_id[:20] + "..." if client_id else None
     }
