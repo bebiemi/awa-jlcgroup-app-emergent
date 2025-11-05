@@ -49,29 +49,41 @@ except Exception as e:
     logger.warning(f"Redis not available ({e}), falling back to memory storage")
     REDIS_URL = "memory://"
 
+# Charger la configuration de rate limiting
+rate_limit_enabled = config.get("security.rate_limit.enabled", default=True)
+default_limit = config.get("security.rate_limit.default_limit", default=100)
+default_period = config.get("security.rate_limit.default_period_seconds", default=60)
+
 limiter = Limiter(
     key_func=get_remote_address,
-    default_limits=["200/hour"],  # Global default limit
+    default_limits=[f"{default_limit}/{default_period} second"] if rate_limit_enabled else [],
     storage_uri=REDIS_URL,
     headers_enabled=True,
+    enabled=rate_limit_enabled
 )
 
-logger.info(f"Rate limiter initialized with storage: {REDIS_URL}")
-
-# Rate limit definitions for different endpoint categories
-RATE_LIMITS = {
-    "auth_login": "5/minute",           # Strict limit for login attempts
-    "auth_register": "100/minute",      # Registration attempts (high for testing)
-    "auth_token": "10/minute",          # EntraID token exchange
-    "auth_refresh": "30/minute",        # Token refresh
-    "upload": "10/hour",                # File uploads
-    "contact": "3/minute",              # Contact form (spam protection)
-    "admin_read": "120/minute",         # Admin GET requests
-    "admin_write": "60/minute",         # Admin POST/PUT/DELETE
-    "public_api": "60/minute",          # Public API endpoints
-    "chatbot": "20/minute",             # Chatbot interactions
-}
+logger.info(f"Rate limiter initialized (enabled={rate_limit_enabled}, storage={REDIS_URL})")
 
 def get_rate_limit(category: str) -> str:
-    """Get rate limit string for a category"""
-    return RATE_LIMITS.get(category, "100/hour")
+    """
+    Get rate limit string for a category from configuration
+    Falls back to default if not configured
+    """
+    if not rate_limit_enabled:
+        return "1000/hour"  # Très permissif si désactivé
+    
+    # Essayer de récupérer depuis la config
+    route_config = config.get(f"security.rate_limit.routes.{category}")
+    if route_config:
+        limit = route_config.get("limit", default_limit)
+        period = route_config.get("period_seconds", default_period)
+        return f"{limit}/{period} second"
+    
+    # Valeurs par défaut hardcodées pour compatibilité
+    RATE_LIMITS = {
+        "auth_login": f"{config.get('security.rate_limit.routes.login.limit', default=5)}/{config.get('security.rate_limit.routes.login.period_seconds', default=300)} second",
+        "auth_register": f"{config.get('security.rate_limit.routes.register.limit', default=3)}/{config.get('security.rate_limit.routes.register.period_seconds', default=3600)} second",
+        "password_reset": f"{config.get('security.rate_limit.routes.password_reset.limit', default=3)}/{config.get('security.rate_limit.routes.password_reset.period_seconds', default=3600)} second",
+    }
+    
+    return RATE_LIMITS.get(category, f"{default_limit}/{default_period} second")
