@@ -77,6 +77,7 @@ export default function Sidebar() {
           { label: 'Utilisateurs', path: '/admin/users', icon: UserGroupIcon },
           { label: 'Groupes', path: '/admin/groups', icon: UserGroupIcon },
           { label: 'Localisations', path: '/admin/locations', icon: MapPinIcon },
+          { label: 'Référentiels', path: '/admin/references', icon: Cog6ToothIcon },
           { label: 'Validations', path: '/admin/validations', icon: ClipboardDocumentCheckIcon },
         ],
       },
