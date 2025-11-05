@@ -112,7 +112,7 @@ export default function ConfigurationVersionsPage() {
     }
   }
 
-  useState(() => {
+  useEffect(() => {
     loadVersions()
   }, [])
 
