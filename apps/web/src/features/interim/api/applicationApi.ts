@@ -28,7 +28,7 @@ export const applicationApi = createApi({
   tagTypes: ['Applications'],
   endpoints: (builder) => ({
     getMyApplications: builder.query<{ applications: Application[] }, void>({
-      query: () => '/api/missions/my-applications',
+      query: () => '/missions/my-applications',
       providesTags: ['Applications'],
     }),
   }),
