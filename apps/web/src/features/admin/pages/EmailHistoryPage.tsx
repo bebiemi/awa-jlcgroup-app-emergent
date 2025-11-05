@@ -84,11 +84,11 @@ export const EmailHistoryPage: React.FC = () => {
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-900">{item.subject}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={\`px-2 py-1 text-xs rounded-full \${
+                    <span className={`px-2 py-1 text-xs rounded-full ${
                       item.status === 'sent'
                         ? 'bg-green-100 text-green-800'
                         : 'bg-red-100 text-red-800'
-                    }\`}>
+                    }`}>
                       {item.status}
                     </span>
                   </td>
