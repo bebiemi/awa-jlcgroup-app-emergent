@@ -34,6 +34,11 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 def hash_password(password: str) -> str:
     """Hasher un mot de passe"""
+    # Bcrypt a une limite de 72 bytes, on tronque si nécessaire
+    # En pratique, 72 caractères sont largement suffisants
+    password_bytes = password.encode('utf-8')
+    if len(password_bytes) > 72:
+        password = password_bytes[:72].decode('utf-8', errors='ignore')
     return pwd_context.hash(password)
 
 
