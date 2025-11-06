@@ -20,7 +20,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from motor.motor_asyncio import AsyncIOMotorClient
-from passlib.context import CryptContext
+import bcrypt
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -28,18 +28,22 @@ load_dotenv()
 MONGO_URL = os.environ.get('MONGO_URL', 'mongodb://localhost:27017')
 DB_NAME = os.environ.get('DATABASE_NAME', 'auth_db')
 
-# Configuration du hashing de mot de passe
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
 
 def hash_password(password: str) -> str:
-    """Hasher un mot de passe"""
-    # Bcrypt a une limite de 72 bytes, on tronque si nécessaire
-    # En pratique, 72 caractères sont largement suffisants
+    """Hasher un mot de passe avec bcrypt"""
+    # Bcrypt a une limite de 72 bytes
     password_bytes = password.encode('utf-8')
+    
+    # Tronquer si nécessaire (ne devrait jamais arriver en pratique)
     if len(password_bytes) > 72:
-        password = password_bytes[:72].decode('utf-8', errors='ignore')
-    return pwd_context.hash(password)
+        password_bytes = password_bytes[:72]
+    
+    # Générer le hash
+    salt = bcrypt.gensalt()
+    hashed = bcrypt.hashpw(password_bytes, salt)
+    
+    # Retourner en string
+    return hashed.decode('utf-8')
 
 
 async def create_super_admin():
