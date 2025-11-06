@@ -23,27 +23,31 @@ from motor.motor_asyncio import AsyncIOMotorClient
 import bcrypt
 from dotenv import load_dotenv
 
+# Importer le PasswordManager du backend
+from awana_auth.security.password import PasswordManager
+from awana_auth.core.config import AuthConfig
+
 load_dotenv()
 
 MONGO_URL = os.environ.get('MONGO_URL', 'mongodb://localhost:27017')
 DB_NAME = os.environ.get('DATABASE_NAME', 'auth_db')
 
+# Initialiser le gestionnaire de mots de passe
+config = AuthConfig()
+password_manager = PasswordManager(config)
+
 
 def hash_password(password: str) -> str:
-    """Hasher un mot de passe avec bcrypt"""
-    # Bcrypt a une limite de 72 bytes
-    password_bytes = password.encode('utf-8')
-    
-    # Tronquer si nécessaire (ne devrait jamais arriver en pratique)
-    if len(password_bytes) > 72:
-        password_bytes = password_bytes[:72]
-    
-    # Générer le hash
-    salt = bcrypt.gensalt()
-    hashed = bcrypt.hashpw(password_bytes, salt)
-    
-    # Retourner en string
-    return hashed.decode('utf-8')
+    """Hasher un mot de passe avec le même système que le backend"""
+    try:
+        return password_manager.hash_password(password)
+    except Exception as e:
+        # Si passlib échoue, utiliser bcrypt directement
+        print(f"⚠️  Fallback to direct bcrypt: {str(e)}")
+        password_bytes = password.encode('utf-8')[:72]  # Limite bcrypt
+        salt = bcrypt.gensalt()
+        hashed = bcrypt.hashpw(password_bytes, salt)
+        return hashed.decode('utf-8')
 
 
 async def create_super_admin():
