@@ -15,19 +15,25 @@ export default defineConfig({
     port: 3000,
     strictPort: true,
     // Allow dynamic preview domains (forked apps get different subdomains)
-    allowedHosts: ['.preview.emergentagent.com', '.emergent.host'],
+    allowedHosts: ['.preview.emergentagent.com', '.emergent.host', 'localhost', '127.0.0.1'],
     hmr: {
-      clientPort: 443,
-      protocol: 'wss',
+      // Use environment variable to determine HMR config
+      // For local dev, HMR will use default settings (http://localhost:3000)
+      ...(process.env.NODE_ENV === 'production' && {
+        clientPort: 443,
+        protocol: 'wss',
+      }),
     },
     proxy: {
       '/api': {
         target: 'http://localhost:8001',
         changeOrigin: true,
+        secure: false,
       },
       '/auth-api': {
         target: 'http://localhost:8000',
         changeOrigin: true,
+        secure: false,
         rewrite: (path) => path.replace(/^\/auth-api/, '/api'),
       },
     },
