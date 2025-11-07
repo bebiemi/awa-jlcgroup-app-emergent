@@ -300,4 +300,41 @@ class MFAStatusResponse(BaseModel):
     methods: List[str]
     phone_number: Optional[str] = None
 
+
+
+# ============================================================================
+# Presence/Status Models
+# ============================================================================
+
+class UserPresenceUpdate(BaseModel):
+    """Update user presence status"""
+    status: PresenceStatus
+    
+    
+class UserPresenceResponse(BaseModel):
+    """User presence status response"""
+    user_id: str
+    username: str
+    full_name: Optional[str] = None
+    presence_status: str
+    presence_updated_at: datetime
+    last_activity_at: datetime
+    
+    class Config:
+        json_encoders = {
+            datetime: lambda v: v.isoformat()
+        }
+
+
+class OnlineUsersResponse(BaseModel):
+    """List of online users with their presence status"""
+    users: List[UserPresenceResponse]
+    total: int
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    
+    class Config:
+        json_encoders = {
+            datetime: lambda v: v.isoformat()
+        }
+
     permissions: List[str] = Field(default_factory=list)
