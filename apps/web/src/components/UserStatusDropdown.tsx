@@ -49,9 +49,12 @@ export default function UserStatusDropdown({
   userEmail,
   compact = false,
 }: UserStatusDropdownProps) {
+  // CRITICAL: Only fetch if token exists
+  const hasToken = !!localStorage.getItem('access_token')
+  
   // Use cached data only - Layout component handles the fetching
   const { data: presence, isLoading } = useGetMyPresenceQuery(undefined, {
-    skip: false, // Use cache
+    skip: !hasToken, // CRITICAL: Skip if no token
     refetchOnMountOrArgChange: false,
     refetchOnFocus: false,
     refetchOnReconnect: false,
