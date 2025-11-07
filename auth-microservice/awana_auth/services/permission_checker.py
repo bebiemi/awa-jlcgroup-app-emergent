@@ -86,7 +86,7 @@ class PermissionChecker:
             return permission_codes
         
         # Get all permission IDs from profiles
-        profiles = self.db.profiles.find({"id": {"$in": profile_ids}})
+        profiles = await self.db.profiles.find({"id": {"$in": profile_ids}}).to_list(length=None)
         permission_ids = []
         for profile in profiles:
             permission_ids.extend(profile.get("permission_ids", []))
@@ -99,10 +99,10 @@ class PermissionChecker:
             return permission_codes
         
         # Get permission codes
-        permissions = self.db.permissions.find(
+        permissions = await self.db.permissions.find(
             {"id": {"$in": permission_ids}},
             {"code": 1}
-        )
+        ).to_list(length=None)
         permission_codes = {p["code"] for p in permissions}
         
         # Cache the result
