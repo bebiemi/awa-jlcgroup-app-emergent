@@ -3,11 +3,12 @@ import { useEffect, useRef } from 'react'
 interface ModalProps {
   isOpen: boolean
   onClose: () => void
+  title?: string
   children: React.ReactNode
   maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl'
 }
 
-export default function Modal({ isOpen, onClose, children, maxWidth = 'md' }: ModalProps) {
+export default function Modal({ isOpen, onClose, title, children, maxWidth = 'md' }: ModalProps) {
   const modalRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
