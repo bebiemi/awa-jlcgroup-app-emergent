@@ -141,7 +141,7 @@ export default function UserStatusDropdown({
                     className={clsx(
                       'group flex items-start w-full px-3 py-2 text-sm rounded-lg transition-colors',
                       active && 'bg-gray-50',
-                      currentStatus === option.value && 'bg-jlc-purple-50',
+                      currentStatus === option.value && 'bg-jlc-magenta/10',
                       isUpdating && 'opacity-50 cursor-not-allowed'
                     )}
                   >
