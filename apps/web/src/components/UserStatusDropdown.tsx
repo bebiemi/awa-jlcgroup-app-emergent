@@ -47,7 +47,13 @@ export default function UserStatusDropdown({
   userName,
   compact = false,
 }: UserStatusDropdownProps) {
-  const { data: presence, isLoading } = useGetMyPresenceQuery()
+  // Don't fetch here - rely on Layout to fetch and pass via cache
+  const { data: presence, isLoading } = useGetMyPresenceQuery(undefined, {
+    // Use cache only, don't make new requests
+    refetchOnMountOrArgChange: false,
+    refetchOnFocus: false,
+    refetchOnReconnect: false,
+  })
   const [updatePresence, { isLoading: isUpdating }] = useUpdateMyPresenceMutation()
 
   const handleStatusChange = async (status: PresenceStatus) => {
