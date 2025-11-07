@@ -1,8 +1,10 @@
 import { useAppSelector } from '@/store/hooks'
-import { BellIcon } from '@heroicons/react/24/outline'
+import { BellIcon, UserCircleIcon } from '@heroicons/react/24/outline'
 import { useGetNotificationsQuery } from '@/features/notifications/api/notificationApi'
+import { useGetMyPresenceQuery } from '@/features/presence/api/presenceApi'
 import { useState } from 'react'
 import NotificationDropdown from '@/features/notifications/components/NotificationDropdown'
+import UserStatusIndicator from './UserStatusIndicator'
 import Sidebar from './Sidebar'
 import Breadcrumb from './Breadcrumb'
 
