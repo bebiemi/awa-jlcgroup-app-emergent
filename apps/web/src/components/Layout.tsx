@@ -15,7 +15,11 @@ interface LayoutProps {
 export default function Layout({ children }: LayoutProps) {
   const { user, isAuthenticated } = useAppSelector((state) => state.auth)
   const [showNotifications, setShowNotifications] = useState(false)
-  const { data: presence } = useGetMyPresenceQuery(undefined, { skip: !isAuthenticated })
+  const { data: presence } = useGetMyPresenceQuery(undefined, { 
+    skip: !isAuthenticated,
+    pollingInterval: 120000, // Poll every 2 minutes only
+    refetchOnMountOrArgChange: 300, // Refetch if cache older than 5 minutes
+  })
 
   const { data: notificationsData } = useGetNotificationsQuery(
     {
