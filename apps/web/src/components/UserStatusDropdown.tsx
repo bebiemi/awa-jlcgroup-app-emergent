@@ -151,7 +151,7 @@ export default function UserStatusDropdown({
                         className={clsx(
                           'font-medium',
                           currentStatus === option.value
-                            ? 'text-jlc-purple-700'
+                            ? 'text-jlc-magenta'
                             : 'text-gray-900'
                         )}
                       >
@@ -161,7 +161,7 @@ export default function UserStatusDropdown({
                     </div>
                     {currentStatus === option.value && (
                       <div className="ml-2 flex-shrink-0">
-                        <div className="w-2 h-2 bg-jlc-purple-600 rounded-full" />
+                        <div className="w-2 h-2 bg-jlc-magenta rounded-full" />
                       </div>
                     )}
                   </button>
