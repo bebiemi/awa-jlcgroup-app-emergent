@@ -112,7 +112,7 @@ export default function UserStatusDropdown({
         )}
 
         {/* Dropdown Icon */}
-        {!compact && <ChevronDownIcon className="w-4 h-4 text-jlc-purple-300 flex-shrink-0" />}
+        {!compact && <ChevronDownIcon className="w-4 h-4 text-white/60 flex-shrink-0" />}
       </Menu.Button>
 
       <Transition
