@@ -48,7 +48,9 @@ export function useInactivityLogout() {
       try {
         await updatePresence({ status: 'online' }).unwrap()
         isAwayRef.current = false
+        console.log('Status reset to online')
       } catch (error) {
+        // Silently fail - not critical
         console.error('Failed to set online status:', error)
       }
     }
