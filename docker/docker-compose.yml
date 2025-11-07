@@ -82,7 +82,7 @@ services:
       - DATABASE_NAME=jlc_db
       - AUTH_SERVICE_URL=http://auth-microservice:8000
       - REDIS_URL=redis://redis:6379
-      - CORS_ORIGINS=http://localhost:3000,http://localhost:5173
+      - CORS_ORIGINS=["http://localhost:3000","http://localhost:5173","http://jlc-web:3000"]
       - UPLOAD_DIR=/app/uploads
       - BASE_URL=http://localhost:8001
       - SMTP_HOST=mailhog
