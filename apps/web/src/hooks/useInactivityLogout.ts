@@ -120,7 +120,16 @@ export function useInactivityLogout() {
       'scroll',
       'touchstart',
       'click',
+      'focus', // Window focus to detect tab return
     ]
+    
+    // Also listen for visibility change to detect when user returns to tab
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        console.log('🔄 Tab became visible - resetting to online')
+        handleActivity()
+      }
+    }
 
     // Throttle to avoid too many resets but ALWAYS process first activity
     let throttleTimeout: NodeJS.Timeout | null = null
