@@ -132,15 +132,15 @@ async def update_activity(
 
 @router.get("/online", response_model=OnlineUsersResponse)
 async def get_online_users(
-    auth_manager: AuthManager = Depends(get_auth_manager),
-    current_user: User = Depends(lambda am=Depends(get_auth_manager): am.get_current_user)
+    current_user: User = Depends(get_current_user),
+    db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """
     Get list of online/active users with their presence status
     Excludes users with 'invisible' status
     """
     try:
-        users_collection = auth_manager.auth_config.auth_db.users
+        users_collection = db.users
         
         # Get all users except those who are invisible or suspended
         users_cursor = users_collection.find({
