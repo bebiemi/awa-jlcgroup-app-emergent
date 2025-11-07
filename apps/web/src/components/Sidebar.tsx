@@ -239,7 +239,7 @@ export default function Sidebar() {
             <img 
               src="/logo-jlc.png" 
               alt="JLC Group" 
-              className={`${isCollapsed ? 'h-10 w-10' : 'h-12 w-auto'} object-contain transition-all`}
+              className={`${isCollapsed ? 'h-10 w-auto' : 'h-14 w-auto max-w-[180px]'} object-contain transition-all`}
             />
             {!isCollapsed && (
               <div>
