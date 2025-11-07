@@ -2,23 +2,16 @@ import { useEffect, useRef, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import { logoutAction } from '@/features/auth/slices/authSlice'
-import { useUpdateMyPresenceMutation, useUpdateActivityMutation } from '@/features/presence/api/presenceApi'
 import toast from 'react-hot-toast'
 
-const AWAY_TIMEOUT = 15 * 60 * 1000 // 15 minutes to set status to "away"
+// Simple inactivity logout - 30 minutes
 const LOGOUT_TIMEOUT = 30 * 60 * 1000 // 30 minutes to auto-logout
-const ACTIVITY_UPDATE_INTERVAL = 2 * 60 * 1000 // Update activity every 2 minutes
 
 export function useInactivityLogout() {
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
   const { isAuthenticated } = useAppSelector((state) => state.auth)
-  const awayTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const logoutTimeoutRef = useRef<NodeJS.Timeout | null>(null)
-  const activityIntervalRef = useRef<NodeJS.Timeout | null>(null)
-  const lastActivityUpdateRef = useRef<number>(0)
-  const [updatePresence] = useUpdateMyPresenceMutation()
-  const [updateActivity] = useUpdateActivityMutation()
 
   const logout = useCallback(() => {
     dispatch(logoutAction())
@@ -26,36 +19,18 @@ export function useInactivityLogout() {
     navigate('/', { replace: true })
   }, [dispatch, navigate])
 
-  const setAwayStatus = useCallback(async () => {
-    try {
-      await updatePresence({ status: 'away' }).unwrap()
-      toast('Statut changé en "Inactif" après 15 minutes d\'inactivité', {
-        icon: '🟡',
-        duration: 3000,
-      })
-    } catch (error) {
-      console.error('Failed to set away status:', error)
-    }
-  }, [updatePresence])
-
   const resetTimer = useCallback(() => {
-    // Clear existing timers
-    if (awayTimeoutRef.current) {
-      clearTimeout(awayTimeoutRef.current)
-    }
+    // Clear existing timer
     if (logoutTimeoutRef.current) {
       clearTimeout(logoutTimeoutRef.current)
     }
 
-    // Only set timers if user is authenticated
+    // Only set timer if user is authenticated
     if (isAuthenticated) {
-      // Set away timer (15 minutes)
-      awayTimeoutRef.current = setTimeout(setAwayStatus, AWAY_TIMEOUT)
-
       // Set logout timer (30 minutes)
       logoutTimeoutRef.current = setTimeout(logout, LOGOUT_TIMEOUT)
     }
-  }, [isAuthenticated, logout, setAwayStatus])
+  }, [isAuthenticated, logout])
 
   useEffect(() => {
     if (!isAuthenticated) {
