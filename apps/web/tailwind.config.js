@@ -7,37 +7,44 @@ export default {
   theme: {
     extend: {
       colors: {
-        // JLC Brand Colors from logo
+        // JLC Official Brand Colors
         jlc: {
+          magenta: '#913975',           // Couleur principale Magenta
+          'indigo-dark': '#362f50',     // Indigo grisé foncé
+          'neon-pink-gray': '#56335d',  // Néon rose grisé
+          'neon-pink': '#743669',       // Néon rose
+          
+          // Palette étendue pour variations
           purple: {
-            50: '#f5f3ff',
-            100: '#ede9fe',
-            200: '#ddd6fe',
-            300: '#c4b5fd',
-            400: '#a78bfa',
-            500: '#7D4CAA',  // Main brand purple
-            600: '#583A7B',  // Deep purple
-            700: '#4A3A6B',  // Dark blue-purple
-            800: '#30274D',  // Very dark
-            900: '#1e1b29',
+            50: '#faf5f9',
+            100: '#f4e9f1',
+            200: '#ecd4e6',
+            300: '#ddb3d4',
+            400: '#c889b9',
+            500: '#913975',  // Magenta principal
+            600: '#743669',  // Néon rose
+            700: '#56335d',  // Néon rose grisé
+            800: '#362f50',  // Indigo grisé foncé
+            900: '#2a2440',
           },
           accent: {
-            yellow: '#FFD700',  // Star yellow
-            light: '#A28BC2',   // Light purple (GROUP text)
+            yellow: '#FFD700',      // Star yellow (conservé)
+            magenta: '#913975',     // Magenta accent
+            pink: '#743669',        // Pink accent
           },
         },
-        // Keep primary for general use
+        // Keep primary for general use (utilise les couleurs JLC)
         primary: {
-          50: '#f5f3ff',
-          100: '#ede9fe',
-          200: '#ddd6fe',
-          300: '#c4b5fd',
-          400: '#a78bfa',
-          500: '#7D4CAA',
-          600: '#583A7B',
-          700: '#4A3A6B',
-          800: '#30274D',
-          900: '#1e1b29',
+          50: '#faf5f9',
+          100: '#f4e9f1',
+          200: '#ecd4e6',
+          300: '#ddb3d4',
+          400: '#c889b9',
+          500: '#913975',  // Magenta
+          600: '#743669',  // Néon rose
+          700: '#56335d',  // Néon rose grisé
+          800: '#362f50',  // Indigo grisé foncé
+          900: '#2a2440',
         },
       },
     },
