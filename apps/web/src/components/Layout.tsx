@@ -14,11 +14,14 @@ interface LayoutProps {
 export default function Layout({ children }: LayoutProps) {
   const { user, isAuthenticated } = useAppSelector((state) => state.auth)
   const [showNotifications, setShowNotifications] = useState(false)
-  // Temporarily disabled to fix infinite loop issue
+  
+  // Fetch presence status with conservative settings to avoid infinite loops
   const { data: presence } = useGetMyPresenceQuery(undefined, { 
-    skip: true, // DISABLED - was causing infinite loop
-    pollingInterval: 120000,
-    refetchOnMountOrArgChange: 300,
+    skip: !isAuthenticated, // Only fetch when authenticated
+    pollingInterval: 300000, // Poll every 5 minutes only
+    refetchOnMountOrArgChange: false, // Don't refetch on mount/arg change
+    refetchOnFocus: false, // Don't refetch on window focus
+    refetchOnReconnect: false, // Don't refetch on reconnect
   })
 
   const { data: notificationsData } = useGetNotificationsQuery(
