@@ -4,13 +4,12 @@ Provides utilities to check user permissions based on profiles and groups
 """
 from typing import List, Optional, Set
 from datetime import datetime, timedelta
-from pymongo.database import Database
-from bson import ObjectId
+from motor.motor_asyncio import AsyncIOMotorDatabase
 
 class PermissionChecker:
     """Service to check user permissions with caching"""
     
-    def __init__(self, db: Database):
+    def __init__(self, db: AsyncIOMotorDatabase):
         self.db = db
         self._cache = {}
         self._cache_ttl = timedelta(minutes=5)
