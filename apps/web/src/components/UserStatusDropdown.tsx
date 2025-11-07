@@ -86,8 +86,8 @@ export default function UserStatusDropdown({
       <Menu.Button
         className={clsx(
           'flex items-center w-full gap-3 px-2 py-2',
-          'text-jlc-purple-100 hover:bg-white/5 rounded-lg transition-colors',
-          'focus:outline-none focus:ring-2 focus:ring-jlc-purple-400'
+          'text-white/90 hover:bg-jlc-magenta/20 rounded-lg transition-colors',
+          'focus:outline-none focus:ring-2 focus:ring-jlc-magenta'
         )}
       >
         {/* Avatar with Status Indicator */}
