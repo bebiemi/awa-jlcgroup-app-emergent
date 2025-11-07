@@ -59,10 +59,11 @@ export const securityApi = createApi({
   reducerPath: 'securityApi',
   baseQuery: fetchBaseQuery({
     baseUrl: '/auth-api/auth/security',
-    prepareHeaders: (headers, { getState }) => {
-      const token = (getState() as any).auth.token
+    prepareHeaders: (headers) => {
+      // CRITICAL: Use localStorage directly for more reliable token access
+      const token = localStorage.getItem('access_token')
       if (token) {
-        headers.set('authorization', `Bearer ${token}`)
+        headers.set('Authorization', `Bearer ${token}`) // Note: Capital 'A' in Authorization
       }
       return headers
     },
