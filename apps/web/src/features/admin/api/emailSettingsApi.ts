@@ -56,16 +56,7 @@ export interface EmailTestResponse {
 
 export const emailSettingsApi = createApi({
   reducerPath: 'emailSettingsApi',
-  baseQuery: fetchBaseQuery({
-    baseUrl: API_URL,
-    prepareHeaders: (headers) => {
-      const token = localStorage.getItem('access_token');
-      if (token) {
-        headers.set('Authorization', `Bearer ${token}`);
-      }
-      return headers;
-    },
-  }),
+  baseQuery: createBaseQueryWithAuth(API_URL),
   tagTypes: ['EmailSettings'],
   endpoints: (builder) => ({
     getEmailSettings: builder.query<EmailConfig, void>({
