@@ -60,15 +60,26 @@ export function useInactivityLogout() {
   const resetToOnline = useCallback(async () => {
     if (isAwayRef.current) {
       try {
-        await updatePresence({ status: 'online' }).unwrap()
-        isAwayRef.current = false
-        console.log('Status reset to online')
+        // Use direct fetch for immediate response
+        const token = localStorage.getItem('access_token')
+        if (token) {
+          await fetch('/auth-api/users/presence/me', {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ status: 'online' })
+          })
+          isAwayRef.current = false
+          console.log('✅ Status reset to ONLINE after activity')
+        }
       } catch (error) {
         // Silently fail - not critical
         console.error('Failed to set online status:', error)
       }
     }
-  }, [updatePresence])
+  }, [])
 
   const resetTimer = useCallback(() => {
     // Clear existing timers
