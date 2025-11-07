@@ -34,10 +34,8 @@ export function useInactivityLogout() {
 
   useEffect(() => {
     if (!isAuthenticated) {
-      // Clear all timers if not authenticated
-      if (awayTimeoutRef.current) clearTimeout(awayTimeoutRef.current)
+      // Clear timer if not authenticated
       if (logoutTimeoutRef.current) clearTimeout(logoutTimeoutRef.current)
-      if (activityIntervalRef.current) clearInterval(activityIntervalRef.current)
       return
     }
 
@@ -54,18 +52,9 @@ export function useInactivityLogout() {
     // Reset timer on any user activity
     const handleActivity = () => {
       resetTimer()
-      
-      // Throttle activity updates to max once per minute
-      const now = Date.now()
-      const timeSinceLastUpdate = now - lastActivityUpdateRef.current
-      
-      if (timeSinceLastUpdate > 60000) { // Only update if 1+ minute since last update
-        lastActivityUpdateRef.current = now
-        updateActivity().catch(console.error)
-      }
     }
 
-    // Add event listeners
+    // Add event listeners with passive option for better performance
     events.forEach((event) => {
       document.addEventListener(event, handleActivity, { passive: true })
     })
@@ -73,27 +62,14 @@ export function useInactivityLogout() {
     // Initialize timer
     resetTimer()
 
-    // Periodic activity update (every 2 minutes if user is active)
-    activityIntervalRef.current = setInterval(() => {
-      if (isAuthenticated) {
-        updateActivity().catch(console.error)
-      }
-    }, ACTIVITY_UPDATE_INTERVAL)
-
     // Cleanup
     return () => {
       events.forEach((event) => {
         document.removeEventListener(event, handleActivity)
       })
-      if (awayTimeoutRef.current) {
-        clearTimeout(awayTimeoutRef.current)
-      }
       if (logoutTimeoutRef.current) {
         clearTimeout(logoutTimeoutRef.current)
       }
-      if (activityIntervalRef.current) {
-        clearInterval(activityIntervalRef.current)
-      }
     }
-  }, [isAuthenticated, resetTimer, updateActivity])
+  }, [isAuthenticated, resetTimer])
 }
