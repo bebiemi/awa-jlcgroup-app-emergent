@@ -110,7 +110,7 @@ class PermissionChecker:
         
         return permission_codes
     
-    def user_has_permission(
+    async def user_has_permission(
         self, 
         user_id: str, 
         permission_code: str,
@@ -127,7 +127,7 @@ class PermissionChecker:
         Returns:
             True if user has permission, False otherwise
         """
-        user_permissions = self.get_user_permissions(user_id)
+        user_permissions = await self.get_user_permissions(user_id)
         
         # Direct match
         if permission_code in user_permissions:
