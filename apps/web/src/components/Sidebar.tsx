@@ -5,7 +5,6 @@ import { logoutAction } from '@/features/auth/slices/authSlice'
 import { useRoles } from '@/hooks/useAppConfig'
 import { useTranslation } from 'react-i18next'
 import LanguageSwitcher from './LanguageSwitcher'
-import UserStatusDropdown from './UserStatusDropdown'
 import {
   HomeIcon,
   UserGroupIcon,
