@@ -125,6 +125,14 @@ export default function Sidebar() {
         ],
       },
       {
+        title: 'IAM & Sécurité',
+        items: [
+          { label: 'Gestion des Profils', path: '/admin/iam/profiles', icon: ShieldCheckIcon },
+          { label: 'Contrôle d\'Accès', path: '/admin/iam/control', icon: ShieldCheckIcon },
+          { label: 'Profils & Permissions', path: '/admin/profiles', icon: ShieldCheckIcon },
+        ],
+      },
+      {
         title: 'Paramètres',
         items: [
           { label: 'Référentiels', path: '/admin/references', icon: Cog6ToothIcon },
@@ -132,7 +140,6 @@ export default function Sidebar() {
           { label: 'Feature Flags', path: '/admin/feature-flags', icon: FlagIcon },
           { label: 'Versions Config', path: '/admin/versions', icon: ClockIcon },
           { label: 'Configuration Email', path: '/admin/email-settings', icon: EnvelopeIcon },
-          { label: 'Profils & Permissions', path: '/admin/profiles', icon: ShieldCheckIcon },
         ],
       },
       {
