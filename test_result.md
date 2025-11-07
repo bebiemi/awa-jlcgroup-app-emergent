@@ -241,6 +241,18 @@ backend:
 
 
 frontend:
+  - task: "IAM Frontend Integration"
+    implemented: true
+    working: "pending_test"
+    file: "/app/apps/web/src/features/iam/pages/"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "pending_test"
+        agent: "main"
+        comment: "IAM frontend implemented with: 1) iamApi RTK Query slice integrated in Redux store, 2) ProfilesManagementPage at /admin/iam/profiles for managing profiles and permissions with create/edit/delete modals, 3) IAMControlPage at /admin/iam/control with tabs for Groups and Permissions management, 4) Routes added in App.tsx with SuperAdmin/Admin role protection, 5) Sidebar updated with new 'IAM & Sécurité' section containing 'Gestion des Profils' and 'Contrôle d'Accès' links, 6) Modal component enhanced with optional title prop. Needs testing after backend IAM is verified."
+  
   - task: "Registration Form UI"
     implemented: true
     working: "NA"
