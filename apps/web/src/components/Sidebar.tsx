@@ -212,9 +212,9 @@ export default function Sidebar() {
   }
 
   const SidebarContent = () => (
-    <div className="flex flex-col h-full bg-gradient-to-b from-jlc-purple-800 to-jlc-purple-900 text-white">
+    <div className="flex flex-col h-full bg-gradient-to-b from-jlc-indigo-dark to-jlc-neon-pink-gray text-white">
       {/* Header */}
-      <div className="p-4 border-b border-jlc-purple-700">
+      <div className="p-4 border-b border-jlc-neon-pink/30">
         <div className="flex items-center justify-between">
           <Link to={getDashboardPath()} className="flex items-center space-x-3 hover:opacity-80 transition">
             <img 
