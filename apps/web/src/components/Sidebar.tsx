@@ -51,7 +51,14 @@ export default function Sidebar() {
   const { user } = useAppSelector((state) => state.auth)
 
   const handleLogout = () => {
+    // Clear all API caches to prevent stale data and 502 errors
+    dispatch({ type: 'presenceApi/resetApiState' })
+    dispatch({ type: 'api/resetApiState' })
+    
+    // Logout and clear localStorage
     dispatch(logoutAction())
+    
+    // Redirect to homepage
     navigate('/', { replace: true })
   }
 
