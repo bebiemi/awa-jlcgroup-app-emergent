@@ -40,16 +40,18 @@ const STATUS_OPTIONS: StatusOption[] = [
 
 interface UserStatusDropdownProps {
   userName?: string
+  userEmail?: string
   compact?: boolean
 }
 
 export default function UserStatusDropdown({
   userName,
+  userEmail,
   compact = false,
 }: UserStatusDropdownProps) {
-  // Don't fetch here - rely on Layout to fetch and pass via cache
+  // Use cached data only - Layout component handles the fetching
   const { data: presence, isLoading } = useGetMyPresenceQuery(undefined, {
-    // Use cache only, don't make new requests
+    skip: false, // Use cache
     refetchOnMountOrArgChange: false,
     refetchOnFocus: false,
     refetchOnReconnect: false,
