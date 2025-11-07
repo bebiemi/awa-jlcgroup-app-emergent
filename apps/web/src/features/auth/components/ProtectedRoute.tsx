@@ -13,13 +13,20 @@ export default function ProtectedRoute({
   requiredRoles,
 }: ProtectedRouteProps) {
   const { isAuthenticated, token } = useAppSelector((state) => state.auth)
+  
+  // CRITICAL: Also check localStorage for token persistence
+  const localToken = localStorage.getItem('access_token')
+  const localUser = localStorage.getItem('user')
+  
+  // If no token in state OR localStorage, redirect to login
+  if (!isAuthenticated || !token || !localToken || !localUser) {
+    console.warn('🚨 ProtectedRoute: No valid authentication found, redirecting to login')
+    return <Navigate to="/login" replace />
+  }
+  
   const { data: user, isLoading } = useGetCurrentUserQuery(undefined, {
     skip: !token,
   })
-
-  if (!isAuthenticated || !token) {
-    return <Navigate to="/login" replace />
-  }
 
   if (isLoading) {
     return (
