@@ -77,25 +77,31 @@ export default function UserStatusDropdown({
     <Menu as="div" className="relative inline-block text-left w-full">
       <Menu.Button
         className={clsx(
-          'flex items-center justify-between w-full px-3 py-2 text-sm',
-          'text-gray-700 hover:bg-gray-50 rounded-lg transition-colors',
-          'focus:outline-none focus:ring-2 focus:ring-jlc-purple-500 focus:ring-offset-2'
+          'flex items-center w-full gap-3 px-2 py-2',
+          'text-jlc-purple-100 hover:bg-white/5 rounded-lg transition-colors',
+          'focus:outline-none focus:ring-2 focus:ring-jlc-purple-400'
         )}
       >
-        <div className="flex items-center space-x-2 min-w-0 flex-1">
-          <UserStatusIndicator status={currentStatus} size="md" showTooltip={false} />
-          {!compact && (
-            <div className="flex flex-col items-start min-w-0">
-              {userName && (
-                <span className="text-xs font-medium text-gray-900 truncate max-w-[150px]">
-                  {userName}
-                </span>
-              )}
-              <span className="text-xs text-gray-500">{currentOption?.label}</span>
-            </div>
-          )}
+        {/* Avatar with Status Indicator */}
+        <div className="relative flex-shrink-0">
+          <div className="h-10 w-10 rounded-full bg-gradient-to-br from-jlc-accent-yellow to-yellow-500 flex items-center justify-center text-jlc-purple-900 font-bold">
+            {userName?.charAt(0) || 'U'}
+          </div>
+          <div className="absolute -bottom-0.5 -right-0.5">
+            <UserStatusIndicator status={currentStatus} size="md" showTooltip={false} />
+          </div>
         </div>
-        {!compact && <ChevronDownIcon className="w-4 h-4 text-gray-400 flex-shrink-0" />}
+
+        {/* User Info */}
+        {!compact && (
+          <div className="flex-1 min-w-0 text-left">
+            <p className="text-sm font-medium text-white truncate">{userName}</p>
+            <p className="text-xs text-jlc-purple-300">{currentOption?.label}</p>
+          </div>
+        )}
+
+        {/* Dropdown Icon */}
+        {!compact && <ChevronDownIcon className="w-4 h-4 text-jlc-purple-300 flex-shrink-0" />}
       </Menu.Button>
 
       <Transition
