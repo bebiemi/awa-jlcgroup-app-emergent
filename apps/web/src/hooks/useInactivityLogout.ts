@@ -73,8 +73,10 @@ export function useInactivityLogout() {
 
   useEffect(() => {
     if (!isAuthenticated) {
-      // Clear timer if not authenticated
+      // Clear timers if not authenticated
+      if (awayTimeoutRef.current) clearTimeout(awayTimeoutRef.current)
       if (logoutTimeoutRef.current) clearTimeout(logoutTimeoutRef.current)
+      isAwayRef.current = false
       return
     }
 
@@ -88,9 +90,17 @@ export function useInactivityLogout() {
       'click',
     ]
 
-    // Reset timer on any user activity
+    // Throttle to avoid too many resets
+    let throttleTimeout: NodeJS.Timeout | null = null
+    
     const handleActivity = () => {
-      resetTimer()
+      if (!throttleTimeout) {
+        resetTimer()
+        // Throttle to max once per 5 seconds
+        throttleTimeout = setTimeout(() => {
+          throttleTimeout = null
+        }, 5000)
+      }
     }
 
     // Add event listeners with passive option for better performance
@@ -106,8 +116,14 @@ export function useInactivityLogout() {
       events.forEach((event) => {
         document.removeEventListener(event, handleActivity)
       })
+      if (awayTimeoutRef.current) {
+        clearTimeout(awayTimeoutRef.current)
+      }
       if (logoutTimeoutRef.current) {
         clearTimeout(logoutTimeoutRef.current)
+      }
+      if (throttleTimeout) {
+        clearTimeout(throttleTimeout)
       }
     }
   }, [isAuthenticated, resetTimer])
