@@ -42,8 +42,40 @@ export default function Layout({ children }: LayoutProps) {
                   {/* Space for future enhancements */}
                 </div>
 
-                {/* Right side - Notifications */}
+                {/* Right side - User Status & Notifications */}
                 <div className="flex items-center space-x-4">
+                  {/* User Avatar with Status */}
+                  <div className="flex items-center space-x-3">
+                    <div className="relative">
+                      <div className="h-10 w-10 rounded-full bg-gradient-to-br from-jlc-accent-yellow to-yellow-500 flex items-center justify-center text-jlc-purple-900 font-semibold">
+                        {user?.full_name?.charAt(0) || user?.username?.charAt(0) || 'U'}
+                      </div>
+                      {presence && (
+                        <div className="absolute -bottom-1 -right-1">
+                          <UserStatusIndicator 
+                            status={presence.presence_status} 
+                            size="md"
+                            showTooltip={true}
+                          />
+                        </div>
+                      )}
+                    </div>
+                    <div className="hidden md:block">
+                      <p className="text-sm font-medium text-gray-900">
+                        {user?.full_name || user?.username}
+                      </p>
+                      {presence && (
+                        <p className="text-xs text-gray-500 capitalize">
+                          {presence.presence_status === 'online' && 'En ligne'}
+                          {presence.presence_status === 'away' && 'Inactif'}
+                          {presence.presence_status === 'do_not_disturb' && 'Ne pas déranger'}
+                          {presence.presence_status === 'offline' && 'Absent'}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Notifications */}
                   <div className="relative">
                     <button
                       onClick={() => setShowNotifications(!showNotifications)}
