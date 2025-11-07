@@ -197,6 +197,24 @@ function App() {
         }
       />
       
+      {/* Routes IAM - SuperAdmin & Admin */}
+      <Route
+        path="/admin/iam/profiles"
+        element={
+          <ProtectedRoute requiredRoles={[roles.admin, roles.super_admin]}>
+            <ProfilesManagementPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/iam/control"
+        element={
+          <ProtectedRoute requiredRoles={[roles.admin, roles.super_admin]}>
+            <IAMControlPage />
+          </ProtectedRoute>
+        }
+      />
+      
       {/* Routes Missions - Admin & Commercial */}
       <Route
         path="/missions"
