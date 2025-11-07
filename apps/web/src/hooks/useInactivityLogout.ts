@@ -79,8 +79,15 @@ export function useInactivityLogout() {
     // Reset timer on any user activity
     const handleActivity = () => {
       resetTimer()
-      // Also update activity timestamp on backend
-      updateActivity().catch(console.error)
+      
+      // Throttle activity updates to max once per minute
+      const now = Date.now()
+      const timeSinceLastUpdate = now - lastActivityUpdateRef.current
+      
+      if (timeSinceLastUpdate > 60000) { // Only update if 1+ minute since last update
+        lastActivityUpdateRef.current = now
+        updateActivity().catch(console.error)
+      }
     }
 
     // Add event listeners
