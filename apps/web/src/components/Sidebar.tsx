@@ -284,17 +284,12 @@ export default function Sidebar() {
           </div>
         )}
         
-        {/* User Info */}
-        <div className="flex items-center gap-3 mb-3">
-          <div className="h-10 w-10 rounded-full bg-gradient-to-br from-jlc-accent-yellow to-yellow-500 flex items-center justify-center text-jlc-purple-900 font-bold flex-shrink-0">
-            {user.full_name?.charAt(0) || user.username.charAt(0)}
-          </div>
-          {!isCollapsed && (
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium truncate">{user.full_name || user.username}</p>
-              <p className="text-xs text-jlc-purple-300 truncate">{user.email}</p>
-            </div>
-          )}
+        {/* User Status & Info */}
+        <div className="mb-3 bg-white/5 rounded-lg p-2">
+          <UserStatusDropdown 
+            userName={user.full_name || user.username}
+            compact={isCollapsed}
+          />
         </div>
         
         {/* Logout Button */}
