@@ -31,6 +31,10 @@ export const presenceApi = createApi({
       return headers
     },
   }),
+  // Prevent infinite retry loops
+  refetchOnMountOrArgChange: false,
+  refetchOnFocus: false,
+  refetchOnReconnect: false,
   tagTypes: ['Presence', 'OnlineUsers'],
   endpoints: (builder) => ({
     getMyPresence: builder.query<UserPresence, void>({
