@@ -99,11 +99,19 @@ export function useInactivityLogout() {
 
     // Throttle to avoid too many resets
     let throttleTimeout: NodeJS.Timeout | null = null
+    let lastActivityTime = 0
     
     const handleActivity = () => {
-      if (!throttleTimeout) {
-        resetTimer()
-        // Throttle to max once per 5 seconds
+      const now = Date.now()
+      const timeSinceLastActivity = now - lastActivityTime
+      
+      // Always reset on first activity or after throttle period
+      if (!throttleTimeout || timeSinceLastActivity > 5000) {
+        lastActivityTime = now
+        resetTimer() // This will call resetToOnline if was away
+        
+        // Throttle subsequent calls for 5 seconds
+        if (throttleTimeout) clearTimeout(throttleTimeout)
         throttleTimeout = setTimeout(() => {
           throttleTimeout = null
         }, 5000)
