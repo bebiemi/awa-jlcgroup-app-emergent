@@ -159,8 +159,15 @@ export function useInactivityLogout() {
 
     // Add event listeners with passive option for better performance
     events.forEach((event) => {
-      document.addEventListener(event, handleActivity, { passive: true })
+      if (event === 'focus') {
+        window.addEventListener(event, handleActivity)
+      } else {
+        document.addEventListener(event, handleActivity, { passive: true })
+      }
     })
+    
+    // Add visibility change listener
+    document.addEventListener('visibilitychange', handleVisibilityChange)
 
     // Initialize timer
     resetTimer()
@@ -168,8 +175,14 @@ export function useInactivityLogout() {
     // Cleanup
     return () => {
       events.forEach((event) => {
-        document.removeEventListener(event, handleActivity)
+        if (event === 'focus') {
+          window.removeEventListener(event, handleActivity)
+        } else {
+          document.removeEventListener(event, handleActivity)
+        }
       })
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+      
       if (awayTimeoutRef.current) {
         clearTimeout(awayTimeoutRef.current)
       }
