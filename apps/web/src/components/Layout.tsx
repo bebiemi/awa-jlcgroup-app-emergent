@@ -4,6 +4,7 @@ import { useGetNotificationsQuery } from '@/features/notifications/api/notificat
 import { useGetMyPresenceQuery } from '@/features/presence/api/presenceApi'
 import { useState } from 'react'
 import NotificationDropdown from '@/features/notifications/components/NotificationDropdown'
+import UserStatusIndicator from './UserStatusIndicator'
 import Sidebar from './Sidebar'
 import Breadcrumb from './Breadcrumb'
 
