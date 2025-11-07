@@ -16,6 +16,7 @@ export function useInactivityLogout() {
   const awayTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const logoutTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const activityIntervalRef = useRef<NodeJS.Timeout | null>(null)
+  const lastActivityUpdateRef = useRef<number>(0)
   const [updatePresence] = useUpdateMyPresenceMutation()
   const [updateActivity] = useUpdateActivityMutation()
 
