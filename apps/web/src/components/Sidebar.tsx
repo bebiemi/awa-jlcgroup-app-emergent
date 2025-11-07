@@ -284,8 +284,8 @@ export default function Sidebar() {
           </div>
         )}
         
-        {/* User Status & Info */}
-        <div className="mb-3 bg-white/5 rounded-lg p-2">
+        {/* User Info with Status Dropdown */}
+        <div className="mb-3">
           <UserStatusDropdown 
             userName={user.full_name || user.username}
             compact={isCollapsed}
