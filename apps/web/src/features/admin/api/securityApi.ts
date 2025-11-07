@@ -58,17 +58,7 @@ export interface CreateProfileRequest {
 
 export const securityApi = createApi({
   reducerPath: 'securityApi',
-  baseQuery: fetchBaseQuery({
-    baseUrl: '/auth-api/auth/security',
-    prepareHeaders: (headers) => {
-      // CRITICAL: Use localStorage directly for more reliable token access
-      const token = localStorage.getItem('access_token')
-      if (token) {
-        headers.set('Authorization', `Bearer ${token}`) // Note: Capital 'A' in Authorization
-      }
-      return headers
-    },
-  }),
+  baseQuery: createBaseQueryWithAuth('/auth-api/auth/security'),
   tagTypes: ['Permissions', 'Profiles', 'Groups'],
   endpoints: (builder) => ({
     // Permissions
