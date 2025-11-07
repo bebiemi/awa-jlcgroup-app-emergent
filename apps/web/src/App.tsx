@@ -44,7 +44,19 @@ function App() {
   const { isAuthenticated, user } = useAppSelector((state) => state.auth)
   const roles = useRoles()
   
-  // Auto-logout after 10 minutes of inactivity
+  // CRITICAL: Verify authentication on app load
+  React.useEffect(() => {
+    const token = localStorage.getItem('access_token')
+    const storedUser = localStorage.getItem('user')
+    
+    // If no token or user data, but app thinks user is authenticated, force logout
+    if (isAuthenticated && (!token || !storedUser)) {
+      console.error('🚨 Invalid session detected on app load - forcing logout')
+      window.location.href = '/login'
+    }
+  }, [isAuthenticated])
+  
+  // Auto-logout after 30 minutes of inactivity
   useInactivityLogout()
 
   // Redirect to role-specific dashboard
