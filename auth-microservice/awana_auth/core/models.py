@@ -26,6 +26,15 @@ class UserStatus(str, Enum):
     PENDING = "pending"
 
 
+class PresenceStatus(str, Enum):
+    """User presence/availability status"""
+    ONLINE = "online"           # 🟢 Active and available
+    AWAY = "away"              # 🟡 Inactive (15+ min no activity)
+    DO_NOT_DISTURB = "do_not_disturb"  # 🔴 Do not disturb (manual)
+    OFFLINE = "offline"        # ⚪ Offline (manual or 30+ min)
+    INVISIBLE = "invisible"    # Hidden status
+
+
 class User(BaseModel):
     """User model"""
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
