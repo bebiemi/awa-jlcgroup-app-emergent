@@ -264,8 +264,8 @@ export default function Sidebar() {
                       onClick={() => setIsMobileOpen(false)}
                       className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all ${
                         active
-                          ? 'bg-jlc-purple-700 text-white shadow-lg'
-                          : 'text-jlc-purple-200 hover:bg-jlc-purple-700/50 hover:text-white'
+                          ? 'bg-jlc-magenta text-white shadow-lg'
+                          : 'text-white/80 hover:bg-jlc-magenta/50 hover:text-white'
                       }`}
                       title={isCollapsed ? item.label : undefined}
                     >
