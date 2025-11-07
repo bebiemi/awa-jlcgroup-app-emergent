@@ -68,12 +68,12 @@ export const emailSettingsApi = createApi({
   tagTypes: ['EmailSettings'],
   endpoints: (builder) => ({
     getEmailSettings: builder.query<EmailConfig, void>({
-      query: () => '/api/emails/settings',
+      query: () => '/emails/settings', // Removed /api - baseUrl already includes it via proxy rewrite
       providesTags: ['EmailSettings'],
     }),
     updateEmailSettings: builder.mutation<any, EmailConfigUpdate>({
       query: (config) => ({
-        url: '/api/emails/settings',
+        url: '/emails/settings',
         method: 'PUT',
         body: config,
       }),
@@ -81,14 +81,14 @@ export const emailSettingsApi = createApi({
     }),
     testEmailConfig: builder.mutation<EmailTestResponse, EmailTestRequest>({
       query: (testData) => ({
-        url: '/api/emails/settings/test',
+        url: '/emails/settings/test',
         method: 'POST',
         body: testData,
       }),
     }),
     deleteEmailSettings: builder.mutation<any, void>({
       query: () => ({
-        url: '/api/emails/settings',
+        url: '/emails/settings',
         method: 'DELETE',
       }),
       invalidatesTags: ['EmailSettings'],
