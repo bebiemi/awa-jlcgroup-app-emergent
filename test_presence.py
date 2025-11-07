@@ -290,7 +290,7 @@ def test_user_presence_system():
         test_results["failed_tests"] += 1
     
     # Step 8: Get specific user's presence status
-    print(f"\n  Step 8: Get Specific User Presence (GET /api/users/presence/{user_id})")
+    print(f"\n  Step 8: Get Specific User Presence (GET /api/users/presence/{{user_id}})")
     
     # Use admin's own user_id from the current_presence response
     admin_user_id = current_presence.get("user_id")
