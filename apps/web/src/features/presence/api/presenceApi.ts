@@ -1,6 +1,5 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-
-const API_BASE_URL = import.meta.env.VITE_AUTH_SERVICE_URL || 'http://localhost:8000'
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { createBaseQueryWithAuth } from '@/utils/baseQueryWithAuth'
 
 export type PresenceStatus = 'online' | 'away' | 'do_not_disturb' | 'offline' | 'invisible'
 
@@ -21,16 +20,7 @@ export interface OnlineUsersResponse {
 
 export const presenceApi = createApi({
   reducerPath: 'presenceApi',
-  baseQuery: fetchBaseQuery({
-    baseUrl: '/auth-api/users/presence', // Use Vite proxy instead of direct localhost
-    prepareHeaders: (headers) => {
-      const token = localStorage.getItem('access_token')
-      if (token) {
-        headers.set('Authorization', `Bearer ${token}`)
-      }
-      return headers
-    },
-  }),
+  baseQuery: createBaseQueryWithAuth('/auth-api/users/presence'),
   // Prevent infinite retry loops
   refetchOnMountOrArgChange: false,
   refetchOnFocus: false,
