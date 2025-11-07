@@ -18,6 +18,11 @@ export function useInactivityLogout() {
   const [updatePresence] = useUpdateMyPresenceMutation()
 
   const logout = useCallback(() => {
+    // Clear all API caches to prevent stale data and 502 errors
+    dispatch({ type: 'presenceApi/resetApiState' })
+    dispatch({ type: 'api/resetApiState' })
+    
+    // Logout
     dispatch(logoutAction())
     toast.error('Déconnecté pour inactivité (30 minutes)')
     navigate('/', { replace: true })
