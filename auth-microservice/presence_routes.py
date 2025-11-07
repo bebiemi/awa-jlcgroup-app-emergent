@@ -24,7 +24,7 @@ router = APIRouter(prefix="/api/users/presence", tags=["presence"])
 
 @router.get("/me", response_model=UserPresenceResponse)
 async def get_my_presence(
-    current_user: User = Depends(lambda: get_auth_manager().get_current_user)
+    current_user: User = Depends(get_current_user)
 ):
     """
     Get current user's presence status
