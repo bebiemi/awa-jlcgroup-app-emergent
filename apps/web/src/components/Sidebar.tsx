@@ -50,16 +50,35 @@ export default function Sidebar() {
   const dispatch = useAppDispatch()
   const { user } = useAppSelector((state) => state.auth)
 
-  const handleLogout = () => {
-    // Clear all API caches to prevent stale data and 502 errors
-    dispatch({ type: 'presenceApi/resetApiState' })
-    dispatch({ type: 'api/resetApiState' })
-    
-    // Logout and clear localStorage
-    dispatch(logoutAction())
-    
-    // Redirect to homepage
-    navigate('/', { replace: true })
+  const handleLogout = async () => {
+    try {
+      // 1. FIRST: Set user status to "offline" in backend
+      await fetch('/auth-api/users/presence/me', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+        },
+        body: JSON.stringify({ status: 'offline' })
+      }).catch(() => {}) // Silent fail if network error
+      
+      // 2. Clear all API caches to prevent stale data
+      dispatch({ type: 'presenceApi/resetApiState' })
+      dispatch({ type: 'api/resetApiState' })
+      
+      // 3. Logout and clear localStorage
+      dispatch(logoutAction())
+      
+      // 4. Redirect to homepage
+      navigate('/', { replace: true })
+    } catch (error) {
+      console.error('Logout error:', error)
+      // Logout anyway even if status update fails
+      dispatch({ type: 'presenceApi/resetApiState' })
+      dispatch({ type: 'api/resetApiState' })
+      dispatch(logoutAction())
+      navigate('/', { replace: true })
+    }
   }
 
   // Get dashboard path based on user role
