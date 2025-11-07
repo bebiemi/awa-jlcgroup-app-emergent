@@ -6,6 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from datetime import datetime, timezone, timedelta
 from typing import List, Optional
 import logging
+from motor.motor_asyncio import AsyncIOMotorDatabase
 
 from awana_auth.core.models import (
     User,
@@ -14,17 +15,11 @@ from awana_auth.core.models import (
     OnlineUsersResponse,
     PresenceStatus
 )
-from awana_auth.core.auth_manager import AuthManager
+from awana_auth.core.dependencies import get_current_user, get_database
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api/users/presence", tags=["presence"])
-
-
-def get_auth_manager():
-    """Dependency to get AuthManager instance"""
-    from main import auth_manager
-    return auth_manager
 
 
 @router.get("/me", response_model=UserPresenceResponse)
