@@ -1,29 +1,25 @@
 <analysis>
-The previous AI engineer diligently addressed several complex feature enhancements and critical bug fixes for the JLC application. Initially, work focused on completing the email notification system and a comprehensive email configuration UI, which involved significant backend (models, services, routes) and frontend (API slices, pages, navigation) development, including securing sensitive data with encryption.
-
-Subsequently, a major overhaul of the Candidat Mise à dispo interim user workflow was undertaken. This involved implementing dynamic mission statuses, J-14 end-of-mission alerts, and application eligibility rules (J-5). Key challenges included resolving persistent authentication issues due to  vs.  database separation, CORS problems, and incorrect API pathing with Vite proxy rewrites. The AI engineer also tackled profile completeness updates, skill synchronization, and issues with local Docker setup,  version incompatibility in admin creation, and local development environment errors. The work culminated in extensive documentation and scripts for Docker setup and super-admin creation.
+The AI engineer successfully guided the JLC application through significant feature enhancements and critical bug fixes. Initially, efforts focused on stabilizing the local development environment, resolving  version incompatibilities, and rectifying Docker proxy issues for API communication. A major feature involved implementing a comprehensive user status management system with inactivity-based state changes, which required extensive backend model/route development and frontend integration, including multiple rounds of debugging for infinite loops, CORS issues, and UI layout problems. This was followed by a complete overhaul of authentication handling to ensure robust session management and proper redirection on expiry/invalidity. The engineer then addressed and fixed critical 404 and 500 API errors on the Email Settings and Permissions pages, ensuring correct API pathing and token usage. Finally, a new IAM system was initiated, focusing on backend model and service creation for users, groups, profiles, and permissions, with the initial setup script successfully executed before pausing for this summary.
 </analysis>
 
 <product_requirements>
-The JLC application, an interim management platform, aims to transition from hardcoded data to a dynamic, configurable system. This involves implementing backend-loaded configurations, i18n support, editable reference data, configuration versioning with rollback, and a feature flag system with caching and audit. Super-admin visibility and export/import for feature flags were also requested.
-
-Key recent developments were:
-1.  **Email Notifications:** System-triggered emails for events like configuration rollbacks.
-2.  **Email Configuration UI:** An administrative interface for managing SMTP settings (host, port, credentials, TLS, sender, admin recipients), including password encryption, test functionality, and history/template management.
-3.  **Interim Workflow Overhaul (Candidat Mise à dispo):** Eliminating hardcoded values, this entails:
-    *   **Interim Dashboard:** Dynamic En mission / En recherche statuses, J-14 end-of-mission alerts, real-time profile completeness, and functional navigation.
-    *   **Profile Page:** Displaying and allowing modification of personal information (Name, First Name, Date of Birth, Place of Birth), with the Home icon linking to the dashboard.
-    *   **Applications Page:** Grouping applications by backend status, showing mission names post-contract validation, displaying a configurable workflow timeline, and dynamically enabling/disabling the Postuler button based on active contracts and a J-5 re-application offset. All data must be configurable via backend, references, or i18n.
+The JLC application, an interim management platform, is evolving from static data to a dynamic, configurable system. This includes backend-loaded configurations, i18n support, editable reference data, configuration versioning with rollback, and a feature flag system. Key implemented developments include:
+1.  **Email Notifications & UI:** System-triggered emails and an administrative interface for managing SMTP settings with password encryption, testing, and history/template management.
+2.  **Interim Workflow Overhaul:** Elimination of hardcoded values for dynamic mission statuses, J-14 end-of-mission alerts, real-time profile completeness, and application eligibility (J-5 offset). Profile pages allow personal info modification, and application pages group applications by status, show mission names, and dynamically enable/disable the Postuler button.
+3.  **User Status Management:** Implement user presence (online, inactive, away, offline) with colored indicators, automatic transitions (15min inactive, 30min logout), and manual status selection.
+4.  **Application Theming:** Implement official JLC brand colors (Magenta, Indigo, Neon Pink) across the UI.
+5.  **Robust Authentication & Session Handling:** Automatic redirection to login on session expiry/invalidity, reset of local store, and prevention of unauthorized API calls and UI access.
+6.  **API Endpoint Corrections:** Fix 404 for Email Settings API and 500 for Permissions API, ensuring correct  prefix usage and token handling.
+7.  **IAM System:** Establish a comprehensive Identity and Access Management (IAM) system encompassing users, groups, profiles, and permissions with RBAC logic, inheritance, and built-in roles.
 </product_requirements>
 
 <key_technical_concepts>
--   **Backend:** FastAPI, MongoDB, Python (Pydantic, , ).
--   **Frontend:** React 18, TypeScript, Redux Toolkit (RTK Query), Vite, .
+-   **Backend:** FastAPI, MongoDB, Python (Pydantic, ).
+-   **Frontend:** React 18, TypeScript, Redux Toolkit (RTK Query), Vite, , Tailwind CSS.
 -   **Authentication:** JWT, OAuth2, RBAC.
--   **Configuration:** Centralized , Dynamic References, Feature Flags, Redis cache.
--   **Email Services:** SMTP, Configuration UI, Template/History management.
+-   **Configuration:** Dynamic configuration, Feature Flags.
 -   **Deployment/Infra:** Docker, Kubernetes, Supervisor, Vite proxy.
--   **Database:** Segregated  (users) and  (app data).
+-   **Database:** Segregated  and .
 </key_technical_concepts>
 
 <code_architecture>
@@ -33,112 +29,33 @@ The application uses a monorepo structure with  (FastAPI),  (React/Vite), and  (
 
 **File Importance & Changes Summary:**
 
-*   : Central router. Modified for new protected routes (Email settings/history/templates, Mes Candidatures).
-*   : Main navigation. Updated with links for Configuration Email, Historique Emails, Templates Emails, and Mes Candidatures. JLC logo link verified to .
-*   : RTK Query API slices (, , ).
-    *   **Changes:** Corrected  to . Fixed missing exports/types. Changed  to use  proxy prefix instead of direct .
-*   : Frontend pages (, , , , ).
-    *   **Changes:**  and  updated to use  for authorization.
-*   : RTK Query API slice for contract data.
-    *   **Changes:** Corrected  to . Changed  to  proxy prefix. Removed redundant  from endpoints (e.g.,  became ).
-*   : RTK Query API slice for interim applications.
-    *   **Changes:** Same  correction and proxy path adjustment as .
-*   : Dashboard for interim users.
-    *   **Changes:** Modified to display dynamic mission status badges and J-14 end-of-mission alerts. Corrected usage of .
-*   : New page to display interim applications.
-*   : Authentication API slice. Reviewed for token handling.
-*   : Redux slice for authentication. Reviewed for token storage.
-*   : Page for available mission offers.
-    *   **Changes:** Modified to disable the Postuler button based on  status from the backend.
-*   : API for user profiles.
-*   : Form for interim profile details.
-    *   **Changes:** Added missing personal information fields (Name, First Name, Date of Birth, Email, Phone).
-*   : User profile page.
-*   : Redux store. Integrated new API slices.
-*   : Frontend build configuration.
-    *   **Changes:** Modified HMR configuration for local development.  updated. Proxy paths fixed to prevent double .
-*    (New): Vite config specifically for Docker environment.
-*   : Configuration manager for backend.
-    *   **Changes:** Corrected default  path for Docker environments ().
-*   : Defines backend Pydantic models.
-*   : Handles password hashing.
-*   : FastAPI router for contract endpoints.
-    *   **Changes:** Fixed  by correcting internal function call arguments.
-*   : Main FastAPI entry point.
-    *   **Changes:** Registered new routers (, , , ). CORS configuration reviewed.
-*   : FastAPI router for profile management.
-    *   **Changes:**  updated to include core user fields. Logic for creating  synchronized with  data (name, email, phone). Added logic to automatically add new skills to . Fixed MongoDB  serialization during insertion.
-*   : Script for creating super admins.
-*    (New): Script for creating super admin from scratch.
-    *   **Changes:** Modified to use  for compatible hashing and to handle password length constraints.
-*    & : Docker Compose files.
-    *   **Changes:** Updated service names, image versions, and  to be a list.
-*   , , ,  (New): Docker ignore files for optimized builds.
-*    (New): Makefile for simplifying Docker commands.
-*   [0;34m
-     ___  __     _____   __   
-    |__ | |   |   /    |__| |__|
-    |   |____ |  /___  |  | |      
-    
-    JLC Application - Docker Manager
-[0m
-[0;31m✗[0m Docker n'est pas installé. Veuillez l'installer d'abord.
-  Installation: https://docs.docker.com/get-docker/ (New): Helper script to start Docker services.
-*   ,  (New): Docker setup documentation.
-*   , [0;34m
- ___  __     _____   __   
-|__ | |   |   /    |__| |__|
-|   |____ |  /___  |  | |      
-
-JLC - Création Super Admin
-[0m
-[0;32m✓[0m Répertoire correct
-[0;32m✓[0m Python 3 installé
-[0;32m✓[0m MongoDB actif
-
-[0;34mVérification des dépendances...[0m
-[0;32m✓[0m Dépendances installées
-
-[0;34mLancement du script de création...[0m
-
-
-============================================================
-🛠️  JLC - Gestion des Super Admins
-============================================================
-
-1. Créer un nouveau super admin
-2. Lister les super admins existants
-3. Quitter
-
-Votre choix (1-3): 
-❌ Erreur: EOF when reading a line
-
-[0;32m✅ Terminé![0m (New): Super admin setup documentation and script.
-*   , [0;34m
-     ___  __     _____   __   
-    |__ | |   |   /    |__| |__|
-    |   |____ |  /___  |  | |      
-    
-    JLC - Diagnostic de Santé
-[0m
-
-🔍 Vérification des services...
-
-  MongoDB (port 27017): [0;32m✅ OK[0m
-  Auth Service (port 8000): [0;31m❌ Port non utilisé[0m, , [0;34m
-     ___  __     _____   __   
-    |__ | |   |   /    |__| |__|
-    |   |____ |  /___  |  | |      
-    
-    JLC - Fix Local Issues
-[0m
-
-[1;33mCe script va:[0m
-  1. Vérifier les services
-  2. Nettoyer les caches
-  3. Redémarrer les services
-  4. Tester la connectivité (New): Local environment troubleshooting and setup guides/scripts.
-*    (New): Guide on dynamic configuration.
+-   : Central router. Corrected  for proxy. Updated for authentication check on app load.
+-   : Main navigation. Updated with links for Configuration Email, Historique Emails, Templates Emails, and Mes Candidatures. Integrated . Updated to use JLC brand colors and for logout redirection.
+-   : Main layout. Integrated  into header. Updated with JLC brand colors. Added  logic for presence query if unauthenticated.
+-    (New): Displays user status as a colored circle.
+-    (New): Allows users to select their presence status. Updated to accept email prop and use JLC colors.
+-   : RTK Query for email settings. Fixed  to prevent double . Integrated .
+-   : RTK Query for security. Fixed token usage from  and integrated .
+-   : Login page. Updated to trigger  after successful login. Updated to use JLC brand colors.
+-   : MFA verification page. Updated to trigger  after successful verification.
+-   : Redux slice for authentication. Enhanced  to reset all RTK Query API states and clear local storage more comprehensively.
+-    (New): RTK Query slice for user presence management.
+-    (New): RTK Query slice for IAM.
+-   : Route protection component. Enhanced to check  for token.
+-   : Custom hook for inactivity logout. Integrated presence updates, then simplified to only handle logout, then re-integrated with throttling for  and window focus detection.
+-   : Redux store. Integrated new  and  slices.
+-    (New): Custom RTK Query  to handle 401 errors by logging out and redirecting.
+-   : Frontend build config. Corrected proxy targets from Docker service names to  for local dev.
+-    (New): Official JLC logo file.
+-   : Tailwind CSS configuration. Updated with official JLC brand colors.
+-   : Backend Pydantic models. Added  enum and  model.
+-    (New): Defines Pydantic models for , , , , , .
+-    (New): Service layer for IAM logic.
+-   : Main FastAPI entry point. Registered  and .
+-    (New): FastAPI router for user presence endpoints (, , ). Corrected auth dependency.
+-    (New): FastAPI router for IAM endpoints (e.g., creating/managing permissions, profiles, groups).
+-    (New): Script to add  and  fields to existing users.
+-    (New): Script to create initial system roles and permissions for the IAM system.
 </code_architecture>
 
 <pending_tasks>
@@ -158,14 +75,18 @@ Votre choix (1-3):
 -   Verify display and behavior of the application timeline.
 -   Enrich configuration with  in system repositories.
 -   Implement dynamic management of public holidays via MongoDB.
+-   Implement IAM frontend pages (, ).
+-   Update middleware for IAM access control.
+-   Update UIs impacted by IAM changes.
+-   Add audit and tests for IAM.
 </pending_tasks>
 
 <current_work>
-Immediately before this summary, the AI engineer was addressing user-reported issues concerning local development environment setup and administrative tasks. Specifically, the last interaction involved fixing a persistent  version incompatibility issue that prevented the  script from successfully creating a super admin account. This involved troubleshooting  and  library versions, leading to a downgrade of  to  to ensure compatibility with  for password hashing. However, the login for newly created admin accounts still failed after this fix, indicating a potential deeper issue with the hashing or verification process, or service interaction.
+Immediately before this summary, the AI engineer was actively implementing the new Identity and Access Management (IAM) system. The backend models () and service logic () for permissions, profiles, and groups were created. API routes for IAM () were set up and registered in the main FastAPI application (). A crucial initialization script () was developed and executed to populate the database with built-in system roles (SuperAdmin, Admin, Interim, etc.), establishing the foundational data for the IAM system. The backend services were restarted to reflect these changes.
 
-Concurrently, the AI engineer was tasked with updating Docker configurations for local and production environments, and providing a comprehensive guide for dynamic configuration parameters (references, business rules, feature flags). Dockerfiles and  files were updated, new helper scripts (, , , ), and extensive documentation (, , , , , ) were created. The  was also adjusted for local Docker setup, and  was fixed for  to be a list. The very last user message provided crucial information regarding Docker proxy configuration (service name vs.  target) and the  format.
+On the frontend, an RTK Query API slice for IAM () was created to interface with the new backend. The very last action recorded was preparing to integrate this new  into the Redux store (). This marks the beginning of the frontend integration for the IAM system, building upon the successfully established backend foundation. The previous work involved extensive fixes for user presence, authentication, and UI theming with JLC brand colors, which are now stable and functional.
 </current_work>
 
 <optional_next_step>
-Address the user's feedback by updating the Docker documentation and  regarding proxy targets and the  format.
+Integrate the newly created  RTK Query slice into the Redux store in .
 </optional_next_step>
