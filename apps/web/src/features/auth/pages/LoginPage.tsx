@@ -38,6 +38,22 @@ export default function LoginPage() {
 
       // Normal login without MFA
       if (result.access_token && result.user) {
+        // CRITICAL: Set user status to "online" immediately after successful login
+        try {
+          await fetch('/auth-api/users/presence/me', {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${result.access_token}`
+            },
+            body: JSON.stringify({ status: 'online' })
+          })
+          console.log('✅ User status set to ONLINE after login')
+        } catch (error) {
+          console.error('Failed to set online status:', error)
+          // Continue anyway - not critical for login flow
+        }
+        
         toast.success('Connexion réussie!')
 
         // Redirect to appropriate dashboard based on user role
