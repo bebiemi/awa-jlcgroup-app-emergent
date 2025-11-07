@@ -34,6 +34,22 @@ export default function MfaVerificationPage({ sessionId, mfaMethod, onBack }: Mf
       }).unwrap()
 
       if (result.success && result.access_token && result.user) {
+        // CRITICAL: Set user status to "online" immediately after successful MFA login
+        try {
+          await fetch('/auth-api/users/presence/me', {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${result.access_token}`
+            },
+            body: JSON.stringify({ status: 'online' })
+          })
+          console.log('✅ User status set to ONLINE after MFA login')
+        } catch (error) {
+          console.error('Failed to set online status:', error)
+          // Continue anyway - not critical for login flow
+        }
+        
         toast.success('Authentification réussie!')
 
         // Redirect to appropriate dashboard based on user role
