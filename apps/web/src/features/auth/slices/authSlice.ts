@@ -41,9 +41,14 @@ const authSlice = createSlice({
       state.token = null
       state.refreshToken = null
       state.isAuthenticated = false
+      
+      // CRITICAL: Complete cleanup of all auth-related data
       localStorage.removeItem('access_token')
       localStorage.removeItem('refresh_token')
       localStorage.removeItem('user')
+      sessionStorage.clear() // Clear session storage too
+      
+      console.log('✅ Auth state cleared completely')
     },
   },
   extraReducers: (builder) => {
