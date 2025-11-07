@@ -132,15 +132,15 @@ export default function LoginPage() {
         {/* Card */}
         <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
           {/* Header with gradient */}
-          <div className="bg-gradient-to-r from-jlc-purple-600 to-jlc-purple-800 p-8 text-white text-center">
+          <div className="bg-gradient-to-br from-jlc-indigo-dark via-jlc-neon-pink-gray to-jlc-magenta p-8 text-white text-center">
             <div className="flex justify-center mb-4">
               <img 
                 src="/logo-jlc.png" 
                 alt="JLC GROUP" 
-                className="h-20 w-auto object-contain"
+                className="h-24 w-auto max-w-[250px] object-contain drop-shadow-lg"
               />
             </div>
-            <p className="text-purple-100">
+            <p className="text-white/90 font-medium">
               Connectez-vous à votre espace
             </p>
           </div>
