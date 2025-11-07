@@ -43,6 +43,7 @@ export const store = configureStore({
     [contractApi.reducerPath]: contractApi.reducer,
     [applicationApi.reducerPath]: applicationApi.reducer,
     [presenceApi.reducerPath]: presenceApi.reducer,
+    [iamApi.reducerPath]: iamApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
