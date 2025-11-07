@@ -127,6 +127,7 @@ app.include_router(email_settings_router)
 app.include_router(email_history_router)
 app.include_router(email_template_router)
 app.include_router(contract_router)
+app.include_router(presence_router)
 
 @app.get("/health")
 async def health_check():
