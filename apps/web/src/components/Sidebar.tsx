@@ -232,7 +232,7 @@ export default function Sidebar() {
           </Link>
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
-            className="p-2 rounded-lg hover:bg-jlc-purple-700 transition-colors hidden lg:block"
+            className="p-2 rounded-lg hover:bg-jlc-magenta/30 transition-colors hidden lg:block"
           >
             {isCollapsed ? (
               <ChevronRightIcon className="h-5 w-5" />
