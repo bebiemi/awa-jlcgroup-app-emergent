@@ -1,4 +1,5 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { createBaseQueryWithAuth } from '@/utils/baseQueryWithAuth';
 
 // Use relative URL to go through Vite proxy
 const API_URL = '/auth-api';
