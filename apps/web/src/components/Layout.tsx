@@ -15,6 +15,7 @@ interface LayoutProps {
 export default function Layout({ children }: LayoutProps) {
   const { user, isAuthenticated } = useAppSelector((state) => state.auth)
   const [showNotifications, setShowNotifications] = useState(false)
+  const { data: presence } = useGetMyPresenceQuery(undefined, { skip: !isAuthenticated })
 
   const { data: notificationsData } = useGetNotificationsQuery(
     {
