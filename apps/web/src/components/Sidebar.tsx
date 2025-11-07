@@ -303,7 +303,7 @@ export default function Sidebar() {
         {/* Logout Button */}
         <button
           onClick={handleLogout}
-          className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-jlc-purple-200 hover:bg-red-600/20 hover:text-red-300 transition-all"
+          className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-white/80 hover:bg-red-600/20 hover:text-red-300 transition-all"
           title={isCollapsed ? t('common.logout') : undefined}
         >
           <ArrowRightOnRectangleIcon className="h-5 w-5 flex-shrink-0" />
