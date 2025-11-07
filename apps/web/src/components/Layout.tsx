@@ -52,15 +52,35 @@ export default function Layout({ children }: LayoutProps) {
 
                 {/* Right side - User Info & Notifications */}
                 <div className="flex items-center space-x-4">
-                  {/* User Avatar (Status indicator temporarily disabled) */}
+                  {/* User Avatar with Status Indicator */}
                   <div className="flex items-center space-x-3">
-                    <div className="h-10 w-10 rounded-full bg-gradient-to-br from-jlc-accent-yellow to-yellow-500 flex items-center justify-center text-jlc-purple-900 font-semibold">
-                      {user?.full_name?.charAt(0) || user?.username?.charAt(0) || 'U'}
+                    <div className="relative">
+                      <div className="h-10 w-10 rounded-full bg-gradient-to-br from-jlc-accent-yellow to-yellow-500 flex items-center justify-center text-jlc-purple-900 font-semibold">
+                        {user?.full_name?.charAt(0) || user?.username?.charAt(0) || 'U'}
+                      </div>
+                      {/* Status indicator badge */}
+                      {presence && (
+                        <div className="absolute -bottom-0.5 -right-0.5">
+                          <UserStatusIndicator 
+                            status={presence.presence_status} 
+                            size="md"
+                            showTooltip={true}
+                          />
+                        </div>
+                      )}
                     </div>
                     <div className="hidden md:block">
                       <p className="text-sm font-medium text-gray-900">
                         {user?.full_name || user?.username}
                       </p>
+                      {presence && (
+                        <p className="text-xs text-gray-500">
+                          {presence.presence_status === 'online' && '🟢 En ligne'}
+                          {presence.presence_status === 'away' && '🟡 Inactif'}
+                          {presence.presence_status === 'do_not_disturb' && '🔴 Ne pas déranger'}
+                          {presence.presence_status === 'offline' && '⚪ Absent'}
+                        </p>
+                      )}
                     </div>
                   </div>
 
