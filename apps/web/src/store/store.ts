@@ -17,6 +17,7 @@ import { emailHistoryApi } from '@/features/admin/api/emailHistoryApi'
 import { emailTemplatesApi } from '@/features/admin/api/emailTemplatesApi'
 import { contractApi } from '@/features/contracts/api/contractApi'
 import { applicationApi } from '@/features/interim/api/applicationApi'
+import { presenceApi } from '@/features/presence/api/presenceApi'
 import authReducer from '@/features/auth/slices/authSlice'
 
 export const store = configureStore({
