@@ -1,13 +1,13 @@
 """
 FastAPI Dependencies for Permission-Based Access Control
 """
-from typing import List, Optional, Callable
+from typing import List, Optional
 from fastapi import Depends, HTTPException, status
-from functools import wraps
+from motor.motor_asyncio import AsyncIOMotorDatabase
 from awana_auth.core.models import User
 from awana_auth.dependencies.auth import get_current_user
-from awana_auth.services.permission_checker import get_permission_checker
-from awana_auth.core.database import get_auth_db
+from awana_auth.services.permission_checker import PermissionChecker
+from awana_auth.core.dependencies import get_database
 
 class PermissionDependency:
     """
