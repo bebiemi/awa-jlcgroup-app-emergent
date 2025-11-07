@@ -248,7 +248,7 @@ export default function Sidebar() {
         {navigationSections.map((section, idx) => (
           <div key={idx}>
             {!isCollapsed && (
-              <h3 className="text-xs font-semibold text-jlc-purple-300 uppercase tracking-wider mb-3">
+              <h3 className="text-xs font-semibold text-white/60 uppercase tracking-wider mb-3">
                 {section.title}
               </h3>
             )}
