@@ -72,11 +72,11 @@ class MultiPermissionDependency:
     
     async def __call__(
         self, 
-        current_user: User = Depends(get_current_user)
+        current_user: User = Depends(get_current_user),
+        db: AsyncIOMotorDatabase = Depends(get_database)
     ) -> User:
         """Check if user has required permissions"""
-        db = get_auth_db()
-        checker = get_permission_checker(db)
+        checker = PermissionChecker(db)
         
         # SuperAdmin bypass
         if "super_admin" in current_user.roles:
@@ -84,13 +84,13 @@ class MultiPermissionDependency:
         
         # Check permissions
         if self.require_all:
-            has_permission = checker.user_has_all_permissions(
+            has_permission = await checker.user_has_all_permissions(
                 current_user.id, 
                 self.permission_codes
             )
             error_msg = f"All permissions required: {', '.join(self.permission_codes)}"
         else:
-            has_permission = checker.user_has_any_permission(
+            has_permission = await checker.user_has_any_permission(
                 current_user.id, 
                 self.permission_codes
             )
