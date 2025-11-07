@@ -53,7 +53,14 @@ export default function Modal({ isOpen, onClose, title, children, maxWidth = 'md
         ref={modalRef}
         className={`bg-white rounded-lg shadow-xl ${widthClasses[maxWidth]} w-full max-h-[90vh] overflow-y-auto`}
       >
-        {children}
+        {title && (
+          <div className="px-6 py-4 border-b border-gray-200">
+            <h2 className="text-xl font-semibold text-gray-900">{title}</h2>
+          </div>
+        )}
+        <div className="p-6">
+          {children}
+        </div>
       </div>
     </div>
   )
