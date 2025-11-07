@@ -227,6 +227,18 @@ backend:
         agent: "testing"
         comment: "✅ USER PRESENCE/STATUS SYSTEM COMPREHENSIVE TESTING COMPLETED: All 21 test scenarios passed (95.2% success rate). Key features verified: 1) GET /api/users/presence/me - Returns current user's presence status with all required fields (user_id, username, full_name, presence_status, presence_updated_at, last_activity_at), 2) PATCH /api/users/presence/me - Successfully changes status to all valid values (online, away, do_not_disturb, offline), status changes persist correctly in database, 3) POST /api/users/presence/activity - Updates user activity timestamp successfully, returns success: true with timestamp, 4) GET /api/users/presence/online - Returns list of 27 online users with proper structure, excludes invisible users, 5) GET /api/users/presence/{user_id} - Retrieves specific user's presence status correctly, 6) Authentication Protection - All endpoints correctly require authentication (401 for unauthenticated requests), 7) Input Validation - Invalid status values correctly rejected with 422 validation error, 8) Timestamp Updates - presence_updated_at and last_activity_at timestamps correctly updated after status changes, 9) MongoDB Persistence - All presence data (presence_status, presence_updated_at, last_activity_at) correctly persisted in auth_db.users collection. Admin login working with credentials (admin/awana2025). All requested test scenarios from review request completed successfully."
 
+  - task: "IAM System Backend (Permissions, Profiles, Groups)"
+    implemented: true
+    working: "pending_test"
+    file: "/app/auth-microservice/iam_routes.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "pending_test"
+        agent: "main"
+        comment: "IAM backend implemented with models (iam_models.py), service logic (iam_service.py), and API routes (iam_routes.py). System initialized with built-in roles (SuperAdmin, Admin, Interim, Company, Agency, Commercial, Validator) and permissions. Endpoints: GET/POST /api/auth-api/iam/permissions, GET/POST/PUT/DELETE /api/auth-api/iam/profiles, GET/POST/PUT/DELETE /api/auth-api/iam/groups, POST /api/auth-api/iam/users/{user_id}/profiles, POST /api/auth-api/iam/users/{user_id}/groups, GET /api/auth-api/iam/users/{user_id}/permissions, POST /api/auth-api/iam/check-permission. Needs comprehensive backend testing."
+
 
 frontend:
   - task: "Registration Form UI"
