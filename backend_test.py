@@ -1664,6 +1664,296 @@ def test_mongodb_skill_verification():
         return False
 
 
+def test_user_presence_system():
+    """Test the User Presence/Status System"""
+    print(f"\n{Colors.BOLD}=== Testing User Presence/Status System ==={Colors.ENDC}")
+    
+    # Step 1: Login as admin
+    print(f"\n  Step 1: Login as Admin (admin/awana2025)")
+    
+    login_data = {
+        "username": "admin",
+        "password": "awana2025"
+    }
+    
+    login_response = test_endpoint(
+        "POST",
+        f"{AUTH_BASE_URL}/auth/local/login",
+        data=login_data,
+        expected_status=200,
+        test_name="Admin Login"
+    )
+    
+    if not login_response:
+        log_test("User Presence Test", "FAIL", "Cannot login as admin")
+        return False
+    
+    access_token = login_response.get("access_token")
+    if not access_token:
+        log_test("Access Token", "FAIL", "No access token received")
+        return False
+    
+    headers = {"Authorization": f"Bearer {access_token}"}
+    log_test("Admin Login", "PASS", f"Successfully logged in, token: {access_token[:20]}...")
+    
+    # Step 2: Get current presence status (should be "online" by default)
+    print(f"\n  Step 2: Get Current Presence Status (GET /api/users/presence/me)")
+    
+    current_presence = test_endpoint(
+        "GET",
+        f"{AUTH_BASE_URL}/users/presence/me",
+        headers=headers,
+        expected_status=200,
+        test_name="Get Current Presence Status"
+    )
+    
+    if not current_presence:
+        log_test("Get Current Presence", "FAIL", "Cannot get current presence status")
+        return False
+    
+    # Verify response structure
+    required_fields = ["user_id", "username", "presence_status", "presence_updated_at", "last_activity_at"]
+    missing_fields = [field for field in required_fields if field not in current_presence]
+    
+    if missing_fields:
+        log_test("Presence Response Structure", "FAIL", f"Missing fields: {missing_fields}")
+    else:
+        log_test("Presence Response Structure", "PASS", "All required fields present")
+    
+    initial_status = current_presence.get("presence_status", "unknown")
+    log_test("Initial Presence Status", "PASS", f"Current status: {initial_status}")
+    
+    # Step 3: Change status to "do_not_disturb"
+    print(f"\n  Step 3: Change Status to 'do_not_disturb' (PATCH /api/users/presence/me)")
+    
+    update_to_dnd = test_endpoint(
+        "PATCH",
+        f"{AUTH_BASE_URL}/users/presence/me",
+        data={"status": "do_not_disturb"},
+        headers=headers,
+        expected_status=200,
+        test_name="Change Status to Do Not Disturb"
+    )
+    
+    if not update_to_dnd:
+        log_test("Change to Do Not Disturb", "FAIL", "Cannot change status to do_not_disturb")
+        return False
+    
+    dnd_status = update_to_dnd.get("presence_status", "unknown")
+    if dnd_status == "do_not_disturb":
+        log_test("Status Changed to DND", "PASS", f"Status successfully changed to: {dnd_status}")
+    else:
+        log_test("Status Changed to DND", "FAIL", f"Expected 'do_not_disturb', got: {dnd_status}")
+    
+    # Step 4: Verify status has changed
+    print(f"\n  Step 4: Verify Status Changed (GET /api/users/presence/me)")
+    
+    verify_dnd = test_endpoint(
+        "GET",
+        f"{AUTH_BASE_URL}/users/presence/me",
+        headers=headers,
+        expected_status=200,
+        test_name="Verify Status Changed"
+    )
+    
+    if verify_dnd:
+        verified_status = verify_dnd.get("presence_status", "unknown")
+        if verified_status == "do_not_disturb":
+            log_test("Status Persisted", "PASS", f"Status correctly persisted as: {verified_status}")
+        else:
+            log_test("Status Persisted", "FAIL", f"Expected 'do_not_disturb', got: {verified_status}")
+    
+    # Step 5: Change status to "offline"
+    print(f"\n  Step 5: Change Status to 'offline' (PATCH /api/users/presence/me)")
+    
+    update_to_offline = test_endpoint(
+        "PATCH",
+        f"{AUTH_BASE_URL}/users/presence/me",
+        data={"status": "offline"},
+        headers=headers,
+        expected_status=200,
+        test_name="Change Status to Offline"
+    )
+    
+    if update_to_offline:
+        offline_status = update_to_offline.get("presence_status", "unknown")
+        if offline_status == "offline":
+            log_test("Status Changed to Offline", "PASS", f"Status successfully changed to: {offline_status}")
+        else:
+            log_test("Status Changed to Offline", "FAIL", f"Expected 'offline', got: {offline_status}")
+    
+    # Step 6: Update activity (POST /api/users/presence/activity)
+    print(f"\n  Step 6: Update User Activity (POST /api/users/presence/activity)")
+    
+    update_activity = test_endpoint(
+        "POST",
+        f"{AUTH_BASE_URL}/users/presence/activity",
+        headers=headers,
+        expected_status=200,
+        test_name="Update User Activity"
+    )
+    
+    if update_activity:
+        if update_activity.get("success"):
+            log_test("Activity Update", "PASS", f"Activity updated at: {update_activity.get('timestamp')}")
+        else:
+            log_test("Activity Update", "FAIL", "Activity update did not return success")
+    
+    # Step 7: Get list of online users (GET /api/users/presence/online)
+    print(f"\n  Step 7: Get List of Online Users (GET /api/users/presence/online)")
+    
+    online_users = test_endpoint(
+        "GET",
+        f"{AUTH_BASE_URL}/users/presence/online",
+        headers=headers,
+        expected_status=200,
+        test_name="Get Online Users List"
+    )
+    
+    if online_users:
+        users_list = online_users.get("users", [])
+        total_users = online_users.get("total", 0)
+        log_test("Online Users List", "PASS", f"Found {total_users} online users")
+        
+        # Verify response structure
+        if users_list and len(users_list) > 0:
+            first_user = users_list[0]
+            user_fields = ["user_id", "username", "presence_status"]
+            missing_user_fields = [field for field in user_fields if field not in first_user]
+            
+            if missing_user_fields:
+                log_test("Online Users Structure", "FAIL", f"Missing fields in user object: {missing_user_fields}")
+            else:
+                log_test("Online Users Structure", "PASS", "User objects have all required fields")
+    
+    # Step 8: Get specific user's presence status
+    print(f"\n  Step 8: Get Specific User Presence (GET /api/users/presence/{user_id})")
+    
+    # Use admin's own user_id from the current_presence response
+    admin_user_id = current_presence.get("user_id")
+    
+    if admin_user_id:
+        specific_user_presence = test_endpoint(
+            "GET",
+            f"{AUTH_BASE_URL}/users/presence/{admin_user_id}",
+            headers=headers,
+            expected_status=200,
+            test_name="Get Specific User Presence"
+        )
+        
+        if specific_user_presence:
+            specific_status = specific_user_presence.get("presence_status", "unknown")
+            log_test("Specific User Presence", "PASS", f"Retrieved user presence: {specific_status}")
+    else:
+        log_test("Specific User Presence", "SKIP", "No user_id available for testing")
+    
+    # Step 9: Test authentication requirement (401 without token)
+    print(f"\n  Step 9: Test Authentication Requirement (401 without token)")
+    
+    endpoints_to_test = [
+        ("GET", "/users/presence/me", "Get My Presence"),
+        ("PATCH", "/users/presence/me", "Update My Presence"),
+        ("POST", "/users/presence/activity", "Update Activity"),
+        ("GET", "/users/presence/online", "Get Online Users")
+    ]
+    
+    for method, endpoint, description in endpoints_to_test:
+        no_auth_response = test_endpoint(
+            method,
+            f"{AUTH_BASE_URL}{endpoint}",
+            data={"status": "online"} if method == "PATCH" else None,
+            expected_status=401,
+            test_name=f"{description} - No Auth"
+        )
+        
+        if no_auth_response:
+            log_test(f"{description} - Auth Required", "PASS", "Unauthenticated request correctly rejected")
+    
+    # Step 10: Test invalid status value
+    print(f"\n  Step 10: Test Invalid Status Value")
+    
+    invalid_status = test_endpoint(
+        "PATCH",
+        f"{AUTH_BASE_URL}/users/presence/me",
+        data={"status": "invalid_status"},
+        headers=headers,
+        expected_status=422,  # Validation error
+        test_name="Invalid Status Value"
+    )
+    
+    if invalid_status:
+        log_test("Invalid Status Validation", "PASS", "Invalid status correctly rejected")
+    
+    # Step 11: Test all valid status values
+    print(f"\n  Step 11: Test All Valid Status Values")
+    
+    valid_statuses = ["online", "away", "do_not_disturb", "offline"]
+    
+    for status in valid_statuses:
+        status_response = test_endpoint(
+            "PATCH",
+            f"{AUTH_BASE_URL}/users/presence/me",
+            data={"status": status},
+            headers=headers,
+            expected_status=200,
+            test_name=f"Change Status to '{status}'"
+        )
+        
+        if status_response:
+            returned_status = status_response.get("presence_status", "unknown")
+            if returned_status == status:
+                log_test(f"Status '{status}'", "PASS", f"Successfully changed to: {status}")
+            else:
+                log_test(f"Status '{status}'", "FAIL", f"Expected '{status}', got: {returned_status}")
+    
+    # Step 12: Verify timestamps are updated correctly
+    print(f"\n  Step 12: Verify Timestamps Update")
+    
+    # Get current presence
+    before_update = test_endpoint(
+        "GET",
+        f"{AUTH_BASE_URL}/users/presence/me",
+        headers=headers,
+        expected_status=200,
+        test_name="Get Presence Before Update"
+    )
+    
+    if before_update:
+        before_timestamp = before_update.get("presence_updated_at")
+        
+        # Wait a moment
+        time.sleep(1)
+        
+        # Update status
+        test_endpoint(
+            "PATCH",
+            f"{AUTH_BASE_URL}/users/presence/me",
+            data={"status": "online"},
+            headers=headers,
+            expected_status=200,
+            test_name="Update Status for Timestamp Test"
+        )
+        
+        # Get presence again
+        after_update = test_endpoint(
+            "GET",
+            f"{AUTH_BASE_URL}/users/presence/me",
+            headers=headers,
+            expected_status=200,
+            test_name="Get Presence After Update"
+        )
+        
+        if after_update:
+            after_timestamp = after_update.get("presence_updated_at")
+            
+            if after_timestamp != before_timestamp:
+                log_test("Timestamp Update", "PASS", "Timestamp correctly updated after status change")
+            else:
+                log_test("Timestamp Update", "FAIL", "Timestamp not updated after status change")
+    
+    return True
+
+
 def test_email_notification_system():
     """Test the Email Notification System comprehensively"""
     print(f"\n{Colors.BOLD}=== Testing Email Notification System ==={Colors.ENDC}")
