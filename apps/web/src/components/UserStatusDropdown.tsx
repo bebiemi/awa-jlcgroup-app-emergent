@@ -104,7 +104,10 @@ export default function UserStatusDropdown({
         {!compact && (
           <div className="flex-1 min-w-0 text-left">
             <p className="text-sm font-medium text-white truncate">{userName}</p>
-            <p className="text-xs text-jlc-purple-300">{currentOption?.label}</p>
+            {userEmail && (
+              <p className="text-xs text-jlc-purple-300 truncate">{userEmail}</p>
+            )}
+            <p className="text-xs text-jlc-purple-200 mt-0.5">{currentOption?.label}</p>
           </div>
         )}
 
