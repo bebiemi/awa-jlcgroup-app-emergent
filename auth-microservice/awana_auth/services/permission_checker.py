@@ -40,7 +40,7 @@ class PermissionChecker:
         else:
             self._cache.clear()
     
-    def get_user_permissions(self, user_id: str) -> Set[str]:
+    async def get_user_permissions(self, user_id: str) -> Set[str]:
         """
         Get all effective permissions for a user
         Includes permissions from:
@@ -56,7 +56,7 @@ class PermissionChecker:
         permission_codes = set()
         
         # Get user data
-        user = self.db.users.find_one({"id": user_id})
+        user = await self.db.users.find_one({"id": user_id})
         if not user:
             return permission_codes
         
