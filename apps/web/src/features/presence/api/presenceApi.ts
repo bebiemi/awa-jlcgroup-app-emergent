@@ -22,7 +22,7 @@ export interface OnlineUsersResponse {
 export const presenceApi = createApi({
   reducerPath: 'presenceApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: `${API_BASE_URL}/api/users/presence`,
+    baseUrl: '/auth-api/users/presence', // Use Vite proxy instead of direct localhost
     prepareHeaders: (headers) => {
       const token = localStorage.getItem('access_token')
       if (token) {
