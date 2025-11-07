@@ -193,14 +193,14 @@ async def get_online_users(
 @router.get("/{user_id}", response_model=UserPresenceResponse)
 async def get_user_presence(
     user_id: str,
-    auth_manager: AuthManager = Depends(get_auth_manager),
-    current_user: User = Depends(lambda am=Depends(get_auth_manager): am.get_current_user)
+    current_user: User = Depends(get_current_user),
+    db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """
     Get a specific user's presence status
     """
     try:
-        users_collection = auth_manager.auth_config.auth_db.users
+        users_collection = db.users
         
         user_doc = await users_collection.find_one({"id": user_id})
         if not user_doc:
