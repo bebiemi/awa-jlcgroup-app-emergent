@@ -41,6 +41,7 @@ export const store = configureStore({
     [emailTemplatesApi.reducerPath]: emailTemplatesApi.reducer,
     [contractApi.reducerPath]: contractApi.reducer,
     [applicationApi.reducerPath]: applicationApi.reducer,
+    [presenceApi.reducerPath]: presenceApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
