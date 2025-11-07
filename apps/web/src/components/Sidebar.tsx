@@ -51,7 +51,7 @@ export default function Sidebar() {
 
   const handleLogout = () => {
     dispatch(logoutAction())
-    navigate('/login')
+    navigate('/', { replace: true })
   }
 
   // Get dashboard path based on user role
