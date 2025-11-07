@@ -2,49 +2,59 @@ import { useEffect, useRef, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import { logoutAction } from '@/features/auth/slices/authSlice'
+import { useUpdateMyPresenceMutation, useUpdateActivityMutation } from '@/features/presence/api/presenceApi'
 import toast from 'react-hot-toast'
 
-const INACTIVITY_TIMEOUT = 60 * 60 * 1000 // 60 minutes (1 hour) in milliseconds
-const WARNING_TIME = 5 * 60 * 1000 // Show warning 5 minutes before logout
+const AWAY_TIMEOUT = 15 * 60 * 1000 // 15 minutes to set status to "away"
+const LOGOUT_TIMEOUT = 30 * 60 * 1000 // 30 minutes to auto-logout
+const ACTIVITY_UPDATE_INTERVAL = 2 * 60 * 1000 // Update activity every 2 minutes
 
 export function useInactivityLogout() {
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
   const { isAuthenticated } = useAppSelector((state) => state.auth)
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null)
-  const warningTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const awayTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const logoutTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const activityIntervalRef = useRef<NodeJS.Timeout | null>(null)
+  const [updatePresence] = useUpdateMyPresenceMutation()
+  const [updateActivity] = useUpdateActivityMutation()
 
   const logout = useCallback(() => {
     dispatch(logoutAction())
-    toast.error('Session expirée pour cause d\'inactivité')
+    toast.error('Déconnecté pour inactivité (30 minutes)')
     navigate('/', { replace: true })
   }, [dispatch, navigate])
 
-  const showWarning = useCallback(() => {
-    toast('Vous serez déconnecté dans 5 minutes pour inactivité', {
-      icon: '⏰',
-      duration: 5000,
-    })
-  }, [])
+  const setAwayStatus = useCallback(async () => {
+    try {
+      await updatePresence({ status: 'away' }).unwrap()
+      toast('Statut changé en "Inactif" après 15 minutes d\'inactivité', {
+        icon: '🟡',
+        duration: 3000,
+      })
+    } catch (error) {
+      console.error('Failed to set away status:', error)
+    }
+  }, [updatePresence])
 
   const resetTimer = useCallback(() => {
     // Clear existing timers
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current)
+    if (awayTimeoutRef.current) {
+      clearTimeout(awayTimeoutRef.current)
     }
-    if (warningTimeoutRef.current) {
-      clearTimeout(warningTimeoutRef.current)
+    if (logoutTimeoutRef.current) {
+      clearTimeout(logoutTimeoutRef.current)
     }
 
     // Only set timers if user is authenticated
     if (isAuthenticated) {
-      // Set warning timer (55 minutes)
-      warningTimeoutRef.current = setTimeout(showWarning, INACTIVITY_TIMEOUT - WARNING_TIME)
+      // Set away timer (15 minutes)
+      awayTimeoutRef.current = setTimeout(setAwayStatus, AWAY_TIMEOUT)
 
-      // Set logout timer (60 minutes)
-      timeoutRef.current = setTimeout(logout, INACTIVITY_TIMEOUT)
+      // Set logout timer (30 minutes)
+      logoutTimeoutRef.current = setTimeout(logout, LOGOUT_TIMEOUT)
     }
-  }, [isAuthenticated, logout, showWarning])
+  }, [isAuthenticated, logout, setAwayStatus])
 
   useEffect(() => {
     if (!isAuthenticated) {
