@@ -16,9 +16,11 @@ export default function Layout({ children }: LayoutProps) {
   const { user, isAuthenticated } = useAppSelector((state) => state.auth)
   const [showNotifications, setShowNotifications] = useState(false)
   
-  // Fetch presence status with conservative settings to avoid infinite loops
+  // Fetch presence status ONLY if authenticated and user exists
+  const shouldFetchPresence = isAuthenticated && user && localStorage.getItem('access_token')
+  
   const { data: presence } = useGetMyPresenceQuery(undefined, { 
-    skip: !isAuthenticated, // Only fetch when authenticated
+    skip: !shouldFetchPresence, // CRITICAL: Skip if not authenticated or no token
     pollingInterval: 300000, // Poll every 5 minutes only
     refetchOnMountOrArgChange: false, // Don't refetch on mount/arg change
     refetchOnFocus: false, // Don't refetch on window focus
