@@ -63,7 +63,7 @@ class PermissionChecker:
         # SuperAdmin has ALL permissions
         if "super_admin" in user.get("roles", []):
             # Get all permission codes
-            all_permissions = self.db.permissions.find({}, {"code": 1})
+            all_permissions = await self.db.permissions.find({}, {"code": 1}).to_list(length=None)
             permission_codes = {p["code"] for p in all_permissions}
             self._set_cached_permissions(user_id, permission_codes)
             return permission_codes
@@ -74,7 +74,7 @@ class PermissionChecker:
         # Get group IDs and their profile IDs
         group_ids = user.get("group_ids", [])
         if group_ids:
-            groups = self.db.groups.find({"id": {"$in": group_ids}})
+            groups = await self.db.groups.find({"id": {"$in": group_ids}}).to_list(length=None)
             for group in groups:
                 profile_ids.extend(group.get("profile_ids", []))
         
