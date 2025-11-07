@@ -224,7 +224,7 @@ export default function Sidebar() {
             />
             {!isCollapsed && (
               <div>
-                <p className="text-xs text-jlc-purple-300 mt-1">
+                <p className="text-xs text-white/70 mt-1">
                   {isAdmin ? 'Administration' : isInterim ? 'Intérimaire' : 'Entreprise'}
                 </p>
               </div>
