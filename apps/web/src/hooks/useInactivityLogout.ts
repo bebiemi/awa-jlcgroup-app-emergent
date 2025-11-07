@@ -58,6 +58,10 @@ export function useInactivityLogout() {
 
   useEffect(() => {
     if (!isAuthenticated) {
+      // Clear all timers if not authenticated
+      if (awayTimeoutRef.current) clearTimeout(awayTimeoutRef.current)
+      if (logoutTimeoutRef.current) clearTimeout(logoutTimeoutRef.current)
+      if (activityIntervalRef.current) clearInterval(activityIntervalRef.current)
       return
     }
 
@@ -74,27 +78,39 @@ export function useInactivityLogout() {
     // Reset timer on any user activity
     const handleActivity = () => {
       resetTimer()
+      // Also update activity timestamp on backend
+      updateActivity().catch(console.error)
     }
 
     // Add event listeners
     events.forEach((event) => {
-      document.addEventListener(event, handleActivity)
+      document.addEventListener(event, handleActivity, { passive: true })
     })
 
     // Initialize timer
     resetTimer()
+
+    // Periodic activity update (every 2 minutes if user is active)
+    activityIntervalRef.current = setInterval(() => {
+      if (isAuthenticated) {
+        updateActivity().catch(console.error)
+      }
+    }, ACTIVITY_UPDATE_INTERVAL)
 
     // Cleanup
     return () => {
       events.forEach((event) => {
         document.removeEventListener(event, handleActivity)
       })
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current)
+      if (awayTimeoutRef.current) {
+        clearTimeout(awayTimeoutRef.current)
       }
-      if (warningTimeoutRef.current) {
-        clearTimeout(warningTimeoutRef.current)
+      if (logoutTimeoutRef.current) {
+        clearTimeout(logoutTimeoutRef.current)
+      }
+      if (activityIntervalRef.current) {
+        clearInterval(activityIntervalRef.current)
       }
     }
-  }, [isAuthenticated, resetTimer])
+  }, [isAuthenticated, resetTimer, updateActivity])
 }
