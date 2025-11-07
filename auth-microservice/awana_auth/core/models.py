@@ -67,6 +67,11 @@ class User(BaseModel):
     mfa_required: bool = False  # Forced by admin
     phone_number: Optional[str] = None
     
+    # Presence/Availability Status
+    presence_status: str = "online"  # PresenceStatus value
+    presence_updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    last_activity_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    
     # Metadata
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
