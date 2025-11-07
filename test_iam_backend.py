@@ -597,6 +597,20 @@ def test_cleanup():
     """Clean up test data"""
     print(f"\n{Colors.BOLD}=== 8. Cleanup Test Data ==={Colors.ENDC}")
     
+    # First, remove profile assignment from user
+    if test_data.get("test_user_id") and test_data.get("created_profile_id"):
+        assignment_data = {
+            "user_id": test_data["test_user_id"],
+            "profile_ids": []  # Remove all profiles
+        }
+        test_endpoint(
+            "POST",
+            f"{IAM_BASE_URL}/users/{test_data['test_user_id']}/profiles",
+            data=assignment_data,
+            headers=get_auth_headers(),
+            test_name="Remove Profile Assignment from User"
+        )
+    
     # Delete test group
     if test_data.get("created_group_id"):
         response = test_endpoint(
@@ -606,7 +620,7 @@ def test_cleanup():
             test_name="Delete Test Group"
         )
     
-    # Delete test profile
+    # Delete test profile (now that it's not assigned)
     if test_data.get("created_profile_id"):
         response = test_endpoint(
             "DELETE",
