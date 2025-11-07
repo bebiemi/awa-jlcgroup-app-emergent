@@ -142,53 +142,42 @@ class PermissionChecker:
         
         return False
     
-    def user_has_any_permission(
+    async def user_has_any_permission(
         self, 
         user_id: str, 
         permission_codes: List[str]
     ) -> bool:
         """Check if user has ANY of the specified permissions"""
         for code in permission_codes:
-            if self.user_has_permission(user_id, code):
+            if await self.user_has_permission(user_id, code):
                 return True
         return False
     
-    def user_has_all_permissions(
+    async def user_has_all_permissions(
         self, 
         user_id: str, 
         permission_codes: List[str]
     ) -> bool:
         """Check if user has ALL of the specified permissions"""
         for code in permission_codes:
-            if not self.user_has_permission(user_id, code):
+            if not await self.user_has_permission(user_id, code):
                 return False
         return True
     
-    def get_user_roles(self, user_id: str) -> List[str]:
+    async def get_user_roles(self, user_id: str) -> List[str]:
         """
         Get user's system roles (legacy support)
         Returns list of role names
         """
-        user = self.db.users.find_one({"id": user_id})
+        user = await self.db.users.find_one({"id": user_id})
         if not user:
             return []
         return user.get("roles", [])
     
-    def user_has_role(self, user_id: str, role: str) -> bool:
+    async def user_has_role(self, user_id: str, role: str) -> bool:
         """
         Check if user has a specific role (legacy support)
         DEPRECATED: Use user_has_permission instead
         """
-        roles = self.get_user_roles(user_id)
+        roles = await self.get_user_roles(user_id)
         return role in roles
-
-
-# Singleton instance
-_permission_checker_instance = None
-
-def get_permission_checker(db: Database) -> PermissionChecker:
-    """Get or create PermissionChecker singleton instance"""
-    global _permission_checker_instance
-    if _permission_checker_instance is None:
-        _permission_checker_instance = PermissionChecker(db)
-    return _permission_checker_instance
