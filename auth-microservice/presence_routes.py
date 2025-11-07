@@ -97,15 +97,15 @@ async def update_my_presence(
 
 @router.post("/activity")
 async def update_activity(
-    auth_manager: AuthManager = Depends(get_auth_manager),
-    current_user: User = Depends(lambda am=Depends(get_auth_manager): am.get_current_user)
+    current_user: User = Depends(get_current_user),
+    db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """
     Update user's last activity timestamp
     Called periodically by frontend to track user activity
     """
     try:
-        users_collection = auth_manager.auth_config.auth_db.users
+        users_collection = db.users
         
         now = datetime.now(timezone.utc)
         update_data = {
