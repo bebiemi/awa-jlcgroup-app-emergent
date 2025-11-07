@@ -17,12 +17,26 @@ export function useInactivityLogout() {
   const isAwayRef = useRef(false)
   const [updatePresence] = useUpdateMyPresenceMutation()
 
-  const logout = useCallback(() => {
-    // Clear all API caches to prevent stale data and 502 errors
+  const logout = useCallback(async () => {
+    try {
+      // 1. FIRST: Set user status to "offline" in backend
+      await fetch('/auth-api/users/presence/me', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+        },
+        body: JSON.stringify({ status: 'offline' })
+      }).catch(() => {}) // Silent fail if network error
+    } catch (error) {
+      console.error('Error setting offline status:', error)
+    }
+    
+    // 2. Clear all API caches to prevent stale data
     dispatch({ type: 'presenceApi/resetApiState' })
     dispatch({ type: 'api/resetApiState' })
     
-    // Logout
+    // 3. Logout
     dispatch(logoutAction())
     toast.error('Déconnecté pour inactivité (30 minutes)')
     navigate('/', { replace: true })
