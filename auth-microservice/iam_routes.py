@@ -49,7 +49,7 @@ async def list_permissions(
 @router.post("/permissions", response_model=Permission, status_code=status.HTTP_201_CREATED)
 async def create_permission(
     permission_data: PermissionCreate,
-    current_user: User = Depends(require_admin),
+    current_user: User = Depends(require_permission("iam.permissions.create")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """Create new permission (super admin only)"""
