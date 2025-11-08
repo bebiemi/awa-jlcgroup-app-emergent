@@ -323,7 +323,7 @@ async def create_setting(
     return {"setting": setting_dict}
 
 
-@router.patch("/settings/{key}", dependencies=[Depends(require_admin)])
+@router.patch("/settings/{key}", dependencies=[Depends(require_permission("config.manage"))])
 async def update_setting(
     key: str,
     value: str,
