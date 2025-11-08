@@ -483,7 +483,7 @@ def test_permission_checker():
     print(f"\n{Colors.YELLOW}Testing SuperAdmin bypass...{Colors.ENDC}")
     response = test_endpoint(
         "GET",
-        f"{AUTH_BASE_URL}/auth/users/{test_data['admin_user_id']}",
+        f"{AUTH_BASE_URL}/api/auth/users/{test_data['admin_user_id']}",
         headers=get_auth_headers(),
         expected_status=200,
         test_name="SuperAdmin can access all endpoints (bypass)"
