@@ -282,22 +282,22 @@ def test_iam_routes():
     """Test IAM management endpoints with permission checks"""
     print(f"\n{Colors.BOLD}=== IAM Routes (iam_routes.py) ==={Colors.ENDC}")
     
-    # 1. GET /api/auth-api/iam/permissions → iam.permissions.read permission
+    # 1. GET /api/iam/permissions → iam.permissions.read permission
     response = test_endpoint(
         "GET",
-        f"{AUTH_BASE_URL}/api/auth-api/iam/permissions",
+        f"{AUTH_BASE_URL}/api/iam/permissions",
         headers=get_auth_headers(),
         expected_status=200,
-        test_name="GET /api/auth-api/iam/permissions (iam.permissions.read permission)"
+        test_name="GET /api/iam/permissions (iam.permissions.read permission)"
     )
     if response:
         permissions = response.json()
         print(f"    Found {len(permissions)} permissions")
     
-    # 2. POST /api/auth-api/iam/permissions → iam.permissions.create permission
+    # 2. POST /api/iam/permissions → iam.permissions.create permission
     test_endpoint(
         "POST",
-        f"{AUTH_BASE_URL}/api/auth-api/iam/permissions",
+        f"{AUTH_BASE_URL}/api/iam/permissions",
         data={
             "code": "test.permission",
             "name": "Test Permission",
@@ -306,25 +306,25 @@ def test_iam_routes():
         },
         headers=get_auth_headers(),
         expected_status=201,
-        test_name="POST /api/auth-api/iam/permissions (iam.permissions.create permission)"
+        test_name="POST /api/iam/permissions (iam.permissions.create permission)"
     )
     
-    # 3. GET /api/auth-api/iam/profiles → iam.profiles.read permission
+    # 3. GET /api/iam/profiles → iam.profiles.read permission
     response = test_endpoint(
         "GET",
-        f"{AUTH_BASE_URL}/api/auth-api/iam/profiles",
+        f"{AUTH_BASE_URL}/api/iam/profiles",
         headers=get_auth_headers(),
         expected_status=200,
-        test_name="GET /api/auth-api/iam/profiles (iam.profiles.read permission)"
+        test_name="GET /api/iam/profiles (iam.profiles.read permission)"
     )
     if response:
         profiles = response.json()
         print(f"    Found {len(profiles)} profiles")
     
-    # 4. POST /api/auth-api/iam/profiles → iam.profiles.create permission
+    # 4. POST /api/iam/profiles → iam.profiles.create permission
     test_endpoint(
         "POST",
-        f"{AUTH_BASE_URL}/api/auth-api/iam/profiles",
+        f"{AUTH_BASE_URL}/api/iam/profiles",
         data={
             "code": "test_profile",
             "name": "Test Profile",
@@ -333,25 +333,25 @@ def test_iam_routes():
         },
         headers=get_auth_headers(),
         expected_status=201,
-        test_name="POST /api/auth-api/iam/profiles (iam.profiles.create permission)"
+        test_name="POST /api/iam/profiles (iam.profiles.create permission)"
     )
     
-    # 5. GET /api/auth-api/iam/groups → iam.groups.read permission
+    # 5. GET /api/iam/groups → iam.groups.read permission
     response = test_endpoint(
         "GET",
-        f"{AUTH_BASE_URL}/api/auth-api/iam/groups",
+        f"{AUTH_BASE_URL}/api/iam/groups",
         headers=get_auth_headers(),
         expected_status=200,
-        test_name="GET /api/auth-api/iam/groups (iam.groups.read permission)"
+        test_name="GET /api/iam/groups (iam.groups.read permission)"
     )
     if response:
         groups = response.json()
         print(f"    Found {len(groups)} groups")
     
-    # 6. POST /api/auth-api/iam/groups → iam.groups.create permission
+    # 6. POST /api/iam/groups → iam.groups.create permission
     test_endpoint(
         "POST",
-        f"{AUTH_BASE_URL}/api/auth-api/iam/groups",
+        f"{AUTH_BASE_URL}/api/iam/groups",
         data={
             "code": "test_group",
             "name": "Test Group",
@@ -360,7 +360,7 @@ def test_iam_routes():
         },
         headers=get_auth_headers(),
         expected_status=201,
-        test_name="POST /api/auth-api/iam/groups (iam.groups.create permission)"
+        test_name="POST /api/iam/groups (iam.groups.create permission)"
     )
 
 # ===== Authorization Tests =====
