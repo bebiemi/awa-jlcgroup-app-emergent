@@ -251,7 +251,7 @@ def test_validation_routes():
     # 1. GET /validations → validations.manage permission
     response = test_endpoint(
         "GET",
-        f"{AUTH_BASE_URL}/validations",
+        f"{AUTH_BASE_URL}/api/validations",
         headers=get_auth_headers(),
         expected_status=200,
         test_name="GET /validations (validations.manage permission)"
@@ -268,7 +268,7 @@ def test_validation_routes():
     if validation_id:
         test_endpoint(
             "POST",
-            f"{AUTH_BASE_URL}/validations/{validation_id}/approve",
+            f"{AUTH_BASE_URL}/api/validations/{validation_id}/approve",
             data={"comments": "Test approval"},
             headers=get_auth_headers(),
             expected_status=200,
