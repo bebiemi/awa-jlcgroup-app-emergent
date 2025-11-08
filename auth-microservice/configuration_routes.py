@@ -375,7 +375,7 @@ async def get_business_rules(
     return {"rules": rules}
 
 
-@router.post("/rules", dependencies=[Depends(require_admin)])
+@router.post("/rules", dependencies=[Depends(require_permission("rules.manage"))])
 async def create_business_rule(
     rule: BusinessRule,
     db: AsyncIOMotorDatabase = Depends(get_database)
