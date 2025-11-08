@@ -273,7 +273,10 @@ export default function Sidebar() {
             {!isCollapsed && (
               <div>
                 <p className="text-xs text-white/70 mt-1">
-                  {isAdmin ? 'Administration' : isInterim ? 'Intérimaire' : 'Entreprise'}
+                  {userPermissions['admin.dashboard'] ? 'Administration' : 
+                   userPermissions['missions.browse'] ? 'Intérimaire' : 
+                   userPermissions['missions.create'] ? 'Entreprise' : 
+                   'Utilisateur'}
                 </p>
               </div>
             )}
