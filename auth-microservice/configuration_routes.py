@@ -350,7 +350,7 @@ async def update_setting(
 
 # ==================== RÈGLES MÉTIER ====================
 
-@router.get("/rules", dependencies=[Depends(require_admin)])
+@router.get("/rules", dependencies=[Depends(require_permission("rules.manage"))])
 async def get_business_rules(
     rule_type: Optional[str] = None,
     is_active: Optional[bool] = None,
