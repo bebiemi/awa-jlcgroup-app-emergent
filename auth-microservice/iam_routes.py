@@ -320,7 +320,7 @@ async def get_group(
 @router.post("/groups", response_model=Group, status_code=status.HTTP_201_CREATED)
 async def create_group(
     group_data: GroupCreate,
-    current_user: User = Depends(require_admin),
+    current_user: User = Depends(require_permission("iam.groups.create")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """Create new group (admin only)"""
