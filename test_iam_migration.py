@@ -111,7 +111,8 @@ def test_user_management_routes():
         test_name="GET /auth/users (users.read permission)"
     )
     if response:
-        users = response.json()
+        data = response.json()
+        users = data.get("users", [])
         print(f"    Found {len(users)} users")
         if len(users) > 0:
             test_data["test_user_id"] = users[0].get("id")
