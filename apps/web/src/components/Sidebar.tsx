@@ -147,8 +147,7 @@ export default function Sidebar() {
         title: 'IAM & Sécurité',
         items: [
           { label: 'Gestion des Profils', path: '/admin/iam/profiles', icon: ShieldCheckIcon },
-          { label: 'Contrôle d\'Accès', path: '/admin/iam/control', icon: ShieldCheckIcon },
-          { label: 'Profils & Permissions', path: '/admin/profiles', icon: ShieldCheckIcon },
+          { label: 'Contrôle d\'Accès (Groupes)', path: '/admin/iam/control', icon: ShieldCheckIcon },
         ],
       },
       {
