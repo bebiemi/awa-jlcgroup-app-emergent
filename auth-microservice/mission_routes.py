@@ -325,13 +325,22 @@ async def update_mission(
             detail="Mission non trouvée"
         )
     
-    # Vérifier permissions
-    user_roles = current_user.get("roles", [])
+    # IAM: Check permissions
+    checker = PermissionChecker(db)
     user_id = current_user.get("sub")
     
+    can_manage = await checker.user_has_permission(
+        current_user.get("id"),
+        "missions.manage"
+    )
+    can_edit = await checker.user_has_permission(
+        current_user.get("id"),
+        "missions.edit"
+    )
+    
     can_update = (
-        cfg.get_admin_role() in user_roles or
-        cfg.get_super_admin_role() in user_roles or
+        can_manage or
+        can_edit or
         mission["created_by"] == user_id or
         mission.get("commercial_id") == user_id
     )
