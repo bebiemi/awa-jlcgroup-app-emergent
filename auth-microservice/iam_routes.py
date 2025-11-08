@@ -402,7 +402,7 @@ async def update_group(
 @router.delete("/groups/{group_id}")
 async def delete_group(
     group_id: str,
-    current_user: User = Depends(require_admin),
+    current_user: User = Depends(require_permission("iam.groups.delete")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """Delete group (admin only)"""
