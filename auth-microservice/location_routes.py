@@ -11,7 +11,8 @@ from awana_auth.core.location_models import (
     Location, LocationCreate, LocationUpdate, LocationTree, LocationType
 )
 from awana_auth.core.models import User
-from awana_auth.core.dependencies import require_admin, get_database
+from awana_auth.core.dependencies import get_database
+from awana_auth.dependencies.permission_dependencies import require_permission
 
 location_router = APIRouter(prefix="/locations", tags=["Locations"])
 
