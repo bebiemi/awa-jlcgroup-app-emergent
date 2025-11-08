@@ -78,7 +78,7 @@ async def get_role(
     return role
 
 
-@router.patch("/{role_code}/visibility", dependencies=[Depends(require_super_admin)])
+@router.patch("/{role_code}/visibility", dependencies=[Depends(require_permission("users.manage"))])
 async def update_role_visibility(
     role_code: str,
     update: RoleVisibilityUpdate,
