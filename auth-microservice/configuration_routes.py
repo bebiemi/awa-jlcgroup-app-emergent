@@ -1,7 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from typing import List, Optional
 from motor.motor_asyncio import AsyncIOMotorDatabase
-from awana_auth.core.dependencies import get_database, require_admin
+from awana_auth.core.dependencies import get_database
+from awana_auth.dependencies.permission_dependencies import require_permission
 from awana_auth.core.reference_models import (
     SystemReference,
     CreateReferenceRequest,
