@@ -269,7 +269,7 @@ function App() {
       <Route
         path="/offres/:id"
         element={
-          <ProtectedRoute requiredRoles={[roles.interim]}>
+          <ProtectedRoute requiredPermissions={['missions.browse']}>
             <MissionDetailPage />
           </ProtectedRoute>
         }
@@ -277,7 +277,7 @@ function App() {
       <Route
         path="/offres/:id/postuler"
         element={
-          <ProtectedRoute requiredRoles={[roles.interim]}>
+          <ProtectedRoute requiredPermissions={['applications.create']}>
             <ApplyMissionPage />
           </ProtectedRoute>
         }
@@ -285,7 +285,7 @@ function App() {
       <Route
         path="/mes-candidatures"
         element={
-          <ProtectedRoute requiredRoles={[roles.interim]}>
+          <ProtectedRoute requiredPermissions={['applications.read_own']}>
             <MyApplicationsPage />
           </ProtectedRoute>
         }
@@ -294,7 +294,7 @@ function App() {
       <Route
         path="/interimaire"
         element={
-          <ProtectedRoute requiredRoles={[roles.interim]}>
+          <ProtectedRoute requiredPermissions={['missions.browse']}>
             <InterimDashboard />
           </ProtectedRoute>
         }
@@ -302,7 +302,7 @@ function App() {
       <Route
         path="/missions-interim"
         element={
-          <ProtectedRoute requiredRoles={[roles.interim]}>
+          <ProtectedRoute requiredPermissions={['missions.browse']}>
             <Navigate to="/offres" replace />
           </ProtectedRoute>
         }
@@ -310,7 +310,7 @@ function App() {
       <Route
         path="/mes-candidatures"
         element={
-          <ProtectedRoute requiredRoles={[roles.interim]}>
+          <ProtectedRoute requiredPermissions={['applications.read_own']}>
             <MesCandidaturesPage />
           </ProtectedRoute>
         }
@@ -318,7 +318,7 @@ function App() {
       <Route
         path="/entreprise"
         element={
-          <ProtectedRoute requiredRoles={[roles.company]}>
+          <ProtectedRoute requiredPermissions={['missions.create']}>
             <CompanyDashboard />
           </ProtectedRoute>
         }
@@ -326,7 +326,7 @@ function App() {
       <Route
         path="/offres"
         element={
-          <ProtectedRoute requiredRoles={[roles.company]}>
+          <ProtectedRoute requiredPermissions={['missions.create']}>
             <Navigate to="/admin" replace />
           </ProtectedRoute>
         }
@@ -334,7 +334,7 @@ function App() {
       <Route
         path="/agence"
         element={
-          <ProtectedRoute requiredRoles={[roles.agency]}>
+          <ProtectedRoute requiredPermissions={['admin.dashboard']}>
             <AgencyDashboard />
           </ProtectedRoute>
         }
@@ -342,7 +342,7 @@ function App() {
       <Route
         path="/commercial"
         element={
-          <ProtectedRoute requiredRoles={[roles.commercial]}>
+          <ProtectedRoute requiredPermissions={['missions.manage']}>
             <CommercialDashboard />
           </ProtectedRoute>
         }
