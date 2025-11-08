@@ -24,7 +24,7 @@ router = APIRouter(prefix="/api/emails", tags=["email-settings"])
 
 @router.get("/settings", response_model=EmailConfigResponse)
 async def get_email_settings(
-    current_user: User = Depends(require_admin),
+    current_user: User = Depends(require_permission("emails.read_config")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """
