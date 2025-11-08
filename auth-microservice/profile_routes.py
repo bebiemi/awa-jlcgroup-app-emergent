@@ -9,6 +9,7 @@ from awana_auth.core.models import User
 from awana_auth.core.profile_models import (
     DocumentUploadResponse
 )
+from awana_auth.services.permission_checker import PermissionChecker
 import uuid
 import os
 from datetime import datetime, timezone
