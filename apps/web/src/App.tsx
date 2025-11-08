@@ -127,7 +127,7 @@ function App() {
       <Route
         path="/admin/profiles"
         element={
-          <ProtectedRoute requiredRoles={[roles.admin, roles.super_admin]}>
+          <ProtectedRoute requiredPermissions={['profiles.manage']}>
             <ProfilesPage />
           </ProtectedRoute>
         }
@@ -135,7 +135,7 @@ function App() {
       <Route
         path="/admin/locations"
         element={
-          <ProtectedRoute requiredRoles={[roles.admin, roles.super_admin]}>
+          <ProtectedRoute requiredPermissions={['locations.manage']}>
             <LocationManagementPage />
           </ProtectedRoute>
         }
@@ -143,7 +143,7 @@ function App() {
       <Route
         path="/admin/references"
         element={
-          <ProtectedRoute requiredRoles={[roles.admin, roles.super_admin]}>
+          <ProtectedRoute requiredPermissions={['references.manage']}>
             <ReferencesManagementPage />
           </ProtectedRoute>
         }
@@ -151,7 +151,7 @@ function App() {
       <Route
         path="/admin/rules"
         element={
-          <ProtectedRoute requiredRoles={[roles.admin, roles.super_admin]}>
+          <ProtectedRoute requiredPermissions={['rules.manage']}>
             <BusinessRulesPage />
           </ProtectedRoute>
         }
@@ -159,7 +159,7 @@ function App() {
       <Route
         path="/admin/versions"
         element={
-          <ProtectedRoute requiredRoles={[roles.admin, roles.super_admin]}>
+          <ProtectedRoute requiredPermissions={['config.manage']}>
             <ConfigurationVersionsPage />
           </ProtectedRoute>
         }
@@ -167,7 +167,7 @@ function App() {
       <Route
         path="/admin/feature-flags"
         element={
-          <ProtectedRoute requiredRoles={[roles.admin, roles.super_admin]}>
+          <ProtectedRoute requiredPermissions={['flags.manage']}>
             <FeatureFlagsPage />
           </ProtectedRoute>
         }
@@ -175,7 +175,7 @@ function App() {
       <Route
         path="/admin/email-settings"
         element={
-          <ProtectedRoute requiredRoles={[roles.admin, roles.super_admin]}>
+          <ProtectedRoute requiredPermissions={['emails.configure']}>
             <EmailSettingsPage />
           </ProtectedRoute>
         }
@@ -183,7 +183,7 @@ function App() {
       <Route
         path="/admin/email-history"
         element={
-          <ProtectedRoute requiredRoles={[roles.admin, roles.super_admin]}>
+          <ProtectedRoute requiredPermissions={['emails.read_history']}>
             <EmailHistoryPage />
           </ProtectedRoute>
         }
@@ -191,7 +191,7 @@ function App() {
       <Route
         path="/admin/email-templates"
         element={
-          <ProtectedRoute requiredRoles={[roles.super_admin]}>
+          <ProtectedRoute requiredPermissions={['emails.manage_templates']}>
             <EmailTemplatesPage />
           </ProtectedRoute>
         }
