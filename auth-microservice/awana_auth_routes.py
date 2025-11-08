@@ -1672,7 +1672,7 @@ async def update_user(
 async def delete_user(
     user_id: str,
     request: Request,
-    current_user: User = Depends(require_super_admin),
+    current_user: User = Depends(require_permission("users.delete")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """Delete user (super admin only)"""
