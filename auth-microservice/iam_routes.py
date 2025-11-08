@@ -81,7 +81,7 @@ async def create_permission(
 @router.delete("/permissions/{permission_id}")
 async def delete_permission(
     permission_id: str,
-    current_user: User = Depends(require_admin),
+    current_user: User = Depends(require_permission("iam.permissions.delete")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """Delete permission (super admin only, not if system protected)"""
