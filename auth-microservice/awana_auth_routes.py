@@ -1923,7 +1923,7 @@ async def list_users(
     status: Optional[str] = None,
     role: Optional[str] = None,
     include_super_admin: bool = Query(False, description="Include super-admin users (super-admin only)"),
-    current_user: User = Depends(require_admin),
+    current_user: User = Depends(require_permission("users.read")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """
