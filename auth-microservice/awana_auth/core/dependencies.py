@@ -215,8 +215,17 @@ async def require_super_admin(
     rbac_manager: RBACManager = Depends(get_rbac_manager)
 ) -> User:
     """
+    DEPRECATED: Use require_permission from permission_dependencies instead
+    
     Require user to have super_admin role
+    This function is kept for backward compatibility only.
     """
+    import warnings
+    warnings.warn(
+        "require_super_admin is deprecated. Use require_permission('admin.access') instead.",
+        DeprecationWarning,
+        stacklevel=2
+    )
     # Check role directly from the user object (works for both local and OAuth users)
     user_roles = set(current_user.roles) if current_user.roles else set()
     
