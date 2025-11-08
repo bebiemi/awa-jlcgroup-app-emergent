@@ -187,7 +187,7 @@ async def create_reference(
     return {"reference": ref_dict}
 
 
-@router.patch("/references/{ref_id}", dependencies=[Depends(require_admin)])
+@router.patch("/references/{ref_id}", dependencies=[Depends(require_permission("references.manage"))])
 async def update_reference(
     ref_id: str,
     update: UpdateReferenceRequest,
