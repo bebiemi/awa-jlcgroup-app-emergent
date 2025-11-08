@@ -118,7 +118,7 @@ async def update_email_settings(
 @router.post("/settings/test")
 async def test_email_config(
     test_request: EmailTestRequest,
-    current_user: User = Depends(require_super_admin)
+    current_user: User = Depends(require_permission("emails.test"))
 ):
     """
     Tester une configuration email avant de l'enregistrer
