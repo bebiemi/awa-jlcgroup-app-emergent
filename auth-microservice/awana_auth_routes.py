@@ -2002,7 +2002,7 @@ async def update_user_status(
     user_id: str,
     status_update: dict,
     request: Request,
-    current_user: User = Depends(require_admin),
+    current_user: User = Depends(require_permission("users.manage_status")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """
