@@ -389,13 +389,22 @@ async def delete_mission(
             detail="Mission non trouvée"
         )
     
-    # Vérifier permissions
-    user_roles = current_user.get("roles", [])
+    # IAM: Check permissions
+    checker = PermissionChecker(db)
     user_id = current_user.get("sub")
     
+    can_manage = await checker.user_has_permission(
+        current_user.get("id"),
+        "missions.manage"
+    )
+    can_delete_perm = await checker.user_has_permission(
+        current_user.get("id"),
+        "missions.delete"
+    )
+    
     can_delete = (
-        cfg.get_admin_role() in user_roles or
-        cfg.get_super_admin_role() in user_roles or
+        can_manage or
+        can_delete_perm or
         mission["created_by"] == user_id
     )
     
