@@ -473,7 +473,7 @@ async def assign_profiles_to_user(
 async def assign_groups_to_user(
     user_id: str,
     assignment: UserGroupAssignment,
-    current_user: User = Depends(require_admin),
+    current_user: User = Depends(require_permission("iam.users.assign")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """Assign user to groups"""
