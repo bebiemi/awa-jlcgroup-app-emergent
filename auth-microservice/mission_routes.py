@@ -439,14 +439,18 @@ async def publish_mission(
             detail="Mission non trouvée"
         )
     
-    # Vérifier permissions
-    user_roles = current_user.get("roles", [])
-    can_publish = cfg.get_admin_role() in user_roles or cfg.get_super_admin_role() in user_roles or cfg.get_commercial_role() in user_roles
+    # IAM: Check permissions
+    checker = PermissionChecker(db)
+    
+    can_publish = await checker.user_has_any_permission(
+        current_user.get("id"),
+        ["missions.publish", "missions.manage"]
+    )
     
     if not can_publish:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Seuls les commerciaux et admins peuvent publier"
+            detail="Vous n'avez pas la permission de publier des missions"
         )
     
     # Publier
