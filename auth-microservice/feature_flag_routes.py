@@ -80,7 +80,7 @@ async def list_feature_flags(
 @router.post("", dependencies=[Depends(require_super_admin)])
 async def create_feature_flag(
     request: CreateFeatureFlagRequest,
-    current_user: User = Depends(require_super_admin),
+    current_user: User = Depends(require_permission("flags.manage")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """
@@ -111,7 +111,7 @@ async def create_feature_flag(
 async def update_feature_flag(
     flag_id: str,
     request: UpdateFeatureFlagRequest,
-    current_user: User = Depends(require_super_admin),
+    current_user: User = Depends(require_permission("flags.manage")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """
@@ -142,7 +142,7 @@ async def update_feature_flag(
 @router.delete("/{flag_id}", dependencies=[Depends(require_super_admin)])
 async def delete_feature_flag(
     flag_id: str,
-    current_user: User = Depends(require_super_admin),
+    current_user: User = Depends(require_permission("flags.manage")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """
@@ -172,7 +172,7 @@ async def delete_feature_flag(
 async def apply_rollout(
     flag_id: str,
     request: RolloutRequest,
-    current_user: User = Depends(require_super_admin),
+    current_user: User = Depends(require_permission("flags.manage")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """
@@ -260,7 +260,7 @@ async def get_all_audit_events(
 
 @router.get("/export", dependencies=[Depends(require_super_admin)])
 async def export_feature_flags(
-    current_user: User = Depends(require_super_admin),
+    current_user: User = Depends(require_permission("flags.manage")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """
@@ -309,7 +309,7 @@ async def export_feature_flags(
 async def import_feature_flags(
     import_data: dict,
     overwrite: bool = Query(False, description="Overwrite existing flags with same key"),
-    current_user: User = Depends(require_super_admin),
+    current_user: User = Depends(require_permission("flags.manage")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """
