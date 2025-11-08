@@ -230,7 +230,8 @@ export default function Sidebar() {
         ],
       }
     )
-  } else if (isCompany) {
+  } else if (userPermissions['missions.create']) {
+    // Company role (can create missions)
     navigationSections.push(
       {
         title: 'Tableau de bord',
