@@ -45,7 +45,7 @@ async def get_email_config(
     }
 
 
-@router.post("/test", dependencies=[Depends(require_super_admin)])
+@router.post("/test", dependencies=[Depends(require_permission("emails.test"))])
 async def send_test_email(
     request: TestEmailRequest,
     current_user: User = Depends(require_permission("emails.configure"))
