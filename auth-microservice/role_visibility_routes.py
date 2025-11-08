@@ -82,7 +82,7 @@ async def get_role(
 async def update_role_visibility(
     role_code: str,
     update: RoleVisibilityUpdate,
-    current_user: User = Depends(require_super_admin),
+    current_user: User = Depends(require_permission("users.manage")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """
@@ -139,7 +139,7 @@ async def update_role_visibility(
 
 @router.get("/visibility/stats")
 async def get_visibility_stats(
-    current_user: User = Depends(require_super_admin),
+    current_user: User = Depends(require_permission("users.manage")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """
