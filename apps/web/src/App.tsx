@@ -116,21 +116,14 @@ function App() {
           </ProtectedRoute>
         }
       />
+      {/* DEPRECATED: Old profiles/groups pages - Redirect to IAM */}
       <Route
         path="/admin/groups"
-        element={
-          <ProtectedRoute requiredPermissions={['groups.manage']}>
-            <GroupsPage />
-          </ProtectedRoute>
-        }
+        element={<Navigate to="/admin/iam/control" replace />}
       />
       <Route
         path="/admin/profiles"
-        element={
-          <ProtectedRoute requiredPermissions={['profiles.manage']}>
-            <ProfilesPage />
-          </ProtectedRoute>
-        }
+        element={<Navigate to="/admin/iam/profiles" replace />}
       />
       <Route
         path="/admin/locations"
