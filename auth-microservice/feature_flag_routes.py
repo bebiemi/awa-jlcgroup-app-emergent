@@ -168,7 +168,7 @@ async def delete_feature_flag(
         )
 
 
-@router.post("/{flag_id}/rollout", dependencies=[Depends(require_super_admin)])
+@router.post("/{flag_id}/rollout", dependencies=[Depends(require_permission("flags.manage"))])
 async def apply_rollout(
     flag_id: str,
     request: RolloutRequest,
