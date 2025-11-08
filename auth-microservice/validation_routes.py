@@ -9,7 +9,7 @@ from datetime import datetime, timezone
 
 from awana_auth.core.location_models import Validation, ValidationStatus
 from awana_auth.core.models import User, UserStatus
-from awana_auth.core.dependencies import require_admin, get_database, get_current_user
+from awana_auth.core.dependencies import get_database, get_current_user
 from awana_auth.dependencies.permission_dependencies import require_permission
 from pydantic import BaseModel
 from awana_auth.utils.config_helpers import cfg
