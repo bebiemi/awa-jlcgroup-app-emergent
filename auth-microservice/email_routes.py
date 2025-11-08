@@ -6,6 +6,7 @@ from pydantic import BaseModel, EmailStr
 from typing import List
 from awana_auth.core.models import User
 from awana_auth.core.dependencies import get_current_user
+from awana_auth.dependencies.permission_dependencies import require_permission
 from awana_auth.services.email_service import get_email_service
 from datetime import datetime, timezone
 
@@ -18,16 +19,6 @@ class TestEmailRequest(BaseModel):
     to_emails: List[EmailStr]
     subject: str = "Email de test JLC"
     message: str = "Ceci est un email de test depuis l'application JLC."
-
-
-def require_super_admin(current_user: User = Depends(get_current_user)):
-    """Dependency pour vérifier que l'utilisateur est super admin"""
-    if "super_admin" not in current_user.roles:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Accès refusé : super admin requis"
-        )
-    return current_user
 
 
 @router.get("/config")
