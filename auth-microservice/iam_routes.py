@@ -196,7 +196,7 @@ async def create_profile(
 async def update_profile(
     profile_id: str,
     profile_data: ProfileUpdate,
-    current_user: User = Depends(require_admin),
+    current_user: User = Depends(require_permission("iam.profiles.update")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """Update profile (admin only, not if protected)"""
