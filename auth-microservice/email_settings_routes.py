@@ -4,6 +4,7 @@ Routes pour la gestion de la configuration email
 from fastapi import APIRouter, Depends, HTTPException, status
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from awana_auth.core.dependencies import get_database, get_current_user
+from awana_auth.dependencies.permission_dependencies import require_permission
 from awana_auth.core.models import User
 from awana_auth.core.email_config_models import (
     EmailConfigUpdate,
@@ -19,26 +20,6 @@ from email.mime.text import MIMEText
 
 
 router = APIRouter(prefix="/api/emails", tags=["email-settings"])
-
-
-def require_super_admin(current_user: User = Depends(get_current_user)):
-    """Vérifier que l'utilisateur est super admin"""
-    if "super_admin" not in current_user.roles:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Accès refusé : super admin requis"
-        )
-    return current_user
-
-
-def require_admin(current_user: User = Depends(get_current_user)):
-    """Vérifier que l'utilisateur est admin ou super admin"""
-    if "admin" not in current_user.roles and "super_admin" not in current_user.roles:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Accès refusé : admin requis"
-        )
-    return current_user
 
 
 @router.get("/settings", response_model=EmailConfigResponse)
