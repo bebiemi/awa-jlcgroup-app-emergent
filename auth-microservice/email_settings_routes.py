@@ -170,7 +170,7 @@ async def test_email_config(
 
 @router.delete("/settings")
 async def delete_email_settings(
-    current_user: User = Depends(require_super_admin),
+    current_user: User = Depends(require_permission("emails.configure")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """
