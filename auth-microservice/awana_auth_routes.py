@@ -1817,11 +1817,11 @@ async def assign_role_to_user(
     user_id: str,
     role_data: RoleAssignRequest,
     request: Request,
-    current_user: User = Depends(require_admin),
+    current_user: User = Depends(require_permission("users.manage")),
     db: AsyncIOMotorDatabase = Depends(get_database),
     rbac_manager: RBACManager = Depends(get_rbac_manager)
 ):
-    """Assign role to user"""
+    """Assign role to user (DEPRECATED: Use IAM profiles instead)"""
     # Check if user exists
     user_doc = await db.users.find_one({"id": user_id}, {"_id": 0})
     
