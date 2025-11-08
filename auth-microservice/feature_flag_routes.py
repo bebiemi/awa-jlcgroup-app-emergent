@@ -77,7 +77,7 @@ async def list_feature_flags(
     }
 
 
-@router.post("", dependencies=[Depends(require_super_admin)])
+@router.post("", dependencies=[Depends(require_permission("flags.manage"))])
 async def create_feature_flag(
     request: CreateFeatureFlagRequest,
     current_user: User = Depends(require_permission("flags.manage")),
