@@ -409,7 +409,7 @@ def test_authorization():
         # Login as interim user
         login_response = test_endpoint(
             "POST",
-            f"{AUTH_BASE_URL}/auth/local/login",
+            f"{AUTH_BASE_URL}/api/auth/local/login",
             data={
                 "username": interim_user.get("username"),
                 "password": "TestPass123!"
@@ -425,7 +425,7 @@ def test_authorization():
             # 4. Test 403 - Insufficient permissions (interim trying to access admin endpoint)
             test_endpoint(
                 "GET",
-                f"{AUTH_BASE_URL}/auth/admin/stats",
+                f"{AUTH_BASE_URL}/api/auth/admin/stats",
                 headers=get_auth_headers(test_data["interim_token"]),
                 expected_status=403,
                 test_name="GET /auth/admin/stats as interim user (403 Forbidden)"
