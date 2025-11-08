@@ -512,7 +512,7 @@ def test_backward_compatibility():
     # 1. Test that legacy role checks still work
     response = test_endpoint(
         "GET",
-        f"{AUTH_BASE_URL}/auth/me",
+        f"{AUTH_BASE_URL}/api/auth/me",
         headers=get_auth_headers(),
         expected_status=200,
         test_name="GET /auth/me (legacy endpoint)"
@@ -530,7 +530,7 @@ def test_backward_compatibility():
     # 2. Test that old endpoints still work
     test_endpoint(
         "GET",
-        f"{AUTH_BASE_URL}/auth/admin/roles",
+        f"{AUTH_BASE_URL}/api/auth/admin/roles",
         headers=get_auth_headers(),
         expected_status=200,
         test_name="GET /auth/admin/roles (legacy role management)"
