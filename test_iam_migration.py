@@ -76,7 +76,7 @@ def login_admin():
     
     response = test_endpoint(
         "POST",
-        f"{AUTH_BASE_URL}/auth/local/login",
+        f"{AUTH_BASE_URL}/api/auth/local/login",
         data={"username": ADMIN_USERNAME, "password": ADMIN_PASSWORD},
         expected_status=200,
         test_name="Admin Login"
