@@ -151,7 +151,7 @@ async def get_profile(
 @router.post("/profiles", response_model=Profile, status_code=status.HTTP_201_CREATED)
 async def create_profile(
     profile_data: ProfileCreate,
-    current_user: User = Depends(require_admin),
+    current_user: User = Depends(require_permission("iam.profiles.create")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """Create new profile (admin only)"""
