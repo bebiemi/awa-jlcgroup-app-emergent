@@ -93,15 +93,34 @@ export default function Sidebar() {
 
   if (!user) return null
 
-  const isAdmin = user.roles.includes(roles.admin) || user.roles.includes(roles.super_admin)
-  const isInterim = user.roles.includes(roles.interim)
-  const isCompany = user.roles.includes(roles.company)
-  const isCommercial = user.roles.includes(roles.commercial)
+  // IAM: Check permissions instead of roles
+  const { permissions: userPermissions } = usePermissions([
+    'admin.dashboard',
+    'users.read',
+    'groups.manage',
+    'locations.manage',
+    'validations.manage',
+    'missions.manage',
+    'missions.browse',
+    'missions.create',
+    'applications.read_own',
+    'iam.profiles.manage',
+    'iam.groups.manage',
+    'profiles.manage',
+    'references.manage',
+    'rules.manage',
+    'flags.manage',
+    'config.manage',
+    'emails.configure',
+    'emails.read_history',
+    'emails.manage_templates',
+    'profile.manage_own',
+  ])
 
-  // Navigation sections based on user role
+  // Navigation sections based on user permissions (IAM)
   const navigationSections: NavSection[] = []
 
-  if (isAdmin) {
+  if (userPermissions['admin.dashboard']) {
     navigationSections.push(
       {
         title: 'Tableau de bord',
