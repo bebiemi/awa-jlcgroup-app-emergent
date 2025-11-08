@@ -19,6 +19,8 @@ from awana_auth.core.mission_models import (
     MedicalStatus, ContractStatus
 )
 from awana_auth.core.dependencies import get_current_user as get_user_dep
+from awana_auth.dependencies.permission_dependencies import require_permission, require_any_permission
+from awana_auth.services.permission_checker import PermissionChecker
 from awana_auth.utils.config_helpers import cfg
 
 router = APIRouter(prefix="/api/missions", tags=["missions"])
