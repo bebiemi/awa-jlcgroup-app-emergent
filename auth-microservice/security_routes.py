@@ -13,7 +13,7 @@ from awana_auth.core.models import (
     CreateUserRequest, CreateGroupRequest, CreateProfileRequest,
     User, UserStatus, AuthProvider
 )
-from awana_auth.core.dependencies import get_database, require_admin, get_current_user
+from awana_auth.core.dependencies import get_database, get_current_user
 from awana_auth.dependencies.permission_dependencies import require_permission
 from awana_auth.core.config import auth_config
 
