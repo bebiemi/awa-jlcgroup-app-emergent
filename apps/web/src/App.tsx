@@ -14,8 +14,8 @@ import AdminDashboard from './features/admin/pages/AdminDashboard'
 import ValidationsPage from './features/admin/pages/ValidationsPage'
 import UserManagementPage from './features/admin/pages/UserManagementPage'
 import CreateUserPage from './features/admin/pages/CreateUserPage'
-import GroupsPage from './features/admin/pages/GroupsPage'
-import ProfilesPage from './features/admin/pages/ProfilesPage'
+// OLD: import GroupsPage from './features/admin/pages/GroupsPage' // DEPRECATED - Use IAMControlPage
+// OLD: import ProfilesPage from './features/admin/pages/ProfilesPage' // DEPRECATED - Use ProfilesManagementPage
 import ProfilesManagementPage from './features/iam/pages/ProfilesManagementPage'
 import IAMControlPage from './features/iam/pages/IAMControlPage'
 import LocationManagementPage from './features/admin/pages/LocationManagementPage'
