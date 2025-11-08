@@ -228,7 +228,7 @@ async def update_reference(
     return {"reference": updated_ref}
 
 
-@router.delete("/references/{ref_id}", dependencies=[Depends(require_admin)])
+@router.delete("/references/{ref_id}", dependencies=[Depends(require_permission("references.manage"))])
 async def delete_reference(
     ref_id: str,
     db: AsyncIOMotorDatabase = Depends(get_database)
