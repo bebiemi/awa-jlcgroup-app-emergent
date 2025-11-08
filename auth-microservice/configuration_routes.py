@@ -298,7 +298,7 @@ async def get_settings(
     return {"settings": settings}
 
 
-@router.post("/settings", dependencies=[Depends(require_admin)])
+@router.post("/settings", dependencies=[Depends(require_permission("config.manage"))])
 async def create_setting(
     setting: CreateSettingRequest,
     db: AsyncIOMotorDatabase = Depends(get_database)
