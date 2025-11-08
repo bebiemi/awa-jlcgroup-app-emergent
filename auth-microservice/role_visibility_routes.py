@@ -7,6 +7,7 @@ from pydantic import BaseModel
 from typing import Optional
 from awana_auth.core.models import User
 from awana_auth.core.dependencies import get_database, get_current_user
+from awana_auth.dependencies.permission_dependencies import require_permission
 from awana_auth.services.feature_flag_service import FeatureFlagService
 from awana_auth.core.feature_flag_models import AuditEventType
 
@@ -17,16 +18,6 @@ router = APIRouter(prefix="/api/roles", tags=["roles-visibility"])
 class RoleVisibilityUpdate(BaseModel):
     """Mise à jour de la visibilité d'un rôle"""
     is_hidden_from_admins: bool
-
-
-def require_super_admin(current_user: User = Depends(get_current_user)):
-    """Dependency pour vérifier que l'utilisateur est super admin"""
-    if "super_admin" not in current_user.roles:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Accès refusé : super admin requis"
-        )
-    return current_user
 
 
 @router.get("")
