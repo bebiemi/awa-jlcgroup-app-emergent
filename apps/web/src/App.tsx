@@ -201,7 +201,7 @@ function App() {
       <Route
         path="/admin/iam/profiles"
         element={
-          <ProtectedRoute requiredRoles={[roles.admin, roles.super_admin]}>
+          <ProtectedRoute requiredPermissions={['iam.profiles.manage']}>
             <ProfilesManagementPage />
           </ProtectedRoute>
         }
@@ -209,7 +209,7 @@ function App() {
       <Route
         path="/admin/iam/control"
         element={
-          <ProtectedRoute requiredRoles={[roles.admin, roles.super_admin]}>
+          <ProtectedRoute requiredPermissions={['iam.groups.manage']}>
             <IAMControlPage />
           </ProtectedRoute>
         }
