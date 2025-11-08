@@ -8,11 +8,18 @@ import {
   type EmailConfigUpdate,
   type EmailTestRequest,
 } from '../api/emailSettingsApi';
+import Layout from '@/components/Layout';
+import Card from '@/components/Card';
+import { PlusIcon, EnvelopeIcon, Cog6ToothIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
+
+type SectionType = 'smtp' | 'admin' | 'test'
 
 export const EmailSettingsPage: React.FC = () => {
   const { data: settings, isLoading, error } = useGetEmailSettingsQuery();
   const [updateSettings, { isLoading: isUpdating }] = useUpdateEmailSettingsMutation();
   const [testConfig, { isLoading: isTesting }] = useTestEmailConfigMutation();
+
+  const [activeSection, setActiveSection] = useState<SectionType>('smtp')
 
   const [formData, setFormData] = useState<EmailConfigUpdate>({
     enabled: false,
@@ -120,253 +127,410 @@ export const EmailSettingsPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-96">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
-      </div>
+      <Layout>
+        <div className="flex justify-center items-center h-96">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-jlc-purple-600"></div>
+        </div>
+      </Layout>
     );
   }
 
   const hasNoConfig = error && (error as any).status === 404;
 
+  // Statistics
+  const stats = {
+    status: formData.enabled ? 'Actif' : 'Inactif',
+    adminCount: formData.admin_emails.length,
+    provider: formData.provider,
+    tls: formData.smtp_use_tls ? 'Activé' : 'Désactivé'
+  }
+
+  const sections = [
+    { value: 'smtp', label: 'Configuration SMTP', icon: Cog6ToothIcon },
+    { value: 'admin', label: 'Emails Admin', icon: EnvelopeIcon },
+    { value: 'test', label: 'Test Configuration', icon: CheckCircleIcon },
+  ]
+
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-900">Configuration Email</h1>
-        <p className="text-gray-600 mt-2">
-          Configurez les paramètres SMTP pour les notifications email
-        </p>
-      </div>
-
-      {hasNoConfig && (
-        <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
-          <p className="text-yellow-700">
-            Aucune configuration email trouvée. Créez-en une nouvelle ci-dessous.
-          </p>
-        </div>
-      )}
-
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="bg-white shadow rounded-lg p-6">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h2 className="text-lg font-semibold text-gray-900">Notifications Email</h2>
-              <p className="text-sm text-gray-600">Activer ou désactiver les notifications</p>
-            </div>
-            <label className="relative inline-flex items-center cursor-pointer">
-              <input
-                type="checkbox"
-                checked={formData.enabled}
-                onChange={(e) => setFormData({ ...formData, enabled: e.target.checked })}
-                className="sr-only peer"
-              />
-              <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-purple-600 peer-focus:ring-4 peer-focus:ring-purple-300 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full peer-checked:after:border-white"></div>
-            </label>
+    <Layout>
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Configuration Email</h1>
+            <p className="text-gray-600 mt-2">
+              Configurez les paramètres SMTP pour les notifications email
+            </p>
           </div>
+        </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Fournisseur SMTP
-              </label>
-              <select
-                value={formData.provider}
-                onChange={(e) => handleProviderChange(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-              >
-                {EMAIL_PROVIDERS.map((provider) => (
-                  <option key={provider.value} value={provider.value}>
-                    {provider.label}
-                  </option>
-                ))}
-              </select>
+        {hasNoConfig && (
+          <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-lg">
+            <div className="flex">
+              <div className="text-4xl mr-3">⚠️</div>
+              <p className="text-yellow-700">
+                Aucune configuration email trouvée. Créez-en une nouvelle ci-dessous.
+              </p>
             </div>
+          </div>
+        )}
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Port SMTP
-              </label>
-              <input
-                type="number"
-                value={formData.smtp_port}
-                onChange={(e) => setFormData({ ...formData, smtp_port: parseInt(e.target.value) })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-              />
-            </div>
-
-            <div className="col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Hôte SMTP
-              </label>
-              <input
-                type="text"
-                value={formData.smtp_host}
-                onChange={(e) => setFormData({ ...formData, smtp_host: e.target.value })}
-                placeholder="smtp.gmail.com"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Utilisateur SMTP
-              </label>
-              <input
-                type="text"
-                value={formData.smtp_user}
-                onChange={(e) => setFormData({ ...formData, smtp_user: e.target.value })}
-                placeholder="your-email@gmail.com"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Mot de passe SMTP
-              </label>
-              <div className="relative">
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  value={formData.smtp_password}
-                  onChange={(e) => setFormData({ ...formData, smtp_password: e.target.value })}
-                  placeholder={settings ? '••••••••' : 'Votre mot de passe'}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-                  required={!settings}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-2 top-2 text-gray-500"
-                >
-                  {showPassword ? '🙈' : '👁️'}
-                </button>
+        {/* Statistics Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Statut</p>
+                <p className={`text-2xl font-bold ${
+                  formData.enabled ? 'text-green-600' : 'text-red-600'
+                }`}>
+                  {stats.status}
+                </p>
               </div>
+              <div className="text-3xl">{formData.enabled ? '✅' : '❌'}</div>
             </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Email expéditeur
-              </label>
-              <input
-                type="email"
-                value={formData.from_email}
-                onChange={(e) => setFormData({ ...formData, from_email: e.target.value })}
-                placeholder="noreply@jlc.com"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Nom expéditeur
-              </label>
-              <input
-                type="text"
-                value={formData.from_name}
-                onChange={(e) => setFormData({ ...formData, from_name: e.target.value })}
-                placeholder="JLC Application"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-                required
-              />
-            </div>
-
-            <div className="col-span-2">
-              <label className="flex items-center">
-                <input
-                  type="checkbox"
-                  checked={formData.smtp_use_tls}
-                  onChange={(e) => setFormData({ ...formData, smtp_use_tls: e.target.checked })}
-                  className="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
-                />
-                <span className="ml-2 text-sm text-gray-700">Utiliser TLS</span>
-              </label>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white shadow rounded-lg p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Emails Administrateurs</h2>
-          <p className="text-sm text-gray-600 mb-4">
-            Ces emails recevront les notifications critiques
-          </p>
-
-          <div className="flex gap-2 mb-4">
-            <input
-              type="email"
-              value={newAdminEmail}
-              onChange={(e) => setNewAdminEmail(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddAdminEmail())}
-              placeholder="admin@jlc.com"
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-            />
-            <button
-              type="button"
-              onClick={handleAddAdminEmail}
-              className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700"
-            >
-              Ajouter
-            </button>
-          </div>
-
-          <div className="space-y-2">
-            {formData.admin_emails.map((email) => (
-              <div key={email} className="flex items-center justify-between bg-gray-50 px-3 py-2 rounded">
-                <span className="text-sm text-gray-700">{email}</span>
-                <button
-                  type="button"
-                  onClick={() => handleRemoveAdminEmail(email)}
-                  className="text-red-600 hover:text-red-800"
-                >
-                  ✕
-                </button>
+          </Card>
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Emails Admin</p>
+                <p className="text-2xl font-bold text-jlc-purple-600">{stats.adminCount}</p>
               </div>
-            ))}
-            {formData.admin_emails.length === 0 && (
-              <p className="text-sm text-gray-500 italic">Aucun email admin ajouté</p>
-            )}
-          </div>
+              <div className="text-3xl">📧</div>
+            </div>
+          </Card>
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Fournisseur</p>
+                <p className="text-lg font-bold text-gray-900 capitalize">{stats.provider}</p>
+              </div>
+              <div className="text-3xl">📨</div>
+            </div>
+          </Card>
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Sécurité TLS</p>
+                <p className={`text-lg font-bold ${
+                  formData.smtp_use_tls ? 'text-green-600' : 'text-red-600'
+                }`}>
+                  {stats.tls}
+                </p>
+              </div>
+              <div className="text-3xl">🔒</div>
+            </div>
+          </Card>
         </div>
 
-        <div className="bg-white shadow rounded-lg p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Tester la Configuration</h2>
-          
-          <div className="flex gap-2 mb-4">
-            <input
-              type="email"
-              value={testEmail}
-              onChange={(e) => setTestEmail(e.target.value)}
-              placeholder="email-test@example.com"
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-            />
-            <button
-              type="button"
-              onClick={handleTestConfig}
-              disabled={isTesting}
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
-            >
-              {isTesting ? 'Test...' : 'Tester'}
-            </button>
+        {/* Section Selector */}
+        <Card>
+          <div className="mb-4">
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">Sections</h3>
+            <p className="text-sm text-gray-600">Sélectionnez une section pour configurer</p>
           </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            {sections.map((section) => {
+              const Icon = section.icon
+              return (
+                <button
+                  key={section.value}
+                  onClick={() => setActiveSection(section.value as SectionType)}
+                  className={`px-6 py-4 rounded-lg transition-all text-left ${
+                    activeSection === section.value
+                      ? 'bg-jlc-purple-600 text-white shadow-lg scale-105'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:scale-102 hover:shadow-md'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <Icon className="h-8 w-8" />
+                    <div className="font-semibold">{section.label}</div>
+                  </div>
+                </button>
+              )
+            })}
+          </div>
+        </Card>
 
-          {testResult && (
-            <div className={`p-3 rounded ${testResult.success ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
-              {testResult.message}
-            </div>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* SMTP Configuration Section */}
+          {activeSection === 'smtp' && (
+            <Card>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between mb-6">
+                  <div>
+                    <h2 className="text-lg font-semibold text-gray-900">Notifications Email</h2>
+                    <p className="text-sm text-gray-600">Activer ou désactiver les notifications</p>
+                  </div>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={formData.enabled}
+                      onChange={(e) => setFormData({ ...formData, enabled: e.target.checked })}
+                      className="sr-only peer"
+                    />
+                    <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-jlc-purple-600 peer-focus:ring-4 peer-focus:ring-purple-300 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full peer-checked:after:border-white"></div>
+                  </label>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Fournisseur SMTP
+                    </label>
+                    <select
+                      value={formData.provider}
+                      onChange={(e) => handleProviderChange(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-jlc-purple-500 focus:border-jlc-purple-500"
+                    >
+                      {EMAIL_PROVIDERS.map((provider) => (
+                        <option key={provider.value} value={provider.value}>
+                          {provider.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Port SMTP
+                    </label>
+                    <input
+                      type="number"
+                      value={formData.smtp_port}
+                      onChange={(e) => setFormData({ ...formData, smtp_port: parseInt(e.target.value) })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-jlc-purple-500 focus:border-jlc-purple-500"
+                    />
+                  </div>
+
+                  <div className="col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Hôte SMTP
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.smtp_host}
+                      onChange={(e) => setFormData({ ...formData, smtp_host: e.target.value })}
+                      placeholder="smtp.gmail.com"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-jlc-purple-500 focus:border-jlc-purple-500"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Utilisateur SMTP
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.smtp_user}
+                      onChange={(e) => setFormData({ ...formData, smtp_user: e.target.value })}
+                      placeholder="your-email@gmail.com"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-jlc-purple-500 focus:border-jlc-purple-500"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Mot de passe SMTP
+                    </label>
+                    <div className="relative">
+                      <input
+                        type={showPassword ? 'text' : 'password'}
+                        value={formData.smtp_password}
+                        onChange={(e) => setFormData({ ...formData, smtp_password: e.target.value })}
+                        placeholder={settings ? '••••••••' : 'Votre mot de passe'}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-jlc-purple-500 focus:border-jlc-purple-500"
+                        required={!settings}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-2 top-2 text-gray-500 hover:text-gray-700"
+                      >
+                        {showPassword ? '🙈' : '👁️'}
+                      </button>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Email expéditeur
+                    </label>
+                    <input
+                      type="email"
+                      value={formData.from_email}
+                      onChange={(e) => setFormData({ ...formData, from_email: e.target.value })}
+                      placeholder="noreply@jlc.com"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-jlc-purple-500 focus:border-jlc-purple-500"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Nom expéditeur
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.from_name}
+                      onChange={(e) => setFormData({ ...formData, from_name: e.target.value })}
+                      placeholder="JLC Application"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-jlc-purple-500 focus:border-jlc-purple-500"
+                      required
+                    />
+                  </div>
+
+                  <div className="col-span-2">
+                    <label className="flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={formData.smtp_use_tls}
+                        onChange={(e) => setFormData({ ...formData, smtp_use_tls: e.target.checked })}
+                        className="rounded border-gray-300 text-jlc-purple-600 focus:ring-jlc-purple-500 h-4 w-4"
+                      />
+                      <span className="ml-2 text-sm text-gray-700">Utiliser TLS (Recommandé)</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </Card>
           )}
-        </div>
 
-        <div className="flex justify-end gap-4">
-          <button
-            type="submit"
-            disabled={isUpdating}
-            className="px-6 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 disabled:opacity-50"
-          >
-            {isUpdating ? 'Enregistrement...' : 'Enregistrer la Configuration'}
-          </button>
-        </div>
-      </form>
-    </div>
+          {/* Admin Emails Section */}
+          {activeSection === 'admin' && (
+            <Card>
+              <div className="space-y-4">
+                <div className="mb-4">
+                  <h2 className="text-lg font-semibold text-gray-900">Emails Administrateurs</h2>
+                  <p className="text-sm text-gray-600 mt-1">
+                    Ces emails recevront les notifications critiques
+                  </p>
+                </div>
+
+                <div className="flex gap-2">
+                  <input
+                    type="email"
+                    value={newAdminEmail}
+                    onChange={(e) => setNewAdminEmail(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddAdminEmail())}
+                    placeholder="admin@jlc.com"
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-jlc-purple-500 focus:border-jlc-purple-500"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleAddAdminEmail}
+                    className="flex items-center gap-2 px-4 py-2 bg-jlc-purple-600 text-white rounded-md hover:bg-jlc-purple-700 transition-colors shadow-md"
+                  >
+                    <PlusIcon className="h-5 w-5" />
+                    Ajouter
+                  </button>
+                </div>
+
+                <div className="space-y-2">
+                  {formData.admin_emails.map((email) => (
+                    <div key={email} className="flex items-center justify-between bg-gradient-to-r from-gray-50 to-white px-4 py-3 rounded-lg border border-gray-200 hover:shadow-md transition-all">
+                      <div className="flex items-center gap-2">
+                        <EnvelopeIcon className="h-5 w-5 text-jlc-purple-600" />
+                        <span className="text-sm text-gray-700 font-medium">{email}</span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveAdminEmail(email)}
+                        className="text-red-600 hover:text-red-800 hover:bg-red-50 p-2 rounded transition-colors"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ))}
+                  {formData.admin_emails.length === 0 && (
+                    <div className="text-center py-8">
+                      <div className="text-4xl mb-2">📧</div>
+                      <p className="text-sm text-gray-500 italic">Aucun email admin ajouté</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </Card>
+          )}
+
+          {/* Test Configuration Section */}
+          {activeSection === 'test' && (
+            <Card>
+              <div className="space-y-4">
+                <div className="mb-4">
+                  <h2 className="text-lg font-semibold text-gray-900">Tester la Configuration</h2>
+                  <p className="text-sm text-gray-600 mt-1">
+                    Envoyez un email de test pour vérifier la configuration
+                  </p>
+                </div>
+                
+                <div className="flex gap-2">
+                  <input
+                    type="email"
+                    value={testEmail}
+                    onChange={(e) => setTestEmail(e.target.value)}
+                    placeholder="email-test@example.com"
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-jlc-purple-500 focus:border-jlc-purple-500"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleTestConfig}
+                    disabled={isTesting}
+                    className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-md"
+                  >
+                    {isTesting ? 'Test en cours...' : 'Tester'}
+                  </button>
+                </div>
+
+                {testResult && (
+                  <div className={`p-4 rounded-lg border-l-4 ${
+                    testResult.success 
+                      ? 'bg-green-50 border-green-500 text-green-700' 
+                      : 'bg-red-50 border-red-500 text-red-700'
+                  }`}>
+                    <div className="flex items-start gap-3">
+                      <div className="text-2xl">
+                        {testResult.success ? '✅' : '❌'}
+                      </div>
+                      <div>
+                        <div className="font-semibold mb-1">
+                          {testResult.success ? 'Test réussi !' : 'Test échoué'}
+                        </div>
+                        <div className="text-sm">{testResult.message}</div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {!testResult && (
+                  <div className="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-lg">
+                    <div className="flex items-start gap-3">
+                      <div className="text-2xl">💡</div>
+                      <div className="text-sm text-blue-700">
+                        <p className="font-semibold mb-1">Conseil</p>
+                        <p>Assurez-vous d'avoir enregistré la configuration avant de tester. Le test utilisera les paramètres actuels du formulaire.</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </Card>
+          )}
+
+          {/* Save Button */}
+          <div className="flex justify-end gap-4">
+            <button
+              type="submit"
+              disabled={isUpdating}
+              className="px-6 py-3 bg-jlc-purple-600 text-white rounded-lg hover:bg-jlc-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-md hover:shadow-lg font-medium"
+            >
+              {isUpdating ? 'Enregistrement...' : 'Enregistrer la Configuration'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </Layout>
   );
 };
