@@ -41,7 +41,7 @@ async def get_validations(
     assigned_to: Optional[str] = Query(None, description="Filter by assigned validator"),
     page: int = Query(1, ge=1),
     page_size: int = Query(15, ge=1, le=100),
-    current_user: User = Depends(require_admin),
+    current_user: User = Depends(require_permission("validations.manage")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """Get validations with filters (admin only)"""
@@ -71,7 +71,7 @@ async def get_validations(
 
 @validation_router.get("/stats")
 async def get_validation_stats(
-    current_user: User = Depends(require_admin),
+    current_user: User = Depends(require_permission("validations.manage")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """Get validation statistics"""
@@ -119,7 +119,7 @@ async def get_my_validation(
 @validation_router.get("/{validation_id}", response_model=Validation)
 async def get_validation(
     validation_id: str,
-    current_user: User = Depends(require_admin),
+    current_user: User = Depends(require_permission("validations.manage")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """Get specific validation"""
@@ -136,7 +136,7 @@ async def get_validation(
 async def approve_validation(
     validation_id: str,
     approval: ValidationApproval,
-    current_user: User = Depends(require_admin),
+    current_user: User = Depends(require_permission("validations.manage")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """Approve a validation request"""
@@ -188,7 +188,7 @@ async def approve_validation(
 async def reject_validation(
     validation_id: str,
     rejection: ValidationRejection,
-    current_user: User = Depends(require_admin),
+    current_user: User = Depends(require_permission("validations.manage")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """Reject a validation request"""
@@ -241,7 +241,7 @@ async def reject_validation(
 async def assign_validation(
     validation_id: str,
     assignment: ValidationAssignment,
-    current_user: User = Depends(require_admin),
+    current_user: User = Depends(require_permission("validations.manage")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """Assign validation to a validator"""
@@ -287,7 +287,7 @@ async def assign_validation(
 @validation_router.post("/{validation_id}/add-country")
 async def add_country_from_validation(
     validation_id: str,
-    current_user: User = Depends(require_admin),
+    current_user: User = Depends(require_permission("validations.manage")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """Create a country from validation warning"""
