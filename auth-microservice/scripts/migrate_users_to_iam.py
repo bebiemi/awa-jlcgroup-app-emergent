@@ -19,8 +19,8 @@ MONGO_URL = os.getenv("MONGO_URL", "mongodb://localhost:27017")
 ROLE_TO_PROFILE_MAPPING = {
     "super_admin": "super_admin",
     "admin": "admin",
-    "interim": "interim",
-    "company": "company",
+    "interim": "interim_user",  # Fixed: map to interim_user profile
+    "company": "company_admin",  # Fixed: map to company_admin profile
     "commercial": "commercial",
     "validator": "validator",
     "agency": "agency"
