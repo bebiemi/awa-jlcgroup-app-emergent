@@ -157,9 +157,13 @@ async def create_mission(
     Créer une nouvelle mission (Étape 1)
     Accessible par: Entreprises, Admin, Commerciaux
     """
-    # Vérifier les permissions
-    user_roles = current_user.get("roles", [])
-    if not any(role in user_roles for role in [cfg.get_admin_role(), cfg.get_super_admin_role(), cfg.get_company_role(), cfg.get_commercial_role()]):
+    # IAM Permission Check
+    checker = PermissionChecker(db)
+    has_permission = await checker.user_has_any_permission(
+        current_user.get("id"),
+        ["missions.create", "missions.manage"]
+    )
+    if not has_permission:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Vous n'avez pas la permission de créer une mission"
