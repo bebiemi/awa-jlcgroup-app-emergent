@@ -73,7 +73,7 @@ async def get_template(
 @router.post("")
 async def create_template(
     template_data: EmailTemplateCreate,
-    current_user: User = Depends(require_super_admin),
+    current_user: User = Depends(require_permission("emails.manage_templates")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """
@@ -116,7 +116,7 @@ async def create_template(
 async def update_template(
     template_id: str,
     template_update: EmailTemplateUpdate,
-    current_user: User = Depends(require_super_admin),
+    current_user: User = Depends(require_permission("emails.manage_templates")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """
@@ -176,7 +176,7 @@ async def update_template(
 @router.delete("/{template_id}")
 async def delete_template(
     template_id: str,
-    current_user: User = Depends(require_super_admin),
+    current_user: User = Depends(require_permission("emails.manage_templates")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """
@@ -240,7 +240,7 @@ async def preview_template(
 
 @router.post("/init-defaults")
 async def initialize_default_templates(
-    current_user: User = Depends(require_super_admin),
+    current_user: User = Depends(require_permission("emails.manage_templates")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """
