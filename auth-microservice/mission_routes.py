@@ -216,21 +216,35 @@ async def get_missions(
     - Admin/Commercial: Toutes les missions
     """
     query = {}
-    user_roles = current_user.get("roles", [])
     user_id = current_user.get("sub")
     
-    # Filtrer selon le rôle
-    if cfg.get_interim_role() in user_roles:
-        # Les intérimaires ne voient que les missions publiées
+    # IAM: Check permissions instead of roles
+    checker = PermissionChecker(db)
+    can_manage_all = await checker.user_has_any_permission(
+        current_user.get("id"),
+        ["missions.manage", "missions.read"]
+    )
+    can_create = await checker.user_has_permission(
+        current_user.get("id"),
+        "missions.create"
+    )
+    can_browse = await checker.user_has_permission(
+        current_user.get("id"),
+        "missions.browse"
+    )
+    
+    # Filtrer selon les permissions
+    if can_browse and not can_manage_all and not can_create:
+        # Interim users (missions.browse) - only published missions
         query["status"] = MissionStatus.PUBLISHED
-    elif cfg.get_company_role() in user_roles:
-        # Les entreprises voient leurs missions
+    elif can_create and not can_manage_all:
+        # Company users (missions.create) - only their missions
         query["company_id"] = user_id
     
     # Appliquer les filtres supplémentaires
     if status:
         query["status"] = status
-    if company_id and (cfg.get_admin_role() in user_roles or cfg.get_super_admin_role() in user_roles):
+    if company_id and can_manage_all:
         query["company_id"] = company_id
     if commercial_id:
         query["commercial_id"] = commercial_id
