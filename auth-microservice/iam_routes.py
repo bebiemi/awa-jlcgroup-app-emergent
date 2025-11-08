@@ -244,7 +244,7 @@ async def update_profile(
 @router.delete("/profiles/{profile_id}")
 async def delete_profile(
     profile_id: str,
-    current_user: User = Depends(require_admin),
+    current_user: User = Depends(require_permission("iam.profiles.delete")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """Delete profile (admin only, not if protected or in use)"""
