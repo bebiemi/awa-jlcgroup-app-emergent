@@ -139,7 +139,7 @@ async def update_feature_flag(
         )
 
 
-@router.delete("/{flag_id}", dependencies=[Depends(require_super_admin)])
+@router.delete("/{flag_id}", dependencies=[Depends(require_permission("flags.manage"))])
 async def delete_feature_flag(
     flag_id: str,
     current_user: User = Depends(require_permission("flags.manage")),
