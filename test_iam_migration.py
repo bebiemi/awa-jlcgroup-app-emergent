@@ -455,7 +455,7 @@ def test_permission_checker():
     if test_data.get("admin_user_id"):
         response = test_endpoint(
             "GET",
-            f"{AUTH_BASE_URL}/api/auth-api/iam/users/{test_data['admin_user_id']}/permissions",
+            f"{AUTH_BASE_URL}/api/iam/users/{test_data['admin_user_id']}/permissions",
             headers=get_auth_headers(),
             expected_status=200,
             test_name="Get admin user permissions"
@@ -470,7 +470,7 @@ def test_permission_checker():
     if test_data.get("admin_user_id"):
         test_endpoint(
             "POST",
-            f"{AUTH_BASE_URL}/api/auth-api/iam/check-permission",
+            f"{AUTH_BASE_URL}/api/iam/check-permission",
             data={
                 "user_id": test_data["admin_user_id"],
                 "permission_code": "users.read"
