@@ -105,7 +105,7 @@ def test_user_management_routes():
     # 1. GET /auth/users → users.read permission
     response = test_endpoint(
         "GET",
-        f"{AUTH_BASE_URL}/auth/users",
+        f"{AUTH_BASE_URL}/api/auth/users",
         headers=get_auth_headers(),
         expected_status=200,
         test_name="GET /auth/users (users.read permission)"
@@ -120,7 +120,7 @@ def test_user_management_routes():
     if test_data.get("test_user_id"):
         test_endpoint(
             "GET",
-            f"{AUTH_BASE_URL}/auth/users/{test_data['test_user_id']}",
+            f"{AUTH_BASE_URL}/api/auth/users/{test_data['test_user_id']}",
             headers=get_auth_headers(),
             expected_status=200,
             test_name="GET /auth/users/{id} (users.read permission)"
@@ -130,7 +130,7 @@ def test_user_management_routes():
     if test_data.get("test_user_id"):
         test_endpoint(
             "PUT",
-            f"{AUTH_BASE_URL}/auth/users/{test_data['test_user_id']}",
+            f"{AUTH_BASE_URL}/api/auth/users/{test_data['test_user_id']}",
             data={"full_name": "Test User Updated"},
             headers=get_auth_headers(),
             expected_status=200,
@@ -141,7 +141,7 @@ def test_user_management_routes():
     if test_data.get("test_user_id"):
         test_endpoint(
             "PATCH",
-            f"{AUTH_BASE_URL}/auth/users/{test_data['test_user_id']}/status",
+            f"{AUTH_BASE_URL}/api/auth/users/{test_data['test_user_id']}/status",
             data={"status": "active", "reason": "Test status update"},
             headers=get_auth_headers(),
             expected_status=200,
@@ -151,7 +151,7 @@ def test_user_management_routes():
     # 5. GET /auth/admin/stats → admin.dashboard permission
     test_endpoint(
         "GET",
-        f"{AUTH_BASE_URL}/auth/admin/stats",
+        f"{AUTH_BASE_URL}/api/auth/admin/stats",
         headers=get_auth_headers(),
         expected_status=200,
         test_name="GET /auth/admin/stats (admin.dashboard permission)"
@@ -161,7 +161,7 @@ def test_user_management_routes():
     if test_data.get("test_user_id"):
         test_endpoint(
             "POST",
-            f"{AUTH_BASE_URL}/auth/admin/users/{test_data['test_user_id']}/mfa/reset",
+            f"{AUTH_BASE_URL}/api/auth/admin/users/{test_data['test_user_id']}/mfa/reset",
             headers=get_auth_headers(),
             expected_status=200,
             test_name="POST /auth/admin/users/{id}/mfa/reset (users.reset_mfa permission)"
