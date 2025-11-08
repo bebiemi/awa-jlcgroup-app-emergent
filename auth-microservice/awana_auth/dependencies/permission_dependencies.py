@@ -5,9 +5,8 @@ from typing import List, Optional
 from fastapi import Depends, HTTPException, status
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from awana_auth.core.models import User
-from awana_auth.dependencies.auth import get_current_user
+from awana_auth.core.dependencies import get_current_user, get_database
 from awana_auth.services.permission_checker import PermissionChecker
-from awana_auth.core.dependencies import get_database
 
 class PermissionDependency:
     """
