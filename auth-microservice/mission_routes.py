@@ -560,15 +560,22 @@ async def get_mission_applications(
             detail="Mission non trouvée"
         )
     
-    # Vérifier permissions
-    user_roles = current_user.get("roles", [])
+    # IAM: Check permissions
+    checker = PermissionChecker(db)
     user_id = current_user.get("sub")
     
+    can_manage = await checker.user_has_any_permission(
+        current_user.get("id"),
+        ["applications.manage", "applications.review"]
+    )
+    can_create = await checker.user_has_permission(
+        current_user.get("id"),
+        "missions.create"
+    )
+    
     can_view = (
-        cfg.get_admin_role() in user_roles or
-        cfg.get_super_admin_role() in user_roles or
-        cfg.get_commercial_role() in user_roles or
-        (mission["company_id"] == user_id and cfg.get_company_role() in user_roles)
+        can_manage or
+        (mission["company_id"] == user_id and can_create)
     )
     
     if not can_view:
