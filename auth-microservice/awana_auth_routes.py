@@ -1586,7 +1586,7 @@ async def get_all_users(
 @users_router.get("/{user_id}", response_model=User)
 async def get_user(
     user_id: str,
-    current_user: User = Depends(require_admin),
+    current_user: User = Depends(require_permission("users.read")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """Get specific user by ID"""
