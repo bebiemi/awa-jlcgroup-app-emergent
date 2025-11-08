@@ -1465,7 +1465,7 @@ async def get_current_user_info(
 
 @auth_router.get("/admin/stats")
 async def get_admin_stats(
-    current_user: User = Depends(require_admin),
+    current_user: User = Depends(require_permission("admin.dashboard")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """Get dashboard statistics for admin"""
