@@ -137,7 +137,7 @@ async def get_version_details(
     return version
 
 
-@router.post("/rollback", dependencies=[Depends(require_admin)])
+@router.post("/rollback", dependencies=[Depends(require_permission("config.manage"))])
 async def rollback_to_version(
     rollback: RollbackRequest,
     background_tasks: BackgroundTasks,
