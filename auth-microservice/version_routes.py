@@ -14,7 +14,7 @@ from awana_auth.services.email_service import get_email_service
 
 router = APIRouter(prefix="/api/versions", tags=["versioning"])
 
-@router.post("/snapshot", dependencies=[Depends(require_admin)])
+@router.post("/snapshot", dependencies=[Depends(require_permission("config.manage"))])
 async def create_snapshot(
     description: str,
     tags: list[str] = [],
