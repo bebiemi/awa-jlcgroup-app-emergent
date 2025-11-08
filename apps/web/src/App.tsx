@@ -83,11 +83,11 @@ function App() {
       <Route path="/auth/google/callback" element={<GoogleCallback />} />
       <Route path="/auth/role-selection" element={<RoleSelectionPage />} />
 
-      {/* Protected routes */}
+      {/* Protected routes - IAM Permissions */}
       <Route
         path="/admin"
         element={
-          <ProtectedRoute requiredRoles={[roles.admin]}>
+          <ProtectedRoute requiredPermissions={['admin.dashboard']}>
             <AdminDashboard />
           </ProtectedRoute>
         }
@@ -95,7 +95,7 @@ function App() {
       <Route
         path="/admin/validations"
         element={
-          <ProtectedRoute requiredRoles={[roles.admin]}>
+          <ProtectedRoute requiredPermissions={['validations.manage']}>
             <ValidationsPage />
           </ProtectedRoute>
         }
@@ -103,7 +103,7 @@ function App() {
       <Route
         path="/admin/users"
         element={
-          <ProtectedRoute requiredRoles={[roles.admin, roles.super_admin]}>
+          <ProtectedRoute requiredPermissions={['users.read']}>
             <UserManagementPage />
           </ProtectedRoute>
         }
@@ -111,7 +111,7 @@ function App() {
       <Route
         path="/admin/users/new"
         element={
-          <ProtectedRoute requiredRoles={[roles.admin, roles.super_admin]}>
+          <ProtectedRoute requiredPermissions={['users.create']}>
             <CreateUserPage />
           </ProtectedRoute>
         }
@@ -119,7 +119,7 @@ function App() {
       <Route
         path="/admin/groups"
         element={
-          <ProtectedRoute requiredRoles={[roles.admin, roles.super_admin]}>
+          <ProtectedRoute requiredPermissions={['groups.manage']}>
             <GroupsPage />
           </ProtectedRoute>
         }
