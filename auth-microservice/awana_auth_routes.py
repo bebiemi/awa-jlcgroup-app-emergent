@@ -1546,7 +1546,7 @@ async def get_all_users(
     status: Optional[UserStatus] = None,
     provider: Optional[AuthProviderEnum] = None,
     include_super_admin: bool = Query(False, description="Include super-admin users (super-admin only)"),
-    current_user: User = Depends(require_admin),
+    current_user: User = Depends(require_permission("users.read")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """
