@@ -215,11 +215,11 @@ function App() {
         }
       />
       
-      {/* Routes Missions - Admin & Commercial */}
+      {/* Routes Missions - Admin & Commercial - IAM */}
       <Route
         path="/missions"
         element={
-          <ProtectedRoute requiredRoles={[roles.admin, roles.super_admin, roles.commercial, roles.company]}>
+          <ProtectedRoute requiredPermissions={['missions.read', 'missions.manage']}>
             <MissionsPage />
           </ProtectedRoute>
         }
@@ -227,7 +227,7 @@ function App() {
       <Route
         path="/missions/create"
         element={
-          <ProtectedRoute requiredRoles={[roles.admin, roles.super_admin, roles.commercial, roles.company]}>
+          <ProtectedRoute requiredPermissions={['missions.create']}>
             <CreateMissionPage />
           </ProtectedRoute>
         }
@@ -235,7 +235,7 @@ function App() {
       <Route
         path="/missions/:id"
         element={
-          <ProtectedRoute requiredRoles={[roles.admin, roles.super_admin, roles.commercial, roles.company]}>
+          <ProtectedRoute requiredPermissions={['missions.read']}>
             <MissionDetailPage />
           </ProtectedRoute>
         }
@@ -243,7 +243,7 @@ function App() {
       <Route
         path="/missions/:id/edit"
         element={
-          <ProtectedRoute requiredRoles={[roles.admin, roles.super_admin, roles.commercial, roles.company]}>
+          <ProtectedRoute requiredPermissions={['missions.edit']}>
             <EditMissionPage />
           </ProtectedRoute>
         }
@@ -251,17 +251,17 @@ function App() {
       <Route
         path="/missions/:id/candidatures"
         element={
-          <ProtectedRoute requiredRoles={[roles.admin, roles.super_admin, roles.commercial]}>
+          <ProtectedRoute requiredPermissions={['applications.manage']}>
             <ApplicationsManagementPage />
           </ProtectedRoute>
         }
       />
       
-      {/* Routes Offres - Intérimaires */}
+      {/* Routes Offres - Intérimaires - IAM */}
       <Route
         path="/offres"
         element={
-          <ProtectedRoute requiredRoles={[roles.interim]}>
+          <ProtectedRoute requiredPermissions={['missions.browse']}>
             <OffresPage />
           </ProtectedRoute>
         }
