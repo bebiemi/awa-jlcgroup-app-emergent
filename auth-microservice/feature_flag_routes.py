@@ -305,7 +305,7 @@ async def export_feature_flags(
     )
 
 
-@router.post("/import", dependencies=[Depends(require_super_admin)])
+@router.post("/import", dependencies=[Depends(require_permission("flags.manage"))])
 async def import_feature_flags(
     import_data: dict,
     overwrite: bool = Query(False, description="Overwrite existing flags with same key"),
