@@ -8,8 +8,11 @@ import {
   Profile,
   Permission
 } from '../api/iamApi'
+import Layout from '@/components/Layout'
+import Card from '@/components/Card'
 import Modal from '@/components/Modal'
 import { toast } from 'react-hot-toast'
+import { PlusIcon, ShieldCheckIcon, UserCircleIcon } from '@heroicons/react/24/outline'
 
 const ProfilesManagementPage: React.FC = () => {
   const { data: profiles, isLoading: profilesLoading } = useListProfilesQuery()
@@ -22,6 +25,7 @@ const ProfilesManagementPage: React.FC = () => {
   const [showEditModal, setShowEditModal] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [selectedProfile, setSelectedProfile] = useState<Profile | null>(null)
+  const [filterCategory, setFilterCategory] = useState<string>('all')
 
   const [formData, setFormData] = useState({
     code: '',
@@ -139,90 +143,212 @@ const ProfilesManagementPage: React.FC = () => {
     }, {} as Record<string, Permission[]>)
   }, [permissions])
 
+  // Filter profiles by category
+  const filteredProfiles = React.useMemo(() => {
+    if (!profiles) return []
+    if (filterCategory === 'all') return profiles
+    return profiles.filter(p => p.category === filterCategory)
+  }, [profiles, filterCategory])
+
+  // Statistics
+  const stats = {
+    total: profiles?.length || 0,
+    system: profiles?.filter(p => p.category === 'system').length || 0,
+    department: profiles?.filter(p => p.category === 'department').length || 0,
+    custom: profiles?.filter(p => p.category === 'custom').length || 0
+  }
+
+  const categories = [
+    { value: 'all', label: 'Tous les Profils', icon: '📋', count: stats.total },
+    { value: 'system', label: 'Système', icon: '🛡️', count: stats.system },
+    { value: 'department', label: 'Département', icon: '🏢', count: stats.department },
+    { value: 'custom', label: 'Personnalisé', icon: '⭐', count: stats.custom },
+  ]
+
   if (profilesLoading || permissionsLoading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
-      </div>
+      <Layout>
+        <div className="flex items-center justify-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-jlc-purple-600"></div>
+        </div>
+      </Layout>
     )
   }
 
   return (
-    <div className="p-6">
-      <div className="mb-6 flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Gestion des Profils</h1>
-          <p className="text-gray-600 mt-1">Gérer les profils et leurs permissions</p>
-        </div>
-        <button
-          onClick={handleCreateClick}
-          className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
-        >
-          + Nouveau Profil
-        </button>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {profiles?.map((profile) => (
-          <div
-            key={profile.id}
-            className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow"
+    <Layout>
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Gestion des Profils</h1>
+            <p className="text-gray-600 mt-1">Gérer les profils et leurs permissions</p>
+          </div>
+          <button
+            onClick={handleCreateClick}
+            className="flex items-center gap-2 px-4 py-2 bg-jlc-purple-600 text-white rounded-lg hover:bg-jlc-purple-700 transition-colors shadow-md hover:shadow-lg"
           >
-            <div className="flex items-start justify-between mb-4">
-              <div className="flex items-center">
-                <div 
-                  className="w-12 h-12 rounded-lg flex items-center justify-center text-white font-bold text-xl"
-                  style={{ backgroundColor: profile.color || '#6366F1' }}
-                >
-                  {profile.icon === 'shield' ? '🛡️' : '⭐'}
-                </div>
-                <div className="ml-3">
-                  <h3 className="font-semibold text-gray-900">{profile.name}</h3>
-                  <p className="text-sm text-gray-500">{profile.code}</p>
-                </div>
+            <PlusIcon className="h-5 w-5" />
+            Nouveau Profil
+          </button>
+        </div>
+
+        {/* Statistics Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Total Profils</p>
+                <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
               </div>
-              {profile.is_system_role && (
-                <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
-                  Système
-                </span>
+              <div className="text-3xl">📋</div>
+            </div>
+          </Card>
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Système</p>
+                <p className="text-2xl font-bold text-blue-600">{stats.system}</p>
+              </div>
+              <div className="text-3xl">🛡️</div>
+            </div>
+          </Card>
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Département</p>
+                <p className="text-2xl font-bold text-green-600">{stats.department}</p>
+              </div>
+              <div className="text-3xl">🏢</div>
+            </div>
+          </Card>
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Personnalisé</p>
+                <p className="text-2xl font-bold text-jlc-purple-600">{stats.custom}</p>
+              </div>
+              <div className="text-3xl">⭐</div>
+            </div>
+          </Card>
+        </div>
+
+        {/* Category Filter */}
+        <Card>
+          <div className="mb-4">
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">Catégories</h3>
+            <p className="text-sm text-gray-600">Filtrer les profils par catégorie</p>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {categories.map((cat) => (
+              <button
+                key={cat.value}
+                onClick={() => setFilterCategory(cat.value)}
+                className={`px-4 py-3 rounded-lg transition-all text-sm font-medium ${
+                  filterCategory === cat.value
+                    ? 'bg-jlc-purple-600 text-white shadow-lg scale-105'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:scale-102 hover:shadow-md'
+                }`}
+              >
+                <div className="text-2xl mb-1">{cat.icon}</div>
+                <div className="text-xs">{cat.label}</div>
+                <div className="text-xs font-bold mt-1">{cat.count}</div>
+              </button>
+            ))}
+          </div>
+        </Card>
+
+        {/* Profiles Grid */}
+        <Card>
+          {filteredProfiles.length === 0 ? (
+            <div className="text-center py-12">
+              <div className="text-6xl mb-4">🎭</div>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">Aucun profil</h3>
+              <p className="text-gray-500 mb-4">
+                {filterCategory === 'all' 
+                  ? 'Créez votre premier profil pour définir les permissions.'
+                  : `Aucun profil dans la catégorie "${categories.find(c => c.value === filterCategory)?.label}".`
+                }
+              </p>
+              {filterCategory === 'all' && (
+                <button
+                  onClick={handleCreateClick}
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-jlc-purple-600 text-white rounded-lg hover:bg-jlc-purple-700"
+                >
+                  <PlusIcon className="h-5 w-5" />
+                  Créer le premier profil
+                </button>
               )}
             </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {filteredProfiles.map((profile) => (
+                <div
+                  key={profile.id}
+                  className="bg-gradient-to-br from-white to-gray-50 rounded-lg p-6 hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer border border-gray-200"
+                  onClick={() => !profile.is_protected && handleEditClick(profile)}
+                >
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                      <div 
+                        className="w-12 h-12 rounded-lg flex items-center justify-center text-white font-bold text-2xl shadow-md"
+                        style={{ backgroundColor: profile.color || '#6366F1' }}
+                      >
+                        {profile.icon === 'shield' ? '🛡️' : '⭐'}
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-gray-900">{profile.name}</h3>
+                        <p className="text-sm text-gray-500">{profile.code}</p>
+                      </div>
+                    </div>
+                    {profile.is_system_role && (
+                      <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
+                        Système
+                      </span>
+                    )}
+                  </div>
 
-            <p className="text-sm text-gray-600 mb-4 line-clamp-2">
-              {profile.description || 'Aucune description'}
-            </p>
+                  <p className="text-sm text-gray-600 mb-4 line-clamp-2">
+                    {profile.description || 'Aucune description'}
+                  </p>
 
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-sm text-gray-500">
-                {profile.permission_ids.length} permission(s)
-              </span>
-              <span className={`px-2 py-1 text-xs rounded-full ${
-                profile.category === 'system' ? 'bg-purple-100 text-purple-800' :
-                profile.category === 'department' ? 'bg-green-100 text-green-800' :
-                'bg-gray-100 text-gray-800'
-              }`}>
-                {profile.category}
-              </span>
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-2">
+                      <ShieldCheckIcon className="h-4 w-4 text-gray-500" />
+                      <span className="text-sm text-gray-500">
+                        {profile.permission_ids.length} permission(s)
+                      </span>
+                    </div>
+                    <span className={`px-2 py-1 text-xs rounded-full ${
+                      profile.category === 'system' ? 'bg-purple-100 text-purple-800' :
+                      profile.category === 'department' ? 'bg-green-100 text-green-800' :
+                      'bg-gray-100 text-gray-800'
+                    }`}>
+                      {profile.category}
+                    </span>
+                  </div>
+
+                  {!profile.is_protected && (
+                    <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
+                      <button
+                        onClick={() => handleEditClick(profile)}
+                        className="flex-1 px-3 py-2 bg-blue-50 text-blue-600 rounded hover:bg-blue-100 transition-colors text-sm font-medium"
+                      >
+                        Modifier
+                      </button>
+                      <button
+                        onClick={() => handleDeleteClick(profile)}
+                        className="flex-1 px-3 py-2 bg-red-50 text-red-600 rounded hover:bg-red-100 transition-colors text-sm font-medium"
+                      >
+                        Supprimer
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ))}
             </div>
-
-            {!profile.is_protected && (
-              <div className="flex gap-2">
-                <button
-                  onClick={() => handleEditClick(profile)}
-                  className="flex-1 px-3 py-2 bg-blue-50 text-blue-600 rounded hover:bg-blue-100 transition-colors text-sm"
-                >
-                  Modifier
-                </button>
-                <button
-                  onClick={() => handleDeleteClick(profile)}
-                  className="flex-1 px-3 py-2 bg-red-50 text-red-600 rounded hover:bg-red-100 transition-colors text-sm"
-                >
-                  Supprimer
-                </button>
-              </div>
-            )}
-          </div>
-        ))}
+          )}
+        </Card>
       </div>
 
       {/* Create Modal */}
@@ -243,7 +369,7 @@ const ProfilesManagementPage: React.FC = () => {
               type="text"
               value={formData.code}
               onChange={(e) => setFormData({ ...formData, code: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-jlc-purple-500 focus:border-jlc-purple-500"
               placeholder="ex: manager_rh"
             />
           </div>
@@ -256,7 +382,7 @@ const ProfilesManagementPage: React.FC = () => {
               type="text"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-jlc-purple-500 focus:border-jlc-purple-500"
               placeholder="ex: Manager RH"
             />
           </div>
@@ -268,7 +394,7 @@ const ProfilesManagementPage: React.FC = () => {
             <textarea
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-jlc-purple-500 focus:border-jlc-purple-500"
               rows={3}
               placeholder="Description du profil..."
             />
@@ -283,7 +409,7 @@ const ProfilesManagementPage: React.FC = () => {
                 type="color"
                 value={formData.color}
                 onChange={(e) => setFormData({ ...formData, color: e.target.value })}
-                className="w-full h-10 border border-gray-300 rounded-lg"
+                className="w-full h-10 border border-gray-300 rounded-lg cursor-pointer"
               />
             </div>
 
@@ -294,7 +420,7 @@ const ProfilesManagementPage: React.FC = () => {
               <select
                 value={formData.category}
                 onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-jlc-purple-500 focus:border-jlc-purple-500"
               >
                 <option value="custom">Personnalisé</option>
                 <option value="department">Département</option>
@@ -315,12 +441,12 @@ const ProfilesManagementPage: React.FC = () => {
                   </h4>
                   <div className="space-y-2 ml-2">
                     {perms.map((permission) => (
-                      <label key={permission.id} className="flex items-start cursor-pointer">
+                      <label key={permission.id} className="flex items-start cursor-pointer hover:bg-gray-50 p-2 rounded">
                         <input
                           type="checkbox"
                           checked={formData.permission_ids.includes(permission.id)}
                           onChange={() => togglePermission(permission.id)}
-                          className="mt-1 mr-2"
+                          className="mt-1 mr-2 h-4 w-4 text-jlc-purple-600 rounded focus:ring-jlc-purple-500"
                         />
                         <div>
                           <div className="text-sm font-medium text-gray-900">
@@ -344,14 +470,14 @@ const ProfilesManagementPage: React.FC = () => {
                 setShowCreateModal(false)
                 resetForm()
               }}
-              className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+              className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
             >
               Annuler
             </button>
             <button
               onClick={handleCreateSubmit}
               disabled={!formData.code || !formData.name}
-              className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
+              className="flex-1 px-4 py-2 bg-jlc-purple-600 text-white rounded-lg hover:bg-jlc-purple-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
             >
               Créer
             </button>
@@ -390,7 +516,7 @@ const ProfilesManagementPage: React.FC = () => {
               type="text"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-jlc-purple-500 focus:border-jlc-purple-500"
             />
           </div>
 
@@ -401,7 +527,7 @@ const ProfilesManagementPage: React.FC = () => {
             <textarea
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-jlc-purple-500 focus:border-jlc-purple-500"
               rows={3}
             />
           </div>
@@ -415,7 +541,7 @@ const ProfilesManagementPage: React.FC = () => {
                 type="color"
                 value={formData.color}
                 onChange={(e) => setFormData({ ...formData, color: e.target.value })}
-                className="w-full h-10 border border-gray-300 rounded-lg"
+                className="w-full h-10 border border-gray-300 rounded-lg cursor-pointer"
               />
             </div>
           </div>
@@ -432,12 +558,12 @@ const ProfilesManagementPage: React.FC = () => {
                   </h4>
                   <div className="space-y-2 ml-2">
                     {perms.map((permission) => (
-                      <label key={permission.id} className="flex items-start cursor-pointer">
+                      <label key={permission.id} className="flex items-start cursor-pointer hover:bg-gray-50 p-2 rounded">
                         <input
                           type="checkbox"
                           checked={formData.permission_ids.includes(permission.id)}
                           onChange={() => togglePermission(permission.id)}
-                          className="mt-1 mr-2"
+                          className="mt-1 mr-2 h-4 w-4 text-jlc-purple-600 rounded focus:ring-jlc-purple-500"
                         />
                         <div>
                           <div className="text-sm font-medium text-gray-900">
@@ -462,14 +588,14 @@ const ProfilesManagementPage: React.FC = () => {
                 setSelectedProfile(null)
                 resetForm()
               }}
-              className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+              className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
             >
               Annuler
             </button>
             <button
               onClick={handleEditSubmit}
               disabled={!formData.name}
-              className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
+              className="flex-1 px-4 py-2 bg-jlc-purple-600 text-white rounded-lg hover:bg-jlc-purple-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
             >
               Mettre à jour
             </button>
@@ -501,20 +627,20 @@ const ProfilesManagementPage: React.FC = () => {
                 setShowDeleteModal(false)
                 setSelectedProfile(null)
               }}
-              className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+              className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
             >
               Annuler
             </button>
             <button
               onClick={handleDeleteConfirm}
-              className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+              className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
             >
               Supprimer
             </button>
           </div>
         </div>
       </Modal>
-    </div>
+    </Layout>
   )
 }
 
