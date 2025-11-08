@@ -1724,7 +1724,7 @@ async def delete_user(
 async def reset_user_mfa(
     user_id: str,
     request: Request,
-    current_user: User = Depends(require_super_admin),
+    current_user: User = Depends(require_permission("users.reset_mfa")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """
