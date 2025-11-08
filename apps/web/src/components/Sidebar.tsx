@@ -177,7 +177,8 @@ export default function Sidebar() {
         ],
       }
     )
-  } else if (isCommercial) {
+  } else if (userPermissions['missions.manage'] && !userPermissions['admin.dashboard']) {
+    // Commercial role (has missions.manage but not full admin)
     navigationSections.push(
       {
         title: 'Tableau de bord',
@@ -206,7 +207,7 @@ export default function Sidebar() {
         ],
       }
     )
-  } else if (isInterim) {
+  } else if (userPermissions['missions.browse']) {
     navigationSections.push(
       {
         title: 'Tableau de bord',
