@@ -148,7 +148,7 @@ async def get_all_config(
     }
 
 
-@router.post("/references", dependencies=[Depends(require_admin)])
+@router.post("/references", dependencies=[Depends(require_permission("references.manage"))])
 async def create_reference(
     ref: CreateReferenceRequest,
     db: AsyncIOMotorDatabase = Depends(get_database)
