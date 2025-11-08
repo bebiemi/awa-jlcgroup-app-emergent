@@ -2074,7 +2074,7 @@ async def update_user(
     user_id: str,
     user_update: dict,
     request: Request,
-    current_user: User = Depends(require_admin),
+    current_user: User = Depends(require_permission("users.edit")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """
