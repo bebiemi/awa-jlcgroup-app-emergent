@@ -258,7 +258,7 @@ async def get_all_audit_events(
     }
 
 
-@router.get("/export", dependencies=[Depends(require_super_admin)])
+@router.get("/export", dependencies=[Depends(require_permission("flags.manage"))])
 async def export_feature_flags(
     current_user: User = Depends(require_permission("flags.manage")),
     db: AsyncIOMotorDatabase = Depends(get_database)
