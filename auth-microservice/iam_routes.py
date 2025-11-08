@@ -32,10 +32,10 @@ router = APIRouter(prefix="/api/iam", tags=["IAM"])
 
 @router.get("/permissions", response_model=List[Permission])
 async def list_permissions(
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_permission("iam.permissions.read")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
-    """List all permissions (admin only)"""
+    """List all permissions, optionally filtered by module"""
     permissions_collection = db.permissions
     permissions = []
     
