@@ -20,6 +20,11 @@ from awana_auth.core.dependencies import (
     require_admin,
     require_super_admin
 )
+from awana_auth.dependencies.permission_dependencies import (
+    require_permission,
+    require_any_permission,
+    require_all_permissions
+)
 from awana_auth.providers.entraid import EntraIDProvider
 from awana_auth.session.jwt import JWTManager
 from awana_auth.session.storage import SessionStorage
