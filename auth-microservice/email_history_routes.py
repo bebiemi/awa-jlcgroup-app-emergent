@@ -4,22 +4,13 @@ Routes pour l'historique des emails
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from awana_auth.core.dependencies import get_database, get_current_user
+from awana_auth.dependencies.permission_dependencies import require_permission
 from awana_auth.core.models import User
 from typing import List, Optional
 from datetime import datetime
 
 
 router = APIRouter(prefix="/api/emails", tags=["email-history"])
-
-
-def require_admin(current_user: User = Depends(get_current_user)):
-    """Vérifier que l'utilisateur est admin ou super admin"""
-    if "admin" not in current_user.roles and "super_admin" not in current_user.roles:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Accès refusé : admin requis"
-        )
-    return current_user
 
 
 @router.get("/history")
