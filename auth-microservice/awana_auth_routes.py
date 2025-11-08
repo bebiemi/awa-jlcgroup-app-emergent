@@ -1606,7 +1606,7 @@ async def update_user(
     user_id: str,
     update_data: UserUpdateRequest,
     request: Request,
-    current_user: User = Depends(require_admin),
+    current_user: User = Depends(require_permission("users.edit")),
     db: AsyncIOMotorDatabase = Depends(get_database),
     rbac_manager: RBACManager = Depends(get_rbac_manager)
 ):
