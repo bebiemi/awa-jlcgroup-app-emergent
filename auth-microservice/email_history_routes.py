@@ -19,7 +19,7 @@ async def get_email_history(
     page_size: int = Query(20, ge=1, le=100, description="Taille de la page"),
     status_filter: Optional[str] = Query(None, description="Filtrer par statut (sent, failed)"),
     sent_by: Optional[str] = Query(None, description="Filtrer par expéditeur"),
-    current_user: User = Depends(require_admin),
+    current_user: User = Depends(require_permission("emails.read_history")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """
@@ -74,7 +74,7 @@ async def get_email_history(
 
 @router.get("/history/stats")
 async def get_email_stats(
-    current_user: User = Depends(require_admin),
+    current_user: User = Depends(require_permission("emails.read_history")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """
@@ -112,7 +112,7 @@ async def get_email_stats(
 @router.delete("/history")
 async def clear_email_history(
     older_than_days: int = Query(30, ge=1, description="Supprimer les emails plus anciens que X jours"),
-    current_user: User = Depends(require_admin),
+    current_user: User = Depends(require_permission("emails.read_history")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """
