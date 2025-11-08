@@ -371,7 +371,7 @@ def test_authorization():
     # 1. Test 401 - Unauthenticated request
     test_endpoint(
         "GET",
-        f"{AUTH_BASE_URL}/auth/users",
+        f"{AUTH_BASE_URL}/api/auth/users",
         expected_status=401,
         test_name="GET /auth/users without token (401 Unauthorized)"
     )
@@ -379,7 +379,7 @@ def test_authorization():
     # 2. Test 401 - Invalid token
     test_endpoint(
         "GET",
-        f"{AUTH_BASE_URL}/auth/users",
+        f"{AUTH_BASE_URL}/api/auth/users",
         headers={"Authorization": "Bearer invalid_token_12345"},
         expected_status=401,
         test_name="GET /auth/users with invalid token (401 Unauthorized)"
