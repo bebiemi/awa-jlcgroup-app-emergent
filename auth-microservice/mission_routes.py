@@ -271,17 +271,33 @@ async def get_mission(
             detail="Mission non trouvée"
         )
     
-    # Vérifier les permissions
-    user_roles = current_user.get("roles", [])
+    # IAM: Check permissions
+    checker = PermissionChecker(db)
     user_id = current_user.get("sub")
     
-    if cfg.get_interim_role() in user_roles and mission["status"] != MissionStatus.PUBLISHED:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Mission non accessible"
-        )
+    can_manage_all = await checker.user_has_any_permission(
+        current_user.get("id"),
+        ["missions.manage", "missions.read"]
+    )
+    can_browse = await checker.user_has_permission(
+        current_user.get("id"),
+        "missions.browse"
+    )
+    can_create = await checker.user_has_permission(
+        current_user.get("id"),
+        "missions.create"
+    )
     
-    if cfg.get_company_role() in user_roles and mission["company_id"] != user_id:
+    # Interim users (missions.browse) can only see published missions
+    if can_browse and not can_manage_all and not can_create:
+        if mission["status"] != MissionStatus.PUBLISHED:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Mission non accessible"
+            )
+    
+    # Company users (missions.create) can only see their missions
+    if can_create and not can_manage_all and mission["company_id"] != user_id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Vous ne pouvez voir que vos missions"
