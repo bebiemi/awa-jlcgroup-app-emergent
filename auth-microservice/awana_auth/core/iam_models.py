@@ -14,6 +14,8 @@ class PermissionScope(str, Enum):
     ORGANIZATION = "organization"  # Organization-level
     TEAM = "team"               # Team-level
     PERSONAL = "personal"       # Personal data only
+    GLOBAL = "global"           # Global scope
+    OWN = "own"                 # User's own data only
 
 
 class PermissionAction(str, Enum):
@@ -28,6 +30,23 @@ class PermissionAction(str, Enum):
     EXECUTE = "execute"
     EXPORT = "export"
     IMPORT = "import"
+    # Extended actions for IAM migration
+    MANAGE = "manage"           # Full management
+    EDIT = "edit"               # Edit existing
+    CONFIGURE = "configure"     # Configuration
+    TEST = "test"               # Testing
+    BROWSE = "browse"           # Browse/list
+    PERFORM = "perform"         # Perform action
+    REVIEW = "review"           # Review
+    DASHBOARD = "dashboard"     # Dashboard access
+    READ_CONFIG = "read_config" # Read configuration
+    MANAGE_STATUS = "manage_status"  # Manage status
+    RESET_MFA = "reset_mfa"     # Reset MFA
+    MANAGE_TEMPLATES = "manage_templates"  # Manage templates
+    READ_HISTORY = "read_history"  # Read history
+    PUBLISH = "publish"         # Publish
+    READ_OWN = "read_own"       # Read own data
+    MANAGE_OWN = "manage_own"   # Manage own data
 
 
 class Permission(BaseModel):
