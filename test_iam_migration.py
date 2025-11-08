@@ -399,7 +399,7 @@ def test_authorization():
             "send_invitation": False
         },
         headers=get_auth_headers(),
-        expected_status=201,
+        expected_status=200,
         test_name="Create interim user for 403 testing"
     )
     
