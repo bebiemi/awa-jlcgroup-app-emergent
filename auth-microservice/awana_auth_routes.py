@@ -16,9 +16,7 @@ from awana_auth.core.dependencies import (
     get_database,
     get_jwt_manager,
     get_session_storage,
-    get_rbac_manager,
-    require_admin,
-    require_super_admin
+    get_rbac_manager
 )
 from awana_auth.dependencies.permission_dependencies import (
     require_permission,
