@@ -10,8 +10,11 @@ import {
   Profile,
   Permission
 } from '../api/iamApi'
+import Layout from '@/components/Layout'
+import Card from '@/components/Card'
 import Modal from '@/components/Modal'
 import { toast } from 'react-hot-toast'
+import { PlusIcon, UsersIcon, ShieldCheckIcon, KeyIcon } from '@heroicons/react/24/outline'
 
 type TabType = 'groups' | 'permissions'
 
@@ -154,197 +157,292 @@ const IAMControlPage: React.FC = () => {
     }, {} as Record<string, Permission[]>)
   }, [permissions])
 
+  // Statistics
+  const stats = {
+    totalGroups: groups?.length || 0,
+    systemGroups: groups?.filter(g => g.is_system_group).length || 0,
+    totalPermissions: permissions?.length || 0,
+    categories: Object.keys(groupedPermissions).length
+  }
+
   const isLoading = groupsLoading || profilesLoading || permissionsLoading
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
-      </div>
+      <Layout>
+        <div className="flex items-center justify-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-jlc-purple-600"></div>
+        </div>
+      </Layout>
     )
   }
 
   return (
-    <div className="p-6">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-900">Contrôle d'Accès (IAM)</h1>
-        <p className="text-gray-600 mt-1">Gérer les groupes et permissions du système</p>
-      </div>
-
-      {/* Tabs */}
-      <div className="mb-6 border-b border-gray-200">
-        <nav className="flex space-x-8">
-          <button
-            onClick={() => setActiveTab('groups')}
-            className={`pb-4 px-1 border-b-2 font-medium text-sm ${
-              activeTab === 'groups'
-                ? 'border-indigo-600 text-indigo-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-            }`}
-          >
-            Groupes ({groups?.length || 0})
-          </button>
-          <button
-            onClick={() => setActiveTab('permissions')}
-            className={`pb-4 px-1 border-b-2 font-medium text-sm ${
-              activeTab === 'permissions'
-                ? 'border-indigo-600 text-indigo-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-            }`}
-          >
-            Permissions ({permissions?.length || 0})
-          </button>
-        </nav>
-      </div>
-
-      {/* Groups Tab */}
-      {activeTab === 'groups' && (
-        <>
-          <div className="mb-4 flex justify-end">
+    <Layout>
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Contrôle d'Accès (IAM)</h1>
+            <p className="text-gray-600 mt-1">Gérer les groupes et permissions du système</p>
+          </div>
+          {activeTab === 'groups' && (
             <button
               onClick={handleCreateGroupClick}
-              className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-jlc-purple-600 text-white rounded-lg hover:bg-jlc-purple-700 transition-colors shadow-md hover:shadow-lg"
             >
-              + Nouveau Groupe
+              <PlusIcon className="h-5 w-5" />
+              Nouveau Groupe
+            </button>
+          )}
+        </div>
+
+        {/* Statistics Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Total Groupes</p>
+                <p className="text-2xl font-bold text-gray-900">{stats.totalGroups}</p>
+              </div>
+              <div className="text-3xl">👥</div>
+            </div>
+          </Card>
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Groupes Système</p>
+                <p className="text-2xl font-bold text-blue-600">{stats.systemGroups}</p>
+              </div>
+              <div className="text-3xl">🔒</div>
+            </div>
+          </Card>
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Permissions</p>
+                <p className="text-2xl font-bold text-jlc-purple-600">{stats.totalPermissions}</p>
+              </div>
+              <div className="text-3xl">🔑</div>
+            </div>
+          </Card>
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Catégories</p>
+                <p className="text-2xl font-bold text-green-600">{stats.categories}</p>
+              </div>
+              <div className="text-3xl">📊</div>
+            </div>
+          </Card>
+        </div>
+
+        {/* Tab Selector as Clickable Tiles */}
+        <Card>
+          <div className="mb-4">
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">Vue</h3>
+            <p className="text-sm text-gray-600">Sélectionnez une vue pour gérer l'accès</p>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <button
+              onClick={() => setActiveTab('groups')}
+              className={`px-6 py-4 rounded-lg transition-all text-left ${
+                activeTab === 'groups'
+                  ? 'bg-jlc-purple-600 text-white shadow-lg scale-105'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:scale-102 hover:shadow-md'
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <UsersIcon className="h-8 w-8" />
+                <div>
+                  <div className="font-semibold text-lg">Groupes</div>
+                  <div className="text-sm opacity-90">{stats.totalGroups} groupe(s)</div>
+                </div>
+              </div>
+            </button>
+            <button
+              onClick={() => setActiveTab('permissions')}
+              className={`px-6 py-4 rounded-lg transition-all text-left ${
+                activeTab === 'permissions'
+                  ? 'bg-jlc-purple-600 text-white shadow-lg scale-105'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:scale-102 hover:shadow-md'
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <KeyIcon className="h-8 w-8" />
+                <div>
+                  <div className="font-semibold text-lg">Permissions</div>
+                  <div className="text-sm opacity-90">{stats.totalPermissions} permission(s)</div>
+                </div>
+              </div>
             </button>
           </div>
+        </Card>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {groups?.map((group) => (
-              <div
-                key={group.id}
-                className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow"
-              >
-                <div className="flex items-start justify-between mb-4">
-                  <div>
-                    <h3 className="font-semibold text-gray-900 text-lg">{group.name}</h3>
-                    <p className="text-sm text-gray-500">{group.code}</p>
-                  </div>
-                  {group.is_system_group && (
-                    <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
-                      Système
-                    </span>
-                  )}
-                </div>
-
-                <p className="text-sm text-gray-600 mb-4 line-clamp-2">
-                  {group.description || 'Aucune description'}
+        {/* Groups Tab */}
+        {activeTab === 'groups' && (
+          <Card>
+            {groups && groups.length === 0 ? (
+              <div className="text-center py-12">
+                <div className="text-6xl mb-4">👥</div>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">Aucun groupe</h3>
+                <p className="text-gray-500 mb-4">
+                  Créez votre premier groupe pour organiser les permissions.
                 </p>
-
-                <div className="space-y-2 mb-4">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-500">Profils:</span>
-                    <span className="font-medium text-gray-900">
-                      {group.profile_ids.length}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-500">Utilisateurs:</span>
-                    <span className="font-medium text-gray-900">
-                      {group.user_ids.length}
-                    </span>
-                  </div>
-                  {group.parent_group_id && (
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-500">Groupe parent:</span>
-                      <span className="font-medium text-gray-900 text-xs truncate">
-                        {getGroupName(group.parent_group_id)}
-                      </span>
-                    </div>
-                  )}
-                </div>
-
-                {/* Profile badges */}
-                {group.profile_ids.length > 0 && (
-                  <div className="mb-4">
-                    <div className="flex flex-wrap gap-1">
-                      {group.profile_ids.slice(0, 3).map((profileId) => (
-                        <span
-                          key={profileId}
-                          className="px-2 py-1 bg-purple-100 text-purple-800 text-xs rounded-full"
-                        >
-                          {getProfileName(profileId)}
-                        </span>
-                      ))}
-                      {group.profile_ids.length > 3 && (
-                        <span className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full">
-                          +{group.profile_ids.length - 3}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                )}
-
-                {!group.is_protected && (
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => handleEditGroupClick(group)}
-                      className="flex-1 px-3 py-2 bg-blue-50 text-blue-600 rounded hover:bg-blue-100 transition-colors text-sm"
-                    >
-                      Modifier
-                    </button>
-                    <button
-                      onClick={() => handleDeleteGroupClick(group)}
-                      className="flex-1 px-3 py-2 bg-red-50 text-red-600 rounded hover:bg-red-100 transition-colors text-sm"
-                    >
-                      Supprimer
-                    </button>
-                  </div>
-                )}
+                <button
+                  onClick={handleCreateGroupClick}
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-jlc-purple-600 text-white rounded-lg hover:bg-jlc-purple-700"
+                >
+                  <PlusIcon className="h-5 w-5" />
+                  Créer le premier groupe
+                </button>
               </div>
-            ))}
-          </div>
-        </>
-      )}
-
-      {/* Permissions Tab */}
-      {activeTab === 'permissions' && (
-        <div className="space-y-6">
-          {Object.entries(groupedPermissions).map(([category, perms]) => (
-            <div key={category} className="bg-white rounded-lg shadow-md p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4 capitalize">
-                {category} ({perms.length})
-              </h3>
+            ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {perms.map((permission) => (
+                {groups?.map((group) => (
                   <div
-                    key={permission.id}
-                    className="border border-gray-200 rounded-lg p-4 hover:border-indigo-300 transition-colors"
+                    key={group.id}
+                    className="bg-gradient-to-br from-white to-gray-50 rounded-lg p-6 hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer border border-gray-200"
+                    onClick={() => !group.is_protected && handleEditGroupClick(group)}
                   >
-                    <div className="flex items-start justify-between mb-2">
-                      <div className="font-medium text-gray-900 text-sm">
-                        {permission.name}
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-12 h-12 rounded-lg bg-jlc-purple-100 flex items-center justify-center">
+                          <UsersIcon className="h-6 w-6 text-jlc-purple-600" />
+                        </div>
+                        <div>
+                          <h3 className="font-semibold text-gray-900 text-lg">{group.name}</h3>
+                          <p className="text-sm text-gray-500">{group.code}</p>
+                        </div>
                       </div>
-                      {permission.is_system && (
+                      {group.is_system_group && (
                         <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
                           Système
                         </span>
                       )}
                     </div>
-                    <div className="text-xs text-gray-600 mb-3">
-                      {permission.description}
+
+                    <p className="text-sm text-gray-600 mb-4 line-clamp-2">
+                      {group.description || 'Aucune description'}
+                    </p>
+
+                    <div className="space-y-2 mb-4">
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-gray-500">Profils:</span>
+                        <span className="font-medium text-gray-900">
+                          {group.profile_ids.length}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-gray-500">Utilisateurs:</span>
+                        <span className="font-medium text-gray-900">
+                          {group.user_ids.length}
+                        </span>
+                      </div>
+                      {group.parent_group_id && (
+                        <div className="flex items-center justify-between text-sm">
+                          <span className="text-gray-500">Groupe parent:</span>
+                          <span className="font-medium text-gray-900 text-xs truncate">
+                            {getGroupName(group.parent_group_id)}
+                          </span>
+                        </div>
+                      )}
                     </div>
-                    <div className="flex flex-wrap gap-1">
-                      <span className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded">
-                        {permission.resource}
-                      </span>
-                      <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded">
-                        {permission.action}
-                      </span>
-                      <span className="px-2 py-1 bg-purple-100 text-purple-800 text-xs rounded">
-                        {permission.scope}
-                      </span>
-                    </div>
-                    <div className="mt-2 text-xs text-gray-500">
-                      Code: <code className="bg-gray-100 px-1 rounded">{permission.code}</code>
-                    </div>
+
+                    {/* Profile badges */}
+                    {group.profile_ids.length > 0 && (
+                      <div className="mb-4">
+                        <div className="flex flex-wrap gap-1">
+                          {group.profile_ids.slice(0, 3).map((profileId) => (
+                            <span
+                              key={profileId}
+                              className="px-2 py-1 bg-purple-100 text-purple-800 text-xs rounded-full"
+                            >
+                              {getProfileName(profileId)}
+                            </span>
+                          ))}
+                          {group.profile_ids.length > 3 && (
+                            <span className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full">
+                              +{group.profile_ids.length - 3}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {!group.is_protected && (
+                      <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
+                        <button
+                          onClick={() => handleEditGroupClick(group)}
+                          className="flex-1 px-3 py-2 bg-blue-50 text-blue-600 rounded hover:bg-blue-100 transition-colors text-sm font-medium"
+                        >
+                          Modifier
+                        </button>
+                        <button
+                          onClick={() => handleDeleteGroupClick(group)}
+                          className="flex-1 px-3 py-2 bg-red-50 text-red-600 rounded hover:bg-red-100 transition-colors text-sm font-medium"
+                        >
+                          Supprimer
+                        </button>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
-            </div>
-          ))}
-        </div>
-      )}
+            )}
+          </Card>
+        )}
+
+        {/* Permissions Tab */}
+        {activeTab === 'permissions' && (
+          <div className="space-y-6">
+            {Object.entries(groupedPermissions).map(([category, perms]) => (
+              <Card key={category}>
+                <h3 className="text-lg font-semibold text-gray-900 mb-4 capitalize flex items-center gap-2">
+                  <ShieldCheckIcon className="h-6 w-6 text-jlc-purple-600" />
+                  {category} ({perms.length})
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {perms.map((permission) => (
+                    <div
+                      key={permission.id}
+                      className="border border-gray-200 rounded-lg p-4 hover:border-jlc-purple-300 hover:shadow-md transition-all duration-200 bg-white hover:bg-gradient-to-br hover:from-white hover:to-purple-50"
+                    >
+                      <div className="flex items-start justify-between mb-2">
+                        <div className="font-medium text-gray-900 text-sm">
+                          {permission.name}
+                        </div>
+                        {permission.is_system && (
+                          <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
+                            Système
+                          </span>
+                        )}
+                      </div>
+                      <div className="text-xs text-gray-600 mb-3">
+                        {permission.description}
+                      </div>
+                      <div className="flex flex-wrap gap-1">
+                        <span className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded">
+                          {permission.resource}
+                        </span>
+                        <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded">
+                          {permission.action}
+                        </span>
+                        <span className="px-2 py-1 bg-purple-100 text-purple-800 text-xs rounded">
+                          {permission.scope}
+                        </span>
+                      </div>
+                      <div className="mt-2 text-xs text-gray-500">
+                        Code: <code className="bg-gray-100 px-1 rounded">{permission.code}</code>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </Card>
+            ))}
+          </div>
+        )}
+      </div>
 
       {/* Create Group Modal */}
       <Modal
@@ -364,7 +462,7 @@ const IAMControlPage: React.FC = () => {
               type="text"
               value={groupFormData.code}
               onChange={(e) => setGroupFormData({ ...groupFormData, code: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-jlc-purple-500 focus:border-jlc-purple-500"
               placeholder="ex: equipe_rh"
             />
           </div>
@@ -377,7 +475,7 @@ const IAMControlPage: React.FC = () => {
               type="text"
               value={groupFormData.name}
               onChange={(e) => setGroupFormData({ ...groupFormData, name: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-jlc-purple-500 focus:border-jlc-purple-500"
               placeholder="ex: Équipe RH"
             />
           </div>
@@ -389,7 +487,7 @@ const IAMControlPage: React.FC = () => {
             <textarea
               value={groupFormData.description}
               onChange={(e) => setGroupFormData({ ...groupFormData, description: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-jlc-purple-500 focus:border-jlc-purple-500"
               rows={3}
               placeholder="Description du groupe..."
             />
@@ -402,7 +500,7 @@ const IAMControlPage: React.FC = () => {
             <select
               value={groupFormData.parent_group_id}
               onChange={(e) => setGroupFormData({ ...groupFormData, parent_group_id: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-jlc-purple-500 focus:border-jlc-purple-500"
             >
               <option value="">Aucun</option>
               {groups?.filter(g => !g.is_protected).map((group) => (
@@ -419,12 +517,12 @@ const IAMControlPage: React.FC = () => {
             </label>
             <div className="max-h-64 overflow-y-auto border border-gray-300 rounded-lg p-3 space-y-2">
               {profiles?.map((profile) => (
-                <label key={profile.id} className="flex items-center cursor-pointer">
+                <label key={profile.id} className="flex items-center cursor-pointer hover:bg-gray-50 p-2 rounded">
                   <input
                     type="checkbox"
                     checked={groupFormData.profile_ids.includes(profile.id)}
                     onChange={() => toggleProfile(profile.id)}
-                    className="mr-2"
+                    className="mr-2 h-4 w-4 text-jlc-purple-600 rounded focus:ring-jlc-purple-500"
                   />
                   <div className="flex items-center">
                     <div
@@ -451,14 +549,14 @@ const IAMControlPage: React.FC = () => {
                 setShowCreateGroupModal(false)
                 resetGroupForm()
               }}
-              className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+              className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
             >
               Annuler
             </button>
             <button
               onClick={handleCreateGroupSubmit}
               disabled={!groupFormData.code || !groupFormData.name}
-              className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
+              className="flex-1 px-4 py-2 bg-jlc-purple-600 text-white rounded-lg hover:bg-jlc-purple-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
             >
               Créer
             </button>
@@ -497,7 +595,7 @@ const IAMControlPage: React.FC = () => {
               type="text"
               value={groupFormData.name}
               onChange={(e) => setGroupFormData({ ...groupFormData, name: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-jlc-purple-500 focus:border-jlc-purple-500"
             />
           </div>
 
@@ -508,7 +606,7 @@ const IAMControlPage: React.FC = () => {
             <textarea
               value={groupFormData.description}
               onChange={(e) => setGroupFormData({ ...groupFormData, description: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-jlc-purple-500 focus:border-jlc-purple-500"
               rows={3}
             />
           </div>
@@ -520,7 +618,7 @@ const IAMControlPage: React.FC = () => {
             <select
               value={groupFormData.parent_group_id}
               onChange={(e) => setGroupFormData({ ...groupFormData, parent_group_id: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-jlc-purple-500 focus:border-jlc-purple-500"
             >
               <option value="">Aucun</option>
               {groups?.filter(g => !g.is_protected && g.id !== selectedGroup?.id).map((group) => (
@@ -537,12 +635,12 @@ const IAMControlPage: React.FC = () => {
             </label>
             <div className="max-h-64 overflow-y-auto border border-gray-300 rounded-lg p-3 space-y-2">
               {profiles?.map((profile) => (
-                <label key={profile.id} className="flex items-center cursor-pointer">
+                <label key={profile.id} className="flex items-center cursor-pointer hover:bg-gray-50 p-2 rounded">
                   <input
                     type="checkbox"
                     checked={groupFormData.profile_ids.includes(profile.id)}
                     onChange={() => toggleProfile(profile.id)}
-                    className="mr-2"
+                    className="mr-2 h-4 w-4 text-jlc-purple-600 rounded focus:ring-jlc-purple-500"
                   />
                   <div className="flex items-center">
                     <div
@@ -570,14 +668,14 @@ const IAMControlPage: React.FC = () => {
                 setSelectedGroup(null)
                 resetGroupForm()
               }}
-              className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+              className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
             >
               Annuler
             </button>
             <button
               onClick={handleEditGroupSubmit}
               disabled={!groupFormData.name}
-              className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
+              className="flex-1 px-4 py-2 bg-jlc-purple-600 text-white rounded-lg hover:bg-jlc-purple-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
             >
               Mettre à jour
             </button>
@@ -609,20 +707,20 @@ const IAMControlPage: React.FC = () => {
                 setShowDeleteGroupModal(false)
                 setSelectedGroup(null)
               }}
-              className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+              className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
             >
               Annuler
             </button>
             <button
               onClick={handleDeleteGroupConfirm}
-              className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+              className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
             >
               Supprimer
             </button>
           </div>
         </div>
       </Modal>
-    </div>
+    </Layout>
   )
 }
 
