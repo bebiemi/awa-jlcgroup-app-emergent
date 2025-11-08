@@ -65,7 +65,7 @@ async def get_email_settings(
 @router.put("/settings")
 async def update_email_settings(
     config_update: EmailConfigUpdate,
-    current_user: User = Depends(require_super_admin),
+    current_user: User = Depends(require_permission("emails.configure")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """
