@@ -24,7 +24,7 @@ router = APIRouter(prefix="/api/emails/templates", tags=["email-templates"])
 async def list_templates(
     template_type: Optional[EmailTemplateType] = None,
     is_active: Optional[bool] = None,
-    current_user: User = Depends(require_admin),
+    current_user: User = Depends(require_permission("emails.manage_templates")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """
@@ -52,7 +52,7 @@ async def list_templates(
 @router.get("/{template_id}")
 async def get_template(
     template_id: str,
-    current_user: User = Depends(require_admin),
+    current_user: User = Depends(require_permission("emails.manage_templates")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """
@@ -209,7 +209,7 @@ async def delete_template(
 async def preview_template(
     template_id: str,
     variables: dict,
-    current_user: User = Depends(require_admin),
+    current_user: User = Depends(require_permission("emails.manage_templates")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """
