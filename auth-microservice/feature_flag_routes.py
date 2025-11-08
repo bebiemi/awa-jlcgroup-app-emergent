@@ -107,7 +107,7 @@ async def create_feature_flag(
         )
 
 
-@router.patch("/{flag_id}", dependencies=[Depends(require_super_admin)])
+@router.patch("/{flag_id}", dependencies=[Depends(require_permission("flags.manage"))])
 async def update_feature_flag(
     flag_id: str,
     request: UpdateFeatureFlagRequest,
