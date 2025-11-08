@@ -15,7 +15,7 @@ from awana_auth.core.iam_models import (
     PermissionCheckRequest, PermissionCheckResponse,
     UserPermissionsResponse
 )
-from awana_auth.core.dependencies import get_current_user, get_database, require_admin
+from awana_auth.core.dependencies import get_current_user, get_database
 from awana_auth.dependencies.permission_dependencies import require_permission, require_any_permission
 from awana_auth.core.models import User
 from awana_auth.services.iam_service import IAMService
