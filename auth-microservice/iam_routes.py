@@ -365,7 +365,7 @@ async def create_group(
 async def update_group(
     group_id: str,
     group_data: GroupUpdate,
-    current_user: User = Depends(require_admin),
+    current_user: User = Depends(require_permission("iam.groups.update")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """Update group (admin only)"""
