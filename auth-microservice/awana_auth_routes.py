@@ -1804,10 +1804,10 @@ async def reset_user_mfa(
 
 @roles_router.get("", response_model=List[Role])
 async def get_all_roles(
-    current_user: User = Depends(require_admin),
+    current_user: User = Depends(require_permission("users.manage")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
-    """Get all roles"""
+    """Get all roles (DEPRECATED: Use IAM profiles instead)"""
     roles_docs = await db.roles.find({}, {"_id": 0}).to_list(length=None)
     return [Role(**doc) for doc in roles_docs]
 
