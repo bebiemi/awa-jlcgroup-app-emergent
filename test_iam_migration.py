@@ -121,7 +121,7 @@ def test_user_management_routes():
     if test_data.get("test_user_id"):
         test_endpoint(
             "GET",
-            f"{AUTH_BASE_URL}/api/auth/users/{test_data['test_user_id']}",
+            f"{AUTH_BASE_URL}/api/admin/users/{test_data['test_user_id']}",
             headers=get_auth_headers(),
             expected_status=200,
             test_name="GET /auth/users/{id} (users.read permission)"
@@ -131,7 +131,7 @@ def test_user_management_routes():
     if test_data.get("test_user_id"):
         test_endpoint(
             "PUT",
-            f"{AUTH_BASE_URL}/api/auth/users/{test_data['test_user_id']}",
+            f"{AUTH_BASE_URL}/api/admin/users/{test_data['test_user_id']}",
             data={"full_name": "Test User Updated"},
             headers=get_auth_headers(),
             expected_status=200,
