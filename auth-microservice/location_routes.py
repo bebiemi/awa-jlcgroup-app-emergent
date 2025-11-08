@@ -86,7 +86,7 @@ async def get_location(
 @location_router.post("", response_model=Location)
 async def create_location(
     location_data: LocationCreate,
-    current_user: User = Depends(require_admin),
+    current_user: User = Depends(require_permission("locations.manage")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """Create new location (admin only)"""
@@ -133,7 +133,7 @@ async def create_location(
 async def update_location(
     location_id: str,
     location_data: LocationUpdate,
-    current_user: User = Depends(require_admin),
+    current_user: User = Depends(require_permission("locations.manage")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """Update location (admin only)"""
@@ -164,7 +164,7 @@ async def update_location(
 @location_router.delete("/{location_id}")
 async def delete_location(
     location_id: str,
-    current_user: User = Depends(require_admin),
+    current_user: User = Depends(require_permission("locations.manage")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """Delete location (admin only)"""
@@ -190,7 +190,7 @@ async def delete_location(
 async def toggle_location_visibility(
     location_id: str,
     is_visible: bool,
-    current_user: User = Depends(require_admin),
+    current_user: User = Depends(require_permission("locations.manage")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """Toggle location visibility (admin only)"""
