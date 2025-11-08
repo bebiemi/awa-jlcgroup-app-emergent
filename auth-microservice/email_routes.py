@@ -119,7 +119,7 @@ Si vous recevez cet email, la configuration SMTP est correcte ✅
         )
 
 
-@router.post("/test-rollback-notification", dependencies=[Depends(require_super_admin)])
+@router.post("/test-rollback-notification", dependencies=[Depends(require_permission("emails.test"))])
 async def send_test_rollback_notification(
     current_user: User = Depends(require_permission("emails.configure"))
 ):
