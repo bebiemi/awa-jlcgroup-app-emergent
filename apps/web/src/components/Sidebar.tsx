@@ -133,7 +133,6 @@ export default function Sidebar() {
         title: 'Gestion',
         items: [
           { label: 'Utilisateurs', path: '/admin/users', icon: UserGroupIcon },
-          { label: 'Groupes', path: '/admin/groups', icon: UserGroupIcon },
           { label: 'Localisations', path: '/admin/locations', icon: MapPinIcon },
           { label: 'Validations', path: '/admin/validations', icon: ClipboardDocumentCheckIcon },
         ],
