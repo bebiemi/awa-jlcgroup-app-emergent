@@ -548,7 +548,7 @@ def test_database_state():
     # 1. Verify permissions count
     response = test_endpoint(
         "GET",
-        f"{AUTH_BASE_URL}/api/auth-api/iam/permissions",
+        f"{AUTH_BASE_URL}/api/iam/permissions",
         headers=get_auth_headers(),
         expected_status=200,
         test_name="Verify permissions in database"
@@ -563,7 +563,7 @@ def test_database_state():
     # 2. Verify profiles count
     response = test_endpoint(
         "GET",
-        f"{AUTH_BASE_URL}/api/auth-api/iam/profiles",
+        f"{AUTH_BASE_URL}/api/iam/profiles",
         headers=get_auth_headers(),
         expected_status=200,
         test_name="Verify profiles in database"
