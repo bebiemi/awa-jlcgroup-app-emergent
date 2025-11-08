@@ -23,7 +23,7 @@ class TestEmailRequest(BaseModel):
 
 @router.get("/config")
 async def get_email_config(
-    current_user: User = Depends(require_super_admin)
+    current_user: User = Depends(require_permission("emails.configure"))
 ):
     """
     Obtenir la configuration email (sans mot de passe)
@@ -48,7 +48,7 @@ async def get_email_config(
 @router.post("/test", dependencies=[Depends(require_super_admin)])
 async def send_test_email(
     request: TestEmailRequest,
-    current_user: User = Depends(require_super_admin)
+    current_user: User = Depends(require_permission("emails.configure"))
 ):
     """
     Envoyer un email de test
@@ -121,7 +121,7 @@ Si vous recevez cet email, la configuration SMTP est correcte ✅
 
 @router.post("/test-rollback-notification", dependencies=[Depends(require_super_admin)])
 async def send_test_rollback_notification(
-    current_user: User = Depends(require_super_admin)
+    current_user: User = Depends(require_permission("emails.configure"))
 ):
     """
     Envoyer une notification de rollback de test
