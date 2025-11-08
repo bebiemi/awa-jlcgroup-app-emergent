@@ -395,7 +395,7 @@ async def create_business_rule(
 
 # ==================== CACHE ====================
 
-@router.post("/cache/clear", dependencies=[Depends(require_admin)])
+@router.post("/cache/clear", dependencies=[Depends(require_permission("config.manage"))])
 async def clear_cache():
     """
     Vider le cache des configurations
