@@ -94,6 +94,38 @@ def test_auth_service_health():
     return False
 
 
+def get_admin_token():
+    """Get admin JWT token for authenticated requests"""
+    print(f"\n{Colors.BOLD}=== Getting Admin Token ==={Colors.ENDC}")
+    
+    login_data = {
+        "username": "admin",
+        "password": "awana2025"
+    }
+    
+    response = test_endpoint(
+        "POST",
+        f"{AUTH_BASE_URL}/auth/local/login",
+        data=login_data,
+        expected_status=200,
+        test_name="Admin Login"
+    )
+    
+    if response:
+        access_token = response.get("access_token")
+        if access_token:
+            log_test("Admin Token", "PASS", f"Token obtained: {access_token[:20]}...")
+            global admin_token
+            admin_token = access_token
+            return access_token
+        else:
+            log_test("Admin Token", "FAIL", "No access token in response")
+            return None
+    else:
+        log_test("Admin Token", "FAIL", "Login failed")
+        return None
+
+
 def test_candidat_registration_and_immediate_login():
     """Test candidat registration with immediate login - CRITICAL TEST"""
     print(f"\n{Colors.BOLD}=== CRITICAL TEST: Candidat Registration + Immediate Login ==={Colors.ENDC}")
