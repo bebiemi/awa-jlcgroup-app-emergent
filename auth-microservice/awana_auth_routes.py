@@ -1182,14 +1182,14 @@ async def local_register(
         if is_collaborator:
             # Collaborator email -> needs validation
             user_status = UserStatus.PENDING
-            assigned_role = 'collaborateur'
-            iam_group_code = 'grp.collaborateur'
+            assigned_role = UserRoles.COLLABORATEUR
+            iam_group_code = IAMGroups.COLLABORATEUR
             logger.info(f"Collaborator registration detected for {register_data.email} - validation required")
         else:
             # Public email -> candidat with immediate access
             user_status = UserStatus.ACTIVE
-            assigned_role = 'candidat'
-            iam_group_code = 'grp.candidat'
+            assigned_role = UserRoles.CANDIDAT
+            iam_group_code = IAMGroups.CANDIDAT
             logger.info(f"Candidat registration detected for {register_data.email} - immediate access granted")
         
         # Create new user
