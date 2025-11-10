@@ -60,6 +60,11 @@ export default function UserManagementPage() {
     setPage(1) // Reset to first page on search
   }
 
+  const handleViewDetails = (user: User) => {
+    setSelectedUserId(user.id)
+    setShowDetailModal(true)
+  }
+
   const handleEdit = (user: User) => {
     setSelectedUser(user)
     setShowEditModal(true)
