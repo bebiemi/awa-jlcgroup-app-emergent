@@ -45,6 +45,7 @@ class User(BaseModel):
     # Authentication
     provider: AuthProvider = AuthProvider.LOCAL
     provider_user_id: Optional[str] = None  # ID from external provider (e.g., EntraID)
+    password_hash: Optional[str] = None  # Hashed password for local authentication
     
     # Status
     status: UserStatus = UserStatus.ACTIVE
