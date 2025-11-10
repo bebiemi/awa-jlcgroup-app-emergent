@@ -48,5 +48,24 @@ export const createBaseQueryWithAuth = (baseUrl: string): BaseQueryFn<
 }
 
 // Default instance with backend URL from environment
-const backendUrl = import.meta.env.VITE_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL || ''
+// In production, use window.location.origin to ensure same protocol (HTTP/HTTPS)
+const getBaseUrl = (): string => {
+  const envUrl = import.meta.env.VITE_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL
+  
+  // If env URL is set and not empty, use it
+  if (envUrl && envUrl.trim() !== '') {
+    return envUrl
+  }
+  
+  // In production/browser, use window.location.origin for same-origin requests
+  // This ensures HTTPS pages make HTTPS requests
+  if (typeof window !== 'undefined' && window.location.origin) {
+    return window.location.origin
+  }
+  
+  // Fallback to empty string (relative URLs)
+  return ''
+}
+
+const backendUrl = getBaseUrl()
 export const baseQueryWithAuth = createBaseQueryWithAuth(backendUrl)
