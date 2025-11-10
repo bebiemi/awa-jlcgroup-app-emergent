@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { UserDetail, useGetUserGroupsQuery, useGetUserProfilesQuery, useAssignGroupMutation, useRemoveGroupMutation, useAssignProfileMutation, useRemoveProfileMutation } from '../../api/userDetailsApi'
-import { useGetGroupsQuery } from '@/features/iam/api/iamApi'
-import { useGetProfilesQuery } from '@/features/iam/api/iamApi'
+import { useGetGroupQuery as useGetAllGroups, useGetProfileQuery as useGetAllProfiles } from '@/features/iam/api/iamApi'
 import { PlusIcon, TrashIcon } from '@heroicons/react/24/outline'
 import toast from 'react-hot-toast'
 import { BADGE_VARIANTS } from '@/constants/ui'
