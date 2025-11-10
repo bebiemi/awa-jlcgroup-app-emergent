@@ -139,6 +139,7 @@ app.include_router(contract_router)
 app.include_router(presence_router)
 app.include_router(iam_router)
 app.include_router(email_domain_router)
+app.include_router(user_detail_router, prefix="/api/iam/users", tags=["User Details"])
 
 @app.get("/health")
 async def health_check():
