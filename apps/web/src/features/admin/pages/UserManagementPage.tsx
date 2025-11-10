@@ -590,6 +590,24 @@ export default function UserManagementPage() {
               setSelectedUser(null)
             }}
           />
+          <ArchiveUserModal
+            user={selectedUser}
+            isOpen={showArchiveModal}
+            onClose={() => {
+              setShowArchiveModal(false)
+              setSelectedUser(null)
+            }}
+            onSuccess={handleModalSuccess}
+          />
+          <RestoreUserModal
+            user={selectedUser}
+            isOpen={showRestoreModal}
+            onClose={() => {
+              setShowRestoreModal(false)
+              setSelectedUser(null)
+            }}
+            onSuccess={handleModalSuccess}
+          />
         </>
       )}
       <QuickAddUserModal isOpen={showQuickAddModal} onClose={() => setShowQuickAddModal(false)} />
