@@ -49,12 +49,22 @@ security:
     suspended: "suspended"
     deleted: "deleted"
     blocked: "blocked"
+    archived: "archived"
     all:
       - "active"
       - "pending"
       - "suspended"
       - "deleted"
       - "blocked"
+      - "archived"
+  
+  # User Archival/Retention Configuration
+  user_retention:
+    enabled: true
+    retention_days: 90  # Days before permanent deletion after archiving
+    allow_override: true  # Allow database override of retention period
+    auto_purge_enabled: false  # Enable automatic purge of expired archives
+    purge_batch_size: 100  # Number of users to purge per batch
   
   # JWT Configuration
   jwt:
