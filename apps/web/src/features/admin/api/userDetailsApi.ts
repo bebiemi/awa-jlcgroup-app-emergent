@@ -228,10 +228,52 @@ export const userDetailsApi = createApi({
 
     // Send Notification
     sendNotification: builder.mutation<{ success: boolean; message: string }, { userId: string; data: { title: string; message: string; type?: string } }>({
-      query: ({ userId, data }) => ({
+      query: ({ userId, data}) => ({
         url: IAM_ENDPOINTS.USERS.SEND_NOTIFICATION(userId),
         method: 'POST',
         body: data,
+      }),
+    }),
+
+    // Archive User
+    archiveUser: builder.mutation<{ user_id: string; status: string; archived_at: string; deletion_scheduled_at: string; retention_days: number; message: string }, { userId: string; reason?: string }>({
+      query: ({ userId, reason }) => ({
+        url: `/api/iam/users/${userId}/archive`,
+        method: 'PATCH',
+        body: { reason },
+      }),
+      invalidatesTags: ['UserDetail'],
+    }),
+
+    // Restore User
+    restoreUser: builder.mutation<{ user_id: string; status: string; restored_at: string; message: string }, { userId: string; reason?: string }>({
+      query: ({ userId, reason }) => ({
+        url: `/api/iam/users/${userId}/restore`,
+        method: 'PATCH',
+        body: { reason },
+      }),
+      invalidatesTags: ['UserDetail'],
+    }),
+
+    // Get Retention Config
+    getRetentionConfig: builder.query<{ retention_days: number; source: string; can_override: boolean }, void>({
+      query: () => '/api/iam/users/retention-config',
+    }),
+
+    // Update Retention Config
+    updateRetentionConfig: builder.mutation<{ message: string; retention_days: number; source: string }, { retention_days: number }>({
+      query: ({ retention_days }) => ({
+        url: '/api/iam/users/retention-config',
+        method: 'PUT',
+        body: { retention_days },
+      }),
+    }),
+
+    // Purge Expired Users
+    purgeExpiredUsers: builder.mutation<{ purged_count: number; purged_user_ids: string[]; message: string }, void>({
+      query: () => ({
+        url: '/api/iam/users/purge-expired',
+        method: 'DELETE',
       }),
     }),
   }),
