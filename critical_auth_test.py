@@ -444,8 +444,13 @@ def test_validations_list():
     )
     
     if validations_response:
-        validations = validations_response.get("validations", [])
-        pending_count = len([v for v in validations if v.get("status") == "pending"])
+        # Handle different response formats
+        if isinstance(validations_response, list):
+            validations = validations_response
+        else:
+            validations = validations_response.get("validations", [])
+        
+        pending_count = len([v for v in validations if isinstance(v, dict) and v.get("status") == "pending"])
         
         log_test("Validations List", "PASS", f"Found {len(validations)} validations, {pending_count} pending")
         
@@ -455,7 +460,7 @@ def test_validations_list():
         
         for test_user in collaborator_users:
             user_email = test_user.get("email")
-            found_validation = any(v.get("user_email") == user_email for v in validations)
+            found_validation = any(isinstance(v, dict) and v.get("user_email") == user_email for v in validations)
             
             if found_validation:
                 log_test(f"Validation Entry - {user_email}", "PASS", "Collaborator appears in validations list")
