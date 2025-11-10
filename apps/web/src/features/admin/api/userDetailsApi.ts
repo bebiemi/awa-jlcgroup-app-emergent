@@ -257,22 +257,22 @@ export const userDetailsApi = createApi({
 
     // Get Retention Config
     getRetentionConfig: builder.query<{ retention_days: number; source: string; can_override: boolean }, void>({
-      query: () => '/api/iam/users/retention-config',
+      query: () => '/api/iam/users/config/retention',
     }),
 
     // Update Retention Config
     updateRetentionConfig: builder.mutation<{ message: string; retention_days: number; source: string }, { retention_days: number }>({
       query: ({ retention_days }) => ({
-        url: '/api/iam/users/retention-config',
+        url: '/api/iam/users/config/retention',
         method: 'PUT',
-        body: { retention_days },
+        params: { retention_days },
       }),
     }),
 
     // Purge Expired Users
     purgeExpiredUsers: builder.mutation<{ purged_count: number; purged_user_ids: string[]; message: string }, void>({
       query: () => ({
-        url: '/api/iam/users/purge-expired',
+        url: '/api/iam/users/purge/expired',
         method: 'DELETE',
       }),
     }),
