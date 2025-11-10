@@ -587,6 +587,7 @@ export default function ValidationsPage() {
         <div className="p-6">
             <h3 className="text-xl font-bold text-gray-900 mb-4">
               Actions en masse - {bulkActionType === 'all' ? 'Toutes' : 
+                bulkActionType === 'candidat' ? 'Candidats' :
                 bulkActionType === 'interim' ? 'Intérimaires' : 
                 bulkActionType === 'company' ? 'Entreprises' : 
                 bulkActionType === 'collaborator' ? 'Collaborateurs' : 
