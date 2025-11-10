@@ -926,7 +926,17 @@ async def convert_to_mission(
         }
     )
     
-    # TODO: Send notification to company
+    # Send notification to company
+    notification_service = NotificationService(db)
+    await notification_service.send_besoin_notification(
+        event_type="mission_created",
+        besoin_id=besoin_id,
+        besoin_titre=besoin["titre"],
+        entreprise_name=besoin["entreprise_name"],
+        recipients=["entreprise", "responsable_besoin"],
+        actor_name=user_name,
+        additional_data={"mission_id": mission_id}
+    )
     
     mission_doc.pop("_id", None)
     return {
