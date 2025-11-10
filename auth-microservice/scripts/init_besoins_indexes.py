@@ -72,3 +72,14 @@ async def create_indexes():
 
 if __name__ == "__main__":
     asyncio.run(create_indexes())
+
+    print("🔧 Creating indexes for notifications collection...")
+    
+    # Notifications indexes
+    await db.notifications.create_index("id", unique=True)
+    await db.notifications.create_index("user_id")
+    await db.notifications.create_index([("user_id", 1), ("read", 1)])
+    await db.notifications.create_index([("user_id", 1), ("created_at", -1)])
+    await db.notifications.create_index("entity_id")
+    
+    print("✅ Notifications indexes created")
