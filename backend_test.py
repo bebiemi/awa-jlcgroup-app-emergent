@@ -1999,57 +1999,110 @@ def test_profile_completion_system():
     return True
 
 
-def test_mongodb_skill_verification():
-    """Verify that new skills are added to system_references collection"""
-    print(f"\n{Colors.BOLD}=== Testing MongoDB Skill References ==={Colors.ENDC}")
+def run_critical_authentication_tests():
+    """Run all critical authentication tests"""
+    print(f"\n{Colors.BOLD}{'='*80}{Colors.ENDC}")
+    print(f"{Colors.BOLD}CRITICAL AUTHENTICATION ISSUE INVESTIGATION{Colors.ENDC}")
+    print(f"{Colors.BOLD}Testing 401 Unauthorized errors after registration{Colors.ENDC}")
+    print(f"{Colors.BOLD}{'='*80}{Colors.ENDC}")
     
-    try:
-        from pymongo import MongoClient
-        import os
-        
-        # Connect to MongoDB
-        mongo_url = os.getenv('MONGO_URL', 'mongodb://localhost:27017')
-        client = MongoClient(mongo_url)
-        
-        # Check both auth_db and jlc_db for system_references
-        auth_db = client['auth_db']
-        jlc_db = client['jlc_db']
-        
-        # Try auth_db first (where auth-microservice stores data)
-        references_collection = auth_db.system_references
-        if references_collection.count_documents({}) == 0:
-            # If no references in auth_db, try jlc_db
-            references_collection = jlc_db.system_references
-        
-        # Look for the unique skill we added
-        skill_code = "gestion_de_projet_2025"
-        skill_ref = references_collection.find_one({
-            "category": "skills",
-            "code": skill_code
-        })
-        
-        if skill_ref:
-            log_test("Skill Reference Found", "PASS", f"Skill '{skill_code}' found in system_references")
-            print(f"    Label FR: {skill_ref.get('label_fr')}")
-            print(f"    Label EN: {skill_ref.get('label_en')}")
-            print(f"    Is Active: {skill_ref.get('is_active')}")
-            print(f"    Added By: {skill_ref.get('metadata', {}).get('added_by')}")
-        else:
-            log_test("Skill Reference Not Found", "FAIL", f"Skill '{skill_code}' not found in system_references")
-        
-        # Count total skills in references
-        total_skills_auth = auth_db.system_references.count_documents({"category": "skills"})
-        total_skills_jlc = jlc_db.system_references.count_documents({"category": "skills"})
-        
-        log_test("Total Skills in auth_db", "PASS", f"Found {total_skills_auth} skills in auth_db.system_references")
-        log_test("Total Skills in jlc_db", "PASS", f"Found {total_skills_jlc} skills in jlc_db.system_references")
-        
-        client.close()
-        return skill_ref is not None
-        
-    except Exception as e:
-        log_test("MongoDB Skill Verification", "FAIL", f"Error connecting to MongoDB: {str(e)}")
+    test_results = []
+    
+    # Test 1: Auth service health
+    print(f"\n{Colors.BLUE}[1/7] Auth Service Health Check{Colors.ENDC}")
+    health_result = test_auth_service_health()
+    test_results.append(("Auth Service Health", health_result))
+    
+    if not health_result:
+        print(f"{Colors.RED}❌ Auth service is not running - cannot proceed with tests{Colors.ENDC}")
         return False
+    
+    # Test 2: Admin login (baseline)
+    print(f"\n{Colors.BLUE}[2/7] Admin Login Baseline Test{Colors.ENDC}")
+    admin_result = test_admin_login()
+    test_results.append(("Admin Login", admin_result is not None))
+    
+    # Test 3: Email domain verification (CORS)
+    print(f"\n{Colors.BLUE}[3/7] Email Domain Verification{Colors.ENDC}")
+    domain_result = test_email_domain_verification()
+    test_results.append(("Email Domain Verification", domain_result))
+    
+    # Test 4: CRITICAL - Candidat registration + immediate login
+    print(f"\n{Colors.BLUE}[4/7] CRITICAL: Candidat Registration + Immediate Login{Colors.ENDC}")
+    candidat_result = test_candidat_registration_and_immediate_login()
+    test_results.append(("Candidat Registration + Login", candidat_result))
+    
+    # Test 5: Collaborator registration + login attempt
+    print(f"\n{Colors.BLUE}[5/7] Collaborator Registration + Login Attempt{Colors.ENDC}")
+    collaborator_result = test_collaborator_registration_and_login()
+    test_results.append(("Collaborator Registration + Login", collaborator_result))
+    
+    # Test 6: MongoDB status investigation
+    print(f"\n{Colors.BLUE}[6/7] MongoDB Status Investigation{Colors.ENDC}")
+    mongodb_result = test_mongodb_status_investigation()
+    test_results.append(("MongoDB Status Investigation", mongodb_result))
+    
+    # Test 7: Validations list
+    print(f"\n{Colors.BLUE}[7/7] Validations List Check{Colors.ENDC}")
+    validations_result = test_validations_list()
+    test_results.append(("Validations List", validations_result))
+    
+    # Summary
+    print(f"\n{Colors.BOLD}{'='*80}{Colors.ENDC}")
+    print(f"{Colors.BOLD}TEST RESULTS SUMMARY{Colors.ENDC}")
+    print(f"{Colors.BOLD}{'='*80}{Colors.ENDC}")
+    
+    passed = 0
+    failed = 0
+    
+    for test_name, result in test_results:
+        status = "PASS" if result else "FAIL"
+        color = Colors.GREEN if result else Colors.RED
+        print(f"{color}[{status}]{Colors.ENDC} {test_name}")
+        if result:
+            passed += 1
+        else:
+            failed += 1
+    
+    print(f"\n{Colors.BOLD}Total: {passed + failed} tests, {Colors.GREEN}{passed} passed{Colors.ENDC}, {Colors.RED}{failed} failed{Colors.ENDC}")
+    
+    # Critical findings
+    print(f"\n{Colors.BOLD}CRITICAL FINDINGS:{Colors.ENDC}")
+    
+    candidat_success = test_results[3][1]  # Candidat registration + login
+    if not candidat_success:
+        print(f"{Colors.RED}❌ CRITICAL BUG CONFIRMED: Candidat users cannot login immediately after registration{Colors.ENDC}")
+        print(f"   This is the 401 Unauthorized error reported by users")
+    else:
+        print(f"{Colors.GREEN}✅ Candidat registration + immediate login working correctly{Colors.ENDC}")
+    
+    collaborator_success = test_results[4][1]  # Collaborator registration + login
+    if collaborator_success:
+        print(f"{Colors.GREEN}✅ Collaborator registration working correctly (pending status, login blocked){Colors.ENDC}")
+    else:
+        print(f"{Colors.RED}❌ Collaborator registration flow has issues{Colors.ENDC}")
+    
+    return candidat_success and collaborator_success
+
+
+if __name__ == "__main__":
+    """Main execution"""
+    try:
+        success = run_critical_authentication_tests()
+        
+        if success:
+            print(f"\n{Colors.GREEN}✅ All critical authentication tests passed{Colors.ENDC}")
+            sys.exit(0)
+        else:
+            print(f"\n{Colors.RED}❌ Critical authentication issues found{Colors.ENDC}")
+            sys.exit(1)
+            
+    except KeyboardInterrupt:
+        print(f"\n{Colors.YELLOW}Tests interrupted by user{Colors.ENDC}")
+        sys.exit(1)
+    except Exception as e:
+        print(f"\n{Colors.RED}Test execution failed: {str(e)}{Colors.ENDC}")
+        sys.exit(1)
 
 
 def test_user_presence_system():
