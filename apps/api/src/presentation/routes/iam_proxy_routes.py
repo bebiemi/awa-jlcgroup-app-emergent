@@ -1,0 +1,60 @@
+"""
+IAM Proxy Routes
+Forwards /api/iam/* requests to auth-microservice
+"""
+from fastapi import APIRouter, Request, HTTPException
+from fastapi.responses import Response
+import httpx
+import os
+import logging
+
+logger = logging.getLogger(__name__)
+
+router = APIRouter()
+
+AUTH_SERVICE_URL = os.getenv('AUTH_SERVICE_URL', 'http://localhost:8000')
+
+
+@router.api_route("/users/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH"])
+async def proxy_iam_users(path: str, request: Request):
+    """
+    Proxy all /api/iam/users/* requests to auth-microservice
+    """
+    # Build target URL
+    target_url = f"{AUTH_SERVICE_URL}/api/iam/users/{path}"
+    
+    # Get request body if present
+    body = None
+    if request.method in ["POST", "PUT", "PATCH"]:
+        body = await request.body()
+    
+    # Forward headers (especially Authorization)
+    headers = dict(request.headers)
+    # Remove host header to avoid conflicts
+    headers.pop('host', None)
+    
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.request(
+                method=request.method,
+                url=target_url,
+                headers=headers,
+                content=body,
+                params=dict(request.query_params),
+                timeout=30.0
+            )
+            
+            # Return the response from auth-microservice
+            return Response(
+                content=response.content,
+                status_code=response.status_code,
+                headers=dict(response.headers),
+                media_type=response.headers.get('content-type')
+            )
+    
+    except httpx.TimeoutException:
+        logger.error(f"Timeout while proxying to auth-microservice: {target_url}")
+        raise HTTPException(status_code=504, detail="Auth service timeout")
+    except Exception as e:
+        logger.error(f"Error proxying to auth-microservice: {str(e)}")
+        raise HTTPException(status_code=502, detail="Auth service unavailable")
