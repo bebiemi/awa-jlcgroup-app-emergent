@@ -348,7 +348,7 @@ async def get_user_profiles(
     if not profile_ids:
         return []
     
-    cursor = db.iam_profiles.find({"id": {"$in": profile_ids}})
+    cursor = db.profiles.find({"id": {"$in": profile_ids}})
     profiles = await cursor.to_list(length=None)
     
     return profiles
@@ -367,7 +367,7 @@ async def assign_profile(
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     
-    profile = await db.iam_profiles.find_one({"id": assignment.profile_id})
+    profile = await db.profiles.find_one({"id": assignment.profile_id})
     if not profile:
         raise HTTPException(status_code=404, detail="Profile not found")
     
