@@ -80,11 +80,16 @@ if upload_dir.exists():
 
 # Import and include routers
 from src.presentation.routes import profile_routes, validation_routes, notification_routes, admin_routes
+import sys
+sys.path.insert(0, '/app/auth-microservice')
+from user_detail_routes import router as user_detail_router
 
 app.include_router(profile_routes.router, prefix="/api")
 app.include_router(validation_routes.router, prefix="/api")
 app.include_router(notification_routes.router, prefix="/api")
 app.include_router(admin_routes.router, prefix="/api")
+# IAM User Detail routes from auth-microservice
+app.include_router(user_detail_router, prefix="/api/iam/users", tags=["User Details"])
 
 
 @app.get("/health")
