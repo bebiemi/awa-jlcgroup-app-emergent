@@ -73,6 +73,10 @@ export default function RegisterPage() {
   const validateForm = () => {
     const newErrors: Record<string, string> = {}
 
+    if (!accountType) {
+      newErrors.accountType = 'Veuillez choisir un type de compte'
+    }
+
     if (!formData.username.trim()) {
       newErrors.username = 'Le nom d\'utilisateur est requis'
     } else if (formData.username.length < 3) {
@@ -97,6 +101,16 @@ export default function RegisterPage() {
 
     if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = 'Les mots de passe ne correspondent pas'
+    }
+
+    // Company-specific validation
+    if (accountType === 'company') {
+      if (!formData.companyName.trim()) {
+        newErrors.companyName = 'Le nom de l\'entreprise est requis'
+      }
+      if (!formData.legalRepresentative.trim()) {
+        newErrors.legalRepresentative = 'Le représentant légal est requis'
+      }
     }
 
     setErrors(newErrors)
