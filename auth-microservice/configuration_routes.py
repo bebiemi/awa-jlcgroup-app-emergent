@@ -94,6 +94,7 @@ async def get_all_config(
         "suspended": config_manager.get("security.user_statuses.suspended"),
         "deleted": config_manager.get("security.user_statuses.deleted"),
         "blocked": config_manager.get("security.user_statuses.blocked"),
+        "archived": config_manager.get("security.user_statuses.archived"),
         "all": config_manager.get("security.user_statuses.all")
     }
     
