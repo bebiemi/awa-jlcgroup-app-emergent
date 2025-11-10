@@ -108,30 +108,16 @@ export default function UserManagementPage() {
   }
 
   const getRoleBadge = (roles: string[]) => {
-    const roleColors: Record<string, string> = {
-      admin: 'bg-purple-100 text-purple-800',
-      super_admin: 'bg-red-100 text-red-800',
-      candidat: 'bg-blue-100 text-blue-800',
-      interim: 'bg-teal-100 text-teal-800',
-      company: 'bg-indigo-100 text-indigo-800',
-      collaborateur: 'bg-green-100 text-green-800',
-    }
-
     return (
       <div className="flex flex-wrap gap-1">
         {roles.map((role) => (
           <span
             key={role}
             className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-              roleColors[role] || 'bg-gray-100 text-gray-800'
+              RoleColors[role] || 'bg-gray-100 text-gray-800'
             }`}
           >
-            {role === 'candidat' ? 'Candidat' : 
-             role === 'interim' ? 'Intérimaire' :
-             role === 'company' ? 'Entreprise' :
-             role === 'collaborateur' ? 'Collaborateur' :
-             role === 'super_admin' ? 'Super Admin' :
-             role}
+            {RoleLabels[role] || role}
           </span>
         ))}
       </div>
