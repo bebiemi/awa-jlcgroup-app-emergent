@@ -242,20 +242,25 @@ export const EmailSettingsPage: React.FC = () => {
             {sections.map((section) => {
               const Icon = section.icon
               return (
-                <button
+                <Tooltip 
                   key={section.value}
-                  onClick={() => setActiveSection(section.value as SectionType)}
-                  className={`px-6 py-4 rounded-lg transition-all text-left ${
-                    activeSection === section.value
-                      ? 'bg-jlc-purple-600 text-white shadow-lg scale-105'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:scale-102 hover:shadow-md'
-                  }`}
+                  content={`Gérer ${section.label.toLowerCase()}`}
+                  position="top"
                 >
-                  <div className="flex items-center gap-3">
-                    <Icon className="h-8 w-8" />
-                    <div className="font-semibold">{section.label}</div>
-                  </div>
-                </button>
+                  <button
+                    onClick={() => setActiveSection(section.value as SectionType)}
+                    className={`px-6 py-4 rounded-lg transition-all text-left ${
+                      activeSection === section.value
+                        ? 'bg-jlc-purple-600 text-white shadow-lg scale-105'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:scale-102 hover:shadow-md'
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <Icon className="h-8 w-8" />
+                      <div className="font-semibold">{section.label}</div>
+                    </div>
+                  </button>
+                </Tooltip>
               )
             })}
           </div>
