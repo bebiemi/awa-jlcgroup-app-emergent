@@ -53,11 +53,16 @@ export default function UserManagementPage() {
   const [showRestoreModal, setShowRestoreModal] = useState(false)
 
   // Fetch users with filters
+  // En mode "active", on exclut les archivés sauf si explicitement sélectionné dans le filtre
+  const effectiveStatusFilter = viewMode === 'archived' 
+    ? 'archived' 
+    : (statusFilter || (viewMode === 'active' ? '!archived' : undefined))
+  
   const { data, isLoading, isFetching, refetch } = useGetUsersQuery({
     page,
     page_size: 15,
     search: searchQuery || undefined,
-    status: viewMode === 'archived' ? 'archived' : (statusFilter || undefined),
+    status: effectiveStatusFilter,
     role: roleFilter || undefined,
   })
 
