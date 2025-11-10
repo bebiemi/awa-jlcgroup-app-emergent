@@ -18,6 +18,7 @@ import {
   PlusIcon,
   UserPlusIcon,
   ShieldExclamationIcon,
+  EyeIcon,
 } from '@heroicons/react/24/outline'
 import { Link } from 'react-router-dom'
 import EditUserModal from '../components/EditUserModal'
@@ -25,6 +26,7 @@ import DeleteUserModal from '../components/DeleteUserModal'
 import BlockUserModal from '../components/BlockUserModal'
 import QuickAddUserModal from '../components/QuickAddUserModal'
 import ResetMfaModal from '../components/ResetMfaModal'
+import UserDetailModal from '../components/UserDetailModal'
 import { UserRoles, RoleLabels, RoleColors } from '@/constants/iamConstants'
 
 export default function UserManagementPage() {
@@ -36,11 +38,13 @@ export default function UserManagementPage() {
 
   // Modal states
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
+  const [selectedUserId, setSelectedUserId] = useState<string>('')
   const [showEditModal, setShowEditModal] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [showBlockModal, setShowBlockModal] = useState(false)
   const [showQuickAddModal, setShowQuickAddModal] = useState(false)
   const [showResetMfaModal, setShowResetMfaModal] = useState(false)
+  const [showDetailModal, setShowDetailModal] = useState(false)
 
   // Fetch users with filters
   const { data, isLoading, isFetching } = useGetUsersQuery({
