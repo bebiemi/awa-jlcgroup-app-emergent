@@ -105,10 +105,10 @@ export default function RoleSelectionPage() {
             {/* Interim Role */}
             <button
               type="button"
-              onClick={() => handleRoleSelect('interim')}
+              onClick={() => handleRoleSelect(UserRoles.INTERIM as UserRole)}
               disabled={isLoading}
               className={`p-6 border-2 rounded-lg transition-all ${
-                selectedRole === 'interim'
+                selectedRole === UserRoles.INTERIM
                   ? 'border-jlc-purple-600 bg-jlc-purple-50 ring-2 ring-jlc-purple-500'
                   : 'border-gray-300 hover:border-jlc-purple-400 bg-white'
               } disabled:opacity-50 disabled:cursor-not-allowed`}
@@ -127,10 +127,10 @@ export default function RoleSelectionPage() {
             {/* Company Role */}
             <button
               type="button"
-              onClick={() => handleRoleSelect('company')}
+              onClick={() => handleRoleSelect(UserRoles.COMPANY as UserRole)}
               disabled={isLoading}
               className={`p-6 border-2 rounded-lg transition-all ${
-                selectedRole === 'company'
+                selectedRole === UserRoles.COMPANY
                   ? 'border-jlc-purple-600 bg-jlc-purple-50 ring-2 ring-jlc-purple-500'
                   : 'border-gray-300 hover:border-jlc-purple-400 bg-white'
               } disabled:opacity-50 disabled:cursor-not-allowed`}
