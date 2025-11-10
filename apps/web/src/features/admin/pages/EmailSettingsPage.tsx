@@ -178,50 +178,58 @@ export const EmailSettingsPage: React.FC = () => {
 
         {/* Statistics Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Statut</p>
-                <p className={`text-2xl font-bold ${
-                  formData.enabled ? 'text-green-600' : 'text-red-600'
-                }`}>
-                  {stats.status}
-                </p>
+          <Tooltip content="État actuel des notifications email" position="top">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Statut</p>
+                  <p className={`text-2xl font-bold ${
+                    formData.enabled ? 'text-green-600' : 'text-red-600'
+                  }`}>
+                    {stats.status}
+                  </p>
+                </div>
+                <div className="text-3xl">{formData.enabled ? '✅' : '❌'}</div>
               </div>
-              <div className="text-3xl">{formData.enabled ? '✅' : '❌'}</div>
-            </div>
-          </Card>
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Emails Admin</p>
-                <p className="text-2xl font-bold text-jlc-purple-600">{stats.adminCount}</p>
+            </Card>
+          </Tooltip>
+          <Tooltip content="Nombre d'emails administrateurs configurés" position="top">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Emails Admin</p>
+                  <p className="text-2xl font-bold text-jlc-purple-600">{stats.adminCount}</p>
+                </div>
+                <div className="text-3xl">📧</div>
               </div>
-              <div className="text-3xl">📧</div>
-            </div>
-          </Card>
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Fournisseur</p>
-                <p className="text-lg font-bold text-gray-900 capitalize">{stats.provider}</p>
+            </Card>
+          </Tooltip>
+          <Tooltip content="Fournisseur de service email configuré" position="top">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Fournisseur</p>
+                  <p className="text-lg font-bold text-gray-900 capitalize">{stats.provider}</p>
+                </div>
+                <div className="text-3xl">📨</div>
               </div>
-              <div className="text-3xl">📨</div>
-            </div>
-          </Card>
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Sécurité TLS</p>
-                <p className={`text-lg font-bold ${
-                  formData.smtp_use_tls ? 'text-green-600' : 'text-red-600'
-                }`}>
-                  {stats.tls}
-                </p>
+            </Card>
+          </Tooltip>
+          <Tooltip content="État de la sécurité TLS/SSL" position="top">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Sécurité TLS</p>
+                  <p className={`text-lg font-bold ${
+                    formData.smtp_use_tls ? 'text-green-600' : 'text-red-600'
+                  }`}>
+                    {stats.tls}
+                  </p>
+                </div>
+                <div className="text-3xl">🔒</div>
               </div>
-              <div className="text-3xl">🔒</div>
-            </div>
-          </Card>
+            </Card>
+          </Tooltip>
         </div>
 
         {/* Section Selector */}
