@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { UserDetail, useGetUserGroupsQuery, useGetUserProfilesQuery, useAssignGroupMutation, useRemoveGroupMutation, useAssignProfileMutation, useRemoveProfileMutation } from '../../api/userDetailsApi'
-import { useGetGroupQuery as useGetAllGroups, useGetProfileQuery as useGetAllProfiles } from '@/features/iam/api/iamApi'
+import { useListGroupsQuery, useListProfilesQuery } from '@/features/iam/api/iamApi'
 import { PlusIcon, TrashIcon } from '@heroicons/react/24/outline'
 import toast from 'react-hot-toast'
 import { BADGE_VARIANTS } from '@/constants/ui'
@@ -13,8 +13,8 @@ interface UserPermissionsTabProps {
 export default function UserPermissionsTab({ userId, userDetail }: UserPermissionsTabProps) {
   const { data: userGroups = [], isLoading: loadingGroups } = useGetUserGroupsQuery(userId)
   const { data: userProfiles = [], isLoading: loadingProfiles } = useGetUserProfilesQuery(userId)
-  const { data: allGroupsData } = useGetAllGroups({})
-  const { data: allProfilesData } = useGetAllProfiles({})
+  const { data: allGroupsData } = useListGroupsQuery({})
+  const { data: allProfilesData } = useListProfilesQuery({})
   
   const allGroups = Array.isArray(allGroupsData) ? allGroupsData : []
   const allProfiles = Array.isArray(allProfilesData) ? allProfilesData : []
