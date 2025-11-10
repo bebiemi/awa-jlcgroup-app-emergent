@@ -333,6 +333,8 @@ def test_mongodb_status_investigation():
         print(f"\n  Investigating test users in MongoDB...")
         
         global test_users
+        critical_issue_found = False
+        
         for test_user in test_users:
             user_id = test_user.get("user_id")
             email = test_user.get("email")
@@ -345,6 +347,7 @@ def test_mongodb_status_investigation():
             if user_doc:
                 actual_status = user_doc.get("status")
                 password_hash = user_doc.get("password_hash")
+                hashed_password = user_doc.get("hashed_password")  # Check alternative field name
                 roles = user_doc.get("roles", [])
                 is_collaborator = user_doc.get("is_collaborator", False)
                 
@@ -354,9 +357,18 @@ def test_mongodb_status_investigation():
                 print(f"      Actual Status: '{actual_status}'")
                 print(f"      Status Match: {actual_status == expected_status}")
                 print(f"      Password Hash Present: {bool(password_hash)}")
+                print(f"      Hashed Password Present: {bool(hashed_password)}")
                 print(f"      Password Hash Length: {len(password_hash) if password_hash else 0}")
+                print(f"      Hashed Password Length: {len(hashed_password) if hashed_password else 0}")
                 print(f"      Roles: {roles}")
                 print(f"      Is Collaborator: {is_collaborator}")
+                
+                # CRITICAL: Check if password hash is missing for candidat user
+                if test_type == "candidat" and not password_hash and not hashed_password:
+                    log_test("CRITICAL PASSWORD ISSUE", "FAIL", f"Candidat user has NO password hash - this explains login failure!")
+                    critical_issue_found = True
+                elif test_type == "candidat" and (password_hash or hashed_password):
+                    log_test("Password Hash Check", "PASS", f"Candidat user has password hash")
                 
                 # Check for any whitespace or encoding issues
                 if actual_status:
@@ -386,8 +398,34 @@ def test_mongodb_status_investigation():
         for status, count in status_counts.items():
             print(f"      '{status}': {count} users")
         
+        # Additional investigation: Check password hash field names across all users
+        print(f"\n  Checking password hash field names across all users...")
+        
+        password_hash_stats = {"password_hash": 0, "hashed_password": 0, "both": 0, "neither": 0}
+        cursor = users_collection.find({}, {"password_hash": 1, "hashed_password": 1, "email": 1})
+        for doc in cursor:
+            has_password_hash = bool(doc.get("password_hash"))
+            has_hashed_password = bool(doc.get("hashed_password"))
+            
+            if has_password_hash and has_hashed_password:
+                password_hash_stats["both"] += 1
+            elif has_password_hash:
+                password_hash_stats["password_hash"] += 1
+            elif has_hashed_password:
+                password_hash_stats["hashed_password"] += 1
+            else:
+                password_hash_stats["neither"] += 1
+        
+        print(f"    Password hash field distribution:")
+        for field, count in password_hash_stats.items():
+            print(f"      {field}: {count} users")
+        
+        if critical_issue_found:
+            print(f"\n{Colors.RED}🚨 CRITICAL ISSUE IDENTIFIED: Password hash missing for candidat users!{Colors.ENDC}")
+            print(f"   This explains why login fails with 'Incorrect username or password'")
+        
         client.close()
-        return True
+        return not critical_issue_found  # Return False if critical issue found
         
     except Exception as e:
         log_test("MongoDB Investigation", "FAIL", f"Error connecting to MongoDB: {str(e)}")
