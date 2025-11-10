@@ -286,7 +286,7 @@ async def get_retention_config(
 
 # ==================== UPDATE RETENTION CONFIG ====================
 
-@router.put("/retention-config")
+@router.put("/config/retention")
 async def update_retention_config(
     retention_days: int,
     db: AsyncIOMotorDatabase = Depends(get_database),
