@@ -24,6 +24,7 @@ class UserStatus(str, Enum):
     INACTIVE = "inactive"
     SUSPENDED = "suspended"
     PENDING = "pending"
+    ARCHIVED = "archived"  # Soft delete - scheduled for deletion
 
 
 class PresenceStatus(str, Enum):
