@@ -26,6 +26,7 @@ from awana_auth.core.besoin_models import (
 )
 from awana_auth.core.audit_models import AuditAction, AuditSeverity
 from awana_auth.services.audit_service import AuditService
+from awana_auth.services.notification_service import NotificationService
 
 router = APIRouter()
 
