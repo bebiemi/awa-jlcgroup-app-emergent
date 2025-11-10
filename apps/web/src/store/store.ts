@@ -21,6 +21,7 @@ import { contractApi } from '@/features/contracts/api/contractApi'
 import { applicationApi } from '@/features/interim/api/applicationApi'
 import { presenceApi } from '@/features/presence/api/presenceApi'
 import { iamApi } from '@/features/iam/api/iamApi'
+import { countryConfigApi } from '@/features/admin/api/countryConfigApi'
 import authReducer from '@/features/auth/slices/authSlice'
 
 export const store = configureStore({
