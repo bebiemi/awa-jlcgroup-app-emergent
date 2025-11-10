@@ -3,8 +3,12 @@ import { createBaseQueryWithAuth } from '@/utils/baseQueryWithAuth'
 import { IAM_ENDPOINTS, QUERY_KEYS } from '@/constants/api'
 
 // Use auth service URL for IAM endpoints
-// In production, use empty string to make requests relative to current origin
-const authServiceUrl = import.meta.env.VITE_AUTH_SERVICE_URL || ''
+// Development: use VITE_AUTH_SERVICE_URL (localhost:8000)
+// Production: use empty string for relative URLs (routed by proxy/nginx)
+const isDevelopment = import.meta.env.DEV || window.location.hostname === 'localhost'
+const authServiceUrl = isDevelopment 
+  ? (import.meta.env.VITE_AUTH_SERVICE_URL || 'http://localhost:8000')
+  : '' // Empty string for production - makes relative requests to current origin
 const baseQueryWithAuthService = createBaseQueryWithAuth(authServiceUrl)
 
 // Extended User Detail Interface
