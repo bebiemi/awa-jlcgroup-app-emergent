@@ -10,6 +10,7 @@ import {
 } from '../api/emailSettingsApi';
 import Layout from '@/components/Layout';
 import Card from '@/components/Card';
+import Tooltip from '@/components/Tooltip';
 import { PlusIcon, EnvelopeIcon, Cog6ToothIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
 
 type SectionType = 'smtp' | 'admin' | 'test'
