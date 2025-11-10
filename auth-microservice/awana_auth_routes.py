@@ -1143,6 +1143,7 @@ async def local_register(
     """
     import bcrypt
     from awana_auth.services.email_domain_service import EmailDomainService
+    from awana_auth.core.iam_constants import IAMGroups, UserRoles, get_validation_type_for_role
     
     try:
         # Check if username already exists
