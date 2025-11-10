@@ -65,4 +65,4 @@ const getBaseUrl = (): string | undefined => {
 }
 
 const backendUrl = getBaseUrl()
-export const baseQueryWithAuth = createBaseQueryWithAuth(backendUrl || '')
+export const baseQueryWithAuth = createBaseQueryWithAuth(backendUrl)
