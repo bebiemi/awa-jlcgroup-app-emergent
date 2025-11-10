@@ -204,7 +204,8 @@ async def create_country(
     }
     
     await db.countries.insert_one(country_doc)
-    del country_doc["_id"] if "_id" in country_doc else None
+    if "_id" in country_doc:
+        del country_doc["_id"]
     
     return Country(**country_doc)
 
