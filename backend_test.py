@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Country Configuration and User Data Retention Configuration Testing
-Tests the new Country Configuration system and User Data Retention Configuration system
+Besoins System Testing - Phase 1
+Tests the complete Besoins (hiring needs) management system
 """
 
 import requests
@@ -11,7 +11,7 @@ import os
 import random
 import string
 import time
-from datetime import datetime
+from datetime import datetime, date
 import re
 from pymongo import MongoClient
 
