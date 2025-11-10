@@ -21,7 +21,7 @@ from awana_auth.core.user_detail_models import (
 )
 from awana_auth.core.dependencies import get_database
 from awana_auth.core.iam_constants import IAMPermissions
-from dependencies.permission_dependencies import require_permission
+from awana_auth.dependencies.permission_dependencies import require_permission
 
 router = APIRouter()
 
