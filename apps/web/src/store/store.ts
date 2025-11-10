@@ -41,6 +41,7 @@ export const store = configureStore({
     [emailSettingsApi.reducerPath]: emailSettingsApi.reducer,
     [emailHistoryApi.reducerPath]: emailHistoryApi.reducer,
     [emailTemplatesApi.reducerPath]: emailTemplatesApi.reducer,
+    [emailDomainsApi.reducerPath]: emailDomainsApi.reducer,
     [contractApi.reducerPath]: contractApi.reducer,
     [applicationApi.reducerPath]: applicationApi.reducer,
     [presenceApi.reducerPath]: presenceApi.reducer,
@@ -64,6 +65,7 @@ export const store = configureStore({
       .concat(emailSettingsApi.middleware)
       .concat(emailHistoryApi.middleware)
       .concat(emailTemplatesApi.middleware)
+      .concat(emailDomainsApi.middleware)
       .concat(contractApi.middleware)
       .concat(applicationApi.middleware)
       .concat(presenceApi.middleware)
