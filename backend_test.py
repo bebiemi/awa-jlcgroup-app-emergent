@@ -20,9 +20,15 @@ AUTH_BASE_URL = "http://localhost:8000/api"  # Direct auth service URL
 API_BASE_URL = "http://localhost:8001/api"   # JLC API service URL (for proxy routes)
 FRONTEND_PROXY_URL = "http://localhost:3000/auth-api"  # Through Vite proxy
 
-# Global variable to store test data
+# Global variables to store test data
 test_data = {}
 test_users = []
+gabon_id = None
+france_id = None
+libreville_id = None
+port_gentil_id = None
+original_retention_days = None
+original_source = None
 
 class Colors:
     GREEN = '\033[92m'
