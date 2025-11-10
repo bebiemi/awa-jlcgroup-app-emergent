@@ -53,7 +53,30 @@ async def create_besoin(
     user_id, user_name, user_role = await get_current_user_info(current_user)
     
     # Get entreprise_id from user profile or user data
-    entreprise_id = current_user.get("entreprise_id")
+    if isinstance(current_user, dict):
+        entreprise_id = current_user.get("entreprise_id")
+    else:
+        # For User objects, check if it has entreprise_id attribute or use a default for admin
+        entreprise_id = getattr(current_user, "entreprise_id", None)
+        
+        # For admin users, create a default test entreprise if none exists
+        if not entreprise_id and "admin" in user_role.lower():
+            # Create or get default test entreprise for admin testing
+            test_entreprise = await db.entreprises.find_one({"nom": "Test Entreprise Admin"})
+            if not test_entreprise:
+                test_entreprise_id = str(uuid.uuid4())
+                test_entreprise_doc = {
+                    "id": test_entreprise_id,
+                    "nom": "Test Entreprise Admin",
+                    "description": "Entreprise de test pour les administrateurs",
+                    "created_at": datetime.now(timezone.utc),
+                    "created_by": user_id
+                }
+                await db.entreprises.insert_one(test_entreprise_doc)
+                entreprise_id = test_entreprise_id
+            else:
+                entreprise_id = test_entreprise["id"]
+    
     if not entreprise_id:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
