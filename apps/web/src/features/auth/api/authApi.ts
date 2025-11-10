@@ -32,7 +32,12 @@ export const authApi = createApi({
         email: string
         password: string
         full_name: string
-        role: 'interim' | 'company'
+        phone?: string
+        date_of_birth?: string
+        company_name?: string
+        legal_representative?: string
+        nif?: string
+        location?: any
       }
     >({
       query: (data) => ({
