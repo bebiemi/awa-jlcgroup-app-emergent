@@ -235,9 +235,10 @@ export default function UserManagementPage() {
                     <option value="">Tous les rôles</option>
                     <option value="admin">Admin</option>
                     <option value="super_admin">Super Admin</option>
+                    <option value="candidat">Candidat</option>
                     <option value="interim">Intérimaire</option>
-                    <option value="company">Société</option>
-                    <option value="agency">Agence</option>
+                    <option value="company">Entreprise</option>
+                    <option value="collaborateur">Collaborateur</option>
                   </select>
                 </div>
               </div>
