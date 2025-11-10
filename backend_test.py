@@ -477,11 +477,11 @@ def test_validations_list():
 
 
 def run_critical_authentication_tests():
-    """Test registration system with automatic email validation"""
-    print(f"\n{Colors.BOLD}=== Testing Registration with Email Validation ==={Colors.ENDC}")
-    
-    # Generate unique identifiers for this test run
-    random_suffix = ''.join(random.choices(string.ascii_lowercase + string.digits, k=6))
+    """Run all critical authentication tests"""
+    print(f"\n{Colors.BOLD}{'='*80}{Colors.ENDC}")
+    print(f"{Colors.BOLD}CRITICAL AUTHENTICATION ISSUE INVESTIGATION{Colors.ENDC}")
+    print(f"{Colors.BOLD}Testing 401 Unauthorized errors after registration{Colors.ENDC}")
+    print(f"{Colors.BOLD}{'='*80}{Colors.ENDC}")
     
     test_cases = [
         {
