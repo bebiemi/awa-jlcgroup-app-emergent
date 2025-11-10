@@ -3229,7 +3229,7 @@ def run_authentication_fix_test():
     return test_results
 
 if __name__ == "__main__":
-    print(f"{Colors.BOLD}🚀 Starting Profile Completion Testing{Colors.ENDC}")
+    print(f"{Colors.BOLD}🚀 Starting Country Configuration and Retention Configuration Testing{Colors.ENDC}")
     print(f"Testing Auth Service: {AUTH_BASE_URL}")
     print(f"Testing JLC API Service: {API_BASE_URL}")
     
@@ -3242,13 +3242,8 @@ if __name__ == "__main__":
     all_tests_passed = True
     
     try:
-        # Test 1: Profile Completion System
-        print(f"\n{Colors.BLUE}📊 Testing Profile Completion System{Colors.ENDC}")
-        profile_completion_success = test_profile_completion_system()
-        
-        # Test 2: MongoDB Skill Verification
-        print(f"\n{Colors.BLUE}🗄️ Testing MongoDB Skill References{Colors.ENDC}")
-        mongodb_skill_success = test_mongodb_skill_verification()
+        # Run configuration tests
+        config_results = run_country_and_retention_tests()
         
     except KeyboardInterrupt:
         print(f"\n{Colors.YELLOW}⚠️ Testing interrupted by user{Colors.ENDC}")
@@ -3261,27 +3256,30 @@ if __name__ == "__main__":
     print(f"\n{Colors.BOLD}📊 TESTING SUMMARY{Colors.ENDC}")
     print("=" * 50)
     
-    # Individual test results
-    test_status = [
-        ("Profile Completion System", profile_completion_success),
-        ("MongoDB Skill References", mongodb_skill_success)
-    ]
+    total_test_categories = len(config_results)
+    successful_categories = len([r for r in config_results if r["success"]])
     
-    for test_name, success in test_status:
-        status = "✅ PASS" if success else "❌ FAIL"
-        print(f"{status} {test_name}")
+    print(f"Test Categories: {successful_categories}/{total_test_categories} passed")
+    
+    for result in config_results:
+        status = "✅ PASS" if result["success"] else "❌ FAIL"
+        print(f"{status} {result['test']}")
+        if not result["success"] and "error" in result:
+            print(f"    Error: {result['error']}")
     
     # Overall result
-    overall_success = all(success for _, success in test_status)
+    overall_success = successful_categories == total_test_categories
     
     if overall_success:
-        print(f"\n{Colors.GREEN}🎉 ALL PROFILE COMPLETION TESTS PASSED!{Colors.ENDC}")
+        print(f"\n{Colors.GREEN}🎉 ALL CONFIGURATION TESTS PASSED!{Colors.ENDC}")
         print(f"\n{Colors.BOLD}Key Results:{Colors.ENDC}")
-        print("✅ Profile completion calculation working correctly")
-        print("✅ Profile updates increase completion percentage")
-        print("✅ New skills are added to system references")
-        print("✅ User 'paf' authentication working")
+        print("✅ Country Configuration system working correctly")
+        print("✅ User Data Retention Configuration system working correctly")
+        print("✅ Authentication and authorization working properly")
+        print("✅ All CRUD operations for countries and cities functional")
+        print("✅ Retention period validation and updates working")
         sys.exit(0)
     else:
-        print(f"\n{Colors.RED}❌ SOME PROFILE COMPLETION TESTS FAILED{Colors.ENDC}")
+        print(f"\n{Colors.RED}❌ SOME CONFIGURATION TESTS FAILED{Colors.ENDC}")
+        print(f"{Colors.RED}Please review the failed tests above.{Colors.ENDC}")
         sys.exit(1)
