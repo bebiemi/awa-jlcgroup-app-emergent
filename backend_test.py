@@ -941,158 +941,35 @@ def run_country_and_retention_tests():
     print(f"{Colors.BOLD}{'='*80}{Colors.ENDC}")
     
     test_cases = [
-        {
-            "name": "1. Inscription Intérimaire avec Email Valide (Auto-validation)",
-            "data": {
-                "username": f"interim_test_{random_suffix}",
-                "email": f"interim.test.{random_suffix}@gmail.com",
-                "password": "SecurePass123!",
-                "full_name": "Jean Dupont",
-                "role": "interim",
-                "phone": "+241 01 23 45 67",
-                "date_of_birth": "1990-01-15"
-            },
-            "expected_status": 200,
-            "expected_user_status": "active"  # Gmail should auto-validate
-        },
-        {
-            "name": "2. Inscription Société avec Email Non-Validé (Validation Manuelle)",
-            "data": {
-                "username": f"company_test_{random_suffix}",
-                "email": f"contact.{random_suffix}@entreprise-locale.ga",
-                "password": "SecurePass123!",
-                "full_name": "Marie Martin",
-                "role": "company",
-                "company_name": "Entreprise Test SARL",
-                "legal_representative": "Marie Martin",
-                "nif": "123456789GA",
-                "phone": "+241 07 89 01 23"
-            },
-            "expected_status": 200,
-            "expected_user_status": "pending"  # .ga domain should require manual validation
-        },
-        {
-            "name": "3a. Username déjà utilisé",
-            "data": {
-                "username": f"interim_test_{random_suffix}",  # Same as first test
-                "email": f"different_{random_suffix}@gmail.com",
-                "password": "SecurePass123!",
-                "full_name": "Different User",
-                "role": "interim"
-            },
-            "expected_status": 400,
-            "expected_error_french": True
-        },
-        {
-            "name": "3b. Email déjà utilisé",
-            "data": {
-                "username": f"differentuser_{random_suffix}",
-                "email": "interim.test@gmail.com",  # Same as first test
-                "password": "SecurePass123!",
-                "full_name": "Different User",
-                "role": "company"
-            },
-            "expected_status": 400,
-            "expected_error_french": True
-        },
-        {
-            "name": "3c. Rôle invalide",
-            "data": {
-                "username": f"testuser_{random_suffix}",
-                "email": f"test_{random_suffix}@gmail.com",
-                "password": "SecurePass123!",
-                "full_name": "Test User",
-                "role": "invalid_role"
-            },
-            "expected_status": 400,
-            "expected_error_french": True
-        }
+        ("Country Configuration System", test_country_configuration_system),
+        ("Retention Configuration System", test_retention_configuration_system),
+        ("Authentication for Config Routes", test_authentication_for_config_routes)
     ]
     
     results = []
-    successful_registrations = []
     
-    for test_case in test_cases:
-        print(f"\n  Testing: {test_case['name']}")
+    for test_name, test_function in test_cases:
+        print(f"\n  Running: {test_name}")
         
-        response = test_endpoint(
-            "POST", 
-            f"{AUTH_BASE_URL}/auth/local/register",
-            data=test_case["data"],
-            expected_status=test_case["expected_status"],
-            test_name=test_case["name"]
-        )
-        
-        if response:
-            if test_case["expected_status"] == 200:
-                # Successful registration - check response structure
-                required_fields = ["access_token", "refresh_token", "user"]
-                missing_fields = [field for field in required_fields if field not in response]
-                
-                if missing_fields:
-                    log_test(f"  {test_case['name']} - Response Structure", "FAIL", 
-                            f"Missing fields: {missing_fields}")
-                else:
-                    log_test(f"  {test_case['name']} - Response Structure", "PASS", 
-                            f"All required fields present")
-                    
-                    # Check user object
-                    user = response.get("user", {})
-                    user_roles = user.get("roles", [])
-                    expected_role = test_case["data"]["role"]
-                    expected_status = test_case.get("expected_user_status", "pending")
-                    
-                    # Check role assignment
-                    if expected_role in user_roles:
-                        log_test(f"  {test_case['name']} - Role Assignment", "PASS",
-                                f"Role correctly set to {expected_role}")
-                    else:
-                        log_test(f"  {test_case['name']} - Role Assignment", "FAIL",
-                                f"Expected role {expected_role} in roles, got {user_roles}")
-                    
-                    # Check user status (active vs pending based on email domain)
-                    actual_status = user.get("status", "unknown")
-                    if actual_status == expected_status:
-                        log_test(f"  {test_case['name']} - Email Validation Status", "PASS",
-                                f"Status correctly set to {expected_status}")
-                    else:
-                        log_test(f"  {test_case['name']} - Email Validation Status", "FAIL",
-                                f"Expected status {expected_status}, got {actual_status}")
-                    
-                    # Store successful registration for profile verification
-                    successful_registrations.append({
-                        "user_id": user.get("id"),
-                        "email": user.get("email"),
-                        "role": expected_role,
-                        "test_name": test_case["name"]
-                    })
-                    
+        try:
+            success = test_function()
+            results.append({
+                "test": test_name,
+                "success": success
+            })
+            
+            if success:
+                log_test(f"{test_name} - Overall", "PASS", "All tests in this category passed")
             else:
-                # Error case - check error message is in French
-                error_detail = response.get("detail", "No error message")
-                print(f"    Error message: {error_detail}")
+                log_test(f"{test_name} - Overall", "FAIL", "Some tests in this category failed")
                 
-                if test_case.get("expected_error_french"):
-                    # Check if error message contains French words
-                    french_indicators = ["déjà", "utilisé", "invalide", "Cet", "Ce"]
-                    has_french = any(word in error_detail for word in french_indicators)
-                    
-                    if has_french:
-                        log_test(f"  {test_case['name']} - French Error Message", "PASS",
-                                f"Error message in French: {error_detail}")
-                    else:
-                        log_test(f"  {test_case['name']} - French Error Message", "WARN",
-                                f"Error message may not be in French: {error_detail}")
-        
-        results.append({
-            "test": test_case["name"],
-            "success": response is not None,
-            "response": response
-        })
-    
-    # Store successful registrations for later profile verification
-    global test_users
-    test_users = successful_registrations
+        except Exception as e:
+            log_test(f"{test_name} - Overall", "FAIL", f"Exception occurred: {str(e)}")
+            results.append({
+                "test": test_name,
+                "success": False,
+                "error": str(e)
+            })
     
     return results
 
