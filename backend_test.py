@@ -126,6 +126,670 @@ def get_admin_token():
         return None
 
 
+def test_create_besoin():
+    """Test 1: CREATE BESOIN - POST /api/besoins"""
+    print(f"\n{Colors.BOLD}=== Test 1: CREATE BESOIN ==={Colors.ENDC}")
+    
+    if not admin_token:
+        log_test("Create Besoin", "FAIL", "No admin token available")
+        return False
+    
+    headers = {"Authorization": f"Bearer {admin_token}"}
+    
+    # Create besoin data as specified in review request
+    besoin_data = {
+        "titre": "Développeur Full Stack Senior",
+        "description": "Recherche développeur expérimenté React/Node.js",
+        "duree": "periode_precise",
+        "date_debut_souhaitee": "2025-12-01",
+        "date_fin_souhaitee": "2026-06-01",
+        "type_poste": "CDI",
+        "competences_attendues": ["React", "Node.js", "MongoDB"],
+        "custom_fields": {
+            "niveau_experience": "Senior",
+            "budget": "60000"
+        }
+    }
+    
+    response = test_endpoint(
+        "POST",
+        f"{AUTH_BASE_URL}/besoins",
+        data=besoin_data,
+        headers=headers,
+        expected_status=201,
+        test_name="Create Besoin"
+    )
+    
+    if response:
+        global created_besoin_id
+        created_besoin_id = response.get("id")
+        
+        # Verify response structure
+        required_fields = ["id", "titre", "description", "status", "created_at", "entreprise_id"]
+        missing_fields = [field for field in required_fields if field not in response]
+        
+        if missing_fields:
+            log_test("Create Besoin - Response Structure", "FAIL", f"Missing fields: {missing_fields}")
+            return False
+        
+        # Verify initial status is BROUILLON
+        if response.get("status") != "brouillon":
+            log_test("Create Besoin - Initial Status", "FAIL", f"Expected 'brouillon', got '{response.get('status')}'")
+            return False
+        
+        log_test("Create Besoin - Response Structure", "PASS", f"Besoin created with ID: {created_besoin_id}")
+        log_test("Create Besoin - Initial Status", "PASS", "Status correctly set to 'brouillon'")
+        return True
+    
+    return False
+
+
+def test_list_besoins():
+    """Test 2: LIST BESOINS - GET /api/besoins?page=1&page_size=10"""
+    print(f"\n{Colors.BOLD}=== Test 2: LIST BESOINS ==={Colors.ENDC}")
+    
+    if not admin_token:
+        log_test("List Besoins", "FAIL", "No admin token available")
+        return False
+    
+    headers = {"Authorization": f"Bearer {admin_token}"}
+    
+    response = test_endpoint(
+        "GET",
+        f"{AUTH_BASE_URL}/besoins?page=1&page_size=10",
+        headers=headers,
+        expected_status=200,
+        test_name="List Besoins"
+    )
+    
+    if response:
+        # Verify pagination structure
+        required_fields = ["items", "total", "page", "page_size", "total_pages"]
+        missing_fields = [field for field in required_fields if field not in response]
+        
+        if missing_fields:
+            log_test("List Besoins - Pagination", "FAIL", f"Missing pagination fields: {missing_fields}")
+            return False
+        
+        items = response.get("items", [])
+        total = response.get("total", 0)
+        
+        log_test("List Besoins - Pagination", "PASS", f"Found {len(items)} items, total: {total}")
+        
+        # Check if our created besoin is in the list
+        if created_besoin_id:
+            found_besoin = any(item.get("id") == created_besoin_id for item in items)
+            if found_besoin:
+                log_test("List Besoins - Created Besoin", "PASS", "Created besoin found in list")
+            else:
+                log_test("List Besoins - Created Besoin", "WARN", "Created besoin not found in list (may be on different page)")
+        
+        return True
+    
+    return False
+
+
+def test_get_single_besoin():
+    """Test 3: GET SINGLE BESOIN - GET /api/besoins/{besoin_id}"""
+    print(f"\n{Colors.BOLD}=== Test 3: GET SINGLE BESOIN ==={Colors.ENDC}")
+    
+    if not admin_token or not created_besoin_id:
+        log_test("Get Single Besoin", "FAIL", "No admin token or besoin ID available")
+        return False
+    
+    headers = {"Authorization": f"Bearer {admin_token}"}
+    
+    response = test_endpoint(
+        "GET",
+        f"{AUTH_BASE_URL}/besoins/{created_besoin_id}",
+        headers=headers,
+        expected_status=200,
+        test_name="Get Single Besoin"
+    )
+    
+    if response:
+        # Verify it's the correct besoin
+        if response.get("id") != created_besoin_id:
+            log_test("Get Single Besoin - ID Match", "FAIL", f"Expected {created_besoin_id}, got {response.get('id')}")
+            return False
+        
+        # Verify required fields
+        required_fields = ["id", "titre", "description", "status", "status_history", "created_at"]
+        missing_fields = [field for field in required_fields if field not in response]
+        
+        if missing_fields:
+            log_test("Get Single Besoin - Fields", "FAIL", f"Missing fields: {missing_fields}")
+            return False
+        
+        log_test("Get Single Besoin - ID Match", "PASS", "Correct besoin retrieved")
+        log_test("Get Single Besoin - Fields", "PASS", "All required fields present")
+        
+        # Verify status history
+        status_history = response.get("status_history", [])
+        if len(status_history) >= 1:
+            log_test("Get Single Besoin - Status History", "PASS", f"Status history has {len(status_history)} entries")
+        else:
+            log_test("Get Single Besoin - Status History", "FAIL", "No status history found")
+        
+        return True
+    
+    return False
+
+
+def test_update_besoin():
+    """Test 4: UPDATE BESOIN - PATCH /api/besoins/{besoin_id}"""
+    print(f"\n{Colors.BOLD}=== Test 4: UPDATE BESOIN (Draft only) ==={Colors.ENDC}")
+    
+    if not admin_token or not created_besoin_id:
+        log_test("Update Besoin", "FAIL", "No admin token or besoin ID available")
+        return False
+    
+    headers = {"Authorization": f"Bearer {admin_token}"}
+    
+    # Update data as specified in review request
+    update_data = {
+        "titre": "Développeur Full Stack Senior UPDATED"
+    }
+    
+    response = test_endpoint(
+        "PATCH",
+        f"{AUTH_BASE_URL}/besoins/{created_besoin_id}",
+        data=update_data,
+        headers=headers,
+        expected_status=200,
+        test_name="Update Besoin"
+    )
+    
+    if response:
+        # Verify the title was updated
+        if response.get("titre") != update_data["titre"]:
+            log_test("Update Besoin - Title Update", "FAIL", f"Expected '{update_data['titre']}', got '{response.get('titre')}'")
+            return False
+        
+        # Verify status is still BROUILLON
+        if response.get("status") != "brouillon":
+            log_test("Update Besoin - Status Unchanged", "FAIL", f"Status changed unexpectedly to '{response.get('status')}'")
+            return False
+        
+        log_test("Update Besoin - Title Update", "PASS", "Title successfully updated")
+        log_test("Update Besoin - Status Unchanged", "PASS", "Status remains 'brouillon'")
+        return True
+    
+    return False
+
+
+def test_submit_besoin():
+    """Test 5: SUBMIT BESOIN - POST /api/besoins/{besoin_id}/submit"""
+    print(f"\n{Colors.BOLD}=== Test 5: SUBMIT BESOIN ==={Colors.ENDC}")
+    
+    if not admin_token or not created_besoin_id:
+        log_test("Submit Besoin", "FAIL", "No admin token or besoin ID available")
+        return False
+    
+    headers = {"Authorization": f"Bearer {admin_token}"}
+    
+    response = test_endpoint(
+        "POST",
+        f"{AUTH_BASE_URL}/besoins/{created_besoin_id}/submit",
+        headers=headers,
+        expected_status=200,
+        test_name="Submit Besoin"
+    )
+    
+    if response:
+        # Verify status changed to SOUMIS
+        if response.get("status") != "soumis":
+            log_test("Submit Besoin - Status Change", "FAIL", f"Expected 'soumis', got '{response.get('status')}'")
+            return False
+        
+        # Verify submitted_at is set
+        if not response.get("submitted_at"):
+            log_test("Submit Besoin - Submitted At", "FAIL", "submitted_at field not set")
+            return False
+        
+        log_test("Submit Besoin - Status Change", "PASS", "Status changed to 'soumis'")
+        log_test("Submit Besoin - Submitted At", "PASS", "submitted_at timestamp set")
+        return True
+    
+    return False
+
+
+def test_update_status_workflow():
+    """Test 6: UPDATE STATUS (JLC only) - POST /api/besoins/{besoin_id}/status"""
+    print(f"\n{Colors.BOLD}=== Test 6: UPDATE STATUS (JLC Workflow) ==={Colors.ENDC}")
+    
+    if not admin_token or not created_besoin_id:
+        log_test("Update Status", "FAIL", "No admin token or besoin ID available")
+        return False
+    
+    headers = {"Authorization": f"Bearer {admin_token}"}
+    
+    # Test workflow: soumis → analyse → mission_creee
+    
+    # Step 1: soumis → analyse
+    print(f"\n  Step 1: soumis → analyse")
+    
+    status_update_data = {
+        "new_status": "analyse",
+        "comment": "En cours d'analyse"
+    }
+    
+    response = test_endpoint(
+        "POST",
+        f"{AUTH_BASE_URL}/besoins/{created_besoin_id}/status",
+        data=status_update_data,
+        headers=headers,
+        expected_status=200,
+        test_name="Update Status to Analyse"
+    )
+    
+    if not response:
+        return False
+    
+    if response.get("status") != "analyse":
+        log_test("Update Status - Analyse", "FAIL", f"Expected 'analyse', got '{response.get('status')}'")
+        return False
+    
+    log_test("Update Status - Analyse", "PASS", "Status updated to 'analyse'")
+    
+    # Step 2: analyse → mission_creee (will be done in convert to mission test)
+    # For now, let's test invalid transition
+    print(f"\n  Step 2: Test Invalid Transition")
+    
+    invalid_status_data = {
+        "new_status": "pourvu",  # Invalid: can't go directly from analyse to pourvu
+        "comment": "Invalid transition test"
+    }
+    
+    invalid_response = test_endpoint(
+        "POST",
+        f"{AUTH_BASE_URL}/besoins/{created_besoin_id}/status",
+        data=invalid_status_data,
+        headers=headers,
+        expected_status=400,
+        test_name="Invalid Status Transition"
+    )
+    
+    if invalid_response:
+        log_test("Update Status - Invalid Transition", "PASS", "Invalid transition correctly rejected")
+    
+    return True
+
+
+def test_add_comment():
+    """Test 7: ADD COMMENT - POST /api/besoins/{besoin_id}/comments"""
+    print(f"\n{Colors.BOLD}=== Test 7: ADD COMMENT ==={Colors.ENDC}")
+    
+    if not admin_token or not created_besoin_id:
+        log_test("Add Comment", "FAIL", "No admin token or besoin ID available")
+        return False
+    
+    headers = {"Authorization": f"Bearer {admin_token}"}
+    
+    comment_data = {
+        "content": "Pouvez-vous préciser le niveau d'anglais requis?"
+    }
+    
+    response = test_endpoint(
+        "POST",
+        f"{AUTH_BASE_URL}/besoins/{created_besoin_id}/comments",
+        data=comment_data,
+        headers=headers,
+        expected_status=201,
+        test_name="Add Comment"
+    )
+    
+    if response:
+        global created_comment_id
+        created_comment_id = response.get("id")
+        
+        # Verify comment structure
+        required_fields = ["id", "besoin_id", "author_type", "author_name", "content", "created_at"]
+        missing_fields = [field for field in required_fields if field not in response]
+        
+        if missing_fields:
+            log_test("Add Comment - Structure", "FAIL", f"Missing fields: {missing_fields}")
+            return False
+        
+        # Verify content matches
+        if response.get("content") != comment_data["content"]:
+            log_test("Add Comment - Content", "FAIL", "Comment content doesn't match")
+            return False
+        
+        # Verify author type (should be 'jlc' for admin user)
+        author_type = response.get("author_type")
+        if author_type not in ["jlc", "entreprise"]:
+            log_test("Add Comment - Author Type", "FAIL", f"Invalid author_type: {author_type}")
+            return False
+        
+        log_test("Add Comment - Structure", "PASS", f"Comment created with ID: {created_comment_id}")
+        log_test("Add Comment - Content", "PASS", "Comment content matches")
+        log_test("Add Comment - Author Type", "PASS", f"Author type: {author_type}")
+        return True
+    
+    return False
+
+
+def test_get_comments():
+    """Test 8: GET COMMENTS - GET /api/besoins/{besoin_id}/comments"""
+    print(f"\n{Colors.BOLD}=== Test 8: GET COMMENTS ==={Colors.ENDC}")
+    
+    if not admin_token or not created_besoin_id:
+        log_test("Get Comments", "FAIL", "No admin token or besoin ID available")
+        return False
+    
+    headers = {"Authorization": f"Bearer {admin_token}"}
+    
+    response = test_endpoint(
+        "GET",
+        f"{AUTH_BASE_URL}/besoins/{created_besoin_id}/comments",
+        headers=headers,
+        expected_status=200,
+        test_name="Get Comments"
+    )
+    
+    if response:
+        # Should be a list
+        if not isinstance(response, list):
+            log_test("Get Comments - Format", "FAIL", "Response is not a list")
+            return False
+        
+        # Should have at least our created comment
+        if len(response) == 0:
+            log_test("Get Comments - Count", "FAIL", "No comments found")
+            return False
+        
+        # Check if our comment is in the list
+        if created_comment_id:
+            found_comment = any(comment.get("id") == created_comment_id for comment in response)
+            if found_comment:
+                log_test("Get Comments - Created Comment", "PASS", "Created comment found in list")
+            else:
+                log_test("Get Comments - Created Comment", "FAIL", "Created comment not found in list")
+        
+        log_test("Get Comments - Format", "PASS", "Response is a list")
+        log_test("Get Comments - Count", "PASS", f"Found {len(response)} comments")
+        return True
+    
+    return False
+
+
+def test_update_jlc_analysis():
+    """Test 9: UPDATE JLC ANALYSIS - PATCH /api/besoins/{besoin_id}/jlc-analysis"""
+    print(f"\n{Colors.BOLD}=== Test 9: UPDATE JLC ANALYSIS ==={Colors.ENDC}")
+    
+    if not admin_token or not created_besoin_id:
+        log_test("Update JLC Analysis", "FAIL", "No admin token or besoin ID available")
+        return False
+    
+    headers = {"Authorization": f"Bearer {admin_token}"}
+    
+    analysis_data = {
+        "observations": "Profil très demandé",
+        "estimated_budget": 65000,
+        "priority": "haute"
+    }
+    
+    response = test_endpoint(
+        "PATCH",
+        f"{AUTH_BASE_URL}/besoins/{created_besoin_id}/jlc-analysis",
+        data=analysis_data,
+        headers=headers,
+        expected_status=200,
+        test_name="Update JLC Analysis"
+    )
+    
+    if response:
+        # Verify jlc_analysis field is present and populated
+        jlc_analysis = response.get("jlc_analysis")
+        if not jlc_analysis:
+            log_test("Update JLC Analysis - Field", "FAIL", "jlc_analysis field not found in response")
+            return False
+        
+        # Verify our data is in the analysis
+        if jlc_analysis.get("observations") != analysis_data["observations"]:
+            log_test("Update JLC Analysis - Observations", "FAIL", "Observations not updated correctly")
+            return False
+        
+        if jlc_analysis.get("estimated_budget") != analysis_data["estimated_budget"]:
+            log_test("Update JLC Analysis - Budget", "FAIL", "Budget not updated correctly")
+            return False
+        
+        log_test("Update JLC Analysis - Field", "PASS", "jlc_analysis field present")
+        log_test("Update JLC Analysis - Observations", "PASS", "Observations updated correctly")
+        log_test("Update JLC Analysis - Budget", "PASS", "Budget updated correctly")
+        return True
+    
+    return False
+
+
+def test_convert_to_mission():
+    """Test 10: CONVERT TO MISSION - POST /api/besoins/{besoin_id}/convert-to-mission"""
+    print(f"\n{Colors.BOLD}=== Test 10: CONVERT TO MISSION ==={Colors.ENDC}")
+    
+    if not admin_token or not created_besoin_id:
+        log_test("Convert to Mission", "FAIL", "No admin token or besoin ID available")
+        return False
+    
+    headers = {"Authorization": f"Bearer {admin_token}"}
+    
+    conversion_data = {
+        "copy_all_fields": True,
+        "internal_notes": "Client premium"
+    }
+    
+    response = test_endpoint(
+        "POST",
+        f"{AUTH_BASE_URL}/besoins/{created_besoin_id}/convert-to-mission",
+        data=conversion_data,
+        headers=headers,
+        expected_status=201,
+        test_name="Convert to Mission"
+    )
+    
+    if response:
+        global created_mission_id
+        created_mission_id = response.get("mission_id")
+        
+        # Verify response structure
+        required_fields = ["message", "mission_id", "besoin_id", "mission"]
+        missing_fields = [field for field in required_fields if field not in response]
+        
+        if missing_fields:
+            log_test("Convert to Mission - Structure", "FAIL", f"Missing fields: {missing_fields}")
+            return False
+        
+        # Verify mission_id is present
+        if not created_mission_id:
+            log_test("Convert to Mission - Mission ID", "FAIL", "No mission_id in response")
+            return False
+        
+        # Verify besoin_id matches
+        if response.get("besoin_id") != created_besoin_id:
+            log_test("Convert to Mission - Besoin ID", "FAIL", "besoin_id doesn't match")
+            return False
+        
+        log_test("Convert to Mission - Structure", "PASS", "Response structure correct")
+        log_test("Convert to Mission - Mission ID", "PASS", f"Mission created with ID: {created_mission_id}")
+        log_test("Convert to Mission - Besoin ID", "PASS", "besoin_id matches")
+        
+        # Now verify the besoin status changed to mission_creee
+        besoin_response = test_endpoint(
+            "GET",
+            f"{AUTH_BASE_URL}/besoins/{created_besoin_id}",
+            headers=headers,
+            expected_status=200,
+            test_name="Verify Besoin Status After Conversion"
+        )
+        
+        if besoin_response:
+            if besoin_response.get("status") == "mission_creee":
+                log_test("Convert to Mission - Status Update", "PASS", "Besoin status updated to 'mission_creee'")
+            else:
+                log_test("Convert to Mission - Status Update", "FAIL", f"Expected 'mission_creee', got '{besoin_response.get('status')}'")
+            
+            # Verify mission_ids array is updated
+            mission_ids = besoin_response.get("mission_ids", [])
+            if created_mission_id in mission_ids:
+                log_test("Convert to Mission - Mission Link", "PASS", "Mission ID added to besoin.mission_ids")
+            else:
+                log_test("Convert to Mission - Mission Link", "FAIL", "Mission ID not found in besoin.mission_ids")
+        
+        return True
+    
+    return False
+
+
+def test_get_audit_trail():
+    """Test 11: GET AUDIT TRAIL - GET /api/besoins/{besoin_id}/audit?page=1"""
+    print(f"\n{Colors.BOLD}=== Test 11: GET AUDIT TRAIL ==={Colors.ENDC}")
+    
+    if not admin_token or not created_besoin_id:
+        log_test("Get Audit Trail", "FAIL", "No admin token or besoin ID available")
+        return False
+    
+    headers = {"Authorization": f"Bearer {admin_token}"}
+    
+    response = test_endpoint(
+        "GET",
+        f"{AUTH_BASE_URL}/besoins/{created_besoin_id}/audit?page=1",
+        headers=headers,
+        expected_status=200,
+        test_name="Get Audit Trail"
+    )
+    
+    if response:
+        # Verify audit trail structure
+        if "items" not in response:
+            log_test("Get Audit Trail - Structure", "FAIL", "No 'items' field in response")
+            return False
+        
+        audit_items = response.get("items", [])
+        
+        # Should have multiple audit entries from our tests
+        if len(audit_items) == 0:
+            log_test("Get Audit Trail - Entries", "FAIL", "No audit entries found")
+            return False
+        
+        # Verify audit entry structure
+        if audit_items:
+            first_entry = audit_items[0]
+            required_fields = ["action", "entity_type", "entity_id", "actor_name", "created_at"]
+            missing_fields = [field for field in required_fields if field not in first_entry]
+            
+            if missing_fields:
+                log_test("Get Audit Trail - Entry Structure", "FAIL", f"Missing fields in audit entry: {missing_fields}")
+                return False
+            
+            log_test("Get Audit Trail - Entry Structure", "PASS", "Audit entry structure correct")
+        
+        log_test("Get Audit Trail - Structure", "PASS", "Audit trail structure correct")
+        log_test("Get Audit Trail - Entries", "PASS", f"Found {len(audit_items)} audit entries")
+        return True
+    
+    return False
+
+
+def test_workflow_validation():
+    """Test workflow validation and permissions"""
+    print(f"\n{Colors.BOLD}=== WORKFLOW VALIDATION TESTS ==={Colors.ENDC}")
+    
+    if not admin_token:
+        log_test("Workflow Validation", "FAIL", "No admin token available")
+        return False
+    
+    headers = {"Authorization": f"Bearer {admin_token}"}
+    
+    # Test 1: Try to update a submitted besoin (should fail)
+    print(f"\n  Test 1: Try to Update Submitted Besoin")
+    
+    # First, create a new besoin and submit it
+    test_besoin_data = {
+        "titre": "Test Besoin for Validation",
+        "description": "This is a test besoin for workflow validation",
+        "duree": "indeterminee",
+        "type_poste": "CDD",
+        "competences_attendues": ["Test"]
+    }
+    
+    create_response = test_endpoint(
+        "POST",
+        f"{AUTH_BASE_URL}/besoins",
+        data=test_besoin_data,
+        headers=headers,
+        expected_status=201,
+        test_name="Create Test Besoin"
+    )
+    
+    if not create_response:
+        return False
+    
+    test_besoin_id = create_response.get("id")
+    
+    # Submit it
+    submit_response = test_endpoint(
+        "POST",
+        f"{AUTH_BASE_URL}/besoins/{test_besoin_id}/submit",
+        headers=headers,
+        expected_status=200,
+        test_name="Submit Test Besoin"
+    )
+    
+    if not submit_response:
+        return False
+    
+    # Now try to update it (should fail)
+    update_attempt = test_endpoint(
+        "PATCH",
+        f"{AUTH_BASE_URL}/besoins/{test_besoin_id}",
+        data={"titre": "Updated Title"},
+        headers=headers,
+        expected_status=400,
+        test_name="Try Update Submitted Besoin"
+    )
+    
+    if update_attempt:
+        log_test("Workflow Validation - Update Block", "PASS", "Submitted besoin correctly blocked from updates")
+    
+    return True
+
+
+def test_permissions_and_access():
+    """Test permissions and access control"""
+    print(f"\n{Colors.BOLD}=== PERMISSIONS AND ACCESS TESTS ==={Colors.ENDC}")
+    
+    # Test 1: Unauthenticated access
+    print(f"\n  Test 1: Unauthenticated Access")
+    
+    unauth_response = test_endpoint(
+        "GET",
+        f"{AUTH_BASE_URL}/besoins",
+        expected_status=401,
+        test_name="Unauthenticated List Besoins"
+    )
+    
+    if unauth_response:
+        log_test("Permissions - Unauthenticated", "PASS", "Unauthenticated access correctly blocked")
+    
+    # Test 2: Invalid token
+    print(f"\n  Test 2: Invalid Token")
+    
+    invalid_headers = {"Authorization": "Bearer invalid_token_123"}
+    
+    invalid_response = test_endpoint(
+        "GET",
+        f"{AUTH_BASE_URL}/besoins",
+        headers=invalid_headers,
+        expected_status=401,
+        test_name="Invalid Token Access"
+    )
+    
+    if invalid_response:
+        log_test("Permissions - Invalid Token", "PASS", "Invalid token correctly rejected")
+    
+    return True
+
+
 def test_candidat_registration_and_immediate_login():
     """Test candidat registration with immediate login - CRITICAL TEST"""
     print(f"\n{Colors.BOLD}=== CRITICAL TEST: Candidat Registration + Immediate Login ==={Colors.ENDC}")
