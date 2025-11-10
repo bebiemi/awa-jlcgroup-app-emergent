@@ -27,7 +27,10 @@ import BlockUserModal from '../components/BlockUserModal'
 import QuickAddUserModal from '../components/QuickAddUserModal'
 import ResetMfaModal from '../components/ResetMfaModal'
 import UserDetailModal from '../components/UserDetailModal'
+import ArchiveUserModal from '../components/ArchiveUserModal'
+import RestoreUserModal from '../components/RestoreUserModal'
 import { UserRoles, RoleLabels, RoleColors } from '@/constants/iamConstants'
+import { ArrowPathIcon, ArchiveBoxIcon } from '@heroicons/react/24/outline'
 
 export default function UserManagementPage() {
   const [page, setPage] = useState(1)
