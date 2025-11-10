@@ -234,11 +234,14 @@ async def purge_expired_users(
     })
     
     # Log audit event for batch deletion
+    actor_id = current_user.get("id") if isinstance(current_user, dict) else current_user.id
+    actor_username = current_user.get("username") if isinstance(current_user, dict) else getattr(current_user, "username", None)
+    
     await db.audit_events.insert_one({
         "id": str(uuid.uuid4()),
         "action": "user.purge_expired",
-        "actor_id": current_user["id"],
-        "actor_username": current_user.get("username"),
+        "actor_id": actor_id,
+        "actor_username": actor_username,
         "target_type": "user",
         "target_id": "batch",
         "payload": {
@@ -250,7 +253,7 @@ async def purge_expired_users(
         "user_agent": None
     })
     
-    logger.info(f"Purged {result.deleted_count} expired users by {current_user['id']}")
+    logger.info(f"Purged {result.deleted_count} expired users by {actor_id}")
     
     return PurgeExpiredUsersResponse(
         purged_count=result.deleted_count,
