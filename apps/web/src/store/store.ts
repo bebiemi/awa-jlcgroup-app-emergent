@@ -51,6 +51,7 @@ export const store = configureStore({
     [presenceApi.reducerPath]: presenceApi.reducer,
     [iamApi.reducerPath]: iamApi.reducer,
     [countryConfigApi.reducerPath]: countryConfigApi.reducer,
+    [securityConfigApi.reducerPath]: securityConfigApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
