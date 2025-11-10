@@ -128,15 +128,15 @@ async def initialize_candidat_iam():
     candidat_profile_id = str(uuid.uuid4())
     candidat_profile = {
         "id": candidat_profile_id,
-        "code": "role.candidat",
+        "code": IAMProfiles.CANDIDAT,
         "name": "Candidat",
         "description": "Profil pour les candidats (avant signature de contrat)",
         "permission_ids": [
-            permission_ids.get("missions.browse"),
-            permission_ids.get("applications.create_own"),
-            permission_ids.get("applications.read_own"),
-            permission_ids.get("profile.manage_own"),
-            permission_ids.get("auth.mfa.manage")
+            permission_ids.get(IAMPermissions.MISSIONS_BROWSE),
+            permission_ids.get(IAMPermissions.APPLICATIONS_CREATE_OWN),
+            permission_ids.get(IAMPermissions.APPLICATIONS_READ_OWN),
+            permission_ids.get(IAMPermissions.PROFILE_MANAGE_OWN),
+            permission_ids.get(IAMPermissions.AUTH_MFA_MANAGE)
         ],
         "category": "system",
         "color": "#10B981",  # Green
@@ -146,13 +146,13 @@ async def initialize_candidat_iam():
         "created_at": datetime.utcnow().isoformat()
     }
     
-    existing_profile = await db.iam_profiles.find_one({"code": "role.candidat"})
+    existing_profile = await db.iam_profiles.find_one({"code": IAMProfiles.CANDIDAT})
     if not existing_profile:
         await db.iam_profiles.insert_one(candidat_profile)
-        print(f"✅ Created profile: role.candidat")
+        print(f"✅ Created profile: {IAMProfiles.CANDIDAT}")
     else:
         candidat_profile_id = existing_profile['id']
-        print(f"⏭️  Profile already exists: role.candidat")
+        print(f"⏭️  Profile already exists: {IAMProfiles.CANDIDAT}")
     
     # 3. Create candidat group
     candidat_group_id = str(uuid.uuid4())
