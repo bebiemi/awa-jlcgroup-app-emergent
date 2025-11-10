@@ -290,7 +290,7 @@ async def get_retention_config(
 async def update_retention_config(
     retention_days: int,
     db: AsyncIOMotorDatabase = Depends(get_database),
-    current_user: dict = Depends(require_permission(IAMPermissions.ADMIN_SETTINGS))
+    current_user: dict = Depends(require_permission(IAMPermissions.USERS_MANAGE))
 ):
     """
     Update retention period (creates/updates database override)
