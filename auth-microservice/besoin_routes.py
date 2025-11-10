@@ -272,7 +272,7 @@ async def get_besoin(
     # Check permissions: company users can only see their own besoins
     is_jlc_user = "admin" in user_role.lower() or "jlc" in user_role.lower()
     if not is_jlc_user:
-        user_entreprise_id = current_user.get("entreprise_id")
+        user_entreprise_id = await get_user_entreprise_id(current_user, db, user_id, user_role)
         if besoin["entreprise_id"] != user_entreprise_id:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
