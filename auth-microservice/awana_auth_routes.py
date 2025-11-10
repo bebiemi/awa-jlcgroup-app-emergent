@@ -1382,6 +1382,118 @@ async def logout(
         )
 
 
+@auth_router.post("/promote-to-interimaire/{user_id}")
+async def promote_candidat_to_interimaire(
+    user_id: str,
+    db: AsyncIOMotorDatabase = Depends(get_database),
+    current_user: User = Depends(require_permission('users.manage'))
+):
+    """
+    Promote a candidat to intérimaire status after contract signature
+    This transitions the user from grp.candidat to grp.interimaire
+    Requires: users.manage permission
+    """
+    try:
+        # Get user
+        user = await db.users.find_one({"id": user_id})
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="User not found"
+            )
+        
+        # Check if user is currently a candidat
+        candidat_group = await db.iam_groups.find_one({"code": "grp.candidat"})
+        if candidat_group and user_id in candidat_group.get("user_ids", []):
+            # Remove from candidat group
+            await db.iam_groups.update_one(
+                {"id": candidat_group["id"]},
+                {
+                    "$pull": {"user_ids": user_id},
+                    "$set": {"updated_at": datetime.now(timezone.utc).isoformat()}
+                }
+            )
+            logger.info(f"✅ User {user_id} removed from grp.candidat")
+        
+        # Add to interimaire group (or create if doesn't exist)
+        interimaire_group = await db.iam_groups.find_one({"code": "grp.interimaire"})
+        if not interimaire_group:
+            # Create interimaire group if doesn't exist
+            import uuid
+            interimaire_profile = await db.iam_profiles.find_one({"code": "role.interim_user"})
+            
+            interimaire_group_id = str(uuid.uuid4())
+            interimaire_group = {
+                "id": interimaire_group_id,
+                "code": "grp.interimaire",
+                "name": "Intérimaires",
+                "description": "Groupe des intérimaires (après signature de contrat)",
+                "profile_ids": [interimaire_profile["id"]] if interimaire_profile else [],
+                "user_ids": [],
+                "is_system_group": True,
+                "is_protected": False,
+                "parent_group_id": None,
+                "created_at": datetime.now(timezone.utc).isoformat()
+            }
+            await db.iam_groups.insert_one(interimaire_group)
+            logger.info("✅ Created grp.interimaire group")
+        
+        # Add user to interimaire group
+        if user_id not in interimaire_group.get("user_ids", []):
+            await db.iam_groups.update_one(
+                {"id": interimaire_group["id"]},
+                {
+                    "$addToSet": {"user_ids": user_id},
+                    "$set": {"updated_at": datetime.now(timezone.utc).isoformat()}
+                }
+            )
+            logger.info(f"✅ User {user_id} added to grp.interimaire")
+        
+        # Update user's roles array
+        await db.users.update_one(
+            {"id": user_id},
+            {
+                "$set": {
+                    "roles": ["interim"],  # Update legacy role
+                    "updated_at": datetime.now(timezone.utc).isoformat()
+                }
+            }
+        )
+        
+        # Audit log
+        audit_logger = AuditLogger(db, auth_config)
+        await audit_logger.log(
+            action=AuditAction.ROLE_GRANTED,
+            actor_id=current_user.id,
+            actor_email=current_user.email,
+            target_id=user_id,
+            target_email=user.get("email"),
+            metadata={
+                "action": "promote_candidat_to_interimaire",
+                "from_group": "grp.candidat",
+                "to_group": "grp.interimaire"
+            }
+        )
+        
+        logger.info(f"✅ User {user_id} promoted from candidat to intérimaire")
+        
+        return {
+            "success": True,
+            "message": "User promoted to intérimaire successfully",
+            "user_id": user_id,
+            "new_group": "grp.interimaire"
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Promotion failed: {e}", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Promotion failed: {str(e)}"
+        )
+
+
 @auth_router.post("/refresh", response_model=LoginResponse)
 @limiter.limit(get_rate_limit("auth_refresh"))
 async def refresh_token(
