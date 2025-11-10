@@ -23,12 +23,10 @@ FRONTEND_PROXY_URL = "http://localhost:3000/auth-api"  # Through Vite proxy
 # Global variables to store test data
 test_data = {}
 test_users = []
-gabon_id = None
-france_id = None
-libreville_id = None
-port_gentil_id = None
-original_retention_days = None
-original_source = None
+admin_token = None
+created_besoin_id = None
+created_mission_id = None
+created_comment_id = None
 
 class Colors:
     GREEN = '\033[92m'
