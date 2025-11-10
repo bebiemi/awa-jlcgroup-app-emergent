@@ -80,6 +80,12 @@ async def lifespan(app: FastAPI):
     init_email_service(db)
     logger.info("✅ Email service initialized")
     
+    # Initialiser les domaines email autorisés
+    from awana_auth.services.email_domain_service import EmailDomainService
+    email_domain_service = EmailDomainService(db)
+    await email_domain_service.initialize_default_domains()
+    logger.info("✅ Email domains initialized")
+    
     yield
     
     if client:
