@@ -45,7 +45,8 @@ const DEFAULT_CONFIG: AppConfig = {
     pending: 'pending',
     suspended: 'suspended',
     deleted: 'deleted',
-    blocked: 'blocked'
+    blocked: 'blocked',
+    archived: 'archived'
   },
   missionStatuses: ['draft', 'published', 'closed', 'cancelled', 'archived'],
   applicationStatuses: ['submitted', 'review', 'interview_scheduled', 'interviewed', 'selected', 'rejected', 'medical_pending', 'medical_completed', 'contract_pending', 'contract_signed'],
