@@ -475,8 +475,6 @@ def test_validations_list():
         log_test("Validations List", "FAIL", "Could not retrieve validations")
         return False
 
-# Removed old test functions - keeping only MFA-specific tests
-
 def test_registration_with_email_validation():
     """Test registration system with automatic email validation"""
     print(f"\n{Colors.BOLD}=== Testing Registration with Email Validation ==={Colors.ENDC}")
