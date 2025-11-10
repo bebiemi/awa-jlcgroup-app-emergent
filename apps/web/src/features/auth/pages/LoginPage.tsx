@@ -1,14 +1,15 @@
-import { useState } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { useNavigate, Link, useLocation } from 'react-router-dom'
 import { useLocalLoginMutation } from '../api/authApi'
 import { useAppSelector } from '@/store/hooks'
 import toast from 'react-hot-toast'
 import Button from '@/components/Button'
-import { ArrowPathIcon, ShieldCheckIcon } from '@heroicons/react/24/outline'
+import { ArrowPathIcon, ShieldCheckIcon, CheckCircleIcon } from '@heroicons/react/24/outline'
 import MfaVerificationPage from './MfaVerificationPage'
 
 export default function LoginPage() {
-  const [username, setUsername] = useState('')
+  const location = useLocation()
+  const [username, setUsername] = useState(location.state?.username || '')
   const [password, setPassword] = useState('')
   const [login, { isLoading }] = useLocalLoginMutation()
   const [googleLoading, setGoogleLoading] = useState(false)
@@ -17,6 +18,15 @@ export default function LoginPage() {
   const [mfaSessionId, setMfaSessionId] = useState('')
   const [mfaMethod, setMfaMethod] = useState<'totp' | 'email'>('totp')
   const navigate = useNavigate()
+
+  // Show success message from registration if present
+  useEffect(() => {
+    if (location.state?.message) {
+      toast.success(location.state.message, { duration: 5000 })
+      // Clear the state to prevent showing message on page refresh
+      window.history.replaceState({}, document.title)
+    }
+  }, [location.state])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
