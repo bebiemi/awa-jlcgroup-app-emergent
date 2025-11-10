@@ -149,6 +149,7 @@ app.include_router(user_archive_router, prefix="/api/iam/users", tags=["User Arc
 app.include_router(country_config_router, prefix="/api/config/countries", tags=["Country Configuration"])
 app.include_router(besoin_router, prefix="/api/besoins", tags=["Besoins"])
 app.include_router(form_config_router, prefix="/api/config", tags=["Dynamic Configuration"])
+app.include_router(notification_router, prefix="/api/notifications", tags=["Notifications"])
 
 @app.get("/health")
 async def health_check():
