@@ -230,7 +230,79 @@ export default function RegisterPage() {
             </div>
           </div>
         ) : (
-          <div className="rounded-md shadow-sm space-y-4">
+          /* Registration Form */
+          <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+            {/* Back button */}
+            <button
+              type="button"
+              onClick={() => setAccountType('')}
+              className="text-sm text-jlc-purple-600 hover:text-jlc-purple-700 flex items-center gap-1"
+            >
+              ← Changer de type de compte
+            </button>
+
+            <div className="rounded-md shadow-sm space-y-4">
+              {/* Company-specific fields */}
+              {accountType === 'company' && (
+                <>
+                  <div>
+                    <label htmlFor="companyName" className="block text-sm font-medium text-gray-700 mb-1">
+                      Nom de l'entreprise *
+                    </label>
+                    <input
+                      id="companyName"
+                      name="companyName"
+                      type="text"
+                      required
+                      value={formData.companyName}
+                      onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
+                      className={`appearance-none relative block w-full px-3 py-2 border ${
+                        errors.companyName ? 'border-red-300' : 'border-gray-300'
+                      } placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-jlc-purple-500 focus:border-jlc-purple-500 sm:text-sm`}
+                      placeholder="Nom de votre entreprise"
+                    />
+                    {errors.companyName && (
+                      <p className="mt-1 text-sm text-red-600">{errors.companyName}</p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label htmlFor="legalRepresentative" className="block text-sm font-medium text-gray-700 mb-1">
+                      Représentant légal *
+                    </label>
+                    <input
+                      id="legalRepresentative"
+                      name="legalRepresentative"
+                      type="text"
+                      required
+                      value={formData.legalRepresentative}
+                      onChange={(e) => setFormData({ ...formData, legalRepresentative: e.target.value })}
+                      className={`appearance-none relative block w-full px-3 py-2 border ${
+                        errors.legalRepresentative ? 'border-red-300' : 'border-gray-300'
+                      } placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-jlc-purple-500 focus:border-jlc-purple-500 sm:text-sm`}
+                      placeholder="Nom du représentant"
+                    />
+                    {errors.legalRepresentative && (
+                      <p className="mt-1 text-sm text-red-600">{errors.legalRepresentative}</p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label htmlFor="nif" className="block text-sm font-medium text-gray-700 mb-1">
+                      NIF (optionnel)
+                    </label>
+                    <input
+                      id="nif"
+                      name="nif"
+                      type="text"
+                      value={formData.nif}
+                      onChange={(e) => setFormData({ ...formData, nif: e.target.value })}
+                      className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-jlc-purple-500 focus:border-jlc-purple-500 sm:text-sm"
+                      placeholder="Numéro d'identification fiscale"
+                    />
+                  </div>
+                </>
+              )}
             {/* Username */}
             <div>
               <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">
