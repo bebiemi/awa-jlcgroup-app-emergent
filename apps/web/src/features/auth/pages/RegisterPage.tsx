@@ -12,6 +12,7 @@ export default function RegisterPage() {
   const [register, { isLoading }] = useRegisterMutation()
   const [verifyEmail, { data: emailVerification }] = useLazyVerifyEmailDomainQuery()
   
+  const [accountType, setAccountType] = useState<'candidat' | 'company' | ''>('')
   const [formData, setFormData] = useState({
     username: '',
     email: '',
