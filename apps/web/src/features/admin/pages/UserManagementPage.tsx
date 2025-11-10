@@ -122,6 +122,11 @@ export default function UserManagementPage() {
         icon: <TrashIcon className="h-4 w-4" />,
         label: 'Supprimé',
       },
+      archived: {
+        color: 'bg-orange-100 text-orange-800',
+        icon: <ArchiveBoxIcon className="h-4 w-4" />,
+        label: 'Archivé',
+      },
     }
 
     const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.pending
