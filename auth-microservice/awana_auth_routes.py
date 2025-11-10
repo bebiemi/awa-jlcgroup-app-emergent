@@ -797,16 +797,23 @@ async def local_login(
             }, {"_id": 0})
             
             if user_doc and user_doc.get("password_hash"):
+                logger.info(f"🔍 User found: {login_data.username}, checking password...")
+                
                 # Verify password
                 password_valid = bcrypt.checkpw(
                     login_data.password.encode('utf-8'),
                     user_doc["password_hash"].encode('utf-8')
                 )
                 
+                logger.info(f"🔐 Password valid: {password_valid}")
+                
                 if password_valid:
                     # Check if user is active
-                    if user_doc.get("status") != UserStatus.ACTIVE.value:
-                        logger.warning(f"Login attempt for inactive user: {login_data.username}")
+                    user_status = user_doc.get("status")
+                    logger.info(f"👤 User status: {user_status} (expecting: {UserStatus.ACTIVE.value})")
+                    
+                    if user_status != UserStatus.ACTIVE.value:
+                        logger.warning(f"Login attempt for inactive user: {login_data.username} (status: {user_status})")
                         audit_logger = AuditLogger(db, auth_config)
                         await audit_logger.log(
                             action=AuditAction.LOGIN_FAILED,
