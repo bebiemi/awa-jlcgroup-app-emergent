@@ -6,6 +6,7 @@ import LocationSelector from '@/components/LocationSelector'
 import PhoneInput from '@/components/PhoneInput'
 import toast from 'react-hot-toast'
 import { ArrowPathIcon, CheckCircleIcon, XCircleIcon, InformationCircleIcon } from '@heroicons/react/24/outline'
+import { ValidationTypes } from '@/constants/iamConstants'
 
 export default function RegisterPage() {
   const navigate = useNavigate()
