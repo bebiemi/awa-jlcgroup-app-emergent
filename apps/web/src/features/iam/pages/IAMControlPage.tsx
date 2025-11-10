@@ -253,38 +253,42 @@ const IAMControlPage: React.FC = () => {
             <p className="text-sm text-gray-600">Sélectionnez une vue pour gérer l'accès</p>
           </div>
           <div className="grid grid-cols-2 gap-4">
-            <button
-              onClick={() => setActiveTab('groups')}
-              className={`px-6 py-4 rounded-lg transition-all text-left ${
-                activeTab === 'groups'
-                  ? 'bg-jlc-purple-600 text-white shadow-lg scale-105'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:scale-102 hover:shadow-md'
-              }`}
-            >
-              <div className="flex items-center gap-3">
-                <UsersIcon className="h-8 w-8" />
-                <div>
-                  <div className="font-semibold text-lg">Groupes</div>
-                  <div className="text-sm opacity-90">{stats.totalGroups} groupe(s)</div>
+            <Tooltip content="Gérer et organiser les groupes d'utilisateurs" position="top">
+              <button
+                onClick={() => setActiveTab('groups')}
+                className={`px-6 py-4 rounded-lg transition-all text-left ${
+                  activeTab === 'groups'
+                    ? 'bg-jlc-purple-600 text-white shadow-lg scale-105'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:scale-102 hover:shadow-md'
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <UsersIcon className="h-8 w-8" />
+                  <div>
+                    <div className="font-semibold text-lg">Groupes</div>
+                    <div className="text-sm opacity-90">{stats.totalGroups} groupe(s)</div>
+                  </div>
                 </div>
-              </div>
-            </button>
-            <button
-              onClick={() => setActiveTab('permissions')}
-              className={`px-6 py-4 rounded-lg transition-all text-left ${
-                activeTab === 'permissions'
-                  ? 'bg-jlc-purple-600 text-white shadow-lg scale-105'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:scale-102 hover:shadow-md'
-              }`}
-            >
-              <div className="flex items-center gap-3">
-                <KeyIcon className="h-8 w-8" />
-                <div>
-                  <div className="font-semibold text-lg">Permissions</div>
-                  <div className="text-sm opacity-90">{stats.totalPermissions} permission(s)</div>
+              </button>
+            </Tooltip>
+            <Tooltip content="Gérer les permissions et droits d'accès" position="top">
+              <button
+                onClick={() => setActiveTab('permissions')}
+                className={`px-6 py-4 rounded-lg transition-all text-left ${
+                  activeTab === 'permissions'
+                    ? 'bg-jlc-purple-600 text-white shadow-lg scale-105'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:scale-102 hover:shadow-md'
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <KeyIcon className="h-8 w-8" />
+                  <div>
+                    <div className="font-semibold text-lg">Permissions</div>
+                    <div className="text-sm opacity-90">{stats.totalPermissions} permission(s)</div>
+                  </div>
                 </div>
-              </div>
-            </button>
+              </button>
+            </Tooltip>
           </div>
         </Card>
 
