@@ -196,42 +196,50 @@ const ProfilesManagementPage: React.FC = () => {
 
         {/* Statistics Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Total Profils</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
+          <Tooltip content="Nombre total de profils créés" position="top">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Total Profils</p>
+                  <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
+                </div>
+                <div className="text-3xl">📋</div>
               </div>
-              <div className="text-3xl">📋</div>
-            </div>
-          </Card>
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Système</p>
-                <p className="text-2xl font-bold text-blue-600">{stats.system}</p>
+            </Card>
+          </Tooltip>
+          <Tooltip content="Profils système protégés" position="top">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Système</p>
+                  <p className="text-2xl font-bold text-blue-600">{stats.system}</p>
+                </div>
+                <div className="text-3xl">🛡️</div>
               </div>
-              <div className="text-3xl">🛡️</div>
-            </div>
-          </Card>
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Département</p>
-                <p className="text-2xl font-bold text-green-600">{stats.department}</p>
+            </Card>
+          </Tooltip>
+          <Tooltip content="Profils par département" position="top">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Département</p>
+                  <p className="text-2xl font-bold text-green-600">{stats.department}</p>
+                </div>
+                <div className="text-3xl">🏢</div>
               </div>
-              <div className="text-3xl">🏢</div>
-            </div>
-          </Card>
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Personnalisé</p>
-                <p className="text-2xl font-bold text-jlc-purple-600">{stats.custom}</p>
+            </Card>
+          </Tooltip>
+          <Tooltip content="Profils personnalisés créés" position="top">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Personnalisé</p>
+                  <p className="text-2xl font-bold text-jlc-purple-600">{stats.custom}</p>
+                </div>
+                <div className="text-3xl">⭐</div>
               </div>
-              <div className="text-3xl">⭐</div>
-            </div>
-          </Card>
+            </Card>
+          </Tooltip>
         </div>
 
         {/* Category Filter */}
