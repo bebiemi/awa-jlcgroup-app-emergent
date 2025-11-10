@@ -143,6 +143,14 @@ function App() {
         }
       />
       <Route
+        path="/admin/countries"
+        element={
+          <ProtectedRoute requiredPermissions={['admin.settings']}>
+            <CountryConfigPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/admin/rules"
         element={
           <ProtectedRoute requiredPermissions={['rules.manage']}>
