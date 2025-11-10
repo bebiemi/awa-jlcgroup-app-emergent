@@ -155,6 +155,7 @@ export default function Sidebar() {
       {
         title: 'Paramètres',
         items: [
+          { label: 'Pays et Devises', path: '/admin/countries', icon: GlobeAltIcon },
           { label: 'Référentiels', path: '/admin/references', icon: Cog6ToothIcon },
           { label: 'Règles Métier', path: '/admin/rules', icon: Cog6ToothIcon },
           { label: 'Feature Flags', path: '/admin/feature-flags', icon: FlagIcon },
