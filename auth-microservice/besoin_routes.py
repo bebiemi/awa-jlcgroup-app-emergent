@@ -463,7 +463,16 @@ async def submit_besoin(
         severity=AuditSeverity.INFO,
     )
     
-    # TODO: Send notification to JLC team
+    # Send notification to JLC team
+    notification_service = NotificationService(db)
+    await notification_service.send_besoin_notification(
+        event_type="submitted",
+        besoin_id=besoin_id,
+        besoin_titre=besoin["titre"],
+        entreprise_name=besoin["entreprise_name"],
+        recipients=["jlc_team"],
+        actor_name=user_name
+    )
     
     # Fetch updated besoin
     updated_besoin = await db.besoins.find_one({"id": besoin_id})
