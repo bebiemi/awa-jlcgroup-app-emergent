@@ -10,11 +10,14 @@ interface UserPermissionsTabProps {
   userDetail: UserDetail
 }
 
-export default function UserPermissionsTab({ userId }: UserPermissionsTabProps) {
+export default function UserPermissionsTab({ userId, userDetail }: UserPermissionsTabProps) {
   const { data: userGroups = [], isLoading: loadingGroups } = useGetUserGroupsQuery(userId)
   const { data: userProfiles = [], isLoading: loadingProfiles } = useGetUserProfilesQuery(userId)
-  const { data: allGroups = [] } = useGetGroupsQuery({})
-  const { data: allProfiles = [] } = useGetProfilesQuery({})
+  const { data: allGroupsData } = useGetAllGroups({})
+  const { data: allProfilesData } = useGetAllProfiles({})
+  
+  const allGroups = Array.isArray(allGroupsData) ? allGroupsData : []
+  const allProfiles = Array.isArray(allProfilesData) ? allProfilesData : []
   
   const [assignGroup] = useAssignGroupMutation()
   const [removeGroup] = useRemoveGroupMutation()
