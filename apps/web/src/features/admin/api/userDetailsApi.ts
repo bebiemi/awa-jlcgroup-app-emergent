@@ -296,4 +296,9 @@ export const {
   useResetPasswordMutation,
   useResetMfaMutation,
   useSendNotificationMutation,
+  useArchiveUserMutation,
+  useRestoreUserMutation,
+  useGetRetentionConfigQuery,
+  useUpdateRetentionConfigMutation,
+  usePurgeExpiredUsersMutation,
 } = userDetailsApi
