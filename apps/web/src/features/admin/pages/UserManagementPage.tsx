@@ -53,11 +53,11 @@ export default function UserManagementPage() {
   const [showRestoreModal, setShowRestoreModal] = useState(false)
 
   // Fetch users with filters
-  const { data, isLoading, isFetching } = useGetUsersQuery({
+  const { data, isLoading, isFetching, refetch } = useGetUsersQuery({
     page,
     page_size: 15,
     search: searchQuery || undefined,
-    status: statusFilter || undefined,
+    status: viewMode === 'archived' ? 'archived' : (statusFilter || undefined),
     role: roleFilter || undefined,
   })
 
