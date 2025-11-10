@@ -200,42 +200,50 @@ const IAMControlPage: React.FC = () => {
 
         {/* Statistics Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Total Groupes</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.totalGroups}</p>
+          <Tooltip content="Nombre total de groupes d'utilisateurs" position="top">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Total Groupes</p>
+                  <p className="text-2xl font-bold text-gray-900">{stats.totalGroups}</p>
+                </div>
+                <div className="text-3xl">👥</div>
               </div>
-              <div className="text-3xl">👥</div>
-            </div>
-          </Card>
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Groupes Système</p>
-                <p className="text-2xl font-bold text-blue-600">{stats.systemGroups}</p>
+            </Card>
+          </Tooltip>
+          <Tooltip content="Groupes protégés par le système" position="top">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Groupes Système</p>
+                  <p className="text-2xl font-bold text-blue-600">{stats.systemGroups}</p>
+                </div>
+                <div className="text-3xl">🔒</div>
               </div>
-              <div className="text-3xl">🔒</div>
-            </div>
-          </Card>
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Permissions</p>
-                <p className="text-2xl font-bold text-jlc-purple-600">{stats.totalPermissions}</p>
+            </Card>
+          </Tooltip>
+          <Tooltip content="Total des permissions disponibles" position="top">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Permissions</p>
+                  <p className="text-2xl font-bold text-jlc-purple-600">{stats.totalPermissions}</p>
+                </div>
+                <div className="text-3xl">🔑</div>
               </div>
-              <div className="text-3xl">🔑</div>
-            </div>
-          </Card>
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Catégories</p>
-                <p className="text-2xl font-bold text-green-600">{stats.categories}</p>
+            </Card>
+          </Tooltip>
+          <Tooltip content="Catégories de permissions organisées" position="top">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Catégories</p>
+                  <p className="text-2xl font-bold text-green-600">{stats.categories}</p>
+                </div>
+                <div className="text-3xl">📊</div>
               </div>
-              <div className="text-3xl">📊</div>
-            </div>
-          </Card>
+            </Card>
+          </Tooltip>
         </div>
 
         {/* Tab Selector as Clickable Tiles */}
