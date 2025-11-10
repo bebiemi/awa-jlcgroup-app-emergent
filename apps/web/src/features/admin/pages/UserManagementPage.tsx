@@ -166,8 +166,40 @@ export default function UserManagementPage() {
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Gestion des Utilisateurs</h1>
             <p className="mt-2 text-gray-600">
-              {data?.pagination.total || 0} utilisateur(s) enregistré(s)
+              {data?.pagination.total || 0} utilisateur(s) {viewMode === 'archived' ? 'archivé(s)' : 'enregistré(s)'}
             </p>
+            {/* Tabs */}
+            <div className="mt-4 flex gap-2">
+              <button
+                onClick={() => {
+                  setViewMode('active')
+                  setStatusFilter('')
+                  setPage(1)
+                }}
+                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                  viewMode === 'active'
+                    ? 'bg-jlc-purple-600 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                Actifs
+              </button>
+              <button
+                onClick={() => {
+                  setViewMode('archived')
+                  setStatusFilter('')
+                  setPage(1)
+                }}
+                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                  viewMode === 'archived'
+                    ? 'bg-orange-600 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                <ArchiveBoxIcon className="h-5 w-5 inline mr-2" />
+                Archives
+              </button>
+            </div>
           </div>
           <div className="flex gap-3">
             <button
