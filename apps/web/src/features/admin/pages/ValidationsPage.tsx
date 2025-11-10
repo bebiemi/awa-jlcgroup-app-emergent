@@ -34,10 +34,10 @@ export default function ValidationsPage() {
   const { data: validationStatuses = [] } = useReferences('validation_statuses')
   
   const validationTypesConfig = {
-    candidat: validationTypes.find(vt => vt.code === 'candidat')?.code || 'candidat',
-    interim: validationTypes.find(vt => vt.code === 'interim')?.code || 'interim',
-    company: validationTypes.find(vt => vt.code === 'company')?.code || 'company',
-    collaborator: validationTypes.find(vt => vt.code === 'collaborator')?.code || 'collaborator'
+    candidat: validationTypes.find(vt => vt.code === ValidationTypes.CANDIDAT)?.code || ValidationTypes.CANDIDAT,
+    interim: validationTypes.find(vt => vt.code === ValidationTypes.INTERIM)?.code || ValidationTypes.INTERIM,
+    company: validationTypes.find(vt => vt.code === ValidationTypes.COMPANY)?.code || ValidationTypes.COMPANY,
+    collaborator: validationTypes.find(vt => vt.code === ValidationTypes.COLLABORATEUR)?.code || ValidationTypes.COLLABORATEUR
   }
   
   const validationStatusesConfig = {
