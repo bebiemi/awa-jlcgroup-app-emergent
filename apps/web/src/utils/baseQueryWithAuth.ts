@@ -48,24 +48,21 @@ export const createBaseQueryWithAuth = (baseUrl: string): BaseQueryFn<
 }
 
 // Default instance with backend URL from environment
-// In production, use window.location.origin to ensure same protocol (HTTP/HTTPS)
-const getBaseUrl = (): string => {
+// CRITICAL: Leave undefined to force truly relative URLs (no protocol, no domain)
+// This prevents Mixed Content errors in production (HTTPS pages making HTTP requests)
+const getBaseUrl = (): string | undefined => {
   const envUrl = import.meta.env.VITE_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL
   
-  // If env URL is set and not empty, use it
+  // If env URL is set and not empty, use it (for local dev with specific ports)
   if (envUrl && envUrl.trim() !== '') {
     return envUrl
   }
   
-  // In production/browser, use window.location.origin for same-origin requests
-  // This ensures HTTPS pages make HTTPS requests
-  if (typeof window !== 'undefined' && window.location.origin) {
-    return window.location.origin
-  }
-  
-  // Fallback to empty string (relative URLs)
-  return ''
+  // In production: return undefined to force relative URLs
+  // RTK Query will use relative paths like /api/config/countries
+  // which will automatically use the same protocol as the page (HTTPS)
+  return undefined
 }
 
 const backendUrl = getBaseUrl()
-export const baseQueryWithAuth = createBaseQueryWithAuth(backendUrl)
+export const baseQueryWithAuth = createBaseQueryWithAuth(backendUrl || '')
