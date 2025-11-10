@@ -40,6 +40,7 @@ async def get_current_user_info(current_user: dict) -> tuple:
 
 async def get_user_entreprise_id(current_user, db: AsyncIOMotorDatabase, user_id: str, user_role: str) -> str:
     """Get entreprise_id for current user, creating test entreprise for admin if needed"""
+    print(f"DEBUG: get_user_entreprise_id called with user_role={user_role}")
     if isinstance(current_user, dict):
         entreprise_id = await get_user_entreprise_id(current_user, db, user_id, user_role)
     else:
