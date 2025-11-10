@@ -48,5 +48,5 @@ export const createBaseQueryWithAuth = (baseUrl: string): BaseQueryFn<
 }
 
 // Default instance with backend URL from environment
-const backendUrl = import.meta.env.VITE_BACKEND_URL || process.env.REACT_APP_BACKEND_URL || ''
+const backendUrl = import.meta.env.VITE_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL || ''
 export const baseQueryWithAuth = createBaseQueryWithAuth(backendUrl)
