@@ -42,6 +42,7 @@ from contract_routes import router as contract_router
 from presence_routes import router as presence_router
 from iam_routes import router as iam_router
 from email_domain_routes import router as email_domain_router
+from user_detail_routes import router as user_detail_router
 from rate_limit import limiter
 
 client = None
