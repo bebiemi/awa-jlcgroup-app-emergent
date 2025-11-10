@@ -158,7 +158,7 @@ async def initialize_candidat_iam():
     candidat_group_id = str(uuid.uuid4())
     candidat_group = {
         "id": candidat_group_id,
-        "code": "grp.candidat",
+        "code": IAMGroups.CANDIDAT,
         "name": "Candidats",
         "description": "Groupe des candidats (avant signature)",
         "profile_ids": [candidat_profile_id],
@@ -169,20 +169,20 @@ async def initialize_candidat_iam():
         "created_at": datetime.utcnow().isoformat()
     }
     
-    existing_group = await db.iam_groups.find_one({"code": "grp.candidat"})
+    existing_group = await db.iam_groups.find_one({"code": IAMGroups.CANDIDAT})
     if not existing_group:
         await db.iam_groups.insert_one(candidat_group)
-        print(f"✅ Created group: grp.candidat")
+        print(f"✅ Created group: {IAMGroups.CANDIDAT}")
     else:
-        print(f"⏭️  Group already exists: grp.candidat")
+        print(f"⏭️  Group already exists: {IAMGroups.CANDIDAT}")
     
     # 4. Update existing admin/superadmin profiles with new permissions
-    admin_profiles = await db.iam_profiles.find({"code": {"$in": ["role.admin", "role.super_admin"]}}).to_list(None)
+    admin_profiles = await db.iam_profiles.find({"code": {"$in": [IAMProfiles.ADMIN, IAMProfiles.SUPER_ADMIN]}}).to_list(None)
     
     for profile in admin_profiles:
         updated_perms = set(profile.get("permission_ids", []))
-        updated_perms.add(permission_ids.get("security.email_domains.read"))
-        updated_perms.add(permission_ids.get("security.email_domains.manage"))
+        updated_perms.add(permission_ids.get(IAMPermissions.SECURITY_EMAIL_DOMAINS_READ))
+        updated_perms.add(permission_ids.get(IAMPermissions.SECURITY_EMAIL_DOMAINS_MANAGE))
         
         await db.iam_profiles.update_one(
             {"id": profile["id"]},
