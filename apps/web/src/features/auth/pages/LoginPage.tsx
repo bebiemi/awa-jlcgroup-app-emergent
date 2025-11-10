@@ -156,6 +156,23 @@ export default function LoginPage() {
           </div>
 
           <div className="p-8">
+            {/* Success message from registration */}
+            {location.state?.message && (
+              <div className="mb-6 p-4 bg-green-50 border-l-4 border-green-500 rounded-r-lg">
+                <div className="flex items-start gap-3">
+                  <CheckCircleIcon className="h-6 w-6 text-green-500 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <h3 className="text-sm font-semibold text-green-800 mb-1">
+                      Inscription réussie !
+                    </h3>
+                    <p className="text-sm text-green-700">
+                      {location.state.message}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Username */}
               <div>
