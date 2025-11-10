@@ -796,6 +796,11 @@ async def local_login(
                 "provider": AuthProviderEnum.LOCAL.value
             }, {"_id": 0})
             
+            logger.info(f"🔍 Searching for user: {login_data.username}")
+            logger.info(f"👤 User found: {bool(user_doc)}")
+            if user_doc:
+                logger.info(f"📧 Email: {user_doc.get('email')}, Status: {user_doc.get('status')}")
+            
             if user_doc and user_doc.get("password_hash"):
                 logger.info(f"🔍 User found: {login_data.username}, checking password...")
                 
