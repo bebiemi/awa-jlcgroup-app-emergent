@@ -92,20 +92,19 @@
     "or": "OU",
     "no_account": "Pas encore de compte ?",
     "already_account": "Vous avez déjà un compte ?",
-    "role_selection_title": "Choisissez votre profil",
-    "role_selection_subtitle": "Sélectionnez le type de compte qui correspond à vos besoins",
+    "role_selection_title": "Créez votre compte",
+    "role_selection_subtitle": "Inscription simple et rapide pour accéder aux offres",
+    "email_domain_hint": "Les adresses professionnelles JLC Group (@jlcgroup.*) nécessitent une validation manuelle",
+    "email_verified_collaborator": "Email collaborateur valide - Votre compte nécessitera une validation",
+    "email_verified_candidate": "Email valide - Votre compte sera activé immédiatement",
     "roles": {
-      "interim": {
-        "title": "Intérimaire",
-        "description": "Je cherche des missions d'intérim"
+      "candidat": {
+        "title": "Candidat",
+        "description": "Je cherche des missions d'intérim (devient intérimaire après signature du contrat)"
       },
       "company": {
         "title": "Entreprise",
         "description": "Je cherche à recruter des intérimaires"
-      },
-      "agency": {
-        "title": "Agence",
-        "description": "Je suis une agence d'intérim"
       }
     }
   },
