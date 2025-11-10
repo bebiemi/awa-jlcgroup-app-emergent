@@ -26,6 +26,18 @@ from awana_auth.dependencies.permission_dependencies import require_permission
 router = APIRouter()
 
 
+# Helper function to convert datetime to ISO string
+def datetime_to_str(value):
+    """Convert datetime object to ISO format string"""
+    if value is None:
+        return None
+    if isinstance(value, datetime):
+        return value.isoformat()
+    if isinstance(value, str):
+        return value
+    return str(value)
+
+
 # ==================== USER DETAIL ====================
 
 @router.get("/{user_id}", response_model=UserDetailResponse)
@@ -43,13 +55,13 @@ async def get_user_detail(
     # Get user groups
     groups = []
     if user.get("group_ids"):
-        groups_cursor = db.iam_groups.find({"id": {"$in": user.get("group_ids", [])}})
+        groups_cursor = db.groups.find({"id": {"$in": user.get("group_ids", [])}})
         groups = await groups_cursor.to_list(length=None)
     
     # Get user profiles
     profiles = []
     if user.get("profile_ids"):
-        profiles_cursor = db.iam_profiles.find({"id": {"$in": user.get("profile_ids", [])}})
+        profiles_cursor = db.profiles.find({"id": {"$in": user.get("profile_ids", [])}})
         profiles = await profiles_cursor.to_list(length=None)
     
     # Get user permissions (from profiles)
@@ -60,7 +72,7 @@ async def get_user_detail(
     # Get permission codes
     permission_codes = []
     if permissions:
-        perms_cursor = db.iam_permissions.find({"id": {"$in": list(permissions)}})
+        perms_cursor = db.permissions.find({"id": {"$in": list(permissions)}})
         perms_list = await perms_cursor.to_list(length=None)
         permission_codes = [p.get("code") for p in perms_list if p.get("code")]
     
@@ -80,10 +92,10 @@ async def get_user_detail(
         phone=user.get("phone"),
         location=user.get("location"),
         location_label=user.get("location_label"),
-        created_at=user.get("created_at", datetime.now(timezone.utc).isoformat()),
-        updated_at=user.get("updated_at", datetime.now(timezone.utc).isoformat()),
-        last_login_at=user.get("last_login_at"),
-        last_activity_at=user.get("last_activity_at"),
+        created_at=datetime_to_str(user.get("created_at")) or datetime.now(timezone.utc).isoformat(),
+        updated_at=datetime_to_str(user.get("updated_at")) or datetime.now(timezone.utc).isoformat(),
+        last_login_at=datetime_to_str(user.get("last_login_at")),
+        last_activity_at=datetime_to_str(user.get("last_activity_at")),
         login_count=user.get("login_count", 0),
         failed_login_attempts=user.get("failed_login_attempts", 0),
         metadata=user.get("metadata", {})
