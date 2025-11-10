@@ -564,8 +564,8 @@ def test_authentication_for_config_routes():
     print(f"\n  Test 2: Retention Routes Without Authentication")
     
     retention_routes = [
-        ("GET", "/iam/users/archive/config/retention", "Get Retention Config"),
-        ("PUT", "/iam/users/archive/config/retention?retention_days=90", "Update Retention Config")
+        ("GET", "/iam/users/config/retention", "Get Retention Config"),
+        ("PUT", "/iam/users/config/retention?retention_days=90", "Update Retention Config")
     ]
     
     for method, endpoint, description in retention_routes:
