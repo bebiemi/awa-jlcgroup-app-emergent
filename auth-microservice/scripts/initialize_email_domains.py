@@ -11,9 +11,9 @@ async def initialize_email_domains():
     """Initialize default email domains"""
     
     # Connect to MongoDB
-    mongo_url = os.environ.get('MONGO_URL', 'mongodb://localhost:27017/jlc_interim')
+    mongo_url = os.environ.get('MONGO_URL', 'mongodb://mongodb:27017/')
     client = AsyncIOMotorClient(mongo_url)
-    db = client.get_database()
+    db = client['jlc_interim']  # Use database name directly
     
     print("🚀 Initializing Email Domains...")
     
