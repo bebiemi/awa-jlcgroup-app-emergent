@@ -141,18 +141,24 @@ export default function RegisterPage() {
 
       const result = await register(payload).unwrap()
       
-      // Success message based on email type
+      // Success - redirect to login with message
       if (emailVerification?.is_collaborator) {
-        toast.success('Compte créé ! Votre compte collaborateur nécessite une validation manuelle.')
+        toast.success('Compte créé ! Votre compte nécessite une validation manuelle.')
+        navigate('/login', { 
+          state: { 
+            email: formData.email,
+            message: 'Votre compte collaborateur a été créé. Il sera activé après validation par un administrateur.'
+          }
+        })
       } else {
-        toast.success('Compte créé avec succès ! Bienvenue sur JLC Group.')
-      }
-
-      // Redirect to dashboard or login based on status
-      if (result.access_token) {
-        navigate('/dashboard')
-      } else {
-        navigate('/login')
+        toast.success('Compte créé avec succès ! Connectez-vous maintenant.')
+        navigate('/login', { 
+          state: { 
+            email: formData.email,
+            username: formData.username,
+            message: 'Votre compte candidat a été créé avec succès. Vous pouvez maintenant vous connecter.'
+          }
+        })
       }
     } catch (error: any) {
       console.error('Registration error:', error)
