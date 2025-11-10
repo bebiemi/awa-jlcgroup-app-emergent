@@ -244,13 +244,13 @@ export default function ValidationsPage() {
           </button>
 
           <button
-            onClick={() => handleTileClick('interim')}
+            onClick={() => handleTileClick('candidat')}
             className="bg-white rounded-lg shadow p-4 border-l-4 border-blue-500 hover:shadow-lg transition-shadow cursor-pointer text-left"
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Intérimaires</p>
-                <p className="text-2xl font-bold text-gray-900">{stats?.pending_interim || 0}</p>
+                <p className="text-sm text-gray-600">Candidats</p>
+                <p className="text-2xl font-bold text-gray-900">{stats?.pending_candidat || stats?.pending_interim || 0}</p>
               </div>
               <UserIcon className="h-8 w-8 text-blue-500" />
             </div>
