@@ -250,19 +250,24 @@ const ProfilesManagementPage: React.FC = () => {
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {categories.map((cat) => (
-              <button
-                key={cat.value}
-                onClick={() => setFilterCategory(cat.value)}
-                className={`px-4 py-3 rounded-lg transition-all text-sm font-medium ${
-                  filterCategory === cat.value
-                    ? 'bg-jlc-purple-600 text-white shadow-lg scale-105'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:scale-102 hover:shadow-md'
-                }`}
+              <Tooltip 
+                key={cat.value} 
+                content={`Afficher ${cat.count} profil(s) ${cat.label.toLowerCase()}`}
+                position="top"
               >
-                <div className="text-2xl mb-1">{cat.icon}</div>
-                <div className="text-xs">{cat.label}</div>
-                <div className="text-xs font-bold mt-1">{cat.count}</div>
-              </button>
+                <button
+                  onClick={() => setFilterCategory(cat.value)}
+                  className={`px-4 py-3 rounded-lg transition-all text-sm font-medium ${
+                    filterCategory === cat.value
+                      ? 'bg-jlc-purple-600 text-white shadow-lg scale-105'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:scale-102 hover:shadow-md'
+                  }`}
+                >
+                  <div className="text-2xl mb-1">{cat.icon}</div>
+                  <div className="text-xs">{cat.label}</div>
+                  <div className="text-xs font-bold mt-1">{cat.count}</div>
+                </button>
+              </Tooltip>
             ))}
           </div>
         </Card>
