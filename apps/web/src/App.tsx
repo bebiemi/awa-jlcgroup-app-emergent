@@ -200,6 +200,14 @@ function App() {
           </ProtectedRoute>
         }
       />
+      <Route
+        path="/admin/retention-config"
+        element={
+          <ProtectedRoute requiredPermissions={['users.manage']}>
+            <RetentionConfigPage />
+          </ProtectedRoute>
+        }
+      />
       
       {/* Routes IAM - SuperAdmin & Admin */}
       <Route
