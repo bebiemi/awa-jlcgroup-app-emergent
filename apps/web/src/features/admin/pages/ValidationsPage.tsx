@@ -25,7 +25,7 @@ import {
 } from '@heroicons/react/24/outline'
 import toast from 'react-hot-toast'
 
-type TabType = 'interim' | 'company' | 'collaborator'
+type TabType = 'candidat' | 'company' | 'collaborator'
 
 export default function ValidationsPage() {
   // Charger les référentiels de configuration
@@ -33,6 +33,7 @@ export default function ValidationsPage() {
   const { data: validationStatuses = [] } = useReferences('validation_statuses')
   
   const validationTypesConfig = {
+    candidat: validationTypes.find(vt => vt.code === 'candidat')?.code || 'candidat',
     interim: validationTypes.find(vt => vt.code === 'interim')?.code || 'interim',
     company: validationTypes.find(vt => vt.code === 'company')?.code || 'company',
     collaborator: validationTypes.find(vt => vt.code === 'collaborator')?.code || 'collaborator'
@@ -44,21 +45,23 @@ export default function ValidationsPage() {
     rejected: validationStatuses.find(vs => vs.code === 'rejected')?.code || 'rejected'
   }
   
-  const [activeTab, setActiveTab] = useState<TabType>('interim')
+  const [activeTab, setActiveTab] = useState<TabType>('candidat')
   const [statusFilter, setStatusFilter] = useState<string>(validationStatusesConfig.pending)
   const [selectedValidation, setSelectedValidation] = useState<Validation | null>(null)
   const [showRejectModal, setShowRejectModal] = useState(false)
   const [showAssignModal, setShowAssignModal] = useState(false)
   const [showBulkActionsModal, setShowBulkActionsModal] = useState(false)
-  const [bulkActionType, setBulkActionType] = useState<'all' | 'interim' | 'company' | 'collaborator' | 'warnings'>('all')
+  const [bulkActionType, setBulkActionType] = useState<'all' | 'candidat' | 'interim' | 'company' | 'collaborator' | 'warnings'>('all')
   const [rejectionReason, setRejectionReason] = useState('')
   const [selectedValidator, setSelectedValidator] = useState('')
   const [selectedValidations, setSelectedValidations] = useState<string[]>([])
 
-  const handleTileClick = (type: 'all' | 'interim' | 'company' | 'collaborator' | 'warnings') => {
+  const handleTileClick = (type: 'all' | 'candidat' | 'interim' | 'company' | 'collaborator' | 'warnings') => {
     // Filter validations based on tile clicked
     let filtered = validations
-    if (type === 'interim') {
+    if (type === 'candidat') {
+      filtered = validations.filter((v: Validation) => v.validation_type === validationTypesConfig.candidat && v.status === validationStatusesConfig.pending)
+    } else if (type === 'interim') {
       filtered = validations.filter((v: Validation) => v.validation_type === validationTypesConfig.interim && v.status === validationStatusesConfig.pending)
     } else if (type === 'company') {
       filtered = validations.filter((v: Validation) => v.validation_type === validationTypesConfig.company && v.status === validationStatusesConfig.pending)
