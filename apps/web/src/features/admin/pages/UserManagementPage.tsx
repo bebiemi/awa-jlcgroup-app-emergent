@@ -220,12 +220,12 @@ export default function UserManagementPage() {
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-jlc-purple-500 focus:border-transparent"
                   >
                     <option value="">Tous les rôles</option>
-                    <option value="admin">Admin</option>
-                    <option value="super_admin">Super Admin</option>
-                    <option value="candidat">Candidat</option>
-                    <option value="interim">Intérimaire</option>
-                    <option value="company">Entreprise</option>
-                    <option value="collaborateur">Collaborateur</option>
+                    <option value={UserRoles.ADMIN}>Administrateur</option>
+                    <option value={UserRoles.SUPER_ADMIN}>Super Admin</option>
+                    <option value={UserRoles.CANDIDAT}>Candidat</option>
+                    <option value={UserRoles.INTERIM}>Intérimaire</option>
+                    <option value={UserRoles.COMPANY}>Entreprise</option>
+                    <option value={UserRoles.COLLABORATEUR}>Collaborateur</option>
                   </select>
                 </div>
               </div>
