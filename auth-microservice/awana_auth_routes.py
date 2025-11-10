@@ -1142,18 +1142,14 @@ async def local_register(
 ):
     """
     Register a new user with username/password
-    Creates user account and assigns selected role (interim or company)
+    Automatically assigns IAM groups based on email domain:
+    - Collaborator domains (@jlcgroup.*) -> grp.collaborateur (requires validation)
+    - Public domains -> grp.candidat (immediate access)
     """
     import bcrypt
+    from awana_auth.services.email_domain_service import EmailDomainService
     
     try:
-        # Validate role
-        if register_data.role not in ['interim', 'company']:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Invalid role. Must be 'interim' or 'company'"
-            )
-        
         # Check if username already exists
         existing_username = await db.users.find_one({
             "username": register_data.username
@@ -1176,20 +1172,29 @@ async def local_register(
                 detail="Cet email est déjà utilisé"
             )
         
+        # Verify email domain using our new service
+        email_service = EmailDomainService(db)
+        is_collaborator = await email_service.is_collaborator_email(register_data.email)
+        
         # Hash password
         password_hash = bcrypt.hashpw(
             register_data.password.encode('utf-8'),
             bcrypt.gensalt()
         ).decode('utf-8')
         
-        # Determine user status based on collaborator flag or email domain
-        if register_data.is_collaborator:
-            # Collaborators ALWAYS need manual validation
+        # Determine user status and role based on email domain
+        if is_collaborator:
+            # Collaborator email -> needs validation
             user_status = UserStatus.PENDING
-            logger.info(f"Collaborator registration - manual validation required for {register_data.email}")
+            assigned_role = 'collaborateur'
+            iam_group_code = 'grp.collaborateur'
+            logger.info(f"Collaborator registration detected for {register_data.email} - validation required")
         else:
-            # Regular users: check email domain
-            user_status = UserStatus.ACTIVE if is_valid_email_domain(register_data.email) else UserStatus.PENDING
+            # Public email -> candidat with immediate access
+            user_status = UserStatus.ACTIVE
+            assigned_role = 'candidat'
+            iam_group_code = 'grp.candidat'
+            logger.info(f"Candidat registration detected for {register_data.email} - immediate access granted")
         
         # Create new user
         user = User(
@@ -1200,11 +1205,8 @@ async def local_register(
             provider_user_id=f"local_{register_data.username}",
             password_hash=password_hash,
             status=user_status,
-            roles=[register_data.role] if not register_data.is_collaborator else [],
-            is_collaborator=register_data.is_collaborator,
-            employee_number=register_data.employee_number if register_data.is_collaborator else None,
-            department=register_data.department if register_data.is_collaborator else None,
-            job_title=register_data.job_title if register_data.is_collaborator else None,
+            roles=[assigned_role],  # Assign role based on email domain
+            is_collaborator=is_collaborator,
         )
         
         # Save user to database
@@ -1214,38 +1216,38 @@ async def local_register(
         user_dict['last_login_at'] = user.last_login_at.isoformat() if user.last_login_at else None
         
         await db.users.insert_one(user_dict)
+        logger.info(f"✅ User created: {user.email} with status {user_status}")
         
-        # Handle collaborators: assign to Collaborateur group
-        if register_data.is_collaborator:
-            collaborateur_group = await db.groups.find_one({"name": "Collaborateur"}, {"_id": 0})
-            if collaborateur_group:
-                # Add user to group via user_groups collection
-                import uuid
-                user_group = {
-                    "id": str(uuid.uuid4()),
-                    "user_id": user.id,
-                    "group_id": collaborateur_group["id"],
-                    "added_by": "system",
-                    "added_at": datetime.now(timezone.utc).isoformat()
-                }
-                await db.user_groups.insert_one(user_group)
-                
-                # Update group member count
-                await db.groups.update_one(
-                    {"id": collaborateur_group["id"]},
-                    {"$inc": {"member_count": 1}}
+        # Assign to appropriate IAM group
+        target_group = await db.iam_groups.find_one({"code": iam_group_code})
+        if target_group:
+            # Check if user is already in the group
+            existing_membership = await db.iam_groups.find_one({
+                "id": target_group["id"],
+                "user_ids": user.id
+            })
+            
+            if not existing_membership:
+                # Add user to group's user_ids array
+                await db.iam_groups.update_one(
+                    {"id": target_group["id"]},
+                    {
+                        "$addToSet": {"user_ids": user.id},
+                        "$set": {"updated_at": datetime.now(timezone.utc).isoformat()}
+                    }
                 )
-                logger.info(f"✅ Collaborator {user.email} assigned to 'Collaborateur' group")
+                logger.info(f"✅ User {user.email} assigned to IAM group: {iam_group_code}")
             else:
-                logger.warning("⚠️ Collaborateur group not found!")
+                logger.info(f"ℹ️ User {user.email} already in group {iam_group_code}")
         else:
-            # Grant role in RBAC system for non-collaborators
-            try:
-                await rbac_manager.grant_role(user.id, register_data.role, granted_by="system")
-            except ValueError as e:
-                logger.warning(f"Could not grant role {register_data.role}: {e}")
+            logger.warning(f"⚠️ IAM group '{iam_group_code}' not found! User has no group assignment.")
         
-        logger.info(f"New user registered: {user.email} {'as collaborator' if register_data.is_collaborator else f'with role {register_data.role}'}")
+        # Grant legacy role in RBAC system (for backward compatibility)
+        try:
+            await rbac_manager.grant_role(user.id, assigned_role, granted_by="system")
+            logger.info(f"✅ Legacy RBAC role '{assigned_role}' granted to {user.email}")
+        except ValueError as e:
+            logger.warning(f"Could not grant legacy role {assigned_role}: {e}")
         
         # Create session
         session = await session_storage.create_session(
@@ -1254,7 +1256,12 @@ async def local_register(
             refresh_token="",
             ip_address=get_client_ip(request),
             user_agent=get_user_agent(request),
-            metadata={"provider": "local", "registration": True}
+            metadata={
+                "provider": "local", 
+                "registration": True,
+                "role": assigned_role,
+                "is_collaborator": is_collaborator
+            }
         )
         
         # Create JWT tokens
@@ -1283,7 +1290,13 @@ async def local_register(
             actor_email=user.email,
             ip_address=get_client_ip(request),
             user_agent=get_user_agent(request),
-            metadata={"provider": "local", "role": register_data.role}
+            metadata={
+                "provider": "local", 
+                "role": assigned_role,
+                "is_collaborator": is_collaborator,
+                "iam_group": iam_group_code,
+                "status": user_status.value
+            }
         )
         
         # Auto-create profile in jlc_db
@@ -1292,11 +1305,9 @@ async def local_register(
             user_id=user.id,
             email=user.email,
             full_name=register_data.full_name,
-            profile_type=register_data.role,
+            profile_type=assigned_role,
             picture=None
         )
-        
-        logger.info(f"✅ Registration successful for {user.email}")
         
         # Create validation record
         await create_validation_record(
@@ -1305,11 +1316,13 @@ async def local_register(
             register_data=register_data
         )
         
-        # Log validation status
+        logger.info(f"✅ Registration completed for {user.email} - Role: {assigned_role}, Status: {user_status}")
+        
+        # Log status message
         if user.status == UserStatus.ACTIVE:
-            logger.info("✅ Email domain validated automatically - Account active")
+            logger.info("✅ Candidat account active - immediate access granted")
         else:
-            logger.info("⚠️ Email domain requires manual validation - Account pending")
+            logger.info("⚠️ Collaborator account pending - manual validation required")
         
         return LoginResponse(
             access_token=access_token,
