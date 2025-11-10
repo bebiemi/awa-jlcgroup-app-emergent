@@ -1,6 +1,10 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { baseQueryWithAuth } from '@/utils/baseQueryWithAuth'
+import { createBaseQueryWithAuth } from '@/utils/baseQueryWithAuth'
 import { IAM_ENDPOINTS, QUERY_KEYS } from '@/constants/api'
+
+// Use auth service URL for IAM endpoints
+const authServiceUrl = import.meta.env.VITE_AUTH_SERVICE_URL || 'http://localhost:8000'
+const baseQueryWithAuthService = createBaseQueryWithAuth(authServiceUrl)
 
 // Extended User Detail Interface
 export interface UserDetail {
