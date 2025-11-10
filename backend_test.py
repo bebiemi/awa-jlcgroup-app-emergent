@@ -2950,24 +2950,7 @@ def run_critical_authentication_tests():
     return candidat_success and collaborator_success
 
 
-if __name__ == "__main__":
-    """Main execution"""
-    try:
-        success = run_critical_authentication_tests()
-        
-        if success:
-            print(f"\n{Colors.GREEN}✅ All critical authentication tests passed{Colors.ENDC}")
-            sys.exit(0)
-        else:
-            print(f"\n{Colors.RED}❌ Critical authentication issues found{Colors.ENDC}")
-            sys.exit(1)
-            
-    except KeyboardInterrupt:
-        print(f"\n{Colors.YELLOW}Tests interrupted by user{Colors.ENDC}")
-        sys.exit(1)
-    except Exception as e:
-        print(f"\n{Colors.RED}Test execution failed: {str(e)}{Colors.ENDC}")
-        sys.exit(1)
+# Removed old main section
 
 
 def test_user_presence_system():
