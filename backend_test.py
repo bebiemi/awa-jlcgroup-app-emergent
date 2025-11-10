@@ -1633,17 +1633,33 @@ def test_authentication_for_config_routes():
     return True
 
 
-def run_country_and_retention_tests():
-    """Run all Country Configuration and Retention Configuration tests"""
+def run_besoins_tests():
+    """Run all Besoins system tests"""
     print(f"\n{Colors.BOLD}{'='*80}{Colors.ENDC}")
-    print(f"{Colors.BOLD}COUNTRY & RETENTION CONFIGURATION TESTING{Colors.ENDC}")
-    print(f"{Colors.BOLD}Testing new Country and Retention Configuration systems{Colors.ENDC}")
+    print(f"{Colors.BOLD}BESOINS SYSTEM TESTING - PHASE 1{Colors.ENDC}")
+    print(f"{Colors.BOLD}Testing complete Besoins (hiring needs) management system{Colors.ENDC}")
+    print(f"{Colors.BOLD}Base URL: {AUTH_BASE_URL}/besoins{Colors.ENDC}")
     print(f"{Colors.BOLD}{'='*80}{Colors.ENDC}")
     
+    # First get admin token
+    if not get_admin_token():
+        log_test("Besoins Testing", "FAIL", "Cannot get admin token - aborting all tests")
+        return []
+    
     test_cases = [
-        ("Country Configuration System", test_country_configuration_system),
-        ("Retention Configuration System", test_retention_configuration_system),
-        ("Authentication for Config Routes", test_authentication_for_config_routes)
+        ("1. CREATE BESOIN", test_create_besoin),
+        ("2. LIST BESOINS", test_list_besoins),
+        ("3. GET SINGLE BESOIN", test_get_single_besoin),
+        ("4. UPDATE BESOIN (Draft only)", test_update_besoin),
+        ("5. SUBMIT BESOIN", test_submit_besoin),
+        ("6. UPDATE STATUS (JLC Workflow)", test_update_status_workflow),
+        ("7. ADD COMMENT", test_add_comment),
+        ("8. GET COMMENTS", test_get_comments),
+        ("9. UPDATE JLC ANALYSIS", test_update_jlc_analysis),
+        ("10. CONVERT TO MISSION", test_convert_to_mission),
+        ("11. GET AUDIT TRAIL", test_get_audit_trail),
+        ("Workflow Validation", test_workflow_validation),
+        ("Permissions and Access", test_permissions_and_access)
     ]
     
     results = []
