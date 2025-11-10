@@ -149,6 +149,7 @@ export default function Sidebar() {
         items: [
           { label: 'Gestion des Profils', path: '/admin/iam/profiles', icon: ShieldCheckIcon },
           { label: 'Contrôle d\'Accès (Groupes)', path: '/admin/iam/control', icon: ShieldCheckIcon },
+          { label: 'Rétention des Données', path: '/admin/retention-config', icon: ClockIcon },
           { label: 'Domaines Email', path: '/admin/security/email-domains', icon: GlobeAltIcon },
         ],
       },
