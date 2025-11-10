@@ -29,7 +29,7 @@ async def initialize_candidat_iam():
     permissions_to_add = [
         {
             "id": str(uuid.uuid4()),
-            "code": "missions.browse",
+            "code": IAMPermissions.MISSIONS_BROWSE,
             "name": "Consulter les missions",
             "description": "Permet de voir la liste des missions disponibles",
             "resource": "missions",
@@ -41,7 +41,7 @@ async def initialize_candidat_iam():
         },
         {
             "id": str(uuid.uuid4()),
-            "code": "applications.create_own",
+            "code": IAMPermissions.APPLICATIONS_CREATE_OWN,
             "name": "Créer une candidature",
             "description": "Permet de postuler à une mission",
             "resource": "applications",
@@ -53,7 +53,7 @@ async def initialize_candidat_iam():
         },
         {
             "id": str(uuid.uuid4()),
-            "code": "applications.read_own",
+            "code": IAMPermissions.APPLICATIONS_READ_OWN,
             "name": "Voir ses candidatures",
             "description": "Permet de consulter ses propres candidatures",
             "resource": "applications",
@@ -65,7 +65,7 @@ async def initialize_candidat_iam():
         },
         {
             "id": str(uuid.uuid4()),
-            "code": "profile.manage_own",
+            "code": IAMPermissions.PROFILE_MANAGE_OWN,
             "name": "Gérer son profil",
             "description": "Permet de modifier son profil utilisateur",
             "resource": "profile",
@@ -77,7 +77,7 @@ async def initialize_candidat_iam():
         },
         {
             "id": str(uuid.uuid4()),
-            "code": "auth.mfa.manage",
+            "code": IAMPermissions.AUTH_MFA_MANAGE,
             "name": "Gérer l'authentification 2FA",
             "description": "Permet d'activer/désactiver la double authentification",
             "resource": "auth",
@@ -89,7 +89,7 @@ async def initialize_candidat_iam():
         },
         {
             "id": str(uuid.uuid4()),
-            "code": "security.email_domains.read",
+            "code": IAMPermissions.SECURITY_EMAIL_DOMAINS_READ,
             "name": "Lire les domaines email",
             "description": "Permet de consulter les domaines email autorisés",
             "resource": "security",
@@ -101,7 +101,7 @@ async def initialize_candidat_iam():
         },
         {
             "id": str(uuid.uuid4()),
-            "code": "security.email_domains.manage",
+            "code": IAMPermissions.SECURITY_EMAIL_DOMAINS_MANAGE,
             "name": "Gérer les domaines email",
             "description": "Permet d'ajouter/modifier/supprimer des domaines email autorisés",
             "resource": "security",
