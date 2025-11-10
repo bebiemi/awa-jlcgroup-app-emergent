@@ -475,7 +475,8 @@ def test_validations_list():
         log_test("Validations List", "FAIL", "Could not retrieve validations")
         return False
 
-def test_registration_with_email_validation():
+
+def run_critical_authentication_tests():
     """Test registration system with automatic email validation"""
     print(f"\n{Colors.BOLD}=== Testing Registration with Email Validation ==={Colors.ENDC}")
     
