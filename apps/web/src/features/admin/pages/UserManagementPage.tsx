@@ -311,6 +311,13 @@ export default function UserManagementPage() {
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                         <div className="flex justify-end gap-2">
                           <button
+                            onClick={() => handleViewDetails(user)}
+                            className="p-2 text-jlc-purple-600 hover:bg-jlc-purple-50 rounded-lg transition-colors"
+                            title="Voir détails"
+                          >
+                            <EyeIcon className="h-5 w-5" />
+                          </button>
+                          <button
                             onClick={() => handleEdit(user)}
                             className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                             title="Modifier"
