@@ -176,12 +176,60 @@ export default function RegisterPage() {
             Créer un compte
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            Inscription simple et rapide pour accéder aux offres
+            Choisissez votre type de compte
           </p>
         </div>
 
-        {/* Form */}
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+        {/* Account Type Selection */}
+        {!accountType ? (
+          <div className="space-y-4">
+            <button
+              onClick={() => setAccountType('candidat')}
+              className="w-full p-6 border-2 border-gray-200 rounded-lg hover:border-jlc-purple-500 hover:bg-jlc-purple-50 transition-all text-left group"
+            >
+              <div className="flex items-start gap-4">
+                <div className="text-4xl">👤</div>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 group-hover:text-jlc-purple-700">
+                    Candidat
+                  </h3>
+                  <p className="text-sm text-gray-600 mt-1">
+                    Je cherche des missions d'intérim (devient intérimaire après signature du contrat)
+                  </p>
+                </div>
+              </div>
+            </button>
+
+            <button
+              onClick={() => setAccountType('company')}
+              className="w-full p-6 border-2 border-gray-200 rounded-lg hover:border-jlc-purple-500 hover:bg-jlc-purple-50 transition-all text-left group"
+            >
+              <div className="flex items-start gap-4">
+                <div className="text-4xl">🏢</div>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 group-hover:text-jlc-purple-700">
+                    Entreprise
+                  </h3>
+                  <p className="text-sm text-gray-600 mt-1">
+                    Je cherche à recruter des intérimaires
+                  </p>
+                </div>
+              </div>
+            </button>
+
+            <div className="text-center pt-4">
+              <p className="text-sm text-gray-600">
+                Vous avez déjà un compte ?{' '}
+                <Link
+                  to="/login"
+                  className="font-medium text-jlc-purple-600 hover:text-jlc-purple-500"
+                >
+                  Se connecter
+                </Link>
+              </p>
+            </div>
+          </div>
+        ) : (
           <div className="rounded-md shadow-sm space-y-4">
             {/* Username */}
             <div>
