@@ -374,41 +374,54 @@ export default function UserManagementPage() {
                           >
                             <EyeIcon className="h-5 w-5" />
                           </button>
-                          <button
-                            onClick={() => handleEdit(user)}
-                            className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                            title="Modifier"
-                          >
-                            <PencilIcon className="h-5 w-5" />
-                          </button>
-                          <button
-                            onClick={() => handleBlock(user)}
-                            className={`p-2 rounded-lg transition-colors ${
-                              user.status === 'suspended'
-                                ? 'text-green-600 hover:bg-green-50'
-                                : 'text-orange-600 hover:bg-orange-50'
-                            }`}
-                            title={user.status === 'suspended' ? 'Débloquer' : 'Bloquer'}
-                          >
-                            <NoSymbolIcon className="h-5 w-5" />
-                          </button>
-                          <button
-                            onClick={() => {
-                              setSelectedUser(user)
-                              setShowResetMfaModal(true)
-                            }}
-                            className="p-2 text-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
-                            title="Réinitialiser MFA"
-                          >
-                            <ShieldExclamationIcon className="h-5 w-5" />
-                          </button>
-                          <button
-                            onClick={() => handleDelete(user)}
-                            className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                            title="Supprimer"
-                          >
-                            <TrashIcon className="h-5 w-5" />
-                          </button>
+                          {viewMode === 'active' && (
+                            <>
+                              <button
+                                onClick={() => handleEdit(user)}
+                                className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                                title="Modifier"
+                              >
+                                <PencilIcon className="h-5 w-5" />
+                              </button>
+                              <button
+                                onClick={() => handleBlock(user)}
+                                className={`p-2 rounded-lg transition-colors ${
+                                  user.status === 'suspended'
+                                    ? 'text-green-600 hover:bg-green-50'
+                                    : 'text-orange-600 hover:bg-orange-50'
+                                }`}
+                                title={user.status === 'suspended' ? 'Débloquer' : 'Bloquer'}
+                              >
+                                <NoSymbolIcon className="h-5 w-5" />
+                              </button>
+                              <button
+                                onClick={() => {
+                                  setSelectedUser(user)
+                                  setShowResetMfaModal(true)
+                                }}
+                                className="p-2 text-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
+                                title="Réinitialiser MFA"
+                              >
+                                <ShieldExclamationIcon className="h-5 w-5" />
+                              </button>
+                              <button
+                                onClick={() => handleArchive(user)}
+                                className="p-2 text-orange-600 hover:bg-orange-50 rounded-lg transition-colors"
+                                title="Archiver"
+                              >
+                                <ArchiveBoxIcon className="h-5 w-5" />
+                              </button>
+                            </>
+                          )}
+                          {viewMode === 'archived' && (
+                            <button
+                              onClick={() => handleRestore(user)}
+                              className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+                              title="Restaurer"
+                            >
+                              <ArrowPathIcon className="h-5 w-5" />
+                            </button>
+                          )}
                         </div>
                       </td>
                     </tr>
