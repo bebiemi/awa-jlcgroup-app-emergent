@@ -499,21 +499,40 @@ export default function RegisterPage() {
                 "S'inscrire"
               )}
             </button>
-          </div>
+            </div>
 
-          {/* Login Link */}
-          <div className="text-center">
-            <p className="text-sm text-gray-600">
-              Vous avez déjà un compte ?{' '}
-              <Link
-                to="/login"
-                className="font-medium text-jlc-purple-600 hover:text-jlc-purple-500"
+            {/* Submit Button */}
+            <div>
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-jlc-purple-600 hover:bg-jlc-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-jlc-purple-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
-                Se connecter
-              </Link>
-            </p>
-          </div>
-        </form>
+                {isLoading ? (
+                  <>
+                    <ArrowPathIcon className="animate-spin h-5 w-5 mr-2" />
+                    Inscription en cours...
+                  </>
+                ) : (
+                  "S'inscrire"
+                )}
+              </button>
+            </div>
+
+            {/* Login Link */}
+            <div className="text-center">
+              <p className="text-sm text-gray-600">
+                Vous avez déjà un compte ?{' '}
+                <Link
+                  to="/login"
+                  className="font-medium text-jlc-purple-600 hover:text-jlc-purple-500"
+                >
+                  Se connecter
+                </Link>
+              </p>
+            </div>
+          </form>
+        )}
       </div>
     </div>
   )
