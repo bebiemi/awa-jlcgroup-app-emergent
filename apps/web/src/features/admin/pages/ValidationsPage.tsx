@@ -301,14 +301,14 @@ export default function ValidationsPage() {
           <div className="border-b border-gray-200">
             <nav className="-mb-px flex space-x-8 px-6" aria-label="Tabs">
               <button
-                onClick={() => setActiveTab('interim')}
+                onClick={() => setActiveTab('candidat')}
                 className={`py-4 px-1 border-b-2 font-medium text-sm ${
-                  activeTab === 'interim'
+                  activeTab === 'candidat'
                     ? 'border-jlc-purple-600 text-jlc-purple-600'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 }`}
               >
-                Intérimaires ({stats?.pending_interim || 0})
+                Candidats ({stats?.pending_candidat || stats?.pending_interim || 0})
               </button>
               <button
                 onClick={() => setActiveTab('company')}
