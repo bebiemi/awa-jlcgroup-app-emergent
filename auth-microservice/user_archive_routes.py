@@ -168,11 +168,14 @@ async def restore_user(
         raise HTTPException(status_code=500, detail="Failed to restore user")
     
     # Log audit event
+    actor_id = current_user.get("id") if isinstance(current_user, dict) else current_user.id
+    actor_username = current_user.get("username") if isinstance(current_user, dict) else getattr(current_user, "username", None)
+    
     await db.audit_events.insert_one({
         "id": str(uuid.uuid4()),
         "action": "user.restore",
-        "actor_id": current_user["id"],
-        "actor_username": current_user.get("username"),
+        "actor_id": actor_id,
+        "actor_username": actor_username,
         "target_type": "user",
         "target_id": user_id,
         "payload": {
@@ -184,7 +187,7 @@ async def restore_user(
         "user_agent": None
     })
     
-    logger.info(f"User {user_id} restored by {current_user['id']}")
+    logger.info(f"User {user_id} restored by {actor_id}")
     
     return RestoreUserResponse(
         user_id=user_id,
