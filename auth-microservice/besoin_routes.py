@@ -681,7 +681,19 @@ async def add_comment(
         metadata={"author_type": author_type}
     )
     
-    # TODO: Send notification to other party
+    # Send notification to other party
+    notification_service = NotificationService(db)
+    recipients = ["entreprise", "responsable_besoin"] if author_type == "jlc" else ["jlc_team"]
+    
+    await notification_service.send_besoin_notification(
+        event_type="comment_added",
+        besoin_id=besoin_id,
+        besoin_titre=besoin["titre"],
+        entreprise_name=besoin["entreprise_name"],
+        recipients=recipients,
+        actor_name=user_name,
+        additional_data={"comment": comment.content}
+    )
     
     comment_doc.pop("_id", None)
     return CommentResponse(**comment_doc)
