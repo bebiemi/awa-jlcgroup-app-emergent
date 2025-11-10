@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Critical Authentication Issue Testing
-Tests the authentication issue where users get 401 Unauthorized errors when trying to log in immediately after registration.
+Country Configuration and User Data Retention Configuration Testing
+Tests the new Country Configuration system and User Data Retention Configuration system
 """
 
 import requests
@@ -17,7 +17,7 @@ from pymongo import MongoClient
 
 # Test configuration
 AUTH_BASE_URL = "http://localhost:8000/api"  # Direct auth service URL
-API_BASE_URL = "http://localhost:8001/api"   # JLC API service URL
+API_BASE_URL = "http://localhost:8001/api"   # JLC API service URL (for proxy routes)
 FRONTEND_PROXY_URL = "http://localhost:3000/auth-api"  # Through Vite proxy
 
 # Global variable to store test data
