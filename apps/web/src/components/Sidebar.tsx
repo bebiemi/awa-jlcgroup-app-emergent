@@ -26,6 +26,7 @@ import {
   EnvelopeIcon,
   InboxIcon,
   DocumentTextIcon,
+  GlobeAltIcon,
 } from '@heroicons/react/24/outline'
 
 interface NavSection {
