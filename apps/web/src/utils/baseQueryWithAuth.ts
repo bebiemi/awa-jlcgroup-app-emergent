@@ -6,13 +6,13 @@ import { logoutAction } from '@/features/auth/slices/authSlice'
  * Base query with automatic 401 handling
  * Logs out user and redirects to login on authentication failure
  */
-export const createBaseQueryWithAuth = (baseUrl: string): BaseQueryFn<
+export const createBaseQueryWithAuth = (baseUrl?: string): BaseQueryFn<
   string | FetchArgs,
   unknown,
   FetchBaseQueryError
 > => {
   const baseQuery = fetchBaseQuery({
-    baseUrl,
+    baseUrl: baseUrl || undefined,
     prepareHeaders: (headers) => {
       const token = localStorage.getItem('access_token')
       if (token) {
