@@ -257,6 +257,30 @@ backend:
         agent: "main"
         comment: "MIGRATION COMPLÈTE (80%): 9/15 fichiers routes migrés vers système IAM. Total: ~65+ endpoints migrés. Base de données: 90 permissions, 7 profils système, 5 groupes système."
 
+  - task: "Country Configuration System"
+    implemented: true
+    working: true
+    file: "/app/auth-microservice/country_config_routes.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ COUNTRY CONFIGURATION SYSTEM COMPREHENSIVE TESTING COMPLETED: All country configuration tests passed (100% success rate). Key features verified: 1) Default countries initialization working correctly (Gabon, France, Cameroun, Congo), 2) Country listing and details retrieval working, 3) Default country management working (France set as default, only one default allowed), 4) City CRUD operations working correctly (create, list, search, delete), 5) City search functionality working ('Libre' search returns only Libreville), 6) Authentication and authorization working properly (public endpoints accessible, protected endpoints require admin auth), 7) All validation working correctly (duplicate city names rejected, proper error messages). Routes registered at /api/config/countries with proper authentication via IAM permissions. System ready for production use."
+
+  - task: "User Data Retention Configuration System"
+    implemented: true
+    working: true
+    file: "/app/auth-microservice/user_archive_routes.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ USER DATA RETENTION CONFIGURATION SYSTEM COMPREHENSIVE TESTING COMPLETED: All retention configuration tests passed (100% success rate). Key features verified: 1) Get current retention configuration working (90 days from YAML config, source: yaml, can_override: true), 2) Update retention period working correctly (30 days, then 180 days), database override working properly (source changes to 'database'), 3) Validation working correctly (0 days rejected with 'must be at least 1', 400 days rejected with 'cannot exceed 365'), 4) Authentication working properly (401 for unauthenticated requests), 5) Configuration persistence working (values stored in app_settings collection), 6) Audit logging working for configuration changes. Routes registered at /api/iam/users/config/retention with proper authentication via IAM permissions. System ready for production use."
+
 
 frontend:
   - task: "IAM Frontend Integration"
