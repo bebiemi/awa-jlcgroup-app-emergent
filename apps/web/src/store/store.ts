@@ -33,6 +33,7 @@ export const store = configureStore({
     [notificationApi.reducerPath]: notificationApi.reducer,
     [adminApi.reducerPath]: adminApi.reducer,
     [usersApi.reducerPath]: usersApi.reducer,
+    [userDetailsApi.reducerPath]: userDetailsApi.reducer,
     [securityApi.reducerPath]: securityApi.reducer,
     [locationsApi.reducerPath]: locationsApi.reducer,
     [locationApi.reducerPath]: locationApi.reducer,
@@ -57,6 +58,7 @@ export const store = configureStore({
       .concat(notificationApi.middleware)
       .concat(adminApi.middleware)
       .concat(usersApi.middleware)
+      .concat(userDetailsApi.middleware)
       .concat(securityApi.middleware)
       .concat(locationsApi.middleware)
       .concat(locationApi.middleware)
