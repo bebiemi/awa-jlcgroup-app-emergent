@@ -357,6 +357,14 @@ function App() {
           </ProtectedRoute>
         }
       />
+      <Route
+        path="/admin/security/email-domains"
+        element={
+          <ProtectedRoute requiredPermissions={['security.email_domains.read']}>
+            <EmailDomainsPage />
+          </ProtectedRoute>
+        }
+      />
 
       {/* Dashboard redirect for authenticated users */}
       <Route
