@@ -88,7 +88,7 @@ export interface ProfileAssignment {
 
 export const userDetailsApi = createApi({
   reducerPath: 'userDetailsApi',
-  baseQuery: baseQueryWithAuth,
+  baseQuery: baseQueryWithAuthService,
   tagTypes: ['UserDetail', 'UserDocuments', 'UserGroups', 'UserProfiles', 'UserActivity'],
   endpoints: (builder) => ({
     // Get User Detail
