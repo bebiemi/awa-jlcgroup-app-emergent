@@ -34,7 +34,11 @@ async def get_current_user_info(current_user: dict) -> tuple:
     """Extract user info from current_user dict"""
     user_id = current_user.get("id") if isinstance(current_user, dict) else current_user.id
     user_name = current_user.get("full_name") or current_user.get("username") if isinstance(current_user, dict) else getattr(current_user, "full_name", current_user.username)
-    user_role = current_user.get("roles", [])[0] if isinstance(current_user, dict) and current_user.get("roles") else "user"
+    if isinstance(current_user, dict):
+        user_role = current_user.get("roles", [])[0] if current_user.get("roles") else "user"
+    else:
+        # For User objects, get roles from the roles attribute
+        user_role = current_user.roles[0] if current_user.roles else "user"
     return user_id, user_name, user_role
 
 
