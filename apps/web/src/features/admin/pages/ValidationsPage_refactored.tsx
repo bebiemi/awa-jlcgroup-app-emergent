@@ -1,0 +1,516 @@
+import { useState } from 'react'
+import Layout from '@/components/Layout'
+import Modal from '@/components/Modal'
+import ActionButton, { ActionButtonGroup } from '@/components/ActionButton'
+import {
+  useGetValidationsQuery,
+  useGetValidationStatsQuery,
+  useApproveValidationMutation,
+  useRejectValidationMutation,
+  useAddCountryFromValidationMutation,
+  useAssignValidationMutation,
+  type Validation,
+} from '../api/validationApi'
+import { useGetUsersQuery } from '../api/usersApi'
+import { useReferences } from '@/hooks/useReferences'
+import {
+  CheckCircleIcon,
+  XCircleIcon,
+  ExclamationTriangleIcon,
+  ClockIcon,
+  MapPinIcon,
+  UserIcon,
+  BuildingOfficeIcon,
+  UserPlusIcon,
+} from '@heroicons/react/24/outline'
+import toast from 'react-hot-toast'
+import { ValidationTypes, UserRoles, getRoleLabel } from '@/constants/iamConstants'
+
+type TabType = 'candidat' | 'company' | 'collaborator'
+
+export default function ValidationsPage() {
+  // Charger les référentiels de configuration
+  const { data: validationTypes = [] } = useReferences('validation_types')
+  const { data: validationStatuses = [] } = useReferences('validation_statuses')
+  
+  const validationTypesConfig = {
+    candidat: validationTypes.find(vt => vt.code === ValidationTypes.CANDIDAT)?.code || ValidationTypes.CANDIDAT,
+    interim: validationTypes.find(vt => vt.code === ValidationTypes.INTERIM)?.code || ValidationTypes.INTERIM,
+    company: validationTypes.find(vt => vt.code === ValidationTypes.COMPANY)?.code || ValidationTypes.COMPANY,
+    collaborator: validationTypes.find(vt => vt.code === ValidationTypes.COLLABORATEUR)?.code || ValidationTypes.COLLABORATEUR
+  }
+  
+  const validationStatusesConfig = {
+    pending: validationStatuses.find(vs => vs.code === 'pending')?.code || 'pending',
+    approved: validationStatuses.find(vs => vs.code === 'approved')?.code || 'approved',
+    rejected: validationStatuses.find(vs => vs.code === 'rejected')?.code || 'rejected'
+  }
+  
+  const [activeTab, setActiveTab] = useState<TabType>('candidat')
+  const [statusFilter, setStatusFilter] = useState<string>(validationStatusesConfig.pending)
+  const [selectedValidation, setSelectedValidation] = useState<Validation | null>(null)
+  const [showRejectModal, setShowRejectModal] = useState(false)
+  const [showAssignModal, setShowAssignModal] = useState(false)
+  const [showBulkActionsModal, setShowBulkActionsModal] = useState(false)
+  const [bulkActionType, setBulkActionType] = useState<'all' | 'candidat' | 'interim' | 'company' | 'collaborator' | 'warnings'>('all')
+  const [rejectionReason, setRejectionReason] = useState('')
+  const [selectedValidator, setSelectedValidator] = useState('')
+  const [selectedValidations, setSelectedValidations] = useState<string[]>([])
+
+  const handleTileClick = (type: 'all' | 'candidat' | 'interim' | 'company' | 'collaborator' | 'warnings') => {
+    // Filter validations based on tile clicked
+    let filtered = validations
+    if (type === 'candidat') {
+      filtered = validations.filter((v: Validation) => v.validation_type === validationTypesConfig.candidat && v.status === validationStatusesConfig.pending)
+    } else if (type === 'interim') {
+      filtered = validations.filter((v: Validation) => v.validation_type === validationTypesConfig.interim && v.status === validationStatusesConfig.pending)
+    } else if (type === 'company') {
+      filtered = validations.filter((v: Validation) => v.validation_type === validationTypesConfig.company && v.status === validationStatusesConfig.pending)
+    } else if (type === 'collaborator') {
+      filtered = validations.filter((v: Validation) => v.validation_type === validationTypesConfig.collaborator && v.status === validationStatusesConfig.pending)
+    } else if (type === 'warnings') {
+      filtered = validations.filter((v: Validation) => v.has_location_warning && v.status === validationStatusesConfig.pending)
+    } else {
+      filtered = validations.filter((v: Validation) => v.status === validationStatusesConfig.pending)
+    }
+    
+    // Don't open modal if no validations
+    if (filtered.length === 0) {
+      toast.info('Aucune validation disponible pour cette catégorie')
+      return
+    }
+    
+    setBulkActionType(type)
+    setSelectedValidations(filtered.map((v: Validation) => v.id))
+    setShowBulkActionsModal(true)
+  }
+
+  const { data: stats } = useGetValidationStatsQuery()
+  const { data: validations = [], isLoading, refetch } = useGetValidationsQuery({
+    validation_type: activeTab,
+    status: statusFilter,
+    page: 1,
+    page_size: 50,
+  })
+
+  // Fetch validators (admins and commercials)
+  const { data: usersData } = useGetUsersQuery({ page: 1, page_size: 200 })
+  
+  // Filter validators based on validation type
+  const getFilteredValidators = () => {
+    const allUsers = usersData?.users || []
+    
+    // For interim and company, show all admins and commercials
+    return allUsers.filter(user =>
+      user.roles.includes(UserRoles.ADMIN) ||
+      user.roles.includes(UserRoles.SUPER_ADMIN) ||
+      user.roles.includes('commercial')
+    )
+  }
+
+  const validators = getFilteredValidators()
+
+  const [approveValidation] = useApproveValidationMutation()
+  const [rejectValidation] = useRejectValidationMutation()
+  const [addCountryFromValidation] = useAddCountryFromValidationMutation()
+  const [assignValidation] = useAssignValidationMutation()
+
+  const handleApprove = async (validation: Validation) => {
+    try {
+      await approveValidation(validation.id).unwrap()
+      toast.success('Validation approuvée avec succès')
+      refetch()
+    } catch (error: any) {
+      toast.error(error?.data?.detail || 'Erreur lors de l\'approbation')
+    }
+  }
+
+  const handleReject = async () => {
+    if (!selectedValidation || !rejectionReason.trim()) {
+      toast.error('Veuillez fournir une raison du rejet')
+      return
+    }
+
+    try {
+      await rejectValidation({
+        id: selectedValidation.id,
+        reason: rejectionReason,
+      }).unwrap()
+      toast.success('Validation rejetée')
+      setShowRejectModal(false)
+      setRejectionReason('')
+      setSelectedValidation(null)
+      refetch()
+    } catch (error: any) {
+      toast.error(error?.data?.detail || 'Erreur lors du rejet')
+    }
+  }
+
+  const handleAddCountry = async (validation: Validation) => {
+    try {
+      await addCountryFromValidation(validation.id).unwrap()
+      toast.success('Pays ajouté à la liste')
+      refetch()
+    } catch (error: any) {
+      toast.error(error?.data?.detail || 'Erreur lors de l\'ajout du pays')
+    }
+  }
+
+  const handleAssign = async () => {
+    if (!selectedValidation || !selectedValidator) {
+      toast.error('Veuillez sélectionner un validateur')
+      return
+    }
+
+    try {
+      await assignValidation({
+        id: selectedValidation.id,
+        validator_id: selectedValidator,
+      }).unwrap()
+      toast.success('Validateur assigné')
+      setShowAssignModal(false)
+      setSelectedValidator('')
+      setSelectedValidation(null)
+      refetch()
+    } catch (error: any) {
+      toast.error(error?.data?.detail || 'Erreur lors de l\'assignation')
+    }
+  }
+
+  const getValidationTypeLabel = (type: string) => {
+    const labels: Record<string, string> = {
+      [ValidationTypes.CANDIDAT]: getRoleLabel(UserRoles.CANDIDAT),
+      [ValidationTypes.INTERIM]: getRoleLabel(UserRoles.INTERIM),
+      [ValidationTypes.COMPANY]: getRoleLabel(UserRoles.COMPANY),
+      [ValidationTypes.COLLABORATEUR]: getRoleLabel(UserRoles.COLLABORATEUR),
+    }
+    return labels[type] || type
+  }
+
+  return (
+    <Layout>
+      <div className="p-6">
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold text-gray-900">Validations</h1>
+          <p className="text-gray-600">Gérer les validations des comptes utilisateurs</p>
+        </div>
+
+        {/* Stats tiles */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          {/* Candidats Tile */}
+          <div
+            className="bg-white rounded-lg p-6 border border-gray-200 hover:border-blue-500 hover:shadow-md cursor-pointer transition-all"
+            onClick={() => handleTileClick('candidat')}
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600">Candidats</p>
+                <p className="text-2xl font-bold text-gray-900">{stats?.pending_candidat || stats?.pending_interim || 0}</p>
+              </div>
+              <UserIcon className="w-10 h-10 text-blue-500" />
+            </div>
+          </div>
+
+          {/* Companies Tile */}
+          <div
+            className="bg-white rounded-lg p-6 border border-gray-200 hover:border-indigo-500 hover:shadow-md cursor-pointer transition-all"
+            onClick={() => handleTileClick('company')}
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600">Entreprises</p>
+                <p className="text-2xl font-bold text-gray-900">{stats?.pending_company || 0}</p>
+              </div>
+              <BuildingOfficeIcon className="w-10 h-10 text-indigo-500" />
+            </div>
+          </div>
+
+          {/* Collaborators Tile */}
+          <div
+            className="bg-white rounded-lg p-6 border border-gray-200 hover:border-green-500 hover:shadow-md cursor-pointer transition-all"
+            onClick={() => handleTileClick('collaborator')}
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600">Collaborateurs</p>
+                <p className="text-2xl font-bold text-gray-900">{stats?.pending_collaborator || 0}</p>
+              </div>
+              <UserPlusIcon className="w-10 h-10 text-green-500" />
+            </div>
+          </div>
+
+          {/* Warnings Tile */}
+          <div
+            className="bg-white rounded-lg p-6 border border-gray-200 hover:border-yellow-500 hover:shadow-md cursor-pointer transition-all"
+            onClick={() => handleTileClick('warnings')}
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600">Avertissements</p>
+                <p className="text-2xl font-bold text-gray-900">{stats?.location_warnings || 0}</p>
+              </div>
+              <ExclamationTriangleIcon className="w-10 h-10 text-yellow-500" />
+            </div>
+          </div>
+        </div>
+
+        {/* Tabs */}
+        <div className="bg-white rounded-lg shadow">
+          <div className="border-b border-gray-200">
+            <nav className="flex space-x-4 px-6" aria-label="Tabs">
+              <button
+                onClick={() => setActiveTab('candidat')}
+                className={`
+                  ${activeTab === 'candidat'
+                    ? 'border-blue-500 text-blue-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+              >
+                Candidats ({stats?.pending_candidat || stats?.pending_interim || 0})
+              </button>
+              <button
+                onClick={() => setActiveTab('company')}
+                className={`
+                  ${activeTab === 'company'
+                    ? 'border-indigo-500 text-indigo-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+              >
+                Entreprises ({stats?.pending_company || 0})
+              </button>
+              <button
+                onClick={() => setActiveTab('collaborator')}
+                className={`
+                  ${activeTab === 'collaborator'
+                    ? 'border-green-500 text-green-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+              >
+                Collaborateurs ({stats?.pending_collaborator || 0})
+              </button>
+            </nav>
+          </div>
+
+          {/* Validations List */}
+          <div className="p-6">
+            {isLoading ? (
+              <div className="text-center py-12">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
+                <p className="mt-4 text-gray-500">Chargement...</p>
+              </div>
+            ) : validations.length === 0 ? (
+              <div className="text-center py-12">
+                <CheckCircleIcon className="mx-auto h-12 w-12 text-gray-400" />
+                <p className="mt-2 text-gray-500">Aucune validation en attente</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {validations.map((validation) => (
+                  <div key={validation.id} className="border border-gray-200 rounded-lg p-4 hover:border-blue-500 transition">
+                    <div className="flex items-center justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2">
+                          <h3 className="text-lg font-medium text-gray-900">{validation.full_name}</h3>
+                          <span className="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+                            {getValidationTypeLabel(validation.validation_type)}
+                          </span>
+                          {validation.validation_type === ValidationTypes.COLLABORATEUR && (
+                            <span className="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                              Collaborateur JLC
+                            </span>
+                          )}
+                          {validation.has_location_warning && (
+                            <ExclamationTriangleIcon className="w-5 h-5 text-yellow-500" />
+                          )}
+                        </div>
+                        <p className="text-sm text-gray-500">{validation.email}</p>
+                        {validation.phone && (
+                          <p className="text-sm text-gray-500">{validation.phone}</p>
+                        )}
+                        {validation.location && validation.location_label && (
+                          <div className="flex items-center gap-1 mt-1">
+                            <MapPinIcon className="w-4 h-4 text-gray-400" />
+                            <p className="text-sm text-gray-500">{validation.location_label}</p>
+                          </div>
+                        )}
+                      </div>
+                      <ActionButtonGroup>
+                        <ActionButton
+                          variant="success"
+                          onClick={() => handleApprove(validation)}
+                          tooltip="Approuver"
+                        >
+                          <CheckCircleIcon className="w-5 h-5" />
+                        </ActionButton>
+                        <ActionButton
+                          variant="danger"
+                          onClick={() => {
+                            setSelectedValidation(validation)
+                            setShowRejectModal(true)
+                          }}
+                          tooltip="Rejeter"
+                        >
+                          <XCircleIcon className="w-5 h-5" />
+                        </ActionButton>
+                        <ActionButton
+                          variant="primary"
+                          onClick={() => {
+                            setSelectedValidation(validation)
+                            setShowAssignModal(true)
+                          }}
+                          tooltip="Assigner un validateur"
+                        >
+                          <UserIcon className="w-5 h-5" />
+                        </ActionButton>
+                        {validation.has_location_warning && (
+                          <ActionButton
+                            variant="warning"
+                            onClick={() => handleAddCountry(validation)}
+                            tooltip="Ajouter le pays à la liste"
+                          >
+                            <MapPinIcon className="w-5 h-5" />
+                          </ActionButton>
+                        )}
+                      </ActionButtonGroup>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Reject Modal */}
+        <Modal
+          isOpen={showRejectModal}
+          onClose={() => {
+            setShowRejectModal(false)
+            setRejectionReason('')
+            setSelectedValidation(null)
+          }}
+          title="Rejeter la validation"
+        >
+          <div className="space-y-4">
+            <p className="text-sm text-gray-500">
+              Veuillez fournir une raison pour le rejet de cette validation.
+            </p>
+            <textarea
+              value={rejectionReason}
+              onChange={(e) => setRejectionReason(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+              rows={4}
+              placeholder="Raison du rejet..."
+            />
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => {
+                  setShowRejectModal(false)
+                  setRejectionReason('')
+                  setSelectedValidation(null)
+                }}
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
+              >
+                Annuler
+              </button>
+              <button
+                onClick={handleReject}
+                className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700"
+                disabled={!rejectionReason.trim()}
+              >
+                Rejeter
+              </button>
+            </div>
+          </div>
+        </Modal>
+
+        {/* Assign Validator Modal */}
+        <Modal
+          isOpen={showAssignModal}
+          onClose={() => {
+            setShowAssignModal(false)
+            setSelectedValidator('')
+            setSelectedValidation(null)
+          }}
+          title="Assigner un validateur"
+        >
+          <div className="space-y-4">
+            <p className="text-sm text-gray-500">
+              Sélectionnez un validateur pour cette demande.
+            </p>
+            {selectedValidation?.validation_type === ValidationTypes.COLLABORATEUR && (
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                <p className="text-sm text-blue-800">
+                  ℹ️ Pour les collaborateurs, seuls les membres des équipes RH et Commerciales peuvent valider.
+                </p>
+              </div>
+            )}
+            <select
+              value={selectedValidator}
+              onChange={(e) => setSelectedValidator(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="">Sélectionner un validateur</option>
+              {validators.map((validator) => (
+                <option key={validator.id} value={validator.id}>
+                  {validator.full_name || validator.username} ({getRoleLabel(validator.roles[0])})
+                </option>
+              ))}
+            </select>
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => {
+                  setShowAssignModal(false)
+                  setSelectedValidator('')
+                  setSelectedValidation(null)
+                }}
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
+              >
+                Annuler
+              </button>
+              <button
+                onClick={handleAssign}
+                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700"
+                disabled={!selectedValidator}
+              >
+                Assigner
+              </button>
+            </div>
+          </div>
+        </Modal>
+
+        {/* Bulk Actions Modal */}
+        <Modal
+          isOpen={showBulkActionsModal}
+          onClose={() => {
+            setShowBulkActionsModal(false)
+            setSelectedValidations([])
+          }}
+          title="Actions groupées"
+        >
+          <div className="space-y-4">
+            <p className="text-sm text-gray-500">
+              Vous avez sélectionné {selectedValidations.length} validation(s) de type {
+                bulkActionType === 'candidat' ? 'Candidats' :
+                bulkActionType === 'company' ? 'Entreprises' :
+                bulkActionType === 'collaborator' ? 'Collaborateurs' :
+                bulkActionType === 'warnings' ? 'Avertissements' :
+                'Toutes'
+              }.
+            </p>
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => {
+                  setShowBulkActionsModal(false)
+                  setSelectedValidations([])
+                }}
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
+              >
+                Annuler
+              </button>
+            </div>
+          </div>
+        </Modal>
+      </div>
+    </Layout>
+  )
+}
