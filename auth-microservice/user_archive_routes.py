@@ -77,7 +77,7 @@ async def archive_user(
     update_data = {
         "status": "archived",
         "archived_at": now,
-        "archived_by": current_user["id"],
+        "archived_by": current_user.get("id") if isinstance(current_user, dict) else current_user.id,
         "deletion_scheduled_at": deletion_date,
         "archive_reason": request.reason,
         "updated_at": now
