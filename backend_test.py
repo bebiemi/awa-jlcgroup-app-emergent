@@ -3945,9 +3945,10 @@ def run_authentication_fix_test():
     return test_results
 
 if __name__ == "__main__":
-    print(f"{Colors.BOLD}🚀 Starting Country Configuration and Retention Configuration Testing{Colors.ENDC}")
+    print(f"{Colors.BOLD}🚀 Starting Besoins System Testing - Phase 1{Colors.ENDC}")
     print(f"Testing Auth Service: {AUTH_BASE_URL}")
-    print(f"Testing JLC API Service: {API_BASE_URL}")
+    print(f"Admin Credentials: admin / awana2025")
+    print(f"Base URL: {AUTH_BASE_URL}/besoins")
     
     # Test auth service health first
     if not test_auth_service_health():
@@ -3958,26 +3959,28 @@ if __name__ == "__main__":
     all_tests_passed = True
     
     try:
-        # Run configuration tests
-        config_results = run_country_and_retention_tests()
+        # Run besoins tests
+        besoins_results = run_besoins_tests()
         
     except KeyboardInterrupt:
         print(f"\n{Colors.YELLOW}⚠️ Testing interrupted by user{Colors.ENDC}")
         sys.exit(1)
     except Exception as e:
         print(f"\n{Colors.RED}❌ Unexpected error during testing: {str(e)}{Colors.ENDC}")
+        import traceback
+        traceback.print_exc()
         all_tests_passed = False
     
     # Summary
-    print(f"\n{Colors.BOLD}📊 TESTING SUMMARY{Colors.ENDC}")
-    print("=" * 50)
+    print(f"\n{Colors.BOLD}📊 BESOINS TESTING SUMMARY{Colors.ENDC}")
+    print("=" * 80)
     
-    total_test_categories = len(config_results)
-    successful_categories = len([r for r in config_results if r["success"]])
+    total_test_categories = len(besoins_results)
+    successful_categories = len([r for r in besoins_results if r["success"]])
     
     print(f"Test Categories: {successful_categories}/{total_test_categories} passed")
     
-    for result in config_results:
+    for result in besoins_results:
         status = "✅ PASS" if result["success"] else "❌ FAIL"
         print(f"{status} {result['test']}")
         if not result["success"] and "error" in result:
@@ -3987,15 +3990,33 @@ if __name__ == "__main__":
     overall_success = successful_categories == total_test_categories
     
     if overall_success:
-        print(f"\n{Colors.GREEN}🎉 ALL CONFIGURATION TESTS PASSED!{Colors.ENDC}")
-        print(f"\n{Colors.BOLD}Key Results:{Colors.ENDC}")
-        print("✅ Country Configuration system working correctly")
-        print("✅ User Data Retention Configuration system working correctly")
-        print("✅ Authentication and authorization working properly")
-        print("✅ All CRUD operations for countries and cities functional")
-        print("✅ Retention period validation and updates working")
+        print(f"\n{Colors.GREEN}🎉 ALL BESOINS TESTS PASSED!{Colors.ENDC}")
+        print(f"\n{Colors.BOLD}Success Criteria Met:{Colors.ENDC}")
+        print("✅ All CRUD operations work")
+        print("✅ Workflow transitions are validated")
+        print("✅ Audit trail captures all actions")
+        print("✅ Comments system works")
+        print("✅ Mission conversion creates proper links")
+        print("✅ Permissions are enforced")
+        
+        if created_besoin_id:
+            print(f"\n{Colors.BOLD}Test Data Created:{Colors.ENDC}")
+            print(f"📋 Besoin ID: {created_besoin_id}")
+            if created_mission_id:
+                print(f"🎯 Mission ID: {created_mission_id}")
+            if created_comment_id:
+                print(f"💬 Comment ID: {created_comment_id}")
+        
         sys.exit(0)
     else:
-        print(f"\n{Colors.RED}❌ SOME CONFIGURATION TESTS FAILED{Colors.ENDC}")
+        print(f"\n{Colors.RED}❌ SOME BESOINS TESTS FAILED{Colors.ENDC}")
         print(f"{Colors.RED}Please review the failed tests above.{Colors.ENDC}")
+        
+        # Show which specific areas failed
+        failed_tests = [r for r in besoins_results if not r["success"]]
+        if failed_tests:
+            print(f"\n{Colors.BOLD}Failed Areas:{Colors.ENDC}")
+            for failed in failed_tests:
+                print(f"❌ {failed['test']}")
+        
         sys.exit(1)
