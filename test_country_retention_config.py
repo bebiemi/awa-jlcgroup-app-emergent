@@ -451,7 +451,7 @@ def test_retention_configuration_system():
     
     invalid_0_response = test_endpoint(
         "PUT",
-        f"{AUTH_BASE_URL}/iam/users/archive/config/retention?retention_days=0",
+        f"{AUTH_BASE_URL}/iam/users/config/retention?retention_days=0",
         headers=headers,
         expected_status=400,
         test_name="Invalid Value - 0 Days"
