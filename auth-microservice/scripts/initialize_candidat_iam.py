@@ -4,9 +4,15 @@ Creates groups, profiles, and permissions for the new candidat role
 """
 import asyncio
 import os
+import sys
+from pathlib import Path
 from motor.motor_asyncio import AsyncIOMotorClient
 from datetime import datetime
 import uuid
+
+# Add parent directory to path to import constants
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from awana_auth.core.iam_constants import IAMGroups, IAMProfiles, IAMPermissions
 
 
 async def initialize_candidat_iam():
