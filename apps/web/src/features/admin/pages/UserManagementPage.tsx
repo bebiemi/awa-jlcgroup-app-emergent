@@ -38,6 +38,7 @@ export default function UserManagementPage() {
   const [statusFilter, setStatusFilter] = useState<string>('')
   const [roleFilter, setRoleFilter] = useState<string>('')
   const [showFilters, setShowFilters] = useState(false)
+  const [viewMode, setViewMode] = useState<'active' | 'archived'>('active')
 
   // Modal states
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
@@ -48,6 +49,8 @@ export default function UserManagementPage() {
   const [showQuickAddModal, setShowQuickAddModal] = useState(false)
   const [showResetMfaModal, setShowResetMfaModal] = useState(false)
   const [showDetailModal, setShowDetailModal] = useState(false)
+  const [showArchiveModal, setShowArchiveModal] = useState(false)
+  const [showRestoreModal, setShowRestoreModal] = useState(false)
 
   // Fetch users with filters
   const { data, isLoading, isFetching } = useGetUsersQuery({
