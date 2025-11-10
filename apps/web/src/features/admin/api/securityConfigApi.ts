@@ -19,14 +19,14 @@ export const securityConfigApi = createApi({
   endpoints: (builder) => ({
     // Get retention configuration
     getRetentionConfig: builder.query<RetentionConfig, void>({
-      query: () => '/api/iam/users/archive/config/retention',
+      query: () => '/api/iam/users/config/retention',
       providesTags: ['RetentionConfig'],
     }),
 
     // Update retention configuration
     updateRetentionConfig: builder.mutation<{ message: string; retention_days: number }, number>({
       query: (retention_days) => ({
-        url: '/api/iam/users/archive/config/retention',
+        url: '/api/iam/users/config/retention',
         method: 'PUT',
         params: { retention_days },
       }),
