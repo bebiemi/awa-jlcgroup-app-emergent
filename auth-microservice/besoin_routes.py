@@ -209,7 +209,7 @@ async def list_besoins(
     
     if not is_jlc_user:
         # Company users can only see their own besoins
-        user_entreprise_id = current_user.get("entreprise_id")
+        user_entreprise_id = await get_user_entreprise_id(current_user, db, user_id, user_role)
         if not user_entreprise_id:
             return BesoinListResponse(items=[], total=0, page=page, page_size=page_size, total_pages=0)
         query["entreprise_id"] = user_entreprise_id
