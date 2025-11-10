@@ -350,11 +350,553 @@ async def update_besoin(
     return BesoinResponse(**updated_besoin)
 
 
-# ==================== TO BE CONTINUED ====================
-# Will add:
-# - UPDATE STATUS (workflow)
-# - SUBMIT BESOIN
-# - ADD COMMENT
-# - GET COMMENTS
-# - CONVERT TO MISSION (JLC only)
-# - JLC ANALYSIS UPDATE
+# ==================== SUBMIT BESOIN ====================
+
+@router.post("/{besoin_id}/submit", response_model=BesoinResponse)
+async def submit_besoin(
+    besoin_id: str,
+    db: AsyncIOMotorDatabase = Depends(get_database),
+    current_user: dict = Depends(require_permission(IAMPermissions.BESOINS_SUBMIT))
+):
+    """
+    Submit besoin to JLC for validation
+    Locks the besoin from further edits by company
+    """
+    user_id, user_name, user_role = await get_current_user_info(current_user)
+    
+    besoin = await db.besoins.find_one({"id": besoin_id})
+    if not besoin:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Besoin non trouvé"
+        )
+    
+    # Check ownership
+    is_jlc_user = "admin" in user_role.lower() or "jlc" in user_role.lower()
+    if not is_jlc_user:
+        user_entreprise_id = current_user.get("entreprise_id")
+        if besoin["entreprise_id"] != user_entreprise_id:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Accès non autorisé à ce besoin"
+            )
+    
+    # Check current status
+    if besoin["status"] != BesoinStatus.BROUILLON.value:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Seuls les besoins en brouillon peuvent être soumis"
+        )
+    
+    # Update status
+    now = datetime.now(timezone.utc)
+    new_status = BesoinStatus.SOUMIS
+    
+    # Add to status history
+    status_history = besoin.get("status_history", [])
+    status_history.append({
+        "from_status": besoin["status"],
+        "to_status": new_status.value,
+        "changed_by": user_id,
+        "changed_by_name": user_name,
+        "changed_at": now,
+        "comment": "Soumis à JLC pour validation"
+    })
+    
+    await db.besoins.update_one(
+        {"id": besoin_id},
+        {
+            "$set": {
+                "status": new_status.value,
+                "status_history": status_history,
+                "submitted_at": now,
+                "updated_at": now,
+            }
+        }
+    )
+    
+    # Log audit
+    audit_service = AuditService(db)
+    await audit_service.log_event(
+        action=AuditAction.BESOIN_SUBMITTED,
+        entity_type="besoin",
+        entity_id=besoin_id,
+        entity_label=besoin["titre"],
+        actor_id=user_id,
+        actor_name=user_name,
+        actor_role=user_role,
+        description=f"Besoin soumis à JLC: {besoin['titre']}",
+        severity=AuditSeverity.INFO,
+    )
+    
+    # TODO: Send notification to JLC team
+    
+    # Fetch updated besoin
+    updated_besoin = await db.besoins.find_one({"id": besoin_id})
+    updated_besoin.pop("_id", None)
+    
+    # Get responsable name
+    if updated_besoin.get("responsable_besoin_id"):
+        responsable = await db.users.find_one({"id": updated_besoin["responsable_besoin_id"]})
+        updated_besoin["responsable_besoin_name"] = responsable.get("full_name") or responsable.get("username") if responsable else None
+    
+    return BesoinResponse(**updated_besoin)
+
+
+# ==================== UPDATE STATUS (WORKFLOW) ====================
+
+@router.post("/{besoin_id}/status", response_model=BesoinResponse)
+async def update_besoin_status(
+    besoin_id: str,
+    status_update: BesoinStatusUpdate,
+    db: AsyncIOMotorDatabase = Depends(get_database),
+    current_user: dict = Depends(require_permission(IAMPermissions.BESOINS_VALIDATE))
+):
+    """
+    Update besoin status (JLC only)
+    Manages workflow transitions
+    """
+    user_id, user_name, user_role = await get_current_user_info(current_user)
+    
+    besoin = await db.besoins.find_one({"id": besoin_id})
+    if not besoin:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Besoin non trouvé"
+        )
+    
+    current_status = besoin["status"]
+    new_status = status_update.new_status
+    
+    # Validate status transition
+    valid_transitions = {
+        BesoinStatus.BROUILLON.value: [BesoinStatus.SOUMIS.value],
+        BesoinStatus.SOUMIS.value: [BesoinStatus.ANALYSE.value, BesoinStatus.BROUILLON.value],
+        BesoinStatus.ANALYSE.value: [BesoinStatus.MISSION_CREEE.value, BesoinStatus.SOUMIS.value],
+        BesoinStatus.MISSION_CREEE.value: [BesoinStatus.PUBLICATION.value],
+        BesoinStatus.PUBLICATION.value: [BesoinStatus.POURVU.value],
+        BesoinStatus.POURVU.value: [],  # Terminal state
+    }
+    
+    if new_status.value not in valid_transitions.get(current_status, []):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Transition de statut invalide: {current_status} → {new_status.value}"
+        )
+    
+    # Update status
+    now = datetime.now(timezone.utc)
+    
+    # Add to status history
+    status_history = besoin.get("status_history", [])
+    status_history.append({
+        "from_status": current_status,
+        "to_status": new_status.value,
+        "changed_by": user_id,
+        "changed_by_name": user_name,
+        "changed_at": now,
+        "comment": status_update.comment
+    })
+    
+    update_data = {
+        "status": new_status.value,
+        "status_history": status_history,
+        "updated_at": now,
+    }
+    
+    # Set closed_at if moving to POURVU
+    if new_status == BesoinStatus.POURVU:
+        update_data["closed_at"] = now
+    
+    await db.besoins.update_one(
+        {"id": besoin_id},
+        {"$set": update_data}
+    )
+    
+    # Log audit
+    audit_service = AuditService(db)
+    await audit_service.log_status_change(
+        entity_type="besoin",
+        entity_id=besoin_id,
+        entity_label=besoin["titre"],
+        from_status=current_status,
+        to_status=new_status.value,
+        actor_id=user_id,
+        actor_name=user_name,
+        actor_role=user_role,
+        comment=status_update.comment,
+    )
+    
+    # TODO: Send notification based on status change
+    
+    # Fetch updated besoin
+    updated_besoin = await db.besoins.find_one({"id": besoin_id})
+    updated_besoin.pop("_id", None)
+    
+    # Get responsable name
+    if updated_besoin.get("responsable_besoin_id"):
+        responsable = await db.users.find_one({"id": updated_besoin["responsable_besoin_id"]})
+        updated_besoin["responsable_besoin_name"] = responsable.get("full_name") or responsable.get("username") if responsable else None
+    
+    return BesoinResponse(**updated_besoin)
+
+
+# ==================== ADD COMMENT ====================
+
+@router.post("/{besoin_id}/comments", response_model=CommentResponse, status_code=status.HTTP_201_CREATED)
+async def add_comment(
+    besoin_id: str,
+    comment: CommentCreate,
+    db: AsyncIOMotorDatabase = Depends(get_database),
+    current_user: dict = Depends(require_permission(IAMPermissions.BESOINS_COMMENT))
+):
+    """
+    Add a comment to a besoin
+    Both company and JLC users can comment
+    """
+    user_id, user_name, user_role = await get_current_user_info(current_user)
+    
+    besoin = await db.besoins.find_one({"id": besoin_id})
+    if not besoin:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Besoin non trouvé"
+        )
+    
+    # Check access
+    is_jlc_user = "admin" in user_role.lower() or "jlc" in user_role.lower()
+    if not is_jlc_user:
+        user_entreprise_id = current_user.get("entreprise_id")
+        if besoin["entreprise_id"] != user_entreprise_id:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Accès non autorisé à ce besoin"
+            )
+    
+    # Determine author type
+    author_type = "jlc" if is_jlc_user else "entreprise"
+    
+    # Create comment
+    comment_id = str(uuid.uuid4())
+    now = datetime.now(timezone.utc)
+    
+    comment_doc = {
+        "id": comment_id,
+        "besoin_id": besoin_id,
+        "author_type": author_type,
+        "author_id": user_id,
+        "author_name": user_name,
+        "content": comment.content,
+        "created_at": now,
+        "updated_at": None,
+    }
+    
+    await db.besoin_comments.insert_one(comment_doc)
+    
+    # Increment comment count on besoin
+    await db.besoins.update_one(
+        {"id": besoin_id},
+        {"$inc": {"comments_count": 1}}
+    )
+    
+    # Log audit
+    audit_service = AuditService(db)
+    await audit_service.log_event(
+        action=AuditAction.BESOIN_COMMENT_ADDED,
+        entity_type="besoin",
+        entity_id=besoin_id,
+        entity_label=besoin["titre"],
+        actor_id=user_id,
+        actor_name=user_name,
+        actor_role=user_role,
+        description=f"Commentaire ajouté par {author_type}",
+        metadata={"author_type": author_type}
+    )
+    
+    # TODO: Send notification to other party
+    
+    comment_doc.pop("_id", None)
+    return CommentResponse(**comment_doc)
+
+
+# ==================== GET COMMENTS ====================
+
+@router.get("/{besoin_id}/comments", response_model=List[CommentResponse])
+async def get_comments(
+    besoin_id: str,
+    db: AsyncIOMotorDatabase = Depends(get_database),
+    current_user: dict = Depends(require_permission(IAMPermissions.BESOINS_READ))
+):
+    """
+    Get all comments for a besoin
+    Ordered by creation date
+    """
+    user_id, user_name, user_role = await get_current_user_info(current_user)
+    
+    besoin = await db.besoins.find_one({"id": besoin_id})
+    if not besoin:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Besoin non trouvé"
+        )
+    
+    # Check access
+    is_jlc_user = "admin" in user_role.lower() or "jlc" in user_role.lower()
+    if not is_jlc_user:
+        user_entreprise_id = current_user.get("entreprise_id")
+        if besoin["entreprise_id"] != user_entreprise_id:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Accès non autorisé à ce besoin"
+            )
+    
+    # Fetch comments
+    cursor = db.besoin_comments.find({"besoin_id": besoin_id}).sort("created_at", 1)
+    comments = await cursor.to_list(length=None)
+    
+    # Remove MongoDB _id
+    for comment in comments:
+        comment.pop("_id", None)
+    
+    return [CommentResponse(**c) for c in comments]
+
+
+# ==================== UPDATE JLC ANALYSIS ====================
+
+@router.patch("/{besoin_id}/jlc-analysis", response_model=BesoinResponse)
+async def update_jlc_analysis(
+    besoin_id: str,
+    analysis: BesoinJLCAnalysis,
+    db: AsyncIOMotorDatabase = Depends(get_database),
+    current_user: dict = Depends(require_permission(IAMPermissions.BESOINS_VALIDATE))
+):
+    """
+    Update JLC internal analysis (JLC only)
+    """
+    user_id, user_name, user_role = await get_current_user_info(current_user)
+    
+    besoin = await db.besoins.find_one({"id": besoin_id})
+    if not besoin:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Besoin non trouvé"
+        )
+    
+    # Prepare analysis data
+    analysis_data = analysis.dict(exclude_unset=True)
+    
+    await db.besoins.update_one(
+        {"id": besoin_id},
+        {
+            "$set": {
+                "jlc_analysis": analysis_data,
+                "updated_at": datetime.now(timezone.utc)
+            }
+        }
+    )
+    
+    # Log audit
+    audit_service = AuditService(db)
+    await audit_service.log_event(
+        action=AuditAction.BESOIN_ANALYSED,
+        entity_type="besoin",
+        entity_id=besoin_id,
+        entity_label=besoin["titre"],
+        actor_id=user_id,
+        actor_name=user_name,
+        actor_role=user_role,
+        description=f"Analyse JLC mise à jour pour: {besoin['titre']}",
+        metadata={"fields_updated": list(analysis_data.keys())}
+    )
+    
+    # Fetch updated besoin
+    updated_besoin = await db.besoins.find_one({"id": besoin_id})
+    updated_besoin.pop("_id", None)
+    
+    # Get responsable name
+    if updated_besoin.get("responsable_besoin_id"):
+        responsable = await db.users.find_one({"id": updated_besoin["responsable_besoin_id"]})
+        updated_besoin["responsable_besoin_name"] = responsable.get("full_name") or responsable.get("username") if responsable else None
+    
+    return BesoinResponse(**updated_besoin)
+
+
+# ==================== CONVERT TO MISSION ====================
+
+@router.post("/{besoin_id}/convert-to-mission", status_code=status.HTTP_201_CREATED)
+async def convert_to_mission(
+    besoin_id: str,
+    conversion_request: ConvertToMissionRequest,
+    db: AsyncIOMotorDatabase = Depends(get_database),
+    current_user: dict = Depends(require_permission(IAMPermissions.BESOINS_CONVERT_TO_MISSION))
+):
+    """
+    Convert besoin to mission (JLC only)
+    Creates a new mission linked to this besoin
+    """
+    user_id, user_name, user_role = await get_current_user_info(current_user)
+    
+    besoin = await db.besoins.find_one({"id": besoin_id})
+    if not besoin:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Besoin non trouvé"
+        )
+    
+    # Check status - should be in ANALYSE or later
+    if besoin["status"] not in [
+        BesoinStatus.ANALYSE.value,
+        BesoinStatus.MISSION_CREEE.value,
+        BesoinStatus.PUBLICATION.value
+    ]:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Le besoin doit être en cours d'analyse pour créer une mission"
+        )
+    
+    # Create mission
+    mission_id = str(uuid.uuid4())
+    now = datetime.now(timezone.utc)
+    
+    # Prepare mission data from besoin
+    mission_doc = {
+        "id": mission_id,
+        "besoin_id": besoin_id,  # Link to besoin
+        "entreprise_id": besoin["entreprise_id"],
+        "titre": conversion_request.mission_titre or besoin["titre"],
+        "description": conversion_request.mission_description or besoin["description"],
+        "type_poste": besoin["type_poste"],
+        "competences_requises": besoin["competences_attendues"],
+        "date_debut": besoin.get("date_debut_souhaitee"),
+        "date_fin": besoin.get("date_fin_souhaitee"),
+        "duree": besoin["duree"],
+        "statut": "brouillon",  # Mission starts as draft
+        "created_by": user_id,
+        "created_by_name": user_name,
+        "created_at": now,
+        "updated_at": now,
+        "internal_notes": conversion_request.internal_notes,
+    }
+    
+    # Copy custom fields if requested
+    if conversion_request.copy_all_fields:
+        mission_doc["custom_fields"] = besoin.get("custom_fields", {})
+    
+    # Insert mission
+    await db.missions.insert_one(mission_doc)
+    
+    # Update besoin with mission_id
+    await db.besoins.update_one(
+        {"id": besoin_id},
+        {
+            "$push": {"mission_ids": mission_id},
+            "$set": {
+                "status": BesoinStatus.MISSION_CREEE.value,
+                "updated_at": now
+            }
+        }
+    )
+    
+    # Add to besoin status history
+    status_history = besoin.get("status_history", [])
+    status_history.append({
+        "from_status": besoin["status"],
+        "to_status": BesoinStatus.MISSION_CREEE.value,
+        "changed_by": user_id,
+        "changed_by_name": user_name,
+        "changed_at": now,
+        "comment": f"Mission créée: {mission_id}"
+    })
+    
+    await db.besoins.update_one(
+        {"id": besoin_id},
+        {"$set": {"status_history": status_history}}
+    )
+    
+    # Log audit for besoin
+    audit_service = AuditService(db)
+    await audit_service.log_event(
+        action=AuditAction.BESOIN_CONVERTED,
+        entity_type="besoin",
+        entity_id=besoin_id,
+        entity_label=besoin["titre"],
+        actor_id=user_id,
+        actor_name=user_name,
+        actor_role=user_role,
+        description=f"Besoin converti en mission: {besoin['titre']}",
+        metadata={
+            "mission_id": mission_id,
+            "mission_titre": mission_doc["titre"]
+        }
+    )
+    
+    # Log audit for mission creation
+    await audit_service.log_event(
+        action=AuditAction.MISSION_CREATED,
+        entity_type="mission",
+        entity_id=mission_id,
+        entity_label=mission_doc["titre"],
+        actor_id=user_id,
+        actor_name=user_name,
+        actor_role=user_role,
+        description=f"Mission créée depuis besoin: {mission_doc['titre']}",
+        metadata={
+            "besoin_id": besoin_id,
+            "source": "besoin_conversion"
+        }
+    )
+    
+    # TODO: Send notification to company
+    
+    mission_doc.pop("_id", None)
+    return {
+        "message": "Mission créée avec succès",
+        "mission_id": mission_id,
+        "besoin_id": besoin_id,
+        "mission": mission_doc
+    }
+
+
+# ==================== GET AUDIT TRAIL ====================
+
+@router.get("/{besoin_id}/audit", response_model=dict)
+async def get_besoin_audit_trail(
+    besoin_id: str,
+    page: int = Query(1, ge=1),
+    page_size: int = Query(50, ge=1, le=100),
+    db: AsyncIOMotorDatabase = Depends(get_database),
+    current_user: dict = Depends(require_permission(IAMPermissions.BESOINS_READ))
+):
+    """
+    Get audit trail for a besoin
+    Complete history of all actions
+    """
+    user_id, user_name, user_role = await get_current_user_info(current_user)
+    
+    besoin = await db.besoins.find_one({"id": besoin_id})
+    if not besoin:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Besoin non trouvé"
+        )
+    
+    # Check access
+    is_jlc_user = "admin" in user_role.lower() or "jlc" in user_role.lower()
+    if not is_jlc_user:
+        user_entreprise_id = current_user.get("entreprise_id")
+        if besoin["entreprise_id"] != user_entreprise_id:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Accès non autorisé à ce besoin"
+            )
+    
+    # Get audit trail
+    audit_service = AuditService(db)
+    audit_trail = await audit_service.get_entity_audit_trail(
+        entity_type="besoin",
+        entity_id=besoin_id,
+        page=page,
+        page_size=page_size
+    )
+    
+    return audit_trail
