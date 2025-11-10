@@ -74,11 +74,11 @@ export default function LoginPage() {
         // Priority order: commercial > admin > interim > company > agency
         if (userRoles.includes('commercial')) {
           dashboardPath = '/commercial'
-        } else if (userRoles.includes('admin') || userRoles.includes('super_admin')) {
+        } else if (userRoles.includes(UserRoles.ADMIN) || userRoles.includes(UserRoles.SUPER_ADMIN)) {
           dashboardPath = '/admin'
-        } else if (userRoles.includes('interim')) {
+        } else if (userRoles.includes(UserRoles.INTERIM)) {
           dashboardPath = '/interimaire'
-        } else if (userRoles.includes('company')) {
+        } else if (userRoles.includes(UserRoles.COMPANY)) {
           dashboardPath = '/entreprise'
         } else if (userRoles.includes('agency')) {
           dashboardPath = '/agence'
