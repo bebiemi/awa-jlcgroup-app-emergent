@@ -19,9 +19,11 @@ async def initialize_candidat_iam():
     """Initialize IAM resources for candidat role"""
     
     # Connect to MongoDB
-    mongo_url = os.environ.get('MONGO_URL', 'mongodb://localhost:27017/jlc_interim')
+    mongo_url = os.environ.get('MONGO_URL', 'mongodb://localhost:27017/auth_db')
     client = AsyncIOMotorClient(mongo_url)
-    db = client.get_database()
+    # Extract database name from URL
+    db_name = mongo_url.split('/')[-1].split('?')[0]
+    db = client[db_name]
     
     print("🚀 Initializing Candidat IAM Resources...")
     
