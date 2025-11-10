@@ -92,11 +92,14 @@ async def archive_user(
         raise HTTPException(status_code=500, detail="Failed to archive user")
     
     # Log audit event
+    actor_id = current_user.get("id") if isinstance(current_user, dict) else current_user.id
+    actor_username = current_user.get("username") if isinstance(current_user, dict) else getattr(current_user, "username", None)
+    
     await db.audit_events.insert_one({
         "id": str(uuid.uuid4()),
         "action": "user.archive",
-        "actor_id": current_user["id"],
-        "actor_username": current_user.get("username"),
+        "actor_id": actor_id,
+        "actor_username": actor_username,
         "target_type": "user",
         "target_id": user_id,
         "payload": {
@@ -109,7 +112,7 @@ async def archive_user(
         "user_agent": None
     })
     
-    logger.info(f"User {user_id} archived by {current_user['id']}, scheduled for deletion on {deletion_date.date()}")
+    logger.info(f"User {user_id} archived by {actor_id}, scheduled for deletion on {deletion_date.date()}")
     
     return ArchiveUserResponse(
         user_id=user_id,
