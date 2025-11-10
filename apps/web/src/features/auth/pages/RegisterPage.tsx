@@ -191,7 +191,7 @@ export default function RegisterPage() {
         {!accountType ? (
           <div className="space-y-4">
             <button
-              onClick={() => setAccountType('candidat')}
+              onClick={() => setAccountType(ValidationTypes.CANDIDAT as 'candidat')}
               className="w-full p-6 border-2 border-gray-200 rounded-lg hover:border-jlc-purple-500 hover:bg-jlc-purple-50 transition-all text-left group"
             >
               <div className="flex items-start gap-4">
@@ -208,7 +208,7 @@ export default function RegisterPage() {
             </button>
 
             <button
-              onClick={() => setAccountType('company')}
+              onClick={() => setAccountType(ValidationTypes.COMPANY as 'company')}
               className="w-full p-6 border-2 border-gray-200 rounded-lg hover:border-jlc-purple-500 hover:bg-jlc-purple-50 transition-all text-left group"
             >
               <div className="flex items-start gap-4">
