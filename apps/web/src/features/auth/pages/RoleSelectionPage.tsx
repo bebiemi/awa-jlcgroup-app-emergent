@@ -4,6 +4,7 @@ import { useAppDispatch } from '@/store/hooks'
 import { setCredentials } from '../slices/authSlice'
 import toast from 'react-hot-toast'
 import { ArrowPathIcon } from '@heroicons/react/24/outline'
+import { UserRoles } from '@/constants/iamConstants'
 
 type UserRole = 'interim' | 'company'
 
