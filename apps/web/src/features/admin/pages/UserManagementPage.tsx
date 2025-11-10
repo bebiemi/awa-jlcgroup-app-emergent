@@ -86,6 +86,20 @@ export default function UserManagementPage() {
     setShowBlockModal(true)
   }
 
+  const handleArchive = (user: User) => {
+    setSelectedUser(user)
+    setShowArchiveModal(true)
+  }
+
+  const handleRestore = (user: User) => {
+    setSelectedUser(user)
+    setShowRestoreModal(true)
+  }
+
+  const handleModalSuccess = () => {
+    refetch()
+  }
+
   const getStatusBadge = (status: string) => {
     const statusConfig = {
       active: {
