@@ -281,6 +281,18 @@ backend:
         agent: "testing"
         comment: "✅ USER DATA RETENTION CONFIGURATION SYSTEM COMPREHENSIVE TESTING COMPLETED: All retention configuration tests passed (100% success rate). Key features verified: 1) Get current retention configuration working (90 days from YAML config, source: yaml, can_override: true), 2) Update retention period working correctly (30 days, then 180 days), database override working properly (source changes to 'database'), 3) Validation working correctly (0 days rejected with 'must be at least 1', 400 days rejected with 'cannot exceed 365'), 4) Authentication working properly (401 for unauthenticated requests), 5) Configuration persistence working (values stored in app_settings collection), 6) Audit logging working for configuration changes. Routes registered at /api/iam/users/config/retention with proper authentication via IAM permissions. System ready for production use."
 
+  - task: "Besoins System - Phase 1"
+    implemented: true
+    working: true
+    file: "/app/auth-microservice/besoin_routes.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ BESOINS SYSTEM COMPREHENSIVE TESTING COMPLETED - PHASE 1: All 13 test categories passed (100% success rate). Complete hiring needs management system tested and working. Key features verified: 1) CREATE BESOIN (POST /api/besoins) - Creates besoins with proper validation, auto-creates test entreprise for admin users, initial status 'brouillon', 2) LIST BESOINS (GET /api/besoins) - Paginated listing working, company users see only their besoins, JLC users see all, 3) GET SINGLE BESOIN (GET /api/besoins/{id}) - Retrieves individual besoins with all fields and status history, 4) UPDATE BESOIN (PATCH /api/besoins/{id}) - Updates only in 'brouillon' status, proper validation and ownership checks, 5) SUBMIT BESOIN (POST /api/besoins/{id}/submit) - Changes status brouillon→soumis, locks editing for company, 6) UPDATE STATUS (POST /api/besoins/{id}/status) - JLC workflow management with valid transitions (soumis→analyse→mission_creee), invalid transitions correctly rejected, 7) ADD COMMENT (POST /api/besoins/{id}/comments) - Comments system working, proper author_type detection (jlc/entreprise), 8) GET COMMENTS (GET /api/besoins/{id}/comments) - Retrieves all comments ordered by creation date, 9) UPDATE JLC ANALYSIS (PATCH /api/besoins/{id}/jlc-analysis) - Internal JLC analysis fields (observations, budget, priority) working correctly, 10) CONVERT TO MISSION (POST /api/besoins/{id}/convert-to-mission) - Creates linked mission, updates besoin status to 'mission_creee', proper bidirectional linking, 11) GET AUDIT TRAIL (GET /api/besoins/{id}/audit) - Complete audit history with 7 audit entries captured, 12) Workflow Validation - Status transition validation working, submitted besoins correctly blocked from updates, 13) Permissions and Access - Authentication required (401 for unauthenticated), invalid tokens rejected (401). SUCCESS CRITERIA MET: ✅ All CRUD operations work, ✅ Workflow transitions validated, ✅ Audit trail captures all actions, ✅ Comments system works, ✅ Mission conversion creates proper links, ✅ Permissions enforced. Test data created: Besoin ID: 2e3c1da8-01b0-4115-995d-b6f5d36c397e, Mission ID: d2031415-6c3e-4e48-ba2f-1b7d7b0cce01, Comment ID: 0b3a3836-d6da-4fa6-bf25-0aae993970e8. Fixed critical issue: User object role extraction in get_current_user_info function. System ready for production use."
+
 
 frontend:
   - task: "IAM Frontend Integration"
