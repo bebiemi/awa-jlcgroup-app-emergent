@@ -41,7 +41,7 @@ async def get_current_user_info(current_user: dict) -> tuple:
 async def get_user_entreprise_id(current_user, db: AsyncIOMotorDatabase, user_id: str, user_role: str) -> str:
     """Get entreprise_id for current user, creating test entreprise for admin if needed"""
     if isinstance(current_user, dict):
-        entreprise_id = current_user.get("entreprise_id")
+        entreprise_id = await get_user_entreprise_id(current_user, db, user_id, user_role)
     else:
         # For User objects, check if it has entreprise_id attribute
         entreprise_id = getattr(current_user, "entreprise_id", None)
@@ -314,7 +314,7 @@ async def update_besoin(
     # Check ownership
     is_jlc_user = "admin" in user_role.lower() or "jlc" in user_role.lower()
     if not is_jlc_user:
-        user_entreprise_id = current_user.get("entreprise_id")
+        user_entreprise_id = await get_user_entreprise_id(current_user, db, user_id, user_role)
         if besoin["entreprise_id"] != user_entreprise_id:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
@@ -403,7 +403,7 @@ async def submit_besoin(
     # Check ownership
     is_jlc_user = "admin" in user_role.lower() or "jlc" in user_role.lower()
     if not is_jlc_user:
-        user_entreprise_id = current_user.get("entreprise_id")
+        user_entreprise_id = await get_user_entreprise_id(current_user, db, user_id, user_role)
         if besoin["entreprise_id"] != user_entreprise_id:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
@@ -595,7 +595,7 @@ async def add_comment(
     # Check access
     is_jlc_user = "admin" in user_role.lower() or "jlc" in user_role.lower()
     if not is_jlc_user:
-        user_entreprise_id = current_user.get("entreprise_id")
+        user_entreprise_id = await get_user_entreprise_id(current_user, db, user_id, user_role)
         if besoin["entreprise_id"] != user_entreprise_id:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
@@ -672,7 +672,7 @@ async def get_comments(
     # Check access
     is_jlc_user = "admin" in user_role.lower() or "jlc" in user_role.lower()
     if not is_jlc_user:
-        user_entreprise_id = current_user.get("entreprise_id")
+        user_entreprise_id = await get_user_entreprise_id(current_user, db, user_id, user_role)
         if besoin["entreprise_id"] != user_entreprise_id:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
@@ -912,7 +912,7 @@ async def get_besoin_audit_trail(
     # Check access
     is_jlc_user = "admin" in user_role.lower() or "jlc" in user_role.lower()
     if not is_jlc_user:
-        user_entreprise_id = current_user.get("entreprise_id")
+        user_entreprise_id = await get_user_entreprise_id(current_user, db, user_id, user_role)
         if besoin["entreprise_id"] != user_entreprise_id:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
