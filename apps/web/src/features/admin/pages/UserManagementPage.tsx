@@ -272,6 +272,7 @@ export default function UserManagementPage() {
                     <option value="active">Actif</option>
                     <option value="pending">En attente</option>
                     <option value="suspended">Suspendu</option>
+                    <option value="archived">Archivé</option>
                     <option value="deleted">Supprimé</option>
                   </select>
                 </div>
