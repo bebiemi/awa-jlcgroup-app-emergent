@@ -475,6 +475,17 @@ export default function UserManagementPage() {
       </div>
 
       {/* Modals */}
+      {selectedUserId && (
+        <UserDetailModal
+          isOpen={showDetailModal}
+          onClose={() => {
+            setShowDetailModal(false)
+            setSelectedUserId('')
+          }}
+          userId={selectedUserId}
+        />
+      )}
+      
       {selectedUser && (
         <>
           <EditUserModal
