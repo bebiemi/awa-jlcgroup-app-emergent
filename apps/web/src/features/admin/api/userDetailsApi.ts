@@ -3,23 +3,10 @@ import { createBaseQueryWithAuth } from '@/utils/baseQueryWithAuth'
 import { IAM_ENDPOINTS, QUERY_KEYS } from '@/constants/api'
 
 // Use auth service URL for IAM endpoints
-// Use the protocol and hostname from current window for production
-const getAuthServiceUrl = () => {
-  // If explicitly set in env, use that
-  if (import.meta.env.VITE_AUTH_SERVICE_URL) {
-    return import.meta.env.VITE_AUTH_SERVICE_URL
-  }
-  
-  // In production (non-localhost), use current origin with /api prefix
-  if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
-    return window.location.origin
-  }
-  
-  // Default for local development
-  return 'http://localhost:8000'
-}
-
-const baseQueryWithAuthService = createBaseQueryWithAuth(getAuthServiceUrl())
+// Empty string for relative URLs (works in production with proper routing)
+// or explicit VITE_AUTH_SERVICE_URL for development
+const authServiceUrl = import.meta.env.VITE_AUTH_SERVICE_URL || ''
+const baseQueryWithAuthService = createBaseQueryWithAuth(authServiceUrl)
 
 // Extended User Detail Interface
 export interface UserDetail {
