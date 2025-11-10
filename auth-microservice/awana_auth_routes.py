@@ -160,11 +160,12 @@ async def create_validation_record(
     """
     import uuid
     
-    # Determine validation type
-    if register_data.is_collaborator:
-        validation_type = "collaborator"
+    # Determine validation type based on email domain and user status
+    if user.is_collaborator:
+        validation_type = "collaborateur"
     else:
-        validation_type = register_data.role
+        # For non-collaborators, use the assigned role
+        validation_type = user.roles[0] if user.roles else "candidat"
     
     validation = {
         "id": str(uuid.uuid4()),
@@ -172,7 +173,7 @@ async def create_validation_record(
         "user_email": user.email,
         "user_full_name": register_data.full_name,
         "validation_type": validation_type,
-        "status": cfg.get_pending_status(),
+        "status": cfg.get_pending_status() if user.status == UserStatus.PENDING else "approved",
         "has_location_warning": False,
         "location_warning_message": None,
         "missing_country": None,
@@ -184,12 +185,6 @@ async def create_validation_record(
         "created_at": datetime.now(timezone.utc).isoformat(),
         "updated_at": datetime.now(timezone.utc).isoformat()
     }
-    
-    # Add collaborator-specific fields
-    if register_data.is_collaborator:
-        validation["employee_number"] = register_data.employee_number
-        validation["department"] = register_data.department
-        validation["job_title"] = register_data.job_title
     
     # Process location data if provided
     if register_data.location:
