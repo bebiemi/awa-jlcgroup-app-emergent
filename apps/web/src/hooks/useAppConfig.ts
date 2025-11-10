@@ -20,6 +20,7 @@ export interface AppConfig {
     suspended: string
     deleted: string
     blocked: string
+    archived: string
   }
   missionStatuses: string[]
   applicationStatuses: string[]
