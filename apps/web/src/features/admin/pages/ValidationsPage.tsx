@@ -24,6 +24,7 @@ import {
   UserPlusIcon,
 } from '@heroicons/react/24/outline'
 import toast from 'react-hot-toast'
+import { ValidationTypes, UserRoles, getRoleLabel } from '@/constants/iamConstants'
 
 type TabType = 'candidat' | 'company' | 'collaborator'
 
