@@ -388,7 +388,7 @@ def test_retention_configuration_system():
     
     config_response = test_endpoint(
         "GET",
-        f"{AUTH_BASE_URL}/iam/users/archive/config/retention",
+        f"{AUTH_BASE_URL}/iam/users/config/retention",
         headers=headers,
         expected_status=200,
         test_name="Get Current Retention Config"
