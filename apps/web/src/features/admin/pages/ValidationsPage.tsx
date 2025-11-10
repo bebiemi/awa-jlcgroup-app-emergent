@@ -104,7 +104,7 @@ export default function ValidationsPage() {
       // For collaborators, only show users in RH or Commerciales groups
       // Since we don't have group membership in user data yet, filter by roles
       return allUsers.filter((user: any) => 
-        user.roles?.some((role: string) => ['admin', 'super_admin'].includes(role)) ||
+        user.roles?.some((role: string) => [UserRoles.ADMIN, UserRoles.SUPER_ADMIN].includes(role)) ||
         user.email?.toLowerCase().includes('rh') ||
         user.email?.toLowerCase().includes('hr') ||
         user.email?.toLowerCase().includes('commercial')
@@ -113,7 +113,7 @@ export default function ValidationsPage() {
     
     // For interim and company, show all admins and commercials
     return allUsers.filter((user: any) => 
-      user.roles?.some((role: string) => ['admin', 'super_admin', 'commercial'].includes(role))
+      user.roles?.some((role: string) => [UserRoles.ADMIN, UserRoles.SUPER_ADMIN, 'commercial'].includes(role))
     )
   }
   
