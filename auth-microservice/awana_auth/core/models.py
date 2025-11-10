@@ -79,6 +79,12 @@ class User(BaseModel):
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     last_login_at: Optional[datetime] = None
     
+    # Archivage (soft delete)
+    archived_at: Optional[datetime] = None
+    archived_by: Optional[str] = None  # User ID who archived
+    deletion_scheduled_at: Optional[datetime] = None  # When to permanently delete
+    archive_reason: Optional[str] = None
+    
     # Additional user data
     metadata: Dict[str, Any] = Field(default_factory=dict)
     
