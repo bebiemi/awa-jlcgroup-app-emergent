@@ -379,7 +379,8 @@ async def create_city(
     }
     
     await db.cities.insert_one(city_doc)
-    del city_doc["_id"] if "_id" in city_doc else None
+    if "_id" in city_doc:
+        del city_doc["_id"]
     
     return City(**city_doc)
 
