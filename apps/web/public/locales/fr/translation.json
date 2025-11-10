@@ -169,7 +169,7 @@
     "validate": "Valider",
     "reject": "Rejeter",
     "types": {
-      "interim": "Intérimaire",
+      "candidat": "Candidat",
       "company": "Entreprise",
       "collaborator": "Collaborateur"
     },
