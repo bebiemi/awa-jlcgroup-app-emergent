@@ -35,7 +35,7 @@ export interface EmailDomainVerification {
 
 export const emailDomainsApi = createApi({
   reducerPath: 'emailDomainsApi',
-  baseQuery: createBaseQueryWithAuth(baseUrl),
+  baseQuery: baseQueryWithAuth,
   tagTypes: ['EmailDomains'],
   endpoints: (builder) => ({
     listEmailDomains: builder.query<AllowedEmailDomain[], boolean | undefined>({
