@@ -56,13 +56,23 @@ async def get_user_detail(
     groups = []
     if user.get("group_ids"):
         groups_cursor = db.groups.find({"id": {"$in": user.get("group_ids", [])}})
-        groups = await groups_cursor.to_list(length=None)
+        groups_raw = await groups_cursor.to_list(length=None)
+        # Remove MongoDB _id field
+        for group in groups_raw:
+            if "_id" in group:
+                del group["_id"]
+        groups = groups_raw
     
     # Get user profiles
     profiles = []
     if user.get("profile_ids"):
         profiles_cursor = db.profiles.find({"id": {"$in": user.get("profile_ids", [])}})
-        profiles = await profiles_cursor.to_list(length=None)
+        profiles_raw = await profiles_cursor.to_list(length=None)
+        # Remove MongoDB _id field
+        for profile in profiles_raw:
+            if "_id" in profile:
+                del profile["_id"]
+        profiles = profiles_raw
     
     # Get user permissions (from profiles)
     permissions = set()
