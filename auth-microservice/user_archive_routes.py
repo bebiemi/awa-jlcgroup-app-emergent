@@ -255,7 +255,7 @@ async def purge_expired_users(
 
 # ==================== GET RETENTION CONFIG ====================
 
-@router.get("/retention-config", response_model=RetentionConfigResponse)
+@router.get("/config/retention", response_model=RetentionConfigResponse)
 async def get_retention_config(
     db: AsyncIOMotorDatabase = Depends(get_database),
     current_user: dict = Depends(require_permission(IAMPermissions.USERS_READ))
