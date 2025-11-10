@@ -570,7 +570,32 @@ async def update_besoin_status(
         comment=status_update.comment,
     )
     
-    # TODO: Send notification based on status change
+    # Send notification based on status change
+    notification_service = NotificationService(db)
+    event_type_map = {
+        "analyse": "analysed",
+        "mission_creee": "mission_created",
+        "publication": "published",
+        "pourvu": "closed"
+    }
+    event_type = event_type_map.get(new_status.value)
+    
+    # Determine recipients based on status
+    if new_status.value in ["analyse", "mission_creee", "publication", "pourvu"]:
+        recipients = ["entreprise", "responsable_besoin"]
+    else:
+        recipients = []
+    
+    if event_type and recipients:
+        await notification_service.send_besoin_notification(
+            event_type=event_type,
+            besoin_id=besoin_id,
+            besoin_titre=besoin["titre"],
+            entreprise_name=besoin["entreprise_name"],
+            recipients=recipients,
+            actor_name=user_name,
+            additional_data={"comment": status_update.comment}
+        )
     
     # Fetch updated besoin
     updated_besoin = await db.besoins.find_one({"id": besoin_id})
