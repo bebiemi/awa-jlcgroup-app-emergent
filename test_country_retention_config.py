@@ -412,7 +412,7 @@ def test_retention_configuration_system():
     if config_response and config_response.get("can_override"):
         update_response = test_endpoint(
             "PUT",
-            f"{AUTH_BASE_URL}/iam/users/archive/config/retention?retention_days=30",
+            f"{AUTH_BASE_URL}/iam/users/config/retention?retention_days=30",
             headers=headers,
             expected_status=200,
             test_name="Update Retention to 30 Days"
