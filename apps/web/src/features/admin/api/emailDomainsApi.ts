@@ -1,7 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { createBaseQueryWithAuth } from '@/utils/baseQueryWithAuth'
-
-const baseUrl = import.meta.env.VITE_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL || 'http://localhost:8000'
+import { baseQueryWithAuth } from '@/utils/baseQueryWithAuth'
 
 export interface AllowedEmailDomain {
   id: string
