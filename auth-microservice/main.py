@@ -44,6 +44,7 @@ from iam_routes import router as iam_router
 from email_domain_routes import router as email_domain_router
 from user_detail_routes import router as user_detail_router
 from user_archive_routes import router as user_archive_router
+from country_config_routes import router as country_config_router
 from rate_limit import limiter
 
 client = None
