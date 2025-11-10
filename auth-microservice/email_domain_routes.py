@@ -24,7 +24,7 @@ async def get_email_domain_service(db: AsyncIOMotorDatabase = Depends(get_databa
     return EmailDomainService(db)
 
 
-@router.post("/verify", response_model=EmailDomainVerification)
+@router.get("/verify", response_model=EmailDomainVerification)
 async def verify_email_domain(
     email: str,
     service: EmailDomainService = Depends(get_email_domain_service)
