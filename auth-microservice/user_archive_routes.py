@@ -320,6 +320,10 @@ async def update_retention_config(
     
     now = datetime.now(timezone.utc)
     
+    # Get actor info
+    actor_id = current_user.get("id") if isinstance(current_user, dict) else current_user.id
+    actor_username = current_user.get("username") if isinstance(current_user, dict) else getattr(current_user, "username", None)
+    
     # Upsert setting in database
     await db.app_settings.update_one(
         {"key": "security.user_retention_days"},
@@ -328,7 +332,7 @@ async def update_retention_config(
                 "key": "security.user_retention_days",
                 "value": retention_days,
                 "updated_at": now,
-                "updated_by": current_user["id"]
+                "updated_by": actor_id
             }
         },
         upsert=True
@@ -338,8 +342,8 @@ async def update_retention_config(
     await db.audit_events.insert_one({
         "id": str(uuid.uuid4()),
         "action": "config.update_retention",
-        "actor_id": current_user["id"],
-        "actor_username": current_user.get("username"),
+        "actor_id": actor_id,
+        "actor_username": actor_username,
         "target_type": "setting",
         "target_id": "security.user_retention_days",
         "payload": {
@@ -350,7 +354,7 @@ async def update_retention_config(
         "user_agent": None
     })
     
-    logger.info(f"Retention period updated to {retention_days} days by {current_user['id']}")
+    logger.info(f"Retention period updated to {retention_days} days by {actor_id}")
     
     return {
         "message": "Retention period updated successfully",
