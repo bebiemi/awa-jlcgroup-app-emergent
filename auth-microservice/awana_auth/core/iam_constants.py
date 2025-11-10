@@ -75,6 +75,21 @@ class IAMPermissions:
     IAM_GROUPS_READ = "iam.groups.read"
     IAM_GROUPS_MANAGE = "iam.groups.manage"
     IAM_PERMISSIONS_READ = "iam.permissions.read"
+    
+    # Besoins (Hiring Needs)
+    BESOINS_CREATE = "besoins.create"
+    BESOINS_READ = "besoins.read"
+    BESOINS_EDIT = "besoins.edit"
+    BESOINS_DELETE = "besoins.delete"
+    BESOINS_SUBMIT = "besoins.submit"
+    BESOINS_VALIDATE = "besoins.validate"
+    BESOINS_CONVERT_TO_MISSION = "besoins.convert_to_mission"
+    BESOINS_COMMENT = "besoins.comment"
+    
+    # Forms & Configuration
+    FORMS_MANAGE = "forms.manage"
+    CONFIG_READ = "config.read"
+    CONFIG_MANAGE = "config.manage"
 
 
 # ============================================
