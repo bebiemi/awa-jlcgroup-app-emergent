@@ -193,7 +193,7 @@ async def restore_user(
 
 # ==================== PURGE EXPIRED USERS ====================
 
-@router.delete("/purge-expired", response_model=PurgeExpiredUsersResponse)
+@router.delete("/purge/expired", response_model=PurgeExpiredUsersResponse)
 async def purge_expired_users(
     db: AsyncIOMotorDatabase = Depends(get_database),
     current_user: dict = Depends(require_permission(IAMPermissions.USERS_MANAGE))
