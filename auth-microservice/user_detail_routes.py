@@ -252,7 +252,7 @@ async def get_user_groups(
     if not group_ids:
         return []
     
-    cursor = db.iam_groups.find({"id": {"$in": group_ids}})
+    cursor = db.groups.find({"id": {"$in": group_ids}})
     groups = await cursor.to_list(length=None)
     
     return groups
@@ -271,7 +271,7 @@ async def assign_group(
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     
-    group = await db.iam_groups.find_one({"id": assignment.group_id})
+    group = await db.groups.find_one({"id": assignment.group_id})
     if not group:
         raise HTTPException(status_code=404, detail="Group not found")
     
