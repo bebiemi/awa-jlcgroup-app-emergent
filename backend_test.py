@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Profile Completion Testing
-Tests the profile completion system with user 'paf'
+Critical Authentication Issue Testing
+Tests the authentication issue where users get 401 Unauthorized errors when trying to log in immediately after registration.
 """
 
 import requests
@@ -13,6 +13,7 @@ import string
 import time
 from datetime import datetime
 import re
+from pymongo import MongoClient
 
 # Test configuration
 AUTH_BASE_URL = "http://localhost:8000/api"  # Direct auth service URL
@@ -21,6 +22,7 @@ FRONTEND_PROXY_URL = "http://localhost:3000/auth-api"  # Through Vite proxy
 
 # Global variable to store test data
 test_data = {}
+test_users = []
 
 class Colors:
     GREEN = '\033[92m'
