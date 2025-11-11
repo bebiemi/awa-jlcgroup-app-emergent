@@ -52,16 +52,7 @@ export interface ProfileResponse {
 
 export const profileApi = createApi({
   reducerPath: 'profileApi',
-  baseQuery: fetchBaseQuery({
-    baseUrl: '/auth-api/profiles',
-    prepareHeaders: (headers) => {
-      const token = localStorage.getItem('access_token')
-      if (token) {
-        headers.set('Authorization', `Bearer ${token}`)
-      }
-      return headers
-    },
-  }),
+  baseQuery: baseQueryWithAuth,
   tagTypes: ['Profile', 'Documents'],
   endpoints: (builder) => ({
     getMyProfile: builder.query<ProfileResponse, void>({
