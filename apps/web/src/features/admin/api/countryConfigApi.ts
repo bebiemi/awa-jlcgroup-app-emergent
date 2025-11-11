@@ -98,7 +98,7 @@ export const countryConfigApi = createApi({
     // Set country as default
     setDefaultCountry: builder.mutation<{ message: string; country_id: string }, string>({
       query: (countryId) => ({
-        url: `/api/config/countries/${countryId}/set-default`,
+        url: `/config/countries/${countryId}/set-default`,
         method: 'PATCH',
       }),
       invalidatesTags: ['Countries'],
