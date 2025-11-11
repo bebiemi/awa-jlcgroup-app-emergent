@@ -154,9 +154,9 @@ const ProfilesManagementPage: React.FC = () => {
   // Statistics
   const stats = {
     total: profiles?.length || 0,
-    system: profiles?.filter(p => p.category === 'system').length || 0,
+    system: profiles?.filter(p => p.is_system_role === true).length || 0,
     department: profiles?.filter(p => p.category === 'department').length || 0,
-    custom: profiles?.filter(p => p.category === 'custom').length || 0
+    custom: profiles?.filter(p => p.category === 'custom' || p.category === 'legacy').length || 0
   }
 
   const categories = [
