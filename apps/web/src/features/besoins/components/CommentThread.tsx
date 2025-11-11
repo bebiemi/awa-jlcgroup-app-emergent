@@ -85,7 +85,7 @@ export default function CommentThread({ besoinId }: CommentThreadProps) {
       {/* Comments List */}
       {comments.length > 0 ? (
         <div className="space-y-4 max-h-96 overflow-y-auto">
-          {comments.map((comment: CommentResponse) => (
+          {comments.map((comment: Comment) => (
             <div key={comment.id} className="flex gap-3">
               <div className="flex-shrink-0">
                 <UserCircleIcon className="h-10 w-10 text-gray-400" />
