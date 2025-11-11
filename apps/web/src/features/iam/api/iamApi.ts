@@ -202,7 +202,7 @@ export const iamApi = createApi({
     // User Assignments
     assignProfilesToUser: builder.mutation<void, { user_id: string; profile_ids: string[] }>({
       query: ({ user_id, profile_ids }) => ({
-        url: `/users/${user_id}/profiles`,
+        url: `/api/iam/users/${user_id}/profiles`,
         method: 'POST',
         body: { user_id, profile_ids },
       }),
@@ -211,7 +211,7 @@ export const iamApi = createApi({
     
     assignGroupsToUser: builder.mutation<void, { user_id: string; group_ids: string[] }>({
       query: ({ user_id, group_ids }) => ({
-        url: `/users/${user_id}/groups`,
+        url: `/api/iam/users/${user_id}/groups`,
         method: 'POST',
         body: { user_id, group_ids },
       }),
@@ -219,7 +219,7 @@ export const iamApi = createApi({
     }),
     
     getUserPermissions: builder.query<UserPermissionsResponse, string>({
-      query: (userId) => `/users/${userId}/permissions`,
+      query: (userId) => `/api/iam/users/${userId}/permissions`,
       providesTags: (_result, _error, userId) => [{ type: 'UserPermissions', id: userId }],
     }),
     
