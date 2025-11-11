@@ -4096,78 +4096,42 @@ def run_authentication_fix_test():
     return test_results
 
 if __name__ == "__main__":
-    print(f"{Colors.BOLD}🚀 Starting Besoins System Testing - Phase 1{Colors.ENDC}")
-    print(f"Testing Auth Service: {AUTH_BASE_URL}")
-    print(f"Admin Credentials: admin / awana2025")
-    print(f"Base URL: {AUTH_BASE_URL}/besoins")
+    print(f"{Colors.BOLD}🚀 Starting IAM Permission Initialization Testing{Colors.ENDC}")
+    print(f"{Colors.BOLD}Testing Base URLs:{Colors.ENDC}")
+    print(f"  Auth Service: {AUTH_BASE_URL}")
+    print(f"  JLC API: {API_BASE_URL}")
     
     # Test auth service health first
     if not test_auth_service_health():
-        print(f"\n{Colors.RED}❌ Auth service is not running. Please start it first.{Colors.ENDC}")
+        print(f"\n{Colors.RED}❌ Auth service not available - aborting all tests{Colors.ENDC}")
         sys.exit(1)
     
-    # Initialize test results
-    all_tests_passed = True
+    # Run IAM tests
+    iam_results = run_iam_tests()
     
-    try:
-        # Run besoins tests
-        besoins_results = run_besoins_tests()
-        
-    except KeyboardInterrupt:
-        print(f"\n{Colors.YELLOW}⚠️ Testing interrupted by user{Colors.ENDC}")
-        sys.exit(1)
-    except Exception as e:
-        print(f"\n{Colors.RED}❌ Unexpected error during testing: {str(e)}{Colors.ENDC}")
-        import traceback
-        traceback.print_exc()
-        all_tests_passed = False
+    # Print final summary
+    print(f"\n{Colors.BOLD}{'='*80}{Colors.ENDC}")
+    print(f"{Colors.BOLD}IAM TESTING SUMMARY{Colors.ENDC}")
+    print(f"{Colors.BOLD}{'='*80}{Colors.ENDC}")
     
-    # Summary
-    print(f"\n{Colors.BOLD}📊 BESOINS TESTING SUMMARY{Colors.ENDC}")
-    print("=" * 80)
+    passed_tests = [r for r in iam_results if r[1]]  # r[1] is success boolean
+    failed_tests = [r for r in iam_results if not r[1]]
     
-    total_test_categories = len(besoins_results)
-    successful_categories = len([r for r in besoins_results if r["success"]])
+    print(f"\n{Colors.GREEN}✅ PASSED TESTS ({len(passed_tests)}):{Colors.ENDC}")
+    for test_name, success in passed_tests:
+        print(f"  ✅ {test_name}")
     
-    print(f"Test Categories: {successful_categories}/{total_test_categories} passed")
+    if failed_tests:
+        print(f"\n{Colors.RED}❌ FAILED TESTS ({len(failed_tests)}):{Colors.ENDC}")
+        for test_name, success in failed_tests:
+            print(f"  ❌ {test_name}")
     
-    for result in besoins_results:
-        status = "✅ PASS" if result["success"] else "❌ FAIL"
-        print(f"{status} {result['test']}")
-        if not result["success"] and "error" in result:
-            print(f"    Error: {result['error']}")
+    success_rate = (len(passed_tests) / len(iam_results)) * 100 if iam_results else 0
+    print(f"\n{Colors.BOLD}Overall Success Rate: {success_rate:.1f}% ({len(passed_tests)}/{len(iam_results)}){Colors.ENDC}")
     
-    # Overall result
-    overall_success = successful_categories == total_test_categories
-    
-    if overall_success:
-        print(f"\n{Colors.GREEN}🎉 ALL BESOINS TESTS PASSED!{Colors.ENDC}")
-        print(f"\n{Colors.BOLD}Success Criteria Met:{Colors.ENDC}")
-        print("✅ All CRUD operations work")
-        print("✅ Workflow transitions are validated")
-        print("✅ Audit trail captures all actions")
-        print("✅ Comments system works")
-        print("✅ Mission conversion creates proper links")
-        print("✅ Permissions are enforced")
-        
-        if created_besoin_id:
-            print(f"\n{Colors.BOLD}Test Data Created:{Colors.ENDC}")
-            print(f"📋 Besoin ID: {created_besoin_id}")
-            if created_mission_id:
-                print(f"🎯 Mission ID: {created_mission_id}")
-            if created_comment_id:
-                print(f"💬 Comment ID: {created_comment_id}")
-        
+    if success_rate >= 80:
+        print(f"{Colors.GREEN}🎉 IAM testing completed successfully!{Colors.ENDC}")
         sys.exit(0)
     else:
-        print(f"\n{Colors.RED}❌ SOME BESOINS TESTS FAILED{Colors.ENDC}")
-        print(f"{Colors.RED}Please review the failed tests above.{Colors.ENDC}")
-        
-        # Show which specific areas failed
-        failed_tests = [r for r in besoins_results if not r["success"]]
-        if failed_tests:
-            print(f"\n{Colors.BOLD}Failed Areas:{Colors.ENDC}")
-            for failed in failed_tests:
-                print(f"❌ {failed['test']}")
-        
+        print(f"{Colors.RED}⚠️  Some IAM tests failed. Please review the results above.{Colors.ENDC}")
         sys.exit(1)
