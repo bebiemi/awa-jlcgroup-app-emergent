@@ -195,48 +195,48 @@ const ProfilesManagementPage: React.FC = () => {
         </div>
 
         {/* Statistics Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <Tooltip content="Nombre total de profils créés" position="top">
-            <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Total Profils</p>
-                  <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
+                  <p className="text-base font-medium text-gray-600 mb-2">Total Profils</p>
+                  <p className="text-4xl font-bold text-gray-900">{stats.total}</p>
                 </div>
-                <div className="text-3xl">📋</div>
+                <div className="text-5xl">📋</div>
               </div>
             </Card>
           </Tooltip>
-          <Tooltip content="Profils système protégés" position="top">
-            <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+          <Tooltip content="Profils système protégés (is_system_role = true)" position="top">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Système</p>
-                  <p className="text-2xl font-bold text-blue-600">{stats.system}</p>
+                  <p className="text-base font-medium text-gray-600 mb-2">Système</p>
+                  <p className="text-4xl font-bold text-blue-600">{stats.system}</p>
                 </div>
-                <div className="text-3xl">🛡️</div>
+                <div className="text-5xl">🛡️</div>
               </div>
             </Card>
           </Tooltip>
           <Tooltip content="Profils par département" position="top">
-            <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Département</p>
-                  <p className="text-2xl font-bold text-green-600">{stats.department}</p>
+                  <p className="text-base font-medium text-gray-600 mb-2">Département</p>
+                  <p className="text-4xl font-bold text-green-600">{stats.department}</p>
                 </div>
-                <div className="text-3xl">🏢</div>
+                <div className="text-5xl">🏢</div>
               </div>
             </Card>
           </Tooltip>
-          <Tooltip content="Profils personnalisés créés" position="top">
-            <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+          <Tooltip content="Profils personnalisés et legacy" position="top">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Personnalisé</p>
-                  <p className="text-2xl font-bold text-jlc-purple-600">{stats.custom}</p>
+                  <p className="text-base font-medium text-gray-600 mb-2">Personnalisé</p>
+                  <p className="text-4xl font-bold text-jlc-purple-600">{stats.custom}</p>
                 </div>
-                <div className="text-3xl">⭐</div>
+                <div className="text-5xl">⭐</div>
               </div>
             </Card>
           </Tooltip>
