@@ -69,7 +69,7 @@ export const countryConfigApi = createApi({
     // Initialize default countries
     initDefaultCountries: builder.mutation<{ message: string; count: number }, void>({
       query: () => ({
-        url: '/api/config/countries/init-default',
+        url: '/config/countries/init-default',
         method: 'POST',
       }),
       invalidatesTags: ['Countries'],
