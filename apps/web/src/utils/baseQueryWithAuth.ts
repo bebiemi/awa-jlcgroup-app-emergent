@@ -11,6 +11,9 @@ export const createBaseQueryWithAuth = (baseUrl?: string): BaseQueryFn<
   unknown,
   FetchBaseQueryError
 > => {
+  // Force log to see what baseUrl is being used
+  console.log('[baseQueryWithAuth] Creating with baseUrl:', baseUrl)
+  
   const baseQuery = fetchBaseQuery({
     baseUrl: baseUrl || undefined,
     prepareHeaders: (headers) => {
