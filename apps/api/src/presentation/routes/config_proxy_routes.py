@@ -15,13 +15,12 @@ router = APIRouter()
 AUTH_SERVICE_URL = os.getenv('AUTH_SERVICE_URL', 'http://localhost:8000')
 
 
-@router.api_route("/countries/{path:path}", methods=["GET", "POST", "PUT", "PATCH", "DELETE"])
-async def proxy_config_countries(path: str, request: Request):
+async def proxy_config_request(endpoint_path: str, request: Request):
     """
-    Proxy all /api/config/countries/* requests to auth-microservice
+    Generic proxy function for config requests
     """
     # Build target URL
-    target_url = f"{AUTH_SERVICE_URL}/api/config/countries/{path}"
+    target_url = f"{AUTH_SERVICE_URL}/api/config/{endpoint_path}"
     
     # Get request body if present
     body = None
@@ -56,3 +55,27 @@ async def proxy_config_countries(path: str, request: Request):
     except Exception as e:
         logger.error(f"Error proxying to auth-microservice: {str(e)}")
         raise HTTPException(status_code=502, detail="Auth service unavailable")
+
+
+@router.api_route("/countries/{path:path}", methods=["GET", "POST", "PUT", "PATCH", "DELETE"])
+async def proxy_config_countries(path: str, request: Request):
+    """Proxy all /api/config/countries/* requests to auth-microservice"""
+    return await proxy_config_request(f"countries/{path}", request)
+
+
+@router.api_route("/forms/{path:path}", methods=["GET", "POST", "PUT", "PATCH", "DELETE"])
+async def proxy_config_forms(path: str, request: Request):
+    """Proxy all /api/config/forms/* requests to auth-microservice"""
+    return await proxy_config_request(f"forms/{path}", request)
+
+
+@router.api_route("/workflows/{path:path}", methods=["GET", "POST", "PUT", "PATCH", "DELETE"])
+async def proxy_config_workflows(path: str, request: Request):
+    """Proxy all /api/config/workflows/* requests to auth-microservice"""
+    return await proxy_config_request(f"workflows/{path}", request)
+
+
+@router.api_route("/references/{path:path}", methods=["GET", "POST", "PUT", "PATCH", "DELETE"])
+async def proxy_config_references(path: str, request: Request):
+    """Proxy all /api/config/references/* requests to auth-microservice"""
+    return await proxy_config_request(f"references/{path}", request)
