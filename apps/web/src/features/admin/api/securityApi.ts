@@ -89,7 +89,7 @@ export const securityApi = createApi({
     }),
     updateProfile: builder.mutation<Profile, { id: string; data: CreateProfileRequest }>({
       query: ({ id, data }) => ({
-        url: `/profiles/${id}`,
+        url: `/api/security/profiles/${id}`,
         method: 'PUT',
         body: data,
       }),
@@ -97,7 +97,7 @@ export const securityApi = createApi({
     }),
     deleteProfile: builder.mutation<{ message: string }, string>({
       query: (id) => ({
-        url: `/profiles/${id}`,
+        url: `/api/security/profiles/${id}`,
         method: 'DELETE',
       }),
       invalidatesTags: ['Profiles'],
@@ -122,7 +122,7 @@ export const securityApi = createApi({
     }),
     updateGroup: builder.mutation<Group, { id: string; data: CreateGroupRequest }>({
       query: ({ id, data }) => ({
-        url: `/groups/${id}`,
+        url: `/api/security/groups/${id}`,
         method: 'PUT',
         body: data,
       }),
@@ -130,21 +130,21 @@ export const securityApi = createApi({
     }),
     deleteGroup: builder.mutation<{ message: string }, string>({
       query: (id) => ({
-        url: `/groups/${id}`,
+        url: `/api/security/groups/${id}`,
         method: 'DELETE',
       }),
       invalidatesTags: ['Groups'],
     }),
     addMemberToGroup: builder.mutation<{ message: string }, { groupId: string; userId: string }>({
       query: ({ groupId, userId }) => ({
-        url: `/groups/${groupId}/members/${userId}`,
+        url: `/api/security/groups/${groupId}/members/${userId}`,
         method: 'POST',
       }),
       invalidatesTags: ['Groups'],
     }),
     removeMemberFromGroup: builder.mutation<{ message: string }, { groupId: string; userId: string }>({
       query: ({ groupId, userId }) => ({
-        url: `/groups/${groupId}/members/${userId}`,
+        url: `/api/security/groups/${groupId}/members/${userId}`,
         method: 'DELETE',
       }),
       invalidatesTags: ['Groups'],
