@@ -14,7 +14,7 @@ async def initialize_default_configs():
     
     # Get MongoDB connection
     mongo_url = os.getenv("MONGO_URL", "mongodb://localhost:27017")
-    db_name = os.getenv("MONGO_DB_NAME", "awana_jlc")
+    db_name = os.getenv("MONGO_DB_NAME", "auth_db")
     
     client = AsyncIOMotorClient(mongo_url)
     db = client[db_name]
