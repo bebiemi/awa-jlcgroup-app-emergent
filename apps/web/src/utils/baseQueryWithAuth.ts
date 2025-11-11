@@ -33,7 +33,28 @@ export const createBaseQueryWithAuth = (baseUrl?: string): BaseQueryFn<
   })
 
   return async (args, api, extraOptions) => {
-    const result = await baseQuery(args, api, extraOptions)
+    // Fix Mixed Content: Ensure URLs use correct protocol
+    let modifiedArgs = args
+    if (typeof args === 'object' && 'url' in args && typeof args.url === 'string') {
+      // If URL is absolute HTTP and we're on HTTPS, convert to relative
+      if (typeof window !== 'undefined' && window.location.protocol === 'https:') {
+        if (args.url.startsWith('http://')) {
+          // Convert to relative URL
+          const url = new URL(args.url)
+          modifiedArgs = { ...args, url: url.pathname + url.search }
+          console.log('🔒 Fixed Mixed Content:', args.url, '→', modifiedArgs.url)
+        }
+      }
+    } else if (typeof args === 'string' && args.startsWith('http://')) {
+      // String URL case
+      if (typeof window !== 'undefined' && window.location.protocol === 'https:') {
+        const url = new URL(args)
+        modifiedArgs = url.pathname + url.search
+        console.log('🔒 Fixed Mixed Content:', args, '→', modifiedArgs)
+      }
+    }
+    
+    const result = await baseQuery(modifiedArgs, api, extraOptions)
 
     // Handle 401 Unauthorized - Session expired or invalid token
     if (result.error && result.error.status === 401) {
