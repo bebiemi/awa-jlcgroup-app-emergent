@@ -50,7 +50,7 @@ export const configurationApi = createApi({
         validation: Record<string, string[]>
       }
     }, void>({
-      query: () => '/all',
+      query: () => '/auth-api/auth/config/all',
       // Cache pendant 5 minutes
       keepUnusedDataFor: 300,
     }),
