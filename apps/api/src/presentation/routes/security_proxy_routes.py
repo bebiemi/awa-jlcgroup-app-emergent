@@ -28,7 +28,7 @@ async def proxy_security_requests(path: str, request: Request):
     # Get headers (exclude host and connection headers)
     headers = {
         key: value for key, value in request.headers.items()
-        if key.lower() not in ["host", "connection", "content-length"]
+        if key.lower() not in ["host", "connection", "content-length", "x-forwarded-proto", "x-forwarded-for", "x-forwarded-host"]
     }
     
     # Get request body
