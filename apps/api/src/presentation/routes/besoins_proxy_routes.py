@@ -19,10 +19,14 @@ async def proxy_besoins_requests(path: str, request: Request):
     query_params = dict(request.query_params)
     # Preserve ALL headers including Authorization
     headers = dict(request.headers)
-    # Only remove problematic headers
+    # Remove problematic headers
     headers.pop("host", None)
     headers.pop("connection", None)
     headers.pop("content-length", None)
+    # Remove X-Forwarded headers to prevent SSL issues in internal communication
+    headers.pop("x-forwarded-proto", None)
+    headers.pop("x-forwarded-for", None)
+    headers.pop("x-forwarded-host", None)
     body = await request.body()
     
     try:
