@@ -7,15 +7,8 @@ from datetime import datetime, timezone
 from typing import Optional, List, Dict, Any
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
-# Import email service - handle both old and new paths
-try:
-    from services.email_service_v2 import EmailServiceV2
-except ImportError:
-    try:
-        from ..services.email_service_v2 import EmailServiceV2
-    except ImportError:
-        # Fallback if email service not available
-        EmailServiceV2 = None
+# Email service is in same directory
+from .email_service_v2 import EmailServiceV2
 
 
 class NotificationService:
