@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { createBaseQueryWithAuth } from '@/utils/baseQueryWithAuth'
+import { baseQueryWithAuth } from '@/utils/baseQueryWithAuth'
 
 export type PresenceStatus = 'online' | 'away' | 'do_not_disturb' | 'offline' | 'invisible'
 
