@@ -67,7 +67,7 @@ export default defineConfig({
         secure: false,
         rewrite: (path) => path.replace(/^\/auth-api/, '/api'),
       },
-    } as Record<string, any>,
+    },
   },
   // Preview configuration (for production builds)
   preview: {
