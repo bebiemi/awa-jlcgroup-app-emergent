@@ -346,6 +346,14 @@ function App() {
         }
       />
       <Route
+        path="/entreprise/besoins/create"
+        element={
+          <ProtectedRoute requiredPermissions={['besoins.create']}>
+            <CreateBesoinPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/offres"
         element={
           <ProtectedRoute requiredPermissions={['missions.create']}>
