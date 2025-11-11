@@ -17,7 +17,7 @@ export default function CommentThread({ besoinId }: CommentThreadProps) {
     if (!newComment.trim()) return
 
     try {
-      await addComment({ besoinId, content: newComment }).unwrap()
+      await addComment({ besoinId, data: { content: newComment } }).unwrap()
       setNewComment('')
       toast.success('Commentaire ajouté')
     } catch (error: any) {
