@@ -119,7 +119,7 @@ export const iamApi = createApi({
     
     deletePermission: builder.mutation<void, string>({
       query: (permissionId) => ({
-        url: `/permissions/${permissionId}`,
+        url: `/api/iam/permissions/${permissionId}`,
         method: 'DELETE',
       }),
       invalidatesTags: ['Permissions'],
@@ -147,7 +147,7 @@ export const iamApi = createApi({
     
     updateProfile: builder.mutation<Profile, { id: string; data: ProfileUpdate }>({
       query: ({ id, data }) => ({
-        url: `/profiles/${id}`,
+        url: `/api/iam/profiles/${id}`,
         method: 'PUT',
         body: data,
       }),
@@ -156,7 +156,7 @@ export const iamApi = createApi({
     
     deleteProfile: builder.mutation<void, string>({
       query: (profileId) => ({
-        url: `/profiles/${profileId}`,
+        url: `/api/iam/profiles/${profileId}`,
         method: 'DELETE',
       }),
       invalidatesTags: ['Profiles'],
@@ -184,7 +184,7 @@ export const iamApi = createApi({
     
     updateGroup: builder.mutation<Group, { id: string; data: GroupUpdate }>({
       query: ({ id, data }) => ({
-        url: `/groups/${id}`,
+        url: `/api/iam/groups/${id}`,
         method: 'PUT',
         body: data,
       }),
@@ -193,7 +193,7 @@ export const iamApi = createApi({
     
     deleteGroup: builder.mutation<void, string>({
       query: (groupId) => ({
-        url: `/groups/${groupId}`,
+        url: `/api/iam/groups/${groupId}`,
         method: 'DELETE',
       }),
       invalidatesTags: ['Groups'],
