@@ -136,10 +136,17 @@ class IAMService:
             # Get direct profiles
             direct_profile_ids = user.get("profile_ids", [])
             direct_profiles = []
+            logger.info(f"Looking for profiles with IDs: {direct_profile_ids}")
             if direct_profile_ids:
                 profiles_cursor = self.profiles_collection.find({"id": {"$in": direct_profile_ids}})
                 async for profile in profiles_cursor:
-                    direct_profiles.append(Profile(**profile))
+                    try:
+                        # Remove MongoDB _id before creating Pydantic model
+                        profile.pop("_id", None)
+                        direct_profiles.append(Profile(**profile))
+                        logger.info(f"Added profile: {profile.get('name')}")
+                    except Exception as e:
+                        logger.error(f"Error creating Profile model: {e}, profile data: {profile}")
             
             # Get groups and their profiles
             user_group_ids = user.get("group_ids", [])
