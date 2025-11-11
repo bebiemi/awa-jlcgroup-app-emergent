@@ -29,6 +29,8 @@ async def init_besoin_permissions():
             "code": "besoins.create",
             "name": "Créer des besoins",
             "description": "Permet de créer et gérer des besoins de recrutement",
+            "resource": "besoins",
+            "action": "create",
             "category": "besoins",
             "is_system_permission": False,
             "created_at": now,
