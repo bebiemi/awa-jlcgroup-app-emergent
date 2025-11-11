@@ -377,6 +377,8 @@ async def update_mission(
     )
     
     updated_mission = await db.missions.find_one({"id": mission_id})
+    # Remove MongoDB _id before creating Pydantic model
+    updated_mission.pop('_id', None)
     return Mission(**updated_mission)
 
 
