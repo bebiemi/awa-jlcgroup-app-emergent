@@ -156,8 +156,13 @@ class IAMService:
             if user_group_ids:
                 groups_cursor = self.groups_collection.find({"id": {"$in": user_group_ids}})
                 async for group_doc in groups_cursor:
-                    groups.append(Group(**group_doc))
-                    group_profile_ids.update(group_doc.get("profile_ids", []))
+                    try:
+                        # Remove MongoDB _id before creating Pydantic model
+                        group_doc.pop("_id", None)
+                        groups.append(Group(**group_doc))
+                        group_profile_ids.update(group_doc.get("profile_ids", []))
+                    except Exception as e:
+                        logger.error(f"Error creating Group model: {e}, group data: {group_doc}")
             
             group_profiles = []
             if group_profile_ids:
