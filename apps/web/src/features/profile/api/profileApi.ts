@@ -56,7 +56,7 @@ export const profileApi = createApi({
   tagTypes: ['Profile', 'Documents'],
   endpoints: (builder) => ({
     getMyProfile: builder.query<ProfileResponse, void>({
-      query: () => '/me',
+      query: () => '/auth-api/profiles/me',
       providesTags: ['Profile'],
     }),
 
