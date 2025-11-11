@@ -356,6 +356,22 @@ function App() {
         }
       />
       <Route
+        path="/entreprise/besoins/:id"
+        element={
+          <ProtectedRoute requiredPermissions={['besoins.read']}>
+            <BesoinDetailPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/entreprise/besoins/:id/edit"
+        element={
+          <ProtectedRoute requiredPermissions={['besoins.edit']}>
+            <CreateBesoinPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/entreprise/settings"
         element={
           <ProtectedRoute requiredPermissions={['entreprises.read']}>
