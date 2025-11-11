@@ -109,6 +109,16 @@ async def health_check():
     }
 
 
+@app.get("/api/health")
+async def api_health():
+    """Health check endpoint under /api path (for production routing)"""
+    return {
+        "status": "healthy",
+        "service": "jlc-api",
+        "version": "1.0.0"
+    }
+
+
 @app.get("/")
 async def root():
     """Root endpoint"""
