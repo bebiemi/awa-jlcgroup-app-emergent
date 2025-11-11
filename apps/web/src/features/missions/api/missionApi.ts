@@ -228,16 +228,7 @@ export interface MissionStats {
 
 export const missionApi = createApi({
   reducerPath: 'missionApi',
-  baseQuery: fetchBaseQuery({
-    baseUrl: '/auth-api',
-    prepareHeaders: (headers, { getState }) => {
-      const token = (getState() as RootState).auth.token
-      if (token) {
-        headers.set('authorization', `Bearer ${token}`)
-      }
-      return headers
-    },
-  }),
+  baseQuery: baseQueryWithAuth,
   tagTypes: ['Mission', 'Application', 'MyApplications'],
   endpoints: (builder) => ({
     // ==================== MISSIONS ====================
