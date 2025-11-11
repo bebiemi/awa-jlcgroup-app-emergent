@@ -12,7 +12,7 @@ export const createBaseQueryWithAuth = (baseUrl?: string): BaseQueryFn<
   FetchBaseQueryError
 > => {
   const baseQuery = fetchBaseQuery({
-    baseUrl: baseUrl || '',  // Empty string to force relative URLs
+    baseUrl: baseUrl || undefined,
     prepareHeaders: (headers) => {
       const token = localStorage.getItem('access_token')
       if (token) {
@@ -23,29 +23,7 @@ export const createBaseQueryWithAuth = (baseUrl?: string): BaseQueryFn<
   })
 
   return async (args, api, extraOptions) => {
-    // Force relative URLs by ensuring no absolute URLs are passed
-    let modifiedArgs = args
-    if (typeof args === 'string') {
-      // Already relative
-      modifiedArgs = args
-    } else if (typeof args === 'object' && 'url' in args) {
-      // Ensure URL is relative
-      const url = args.url || ''
-      if (url.startsWith('http://') || url.startsWith('https://')) {
-        // Extract just the path from absolute URLs
-        try {
-          const urlObj = new URL(url)
-          modifiedArgs = { ...args, url: urlObj.pathname + urlObj.search }
-        } catch (e) {
-          // If URL parsing fails, use as is
-          modifiedArgs = args
-        }
-      } else {
-        modifiedArgs = args
-      }
-    }
-    
-    const result = await baseQuery(modifiedArgs, api, extraOptions)
+    const result = await baseQuery(args, api, extraOptions)
 
     // Handle 401 Unauthorized - Session expired or invalid token
     if (result.error && result.error.status === 401) {
