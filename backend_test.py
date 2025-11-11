@@ -1647,29 +1647,20 @@ def test_company_management_system():
         # Test 3.1: Get own entreprise (may return 404 if not associated)
         print(f"\n  Test 3.1: Get Own Entreprise (Company User)")
         
-        me_response = test_endpoint(
-            "GET",
-            f"{API_BASE_URL}/entreprises/me",
-            headers=company_headers,
-            expected_status=[200, 404],  # 404 is acceptable if not associated
-            test_name="Company - Get Own Entreprise"
-        )
-        
-        if me_response:
-            log_test("Company - Get Own Entreprise", "PASS", "Request successful (may be 404 if not associated)")
-            test_results.append(("Company Get Own Entreprise", True))
-        else:
-            # Check if it was a 404 (acceptable)
-            try:
-                response = requests.get(f"{API_BASE_URL}/entreprises/me", headers=company_headers, timeout=10)
-                if response.status_code == 404:
-                    log_test("Company - Get Own Entreprise", "PASS", "404 returned (user not associated with company)")
-                    test_results.append(("Company Get Own Entreprise", True))
-                else:
-                    log_test("Company - Get Own Entreprise", "FAIL", f"Unexpected status: {response.status_code}")
-                    test_results.append(("Company Get Own Entreprise", False))
-            except:
+        try:
+            response = requests.get(f"{API_BASE_URL}/entreprises/me", headers=company_headers, timeout=10)
+            if response.status_code == 200:
+                log_test("Company - Get Own Entreprise", "PASS", "Successfully retrieved own entreprise")
+                test_results.append(("Company Get Own Entreprise", True))
+            elif response.status_code == 404:
+                log_test("Company - Get Own Entreprise", "PASS", "404 returned (user not associated with company)")
+                test_results.append(("Company Get Own Entreprise", True))
+            else:
+                log_test("Company - Get Own Entreprise", "FAIL", f"Unexpected status: {response.status_code}")
                 test_results.append(("Company Get Own Entreprise", False))
+        except Exception as e:
+            log_test("Company - Get Own Entreprise", "FAIL", f"Request failed: {str(e)}")
+            test_results.append(("Company Get Own Entreprise", False))
         
         # Test 3.2: Try to create entreprise (should fail - no create permission)
         print(f"\n  Test 3.2: Try Create Entreprise (Company User - Should Fail)")
