@@ -62,7 +62,7 @@ export const profileApi = createApi({
 
     updateMyProfile: builder.mutation<{ success: boolean; message: string; completion_percentage: number }, Partial<InterimProfile | CompanyManagerProfile>>({
       query: (data) => ({
-        url: '/me',
+        url: '/auth-api/profiles/me',
         method: 'PUT',
         body: data,
       }),
@@ -76,7 +76,7 @@ export const profileApi = createApi({
         formData.append('document_type', document_type)
         
         return {
-          url: '/documents',
+          url: '/auth-api/profiles/documents',
           method: 'POST',
           body: formData,
         }
@@ -91,7 +91,7 @@ export const profileApi = createApi({
 
     deleteDocument: builder.mutation<{ success: boolean; message: string }, string>({
       query: (documentId) => ({
-        url: `/documents/${documentId}`,
+        url: `/auth-api/profiles/documents/${documentId}`,
         method: 'DELETE',
       }),
       invalidatesTags: ['Documents', 'Profile'],
