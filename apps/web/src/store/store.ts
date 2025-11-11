@@ -57,6 +57,7 @@ export const store = configureStore({
     [securityConfigApi.reducerPath]: securityConfigApi.reducer,
     [besoinApi.reducerPath]: besoinApi.reducer,
     [configApi.reducerPath]: configApi.reducer,
+    [entrepriseApi.reducerPath]: entrepriseApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
