@@ -123,8 +123,10 @@ async def init_besoin_permissions():
         "name": "Entreprise",
         "description": "Profil pour les entreprises clientes - Gestion des besoins et missions",
         "permission_ids": permission_ids,
-        "is_system_profile": False,
+        "is_system_role": False,  # Correct field name
         "is_protected": False,
+        "priority": 0,
+        "category": "custom",
         "created_at": now,
         "updated_at": now,
     }
