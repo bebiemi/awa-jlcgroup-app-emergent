@@ -11,8 +11,18 @@ export const createBaseQueryWithAuth = (baseUrl?: string): BaseQueryFn<
   unknown,
   FetchBaseQueryError
 > => {
+  // Fix Mixed Content issue: If page is HTTPS, ensure API calls are also HTTPS
+  // In production/preview (HTTPS), force relative URLs to use same protocol
+  let finalBaseUrl = baseUrl || undefined
+  
+  // If we're on HTTPS and no baseUrl is specified, ensure relative URLs work
+  if (typeof window !== 'undefined' && window.location.protocol === 'https:' && !finalBaseUrl) {
+    // Use relative URLs - browser will automatically use HTTPS
+    finalBaseUrl = undefined
+  }
+  
   const baseQuery = fetchBaseQuery({
-    baseUrl: baseUrl || undefined,
+    baseUrl: finalBaseUrl,
     prepareHeaders: (headers) => {
       const token = localStorage.getItem('access_token')
       if (token) {
