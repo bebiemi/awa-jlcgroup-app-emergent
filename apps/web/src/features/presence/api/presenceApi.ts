@@ -28,7 +28,7 @@ export const presenceApi = createApi({
   tagTypes: ['Presence', 'OnlineUsers'],
   endpoints: (builder) => ({
     getMyPresence: builder.query<UserPresence, void>({
-      query: () => '/me',
+      query: () => '/api/users/presence/me',
       providesTags: ['Presence'],
     }),
     updateMyPresence: builder.mutation<UserPresence, { status: PresenceStatus }>({
