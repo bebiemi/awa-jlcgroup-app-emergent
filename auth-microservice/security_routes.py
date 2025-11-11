@@ -325,6 +325,29 @@ async def create_user(
     hasher = PasswordManager(auth_config)
     hashed_password = hasher.hash_password(password)
     
+    # Auto-assign profiles based on roles
+    profile_ids = []
+    if request.profile_id:
+        # If profile_id is provided, use it
+        profile_ids = [request.profile_id]
+    else:
+        # Auto-assign profiles based on roles
+        role_to_profile_map = {
+            'admin': 'admin',
+            'super_admin': 'super_admin',
+            'company': 'entreprise',
+            'interim': 'interim_user',
+            'commercial': 'commercial',
+        }
+        
+        # Get profiles collection to find profile IDs
+        for role in request.roles:
+            profile_code = role_to_profile_map.get(role)
+            if profile_code:
+                profile = await db.profiles.find_one({"code": profile_code})
+                if profile and profile['id'] not in profile_ids:
+                    profile_ids.append(profile['id'])
+    
     # Create user
     new_user = User(
         username=username,
@@ -339,7 +362,7 @@ async def create_user(
     user_data = new_user.model_dump()
     user_data["password_hash"] = hashed_password
     user_data["group_ids"] = request.group_ids
-    user_data["profile_id"] = request.profile_id
+    user_data["profile_ids"] = profile_ids  # Use profile_ids (plural)
     
     await db.users.insert_one(user_data)
     
