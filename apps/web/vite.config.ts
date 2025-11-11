@@ -12,7 +12,7 @@ export default defineConfig({
   },
   server: {
     host: '0.0.0.0',
-    port: 3000,
+    port: 3001,  // Changed to 3001 to allow nginx to listen on 3000
     strictPort: true,
     // Allow dynamic preview domains (forked apps get different subdomains)
     allowedHosts: ['.preview.emergentagent.com', '.emergent.host', 'localhost', '127.0.0.1'],
