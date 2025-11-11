@@ -69,8 +69,9 @@ export const createBaseQueryWithAuth = (baseUrl?: string): BaseQueryFn<
   }
 }
 
-// Default instance with backend URL from environment
-// CRITICAL: ALWAYS use undefined to force truly relative URLs
+// Default instance with empty string to force relative URLs
+// CRITICAL: Empty string ensures all URLs are relative to current origin
 // This prevents Mixed Content errors in production (HTTPS pages making HTTP requests)
-// SOLUTION: Always use undefined to ensure relative URLs work in all environments
-export const baseQueryWithAuth = createBaseQueryWithAuth(undefined)
+// In development: Vite proxy handles routing (/api/* → correct service)
+// In production: Kubernetes/nginx handles routing based on path
+export const baseQueryWithAuth = createBaseQueryWithAuth('')
