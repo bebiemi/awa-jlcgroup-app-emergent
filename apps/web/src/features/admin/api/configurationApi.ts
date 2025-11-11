@@ -62,7 +62,7 @@ export const configurationApi = createApi({
       is_active?: boolean
     }>({
       query: (params) => ({
-        url: '/references',
+        url: '/auth-api/auth/config/references',
         params,
       }),
       providesTags: ['References'],
@@ -70,7 +70,7 @@ export const configurationApi = createApi({
     
     createReference: builder.mutation<{ reference: SystemReference }, Partial<SystemReference>>({
       query: (data) => ({
-        url: '/references',
+        url: '/auth-api/auth/config/references',
         method: 'POST',
         body: data,
       }),
@@ -82,7 +82,7 @@ export const configurationApi = createApi({
       data: Partial<SystemReference>
     }>({
       query: ({ id, data }) => ({
-        url: `/references/${id}`,
+        url: `/auth-api/auth/config/references/${id}`,
         method: 'PATCH',
         body: data,
       }),
@@ -91,7 +91,7 @@ export const configurationApi = createApi({
     
     deleteReference: builder.mutation<void, string>({
       query: (id) => ({
-        url: `/references/${id}`,
+        url: `/auth-api/auth/config/references/${id}`,
         method: 'DELETE',
       }),
       invalidatesTags: ['References'],
@@ -103,7 +103,7 @@ export const configurationApi = createApi({
       is_public?: boolean
     }>({
       query: (params) => ({
-        url: '/settings',
+        url: '/auth-api/auth/config/settings',
         params,
       }),
       providesTags: ['Settings'],
@@ -114,7 +114,7 @@ export const configurationApi = createApi({
       value: string
     }>({
       query: ({ key, value }) => ({
-        url: `/settings/${key}`,
+        url: `/auth-api/auth/config/settings/${key}`,
         method: 'PATCH',
         body: { value },
       }),
