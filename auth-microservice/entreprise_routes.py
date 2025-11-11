@@ -11,7 +11,7 @@ import uuid
 from awana_auth.core.dependencies import get_database
 from awana_auth.core.dependencies import get_current_user
 from awana_auth.core.models import User
-from awana_auth.core.iam_helpers import require_permission
+from awana_auth.dependencies.permission_dependencies import require_permission
 from pydantic import BaseModel, Field, EmailStr
 
 
