@@ -53,3 +53,4 @@ export const createBaseQueryWithAuth = (baseUrl?: string): BaseQueryFn<
 // SOLUTION: Always use undefined to ensure relative URLs work in all environments
 // Force undefined at runtime to ensure no hardcoded URLs
 export const baseQueryWithAuth = createBaseQueryWithAuth(undefined as any)
+// Force reload: 1762828583
