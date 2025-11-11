@@ -32,7 +32,7 @@ async def proxy_config_request(endpoint_path: str, request: Request):
     headers.pop('host', None)
     
     try:
-        async with httpx.AsyncClient() as client:
+        async with httpx.AsyncClient(follow_redirects=True) as client:
             response = await client.request(
                 method=request.method,
                 url=target_url,
