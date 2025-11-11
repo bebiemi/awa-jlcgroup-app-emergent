@@ -255,6 +255,7 @@ export default function Sidebar() {
         title: 'Compte',
         items: [
           { label: 'Mon Profil', path: '/profile', icon: UserCircleIcon },
+          { label: 'Mon Entreprise', path: '/entreprise/settings', icon: BuildingOfficeIcon },
           { label: 'Sécurité', path: '/security', icon: ShieldCheckIcon },
         ],
       }
