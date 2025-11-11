@@ -310,6 +310,8 @@ async def get_mission(
             detail="Vous ne pouvez voir que vos missions"
         )
     
+    # Remove MongoDB _id before creating Pydantic model
+    mission.pop('_id', None)
     return Mission(**mission)
 
 
