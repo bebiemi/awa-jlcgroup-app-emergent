@@ -79,7 +79,7 @@ if upload_dir.exists():
     app.mount("/uploads", StaticFiles(directory=str(upload_dir)), name="uploads")
 
 # Import and include routers
-from src.presentation.routes import profile_routes, validation_routes, notification_routes, admin_routes, iam_proxy_routes, config_proxy_routes, security_proxy_routes
+from src.presentation.routes import profile_routes, validation_routes, notification_routes, admin_routes, iam_proxy_routes, config_proxy_routes, security_proxy_routes, auth_api_proxy_routes
 
 app.include_router(profile_routes.router, prefix="/api")
 app.include_router(validation_routes.router, prefix="/api")
@@ -91,6 +91,8 @@ app.include_router(iam_proxy_routes.router, prefix="/api/iam", tags=["IAM Proxy"
 app.include_router(config_proxy_routes.router, prefix="/api/config", tags=["Config Proxy"])
 # Proxy Security routes to auth-microservice
 app.include_router(security_proxy_routes.router, prefix="/api", tags=["Security Proxy"])
+# Proxy /auth-api to auth-microservice /api (for frontend compatibility)
+app.include_router(auth_api_proxy_routes.router, prefix="/auth-api", tags=["Auth API Proxy"])
 
 
 @app.get("/health")
