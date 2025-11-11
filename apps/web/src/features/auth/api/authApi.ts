@@ -11,7 +11,7 @@ export const authApi = createApi({
   endpoints: (builder) => ({
     localLogin: builder.mutation<LoginResponse, { username: string; password: string }>({
       query: (credentials) => ({
-        url: '/auth/local/login',
+        url: '/api/auth/local/login',
         method: 'POST',
         body: credentials,
       }),
@@ -32,7 +32,7 @@ export const authApi = createApi({
       }
     >({
       query: (data) => ({
-        url: '/auth/local/register',
+        url: '/api/auth/local/register',
         method: 'POST',
         body: data,
       }),
@@ -42,13 +42,13 @@ export const authApi = createApi({
     }),
     logout: builder.mutation<void, void>({
       query: () => ({
-        url: '/auth/logout',
+        url: '/api/auth/logout',
         method: 'POST',
       }),
     }),
     refreshToken: builder.mutation<LoginResponse, { refresh_token: string }>({
       query: (body) => ({
-        url: '/auth/refresh',
+        url: '/api/auth/refresh',
         method: 'POST',
         body,
       }),
