@@ -24,7 +24,8 @@ export default defineConfig({
         protocol: 'wss',
       }),
     },
-    proxy: {
+    // Only enable proxy in true local development (not in preview environments)
+    proxy: process.env.PREVIEW_ENV ? {} : {
       // IAM endpoints - route to auth-microservice (MUST be before generic /api)
       '/api/iam': {
         target: 'http://localhost:8000',
