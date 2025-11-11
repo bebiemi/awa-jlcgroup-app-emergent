@@ -195,6 +195,8 @@ async def create_mission(
     
     await db.missions.insert_one(mission_data)
     
+    # Remove MongoDB _id before creating Pydantic model
+    mission_data.pop('_id', None)
     return Mission(**mission_data)
 
 
