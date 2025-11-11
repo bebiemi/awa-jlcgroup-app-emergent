@@ -99,7 +99,7 @@ export interface GroupUpdate {
 
 export const iamApi = createApi({
   reducerPath: 'iamApi',
-  baseQuery: createBaseQueryWithAuth('/auth-api/iam'),
+  baseQuery: baseQueryWithAuth,
   tagTypes: ['Permissions', 'Profiles', 'Groups', 'UserPermissions'],
   endpoints: (builder) => ({
     // Permissions
