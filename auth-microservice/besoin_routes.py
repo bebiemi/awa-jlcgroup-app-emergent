@@ -45,11 +45,20 @@ async def get_current_user_info(current_user: dict) -> tuple:
 
 async def get_user_entreprise_id(current_user, db: AsyncIOMotorDatabase, user_id: str, user_role: str) -> str:
     """Get entreprise_id for current user, creating test entreprise for admin if needed"""
+    entreprise_id = None
+    
+    # Try to get from current_user dict or object
     if isinstance(current_user, dict):
-        entreprise_id = await get_user_entreprise_id(current_user, db, user_id, user_role)
+        entreprise_id = current_user.get("company_id") or current_user.get("entreprise_id")
     else:
-        # For User objects, check if it has entreprise_id attribute
-        entreprise_id = getattr(current_user, "entreprise_id", None)
+        # For User objects, check if it has entreprise_id or company_id attribute
+        entreprise_id = getattr(current_user, "entreprise_id", None) or getattr(current_user, "company_id", None)
+    
+    # If not found, try to get from user document in database
+    if not entreprise_id:
+        user_doc = await db.users.find_one({"id": user_id})
+        if user_doc:
+            entreprise_id = user_doc.get("company_id") or user_doc.get("entreprise_id")
     
     # For admin users, create a default test entreprise if none exists
     if not entreprise_id and "admin" in user_role.lower():
