@@ -1847,13 +1847,25 @@ def test_company_management_system():
                 log_test("Admin - Soft Delete", "PASS", "Entreprise soft deleted successfully (204 No Content)")
                 test_results.append(("Admin Soft Delete", True))
                 
-                # Verify it's soft deleted (should return 404 or show inactive status)
+                # Verify it's soft deleted (should show inactive status)
                 verify_response = requests.get(f"{API_BASE_URL}/entreprises/{created_entreprise_id}", headers=admin_headers, timeout=10)
-                if verify_response.status_code == 404:
+                if verify_response.status_code == 200:
+                    try:
+                        verify_data = verify_response.json()
+                        if verify_data.get("status") == "inactive":
+                            log_test("Soft Delete Verification", "PASS", "Entreprise status changed to 'inactive'")
+                            test_results.append(("Soft Delete Verification", True))
+                        else:
+                            log_test("Soft Delete Verification", "FAIL", f"Expected status 'inactive', got '{verify_data.get('status')}'")
+                            test_results.append(("Soft Delete Verification", False))
+                    except:
+                        log_test("Soft Delete Verification", "FAIL", "Could not parse response JSON")
+                        test_results.append(("Soft Delete Verification", False))
+                elif verify_response.status_code == 404:
                     log_test("Soft Delete Verification", "PASS", "Deleted entreprise no longer accessible")
                     test_results.append(("Soft Delete Verification", True))
                 else:
-                    log_test("Soft Delete Verification", "FAIL", f"Expected 404, got {verify_response.status_code}")
+                    log_test("Soft Delete Verification", "FAIL", f"Unexpected status: {verify_response.status_code}")
                     test_results.append(("Soft Delete Verification", False))
             else:
                 log_test("Admin - Soft Delete", "FAIL", f"Expected 204, got {response.status_code}")
