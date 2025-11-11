@@ -108,6 +108,29 @@ export const authApi = createApi({
         method: 'POST',
         body,
       }),
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled
+          if (data.access_token && data.user) {
+            // Update credentials in Redux store
+            dispatch(
+              setCredentials({
+                user: data.user,
+                token: data.access_token,
+                refreshToken: data.refresh_token,
+              })
+            )
+            // Update localStorage
+            localStorage.setItem('access_token', data.access_token)
+            if (data.refresh_token) {
+              localStorage.setItem('refresh_token', data.refresh_token)
+            }
+            localStorage.setItem('user', JSON.stringify(data.user))
+          }
+        } catch (error) {
+          // Error handled by mutation
+        }
+      },
     }),
   }),
 })
