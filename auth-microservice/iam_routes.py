@@ -496,8 +496,20 @@ async def assign_groups_to_user(
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     
+    # Handle both single group_id and multiple group_ids
+    group_ids = []
+    if assignment.group_id:
+        group_ids = [assignment.group_id]
+    elif assignment.group_ids:
+        group_ids = assignment.group_ids
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Either group_id or group_ids must be provided"
+        )
+    
     # Verify groups exist
-    for group_id in assignment.group_ids:
+    for group_id in group_ids:
         group = await db.groups.find_one({"id": group_id})
         if not group:
             raise HTTPException(
@@ -505,7 +517,7 @@ async def assign_groups_to_user(
                 detail=f"Group {group_id} not found"
             )
     
-    success = await iam_service.assign_groups_to_user(user_id, assignment.group_ids)
+    success = await iam_service.assign_groups_to_user(user_id, group_ids)
     if not success:
         raise HTTPException(status_code=500, detail="Failed to assign groups")
     
