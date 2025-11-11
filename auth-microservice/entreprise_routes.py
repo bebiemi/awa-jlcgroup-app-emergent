@@ -60,9 +60,22 @@ class EntrepriseUpdate(BaseModel):
     status: Optional[str] = None  # active, inactive, suspended
 
 
-class EntrepriseResponse(EntrepriseBase):
-    """Model for entreprise response"""
+class EntrepriseResponse(BaseModel):
+    """Model for entreprise response - flexible for existing data"""
     id: str
+    nom: str
+    raison_sociale: Optional[str] = None
+    siret: Optional[str] = None
+    adresse: Optional[str] = None
+    code_postal: Optional[str] = None
+    ville: Optional[str] = None
+    pays: Optional[str] = "France"
+    email: Optional[str] = None
+    telephone: Optional[str] = None
+    description: Optional[str] = None
+    secteur_activite: Optional[str] = None
+    effectif: Optional[str] = None
+    site_web: Optional[str] = None
     status: str = "active"
     created_at: datetime
     updated_at: Optional[datetime] = None
