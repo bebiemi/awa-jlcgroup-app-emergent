@@ -116,7 +116,7 @@ export const countryConfigApi = createApi({
     // Get cities for a country
     getCities: builder.query<City[], { countryId: string; search?: string; active_only?: boolean }>({
       query: ({ countryId, search, active_only = true }) => ({
-        url: `/api/config/countries/${countryId}/cities`,
+        url: `/config/countries/${countryId}/cities`,
         params: { search, active_only },
       }),
       providesTags: (result, error, { countryId }) => [{ type: 'Cities', id: countryId }],
