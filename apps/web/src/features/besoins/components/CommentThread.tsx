@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useGetCommentsQuery, useAddCommentMutation, CommentResponse } from '../api/besoinApi'
-import { PaperAirplaneIcon, UserCircleIcon } from '@heroicons/react/24/outline'
+import { PaperAirplaneIcon, UserCircleIcon, ChatBubbleLeftRightIcon } from '@heroicons/react/24/outline'
 import { toast } from 'react-hot-toast'
 
 interface CommentThreadProps {
