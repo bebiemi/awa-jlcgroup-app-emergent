@@ -25,47 +25,13 @@ export default defineConfig({
       }),
     },
     proxy: {
-      // IAM endpoints - route to auth-microservice (MUST be before generic /api)
-      '/api/iam': {
-        target: 'http://localhost:8000',
-        changeOrigin: true,
-        secure: false,
-      },
-      // Auth endpoints - route to auth-microservice
-      '/api/auth': {
-        target: 'http://localhost:8000',
-        changeOrigin: true,
-        secure: false,
-      },
-      // Config endpoints - route to auth-microservice (MUST be before generic /api)
-      '/api/config': {
-        target: 'http://localhost:8000',
-        changeOrigin: true,
-        secure: false,
-      },
-      // Security endpoints - route to auth-microservice (MUST be before generic /api)
-      '/api/security': {
-        target: 'http://localhost:8000',
-        changeOrigin: true,
-        secure: false,
-      },
-      // Besoins endpoints - route to auth-microservice (MUST be before generic /api)
-      '/api/besoins': {
-        target: 'http://localhost:8000',
-        changeOrigin: true,
-        secure: false,
-      },
-      // Generic API - route to backend
+      // ALL /api requests go to backend (port 8001)
+      // Backend has proxy routes to forward to auth-microservice (port 8000) as needed
+      // This architecture works in both dev and production/preview environments
       '/api': {
-        target: 'http://localhost:8001',  // Use localhost for local dev
+        target: 'http://localhost:8001',
         changeOrigin: true,
         secure: false,
-      },
-      '/auth-api': {
-        target: 'http://localhost:8000',  // Use localhost for local dev
-        changeOrigin: true,
-        secure: false,
-        rewrite: (path) => path.replace(/^\/auth-api/, '/api'),
       },
     },
   },
