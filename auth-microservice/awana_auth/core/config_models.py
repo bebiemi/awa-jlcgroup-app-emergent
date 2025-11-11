@@ -26,7 +26,7 @@ class ValidationRule(BaseModel):
     """Validation rule for a field"""
     type: str  # "required", "min_length", "max_length", "pattern", "min", "max"
     value: Optional[Union[str, int, bool]] = None
-    message: str  # Error message (can be i18n key)
+    message: Union[str, Dict[str, str]]  # Error message (string or i18n dict)
 
 
 class FieldOption(BaseModel):
