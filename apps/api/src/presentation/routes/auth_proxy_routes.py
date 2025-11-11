@@ -19,7 +19,7 @@ async def proxy_auth_requests(path: str, request: Request):
     query_params = dict(request.query_params)
     headers = {
         key: value for key, value in request.headers.items()
-        if key.lower() not in ["host", "connection", "content-length"]
+        if key.lower() not in ["host", "connection", "content-length", "x-forwarded-proto", "x-forwarded-for", "x-forwarded-host"]
     }
     body = await request.body()
     
