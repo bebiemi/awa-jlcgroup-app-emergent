@@ -1846,22 +1846,20 @@ def test_company_management_system():
             if response.status_code == 204:
                 log_test("Admin - Soft Delete", "PASS", "Entreprise soft deleted successfully (204 No Content)")
                 test_results.append(("Admin Soft Delete", True))
-            
-            # Verify it's soft deleted (should return 404 or show inactive status)
-            verify_delete_response = test_endpoint(
-                "GET",
-                f"{API_BASE_URL}/entreprises/{created_entreprise_id}",
-                headers=admin_headers,
-                expected_status=404,
-                test_name="Verify Soft Delete"
-            )
-            
-            if verify_delete_response:
-                log_test("Soft Delete Verification", "PASS", "Deleted entreprise no longer accessible")
-                test_results.append(("Soft Delete Verification", True))
+                
+                # Verify it's soft deleted (should return 404 or show inactive status)
+                verify_response = requests.get(f"{API_BASE_URL}/entreprises/{created_entreprise_id}", headers=admin_headers, timeout=10)
+                if verify_response.status_code == 404:
+                    log_test("Soft Delete Verification", "PASS", "Deleted entreprise no longer accessible")
+                    test_results.append(("Soft Delete Verification", True))
+                else:
+                    log_test("Soft Delete Verification", "FAIL", f"Expected 404, got {verify_response.status_code}")
+                    test_results.append(("Soft Delete Verification", False))
             else:
-                test_results.append(("Soft Delete Verification", False))
-        else:
+                log_test("Admin - Soft Delete", "FAIL", f"Expected 204, got {response.status_code}")
+                test_results.append(("Admin Soft Delete", False))
+        except Exception as e:
+            log_test("Admin - Soft Delete", "FAIL", f"Request failed: {str(e)}")
             test_results.append(("Admin Soft Delete", False))
     
     return test_results
