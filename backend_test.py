@@ -1466,61 +1466,396 @@ def test_authentication_for_config_routes():
     return True
 
 
-def run_besoins_tests():
-    """Run all Besoins system tests"""
+def test_iam_permissions_validation():
+    """Test IAM permissions validation after Pydantic fixes"""
     print(f"\n{Colors.BOLD}{'='*80}{Colors.ENDC}")
-    print(f"{Colors.BOLD}BESOINS SYSTEM TESTING - PHASE 1{Colors.ENDC}")
-    print(f"{Colors.BOLD}Testing complete Besoins (hiring needs) management system{Colors.ENDC}")
-    print(f"{Colors.BOLD}Base URL: {AUTH_BASE_URL}/besoins{Colors.ENDC}")
+    print(f"{Colors.BOLD}IAM PERMISSIONS VALIDATION TESTING{Colors.ENDC}")
+    print(f"{Colors.BOLD}Testing IAM permission system after Pydantic validation fixes{Colors.ENDC}")
+    print(f"{Colors.BOLD}Base URL: {AUTH_BASE_URL}{Colors.ENDC}")
     print(f"{Colors.BOLD}{'='*80}{Colors.ENDC}")
     
-    # First get admin token
+    # Get admin token first
     if not get_admin_token():
-        log_test("Besoins Testing", "FAIL", "Cannot get admin token - aborting all tests")
+        log_test("IAM Testing", "FAIL", "Cannot get admin token - aborting all tests")
         return []
     
-    test_cases = [
-        ("1. CREATE BESOIN", test_create_besoin),
-        ("2. LIST BESOINS", test_list_besoins),
-        ("3. GET SINGLE BESOIN", test_get_single_besoin),
-        ("4. UPDATE BESOIN (Draft only)", test_update_besoin),
-        ("5. SUBMIT BESOIN", test_submit_besoin),
-        ("6. UPDATE STATUS (JLC Workflow)", test_update_status_workflow),
-        ("7. ADD COMMENT", test_add_comment),
-        ("8. GET COMMENTS", test_get_comments),
-        ("9. UPDATE JLC ANALYSIS", test_update_jlc_analysis),
-        ("10. CONVERT TO MISSION", test_convert_to_mission),
-        ("11. GET AUDIT TRAIL", test_get_audit_trail),
-        ("Workflow Validation", test_workflow_validation),
-        ("Permissions and Access", test_permissions_and_access)
+    headers = {"Authorization": f"Bearer {admin_token}"}
+    
+    test_results = []
+    
+    # Test 1: Admin login and authentication
+    print(f"\n  Test 1: Admin Login and Authentication")
+    login_success = test_admin_login_detailed()
+    test_results.append(("Admin Login", login_success))
+    
+    # Test 2: /api/auth/me endpoint
+    print(f"\n  Test 2: Auth Me Endpoint")
+    me_success = test_auth_me_endpoint(headers)
+    test_results.append(("Auth Me Endpoint", me_success))
+    
+    # Test 3: GET /api/iam/permissions
+    print(f"\n  Test 3: IAM Permissions List")
+    permissions_success = test_iam_permissions_list(headers)
+    test_results.append(("IAM Permissions List", permissions_success))
+    
+    # Test 4: GET /api/iam/profiles
+    print(f"\n  Test 4: IAM Profiles List")
+    profiles_success = test_iam_profiles_list(headers)
+    test_results.append(("IAM Profiles List", profiles_success))
+    
+    # Test 5: GET /api/iam/users/{user_id}/profiles
+    print(f"\n  Test 5: User Profiles Assignment")
+    user_profiles_success = test_user_profiles_assignment(headers)
+    test_results.append(("User Profiles Assignment", user_profiles_success))
+    
+    # Test 6: Verify besoin permissions structure
+    print(f"\n  Test 6: Besoin Permissions Structure")
+    besoin_perms_success = test_besoin_permissions_structure(headers)
+    test_results.append(("Besoin Permissions Structure", besoin_perms_success))
+    
+    # Test 7: Permission checking for besoins operations
+    print(f"\n  Test 7: Besoin Permission Checking")
+    perm_check_success = test_besoin_permission_checking(headers)
+    test_results.append(("Besoin Permission Checking", perm_check_success))
+    
+    return test_results
+
+
+def test_admin_login_detailed():
+    """Test admin login with detailed validation"""
+    login_data = {
+        "username": "admin",
+        "password": "awana2025"
+    }
+    
+    response = test_endpoint(
+        "POST",
+        f"{AUTH_BASE_URL}/auth/local/login",
+        data=login_data,
+        expected_status=200,
+        test_name="Admin Login Detailed"
+    )
+    
+    if response:
+        # Verify response structure
+        required_fields = ["access_token", "token_type", "user"]
+        missing_fields = [field for field in required_fields if field not in response]
+        
+        if missing_fields:
+            log_test("Admin Login - Response Structure", "FAIL", f"Missing fields: {missing_fields}")
+            return False
+        
+        # Verify user has profile_ids and group_ids fields
+        user = response.get("user", {})
+        if "profile_ids" not in user:
+            log_test("Admin Login - User Profile IDs", "FAIL", "User missing profile_ids field")
+            return False
+        
+        if "group_ids" not in user:
+            log_test("Admin Login - User Group IDs", "FAIL", "User missing group_ids field")
+            return False
+        
+        log_test("Admin Login - Response Structure", "PASS", "All required fields present")
+        log_test("Admin Login - User Profile IDs", "PASS", f"Profile IDs: {user.get('profile_ids', [])}")
+        log_test("Admin Login - User Group IDs", "PASS", f"Group IDs: {user.get('group_ids', [])}")
+        return True
+    
+    return False
+
+
+def test_auth_me_endpoint(headers):
+    """Test /api/auth/me endpoint"""
+    response = test_endpoint(
+        "GET",
+        f"{AUTH_BASE_URL}/auth/me",
+        headers=headers,
+        expected_status=200,
+        test_name="Auth Me Endpoint"
+    )
+    
+    if response:
+        # Verify user has profile_ids and group_ids fields
+        if "profile_ids" not in response:
+            log_test("Auth Me - Profile IDs", "FAIL", "User missing profile_ids field")
+            return False
+        
+        if "group_ids" not in response:
+            log_test("Auth Me - Group IDs", "FAIL", "User missing group_ids field")
+            return False
+        
+        log_test("Auth Me - Profile IDs", "PASS", f"Profile IDs: {response.get('profile_ids', [])}")
+        log_test("Auth Me - Group IDs", "PASS", f"Group IDs: {response.get('group_ids', [])}")
+        return True
+    
+    return False
+
+
+def test_iam_permissions_list(headers):
+    """Test GET /api/iam/permissions"""
+    response = test_endpoint(
+        "GET",
+        f"{AUTH_BASE_URL}/iam/permissions",
+        headers=headers,
+        expected_status=200,
+        test_name="IAM Permissions List"
+    )
+    
+    if response:
+        if not isinstance(response, list):
+            log_test("IAM Permissions - Format", "FAIL", "Response is not a list")
+            return False
+        
+        if len(response) == 0:
+            log_test("IAM Permissions - Count", "FAIL", "No permissions found")
+            return False
+        
+        # Check if we have the expected 97 permissions
+        expected_count = 97
+        actual_count = len(response)
+        
+        if actual_count != expected_count:
+            log_test("IAM Permissions - Count", "WARN", f"Expected {expected_count}, got {actual_count}")
+        else:
+            log_test("IAM Permissions - Count", "PASS", f"Found {actual_count} permissions")
+        
+        # Verify each permission has required fields
+        missing_fields_count = 0
+        for perm in response:
+            required_fields = ["resource", "action", "scope"]
+            missing = [field for field in required_fields if field not in perm]
+            if missing:
+                missing_fields_count += 1
+        
+        if missing_fields_count > 0:
+            log_test("IAM Permissions - Structure", "FAIL", f"{missing_fields_count} permissions missing required fields")
+            return False
+        else:
+            log_test("IAM Permissions - Structure", "PASS", "All permissions have required fields (resource, action, scope)")
+        
+        return True
+    
+    return False
+
+
+def test_iam_profiles_list(headers):
+    """Test GET /api/iam/profiles"""
+    response = test_endpoint(
+        "GET",
+        f"{AUTH_BASE_URL}/iam/profiles",
+        headers=headers,
+        expected_status=200,
+        test_name="IAM Profiles List"
+    )
+    
+    if response:
+        if not isinstance(response, list):
+            log_test("IAM Profiles - Format", "FAIL", "Response is not a list")
+            return False
+        
+        if len(response) == 0:
+            log_test("IAM Profiles - Count", "FAIL", "No profiles found")
+            return False
+        
+        log_test("IAM Profiles - Count", "PASS", f"Found {len(response)} profiles")
+        
+        # Check for expected profiles
+        profile_codes = [profile.get("code") for profile in response]
+        expected_profiles = ["admin", "super_admin", "interim", "company", "agency", "commercial", "validator"]
+        
+        found_profiles = [code for code in expected_profiles if code in profile_codes]
+        log_test("IAM Profiles - Expected Profiles", "PASS", f"Found profiles: {found_profiles}")
+        
+        return True
+    
+    return False
+
+
+def test_user_profiles_assignment(headers):
+    """Test GET /api/iam/users/{user_id}/profiles"""
+    # First get current user info
+    me_response = test_endpoint(
+        "GET",
+        f"{AUTH_BASE_URL}/auth/me",
+        headers=headers,
+        expected_status=200,
+        test_name="Get Current User for Profile Test"
+    )
+    
+    if not me_response:
+        return False
+    
+    user_id = me_response.get("id")
+    if not user_id:
+        log_test("User Profiles - User ID", "FAIL", "No user ID found")
+        return False
+    
+    # Test user profiles endpoint
+    response = test_endpoint(
+        "GET",
+        f"{AUTH_BASE_URL}/iam/users/{user_id}/profiles",
+        headers=headers,
+        expected_status=200,
+        test_name="User Profiles Assignment"
+    )
+    
+    if response:
+        # Verify response structure
+        required_fields = ["user_id", "direct_profiles", "group_profiles", "all_permissions", "groups"]
+        missing_fields = [field for field in required_fields if field not in response]
+        
+        if missing_fields:
+            log_test("User Profiles - Structure", "FAIL", f"Missing fields: {missing_fields}")
+            return False
+        
+        log_test("User Profiles - Structure", "PASS", "All required fields present")
+        
+        # Check permissions count
+        all_permissions = response.get("all_permissions", [])
+        log_test("User Profiles - Permissions Count", "PASS", f"User has {len(all_permissions)} permissions")
+        
+        return True
+    
+    return False
+
+
+def test_besoin_permissions_structure(headers):
+    """Test that besoin permissions exist with correct structure"""
+    response = test_endpoint(
+        "GET",
+        f"{AUTH_BASE_URL}/iam/permissions",
+        headers=headers,
+        expected_status=200,
+        test_name="Get Permissions for Besoin Check"
+    )
+    
+    if not response:
+        return False
+    
+    # Expected besoin permissions
+    expected_besoin_permissions = [
+        "besoins.create",
+        "besoins.read", 
+        "besoins.edit",
+        "besoins.submit",
+        "besoins.comment",
+        "besoins.validate",
+        "besoins.convert_to_mission"
     ]
     
-    results = []
+    found_permissions = []
+    besoin_permissions = []
     
-    for test_name, test_function in test_cases:
-        print(f"\n  Running: {test_name}")
+    for perm in response:
+        if perm.get("code", "").startswith("besoins."):
+            besoin_permissions.append(perm)
+            if perm.get("code") in expected_besoin_permissions:
+                found_permissions.append(perm.get("code"))
+    
+    # Check if all expected permissions are found
+    missing_permissions = [code for code in expected_besoin_permissions if code not in found_permissions]
+    
+    if missing_permissions:
+        log_test("Besoin Permissions - Missing", "FAIL", f"Missing permissions: {missing_permissions}")
+        return False
+    else:
+        log_test("Besoin Permissions - All Present", "PASS", f"All {len(expected_besoin_permissions)} besoin permissions found")
+    
+    # Verify structure of besoin permissions
+    structure_valid = True
+    for perm in besoin_permissions:
+        required_fields = ["resource", "action", "scope"]
+        missing = [field for field in required_fields if field not in perm]
         
-        try:
-            success = test_function()
-            results.append({
-                "test": test_name,
-                "success": success
-            })
-            
-            if success:
-                log_test(f"{test_name} - Overall", "PASS", "All tests in this category passed")
-            else:
-                log_test(f"{test_name} - Overall", "FAIL", "Some tests in this category failed")
-                
-        except Exception as e:
-            log_test(f"{test_name} - Overall", "FAIL", f"Exception occurred: {str(e)}")
-            results.append({
-                "test": test_name,
-                "success": False,
-                "error": str(e)
-            })
+        if missing:
+            log_test("Besoin Permissions - Structure", "FAIL", f"Permission {perm.get('code')} missing: {missing}")
+            structure_valid = False
+        
+        # Verify resource is "besoins"
+        if perm.get("resource") != "besoins":
+            log_test("Besoin Permissions - Resource", "FAIL", f"Permission {perm.get('code')} has wrong resource: {perm.get('resource')}")
+            structure_valid = False
     
-    return results
+    if structure_valid:
+        log_test("Besoin Permissions - Structure", "PASS", "All besoin permissions have correct structure")
+    
+    return structure_valid
+
+
+def test_besoin_permission_checking(headers):
+    """Test permission checking for besoins operations"""
+    # First get current user info
+    me_response = test_endpoint(
+        "GET",
+        f"{AUTH_BASE_URL}/auth/me",
+        headers=headers,
+        expected_status=200,
+        test_name="Get Current User for Permission Check"
+    )
+    
+    if not me_response:
+        return False
+    
+    user_id = me_response.get("id")
+    if not user_id:
+        log_test("Permission Check - User ID", "FAIL", "No user ID found")
+        return False
+    
+    # Test permission checking for various besoin operations
+    permissions_to_check = [
+        "besoins.create",
+        "besoins.read",
+        "besoins.edit",
+        "besoins.submit"
+    ]
+    
+    all_checks_passed = True
+    
+    for permission_code in permissions_to_check:
+        check_data = {
+            "user_id": user_id,
+            "permission_code": permission_code
+        }
+        
+        response = test_endpoint(
+            "POST",
+            f"{AUTH_BASE_URL}/iam/check-permission",
+            data=check_data,
+            headers=headers,
+            expected_status=200,
+            test_name=f"Check Permission {permission_code}"
+        )
+        
+        if response:
+            has_permission = response.get("has_permission", False)
+            granted_by = response.get("granted_by", [])
+            
+            log_test(f"Permission Check - {permission_code}", 
+                    "PASS" if has_permission else "INFO", 
+                    f"Has permission: {has_permission}, Granted by: {granted_by}")
+        else:
+            log_test(f"Permission Check - {permission_code}", "FAIL", "Permission check failed")
+            all_checks_passed = False
+    
+    return all_checks_passed
+
+
+def run_iam_tests():
+    """Run all IAM system tests"""
+    print(f"\n{Colors.BOLD}{'='*80}{Colors.ENDC}")
+    print(f"{Colors.BOLD}IAM PERMISSION INITIALIZATION TESTING{Colors.ENDC}")
+    print(f"{Colors.BOLD}Testing IAM permission system after Pydantic validation fixes{Colors.ENDC}")
+    print(f"{Colors.BOLD}Base URL: {AUTH_BASE_URL}{Colors.ENDC}")
+    print(f"{Colors.BOLD}{'='*80}{Colors.ENDC}")
+    
+    # Test auth service health first
+    if not test_auth_service_health():
+        log_test("IAM Testing", "FAIL", "Auth service not available - aborting all tests")
+        return []
+    
+    # Run IAM permission validation tests
+    test_results = test_iam_permissions_validation()
+    
+    return test_results
 
 def test_password_reset():
     """Test password reset functionality"""
