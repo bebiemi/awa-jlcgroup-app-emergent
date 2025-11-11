@@ -47,6 +47,11 @@ class PermissionAction(str, Enum):
     PUBLISH = "publish"         # Publish
     READ_OWN = "read_own"       # Read own data
     MANAGE_OWN = "manage_own"   # Manage own data
+    # Besoins workflow actions
+    SUBMIT = "submit"           # Submit besoin
+    COMMENT = "comment"         # Add comment
+    VALIDATE = "validate"       # Validate besoin (JLC)
+    CONVERT_TO_MISSION = "convert_to_mission"  # Convert besoin to mission
 
 
 class Permission(BaseModel):
