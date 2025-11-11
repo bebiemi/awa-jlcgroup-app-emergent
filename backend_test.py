@@ -1466,6 +1466,422 @@ def test_authentication_for_config_routes():
     return True
 
 
+def test_company_management_system():
+    """Test the complete Company Management System (Entreprise endpoints)"""
+    print(f"\n{Colors.BOLD}{'='*80}{Colors.ENDC}")
+    print(f"{Colors.BOLD}COMPANY MANAGEMENT SYSTEM TESTING{Colors.ENDC}")
+    print(f"{Colors.BOLD}Testing all entreprise CRUD endpoints with permissions{Colors.ENDC}")
+    print(f"{Colors.BOLD}Base URL: {API_BASE_URL}{Colors.ENDC}")
+    print(f"{Colors.BOLD}{'='*80}{Colors.ENDC}")
+    
+    test_results = []
+    
+    # Test accounts from review request
+    test_accounts = {
+        "admin": {"username": "admin", "password": "awana2025"},
+        "company": {"username": "entreprise_test", "password": "Entreprise2025!"},
+        "commercial": {"username": "commercial_test", "password": "Commercial2025!"}
+    }
+    
+    tokens = {}
+    
+    # Step 1: Get tokens for all test accounts
+    print(f"\n{Colors.BOLD}=== STEP 1: AUTHENTICATION ==={Colors.ENDC}")
+    
+    for account_type, credentials in test_accounts.items():
+        print(f"\n  Getting token for {account_type} user...")
+        
+        login_response = test_endpoint(
+            "POST",
+            f"{AUTH_BASE_URL}/auth/local/login",
+            data=credentials,
+            expected_status=200,
+            test_name=f"{account_type.title()} Login"
+        )
+        
+        if login_response and login_response.get("access_token"):
+            tokens[account_type] = login_response["access_token"]
+            log_test(f"{account_type.title()} Token", "PASS", f"Token obtained: {tokens[account_type][:20]}...")
+            test_results.append((f"{account_type.title()} Authentication", True))
+        else:
+            log_test(f"{account_type.title()} Token", "FAIL", "Could not obtain token")
+            test_results.append((f"{account_type.title()} Authentication", False))
+    
+    if not tokens.get("admin"):
+        log_test("Company Management Testing", "FAIL", "Cannot proceed without admin token")
+        return test_results
+    
+    admin_headers = {"Authorization": f"Bearer {tokens['admin']}"}
+    
+    # Step 2: Test with Admin User (should have all permissions)
+    print(f"\n{Colors.BOLD}=== STEP 2: ADMIN USER TESTS ==={Colors.ENDC}")
+    
+    created_entreprise_id = None
+    
+    # Test 2.1: List all entreprises (admin should see all)
+    print(f"\n  Test 2.1: List All Entreprises (Admin)")
+    
+    list_response = test_endpoint(
+        "GET",
+        f"{API_BASE_URL}/entreprises",
+        headers=admin_headers,
+        expected_status=200,
+        test_name="Admin - List All Entreprises"
+    )
+    
+    if list_response:
+        if isinstance(list_response, list):
+            log_test("Admin - List Entreprises Format", "PASS", f"Found {len(list_response)} entreprises")
+            test_results.append(("Admin List Entreprises", True))
+        else:
+            log_test("Admin - List Entreprises Format", "FAIL", "Response is not a list")
+            test_results.append(("Admin List Entreprises", False))
+    else:
+        test_results.append(("Admin List Entreprises", False))
+    
+    # Test 2.2: Create a test entreprise (admin only)
+    print(f"\n  Test 2.2: Create Test Entreprise (Admin)")
+    
+    # Generate unique SIRET (14 digits)
+    import random
+    unique_siret = f"{random.randint(10000000000000, 99999999999999)}"
+    
+    entreprise_data = {
+        "nom": "Test Entreprise SARL",
+        "raison_sociale": "Test Entreprise Société à Responsabilité Limitée",
+        "siret": unique_siret,
+        "adresse": "123 Rue de Test, 75001 Paris, France",
+        "email": "contact@testentreprise.com",
+        "telephone": "+33123456789",
+        "secteur_activite": "Services informatiques",
+        "description": "Entreprise de test pour les API"
+    }
+    
+    create_response = test_endpoint(
+        "POST",
+        f"{API_BASE_URL}/entreprises",
+        data=entreprise_data,
+        headers=admin_headers,
+        expected_status=201,
+        test_name="Admin - Create Entreprise"
+    )
+    
+    if create_response:
+        created_entreprise_id = create_response.get("id")
+        
+        # Verify response structure
+        required_fields = ["id", "nom", "raison_sociale", "siret", "adresse", "email", "telephone"]
+        missing_fields = [field for field in required_fields if field not in create_response]
+        
+        if missing_fields:
+            log_test("Admin - Create Entreprise Structure", "FAIL", f"Missing fields: {missing_fields}")
+            test_results.append(("Admin Create Entreprise", False))
+        else:
+            log_test("Admin - Create Entreprise Structure", "PASS", f"Entreprise created with ID: {created_entreprise_id}")
+            test_results.append(("Admin Create Entreprise", True))
+            
+            # Verify SIRET matches
+            if create_response.get("siret") == unique_siret:
+                log_test("Admin - SIRET Validation", "PASS", "SIRET correctly stored")
+            else:
+                log_test("Admin - SIRET Validation", "FAIL", f"Expected {unique_siret}, got {create_response.get('siret')}")
+    else:
+        test_results.append(("Admin Create Entreprise", False))
+    
+    # Test 2.3: Get entreprise by ID (admin)
+    if created_entreprise_id:
+        print(f"\n  Test 2.3: Get Entreprise by ID (Admin)")
+        
+        get_response = test_endpoint(
+            "GET",
+            f"{API_BASE_URL}/entreprises/{created_entreprise_id}",
+            headers=admin_headers,
+            expected_status=200,
+            test_name="Admin - Get Entreprise by ID"
+        )
+        
+        if get_response:
+            if get_response.get("id") == created_entreprise_id:
+                log_test("Admin - Get Entreprise ID Match", "PASS", "Correct entreprise retrieved")
+                test_results.append(("Admin Get Entreprise by ID", True))
+            else:
+                log_test("Admin - Get Entreprise ID Match", "FAIL", "Wrong entreprise retrieved")
+                test_results.append(("Admin Get Entreprise by ID", False))
+        else:
+            test_results.append(("Admin Get Entreprise by ID", False))
+    
+    # Test 2.4: Update entreprise by ID (admin)
+    if created_entreprise_id:
+        print(f"\n  Test 2.4: Update Entreprise by ID (Admin)")
+        
+        update_data = {
+            "nom": "Test Entreprise SARL UPDATED",
+            "description": "Description mise à jour par admin"
+        }
+        
+        update_response = test_endpoint(
+            "PATCH",
+            f"{API_BASE_URL}/entreprises/{created_entreprise_id}",
+            data=update_data,
+            headers=admin_headers,
+            expected_status=200,
+            test_name="Admin - Update Entreprise by ID"
+        )
+        
+        if update_response:
+            if update_response.get("nom") == update_data["nom"]:
+                log_test("Admin - Update Entreprise Name", "PASS", "Name successfully updated")
+                test_results.append(("Admin Update Entreprise by ID", True))
+            else:
+                log_test("Admin - Update Entreprise Name", "FAIL", "Name not updated correctly")
+                test_results.append(("Admin Update Entreprise by ID", False))
+        else:
+            test_results.append(("Admin Update Entreprise by ID", False))
+    
+    # Step 3: Test with Company User
+    print(f"\n{Colors.BOLD}=== STEP 3: COMPANY USER TESTS ==={Colors.ENDC}")
+    
+    if tokens.get("company"):
+        company_headers = {"Authorization": f"Bearer {tokens['company']}"}
+        
+        # Test 3.1: Get own entreprise (may return 404 if not associated)
+        print(f"\n  Test 3.1: Get Own Entreprise (Company User)")
+        
+        me_response = test_endpoint(
+            "GET",
+            f"{API_BASE_URL}/entreprises/me",
+            headers=company_headers,
+            expected_status=[200, 404],  # 404 is acceptable if not associated
+            test_name="Company - Get Own Entreprise"
+        )
+        
+        if me_response:
+            log_test("Company - Get Own Entreprise", "PASS", "Request successful (may be 404 if not associated)")
+            test_results.append(("Company Get Own Entreprise", True))
+        else:
+            # Check if it was a 404 (acceptable)
+            try:
+                response = requests.get(f"{API_BASE_URL}/entreprises/me", headers=company_headers, timeout=10)
+                if response.status_code == 404:
+                    log_test("Company - Get Own Entreprise", "PASS", "404 returned (user not associated with company)")
+                    test_results.append(("Company Get Own Entreprise", True))
+                else:
+                    log_test("Company - Get Own Entreprise", "FAIL", f"Unexpected status: {response.status_code}")
+                    test_results.append(("Company Get Own Entreprise", False))
+            except:
+                test_results.append(("Company Get Own Entreprise", False))
+        
+        # Test 3.2: Try to create entreprise (should fail - no create permission)
+        print(f"\n  Test 3.2: Try Create Entreprise (Company User - Should Fail)")
+        
+        company_create_data = {
+            "nom": "Unauthorized Company",
+            "raison_sociale": "Should Not Be Created",
+            "siret": "12345678901234",
+            "adresse": "Unauthorized Address",
+            "email": "unauthorized@test.com",
+            "telephone": "+33987654321"
+        }
+        
+        unauthorized_create = test_endpoint(
+            "POST",
+            f"{API_BASE_URL}/entreprises",
+            data=company_create_data,
+            headers=company_headers,
+            expected_status=403,
+            test_name="Company - Unauthorized Create"
+        )
+        
+        if unauthorized_create:
+            log_test("Company - Create Permission Denied", "PASS", "Create correctly blocked for company user")
+            test_results.append(("Company Create Permission Check", True))
+        else:
+            test_results.append(("Company Create Permission Check", False))
+        
+        # Test 3.3: Try to access another company's data (should fail - scope=own)
+        if created_entreprise_id:
+            print(f"\n  Test 3.3: Try Access Other Company Data (Should Fail)")
+            
+            unauthorized_access = test_endpoint(
+                "GET",
+                f"{API_BASE_URL}/entreprises/{created_entreprise_id}",
+                headers=company_headers,
+                expected_status=403,
+                test_name="Company - Unauthorized Access"
+            )
+            
+            if unauthorized_access:
+                log_test("Company - Access Permission Denied", "PASS", "Access to other company correctly blocked")
+                test_results.append(("Company Access Permission Check", True))
+            else:
+                test_results.append(("Company Access Permission Check", False))
+        
+        # Test 3.4: Try to delete (should fail - no delete permission)
+        if created_entreprise_id:
+            print(f"\n  Test 3.4: Try Delete Entreprise (Should Fail)")
+            
+            unauthorized_delete = test_endpoint(
+                "DELETE",
+                f"{API_BASE_URL}/entreprises/{created_entreprise_id}",
+                headers=company_headers,
+                expected_status=403,
+                test_name="Company - Unauthorized Delete"
+            )
+            
+            if unauthorized_delete:
+                log_test("Company - Delete Permission Denied", "PASS", "Delete correctly blocked for company user")
+                test_results.append(("Company Delete Permission Check", True))
+            else:
+                test_results.append(("Company Delete Permission Check", False))
+    
+    # Step 4: Test Validation
+    print(f"\n{Colors.BOLD}=== STEP 4: VALIDATION TESTS ==={Colors.ENDC}")
+    
+    # Test 4.1: Create with invalid SIRET (not 14 digits)
+    print(f"\n  Test 4.1: Invalid SIRET Validation")
+    
+    invalid_siret_data = {
+        "nom": "Invalid SIRET Company",
+        "raison_sociale": "Invalid SIRET Test",
+        "siret": "123456789",  # Only 9 digits
+        "adresse": "Test Address",
+        "email": "invalid@test.com",
+        "telephone": "+33123456789"
+    }
+    
+    invalid_siret_response = test_endpoint(
+        "POST",
+        f"{API_BASE_URL}/entreprises",
+        data=invalid_siret_data,
+        headers=admin_headers,
+        expected_status=422,
+        test_name="Invalid SIRET Validation"
+    )
+    
+    if invalid_siret_response:
+        log_test("SIRET Validation", "PASS", "Invalid SIRET correctly rejected")
+        test_results.append(("SIRET Validation", True))
+    else:
+        test_results.append(("SIRET Validation", False))
+    
+    # Test 4.2: Create with duplicate SIRET (should return 409)
+    if created_entreprise_id:
+        print(f"\n  Test 4.2: Duplicate SIRET Validation")
+        
+        duplicate_siret_data = {
+            "nom": "Duplicate SIRET Company",
+            "raison_sociale": "Duplicate SIRET Test",
+            "siret": unique_siret,  # Same SIRET as created entreprise
+            "adresse": "Different Address",
+            "email": "duplicate@test.com",
+            "telephone": "+33987654321"
+        }
+        
+        duplicate_response = test_endpoint(
+            "POST",
+            f"{API_BASE_URL}/entreprises",
+            data=duplicate_siret_data,
+            headers=admin_headers,
+            expected_status=409,
+            test_name="Duplicate SIRET Validation"
+        )
+        
+        if duplicate_response:
+            log_test("Duplicate SIRET Validation", "PASS", "Duplicate SIRET correctly rejected")
+            test_results.append(("Duplicate SIRET Validation", True))
+        else:
+            test_results.append(("Duplicate SIRET Validation", False))
+    
+    # Test 4.3: Update with empty body (should return 400)
+    if created_entreprise_id:
+        print(f"\n  Test 4.3: Empty Update Validation")
+        
+        empty_update_response = test_endpoint(
+            "PATCH",
+            f"{API_BASE_URL}/entreprises/{created_entreprise_id}",
+            data={},
+            headers=admin_headers,
+            expected_status=400,
+            test_name="Empty Update Validation"
+        )
+        
+        if empty_update_response:
+            log_test("Empty Update Validation", "PASS", "Empty update correctly rejected")
+            test_results.append(("Empty Update Validation", True))
+        else:
+            test_results.append(("Empty Update Validation", False))
+    
+    # Step 5: Test Authentication
+    print(f"\n{Colors.BOLD}=== STEP 5: AUTHENTICATION TESTS ==={Colors.ENDC}")
+    
+    # Test 5.1: All endpoints without auth token (should return 401)
+    print(f"\n  Test 5.1: Unauthenticated Access")
+    
+    unauth_endpoints = [
+        ("GET", "/entreprises", "List Entreprises"),
+        ("GET", "/entreprises/me", "Get Own Entreprise"),
+        ("POST", "/entreprises", "Create Entreprise"),
+        ("PATCH", "/entreprises/me", "Update Own Entreprise")
+    ]
+    
+    unauth_success_count = 0
+    for method, endpoint, description in unauth_endpoints:
+        response = test_endpoint(
+            method,
+            f"{API_BASE_URL}{endpoint}",
+            data={} if method in ["POST", "PATCH"] else None,
+            expected_status=401,
+            test_name=f"Unauth - {description}"
+        )
+        
+        if response:
+            unauth_success_count += 1
+    
+    if unauth_success_count == len(unauth_endpoints):
+        log_test("Authentication Required", "PASS", "All endpoints correctly require authentication")
+        test_results.append(("Authentication Required", True))
+    else:
+        log_test("Authentication Required", "FAIL", f"Only {unauth_success_count}/{len(unauth_endpoints)} endpoints require auth")
+        test_results.append(("Authentication Required", False))
+    
+    # Step 6: Test Soft Delete (admin only)
+    if created_entreprise_id:
+        print(f"\n{Colors.BOLD}=== STEP 6: SOFT DELETE TEST ==={Colors.ENDC}")
+        
+        print(f"\n  Test 6.1: Soft Delete Entreprise (Admin)")
+        
+        delete_response = test_endpoint(
+            "DELETE",
+            f"{API_BASE_URL}/entreprises/{created_entreprise_id}",
+            headers=admin_headers,
+            expected_status=204,
+            test_name="Admin - Soft Delete Entreprise"
+        )
+        
+        if delete_response is not None:  # 204 returns None but is successful
+            log_test("Admin - Soft Delete", "PASS", "Entreprise soft deleted successfully")
+            test_results.append(("Admin Soft Delete", True))
+            
+            # Verify it's soft deleted (should return 404 or show inactive status)
+            verify_delete_response = test_endpoint(
+                "GET",
+                f"{API_BASE_URL}/entreprises/{created_entreprise_id}",
+                headers=admin_headers,
+                expected_status=404,
+                test_name="Verify Soft Delete"
+            )
+            
+            if verify_delete_response:
+                log_test("Soft Delete Verification", "PASS", "Deleted entreprise no longer accessible")
+                test_results.append(("Soft Delete Verification", True))
+            else:
+                test_results.append(("Soft Delete Verification", False))
+        else:
+            test_results.append(("Admin Soft Delete", False))
+    
+    return test_results
+
+
 def test_iam_permissions_validation():
     """Test IAM permissions validation after Pydantic fixes"""
     print(f"\n{Colors.BOLD}{'='*80}{Colors.ENDC}")
