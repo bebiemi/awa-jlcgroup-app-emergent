@@ -62,7 +62,7 @@ export const countryConfigApi = createApi({
 
     // Get single country
     getCountry: builder.query<Country, string>({
-      query: (countryId) => `/api/config/countries/${countryId}`,
+      query: (countryId) => `/config/countries/${countryId}`,
       providesTags: (result, error, id) => [{ type: 'Countries', id }],
     }),
 
