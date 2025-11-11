@@ -452,8 +452,20 @@ async def assign_profiles_to_user(
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     
+    # Handle both single profile_id and multiple profile_ids
+    profile_ids = []
+    if assignment.profile_id:
+        profile_ids = [assignment.profile_id]
+    elif assignment.profile_ids:
+        profile_ids = assignment.profile_ids
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Either profile_id or profile_ids must be provided"
+        )
+    
     # Verify profiles exist
-    for prof_id in assignment.profile_ids:
+    for prof_id in profile_ids:
         prof = await db.profiles.find_one({"id": prof_id})
         if not prof:
             raise HTTPException(
@@ -461,7 +473,7 @@ async def assign_profiles_to_user(
                 detail=f"Profile {prof_id} not found"
             )
     
-    success = await iam_service.assign_profiles_to_user(user_id, assignment.profile_ids)
+    success = await iam_service.assign_profiles_to_user(user_id, profile_ids)
     if not success:
         raise HTTPException(status_code=500, detail="Failed to assign profiles")
     
