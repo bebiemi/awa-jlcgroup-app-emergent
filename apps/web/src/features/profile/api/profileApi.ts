@@ -85,7 +85,7 @@ export const profileApi = createApi({
     }),
 
     getMyDocuments: builder.query<{ documents: Document[] }, void>({
-      query: () => '/documents',
+      query: () => '/auth-api/profiles/documents',
       providesTags: ['Documents'],
     }),
 
