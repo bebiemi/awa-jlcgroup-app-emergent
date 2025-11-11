@@ -321,6 +321,18 @@ backend:
         agent: "main"
         comment: "✅ FIXED: Root cause was users having roles but no IAM profiles (profile_ids: []). Created scripts to assign profiles based on roles. Tested and verified - API now returns 200 OK with workflow data."
 
+  - task: "Company Management System"
+    implemented: true
+    working: "pending_test"
+    file: "/app/auth-microservice/entreprise_routes.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "pending_test"
+        agent: "main"
+        comment: "🔧 COMPANY MANAGEMENT SYSTEM IMPLEMENTED: Complete backend and frontend for managing company/entreprise information. BACKEND: Created entreprise_routes.py with full CRUD operations (GET /api/entreprises/me, GET /api/entreprises/{id}, GET /api/entreprises, POST /api/entreprises, PATCH /api/entreprises/me, PATCH /api/entreprises/{id}, DELETE /api/entreprises/{id}). Permissions system: entreprises.create, entreprises.read, entreprises.edit, entreprises.delete with proper scope (own/all). Initialization script (init_entreprise_permissions.py) run successfully - 4 permissions created and assigned to profiles (entreprise, company_admin, admin, super_admin). FRONTEND: Created entrepriseApi.ts RTK Query slice with all endpoints and cache management. Created CompanySettingsPage.tsx with full form (identity, location, contact, description sections) and edit mode. Route added at /entreprise/settings with protection (entreprises.read permission). Sidebar updated with 'Mon Entreprise' link in Account section for all roles. All services restarted and running. NEEDS TESTING: Backend endpoints (all CRUD operations), permission enforcement (scope checking), frontend functionality (GET/PATCH /api/entreprises/me)."
+
 frontend:
   - task: "IAM Frontend Integration"
     implemented: true
