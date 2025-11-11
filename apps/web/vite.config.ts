@@ -33,6 +33,12 @@ export default defineConfig({
         changeOrigin: true,
         secure: false,
       },
+      // /auth-api also goes to backend (legacy compatibility)
+      '/auth-api': {
+        target: 'http://localhost:8001',
+        changeOrigin: true,
+        secure: false,
+      },
     },
   },
   // Preview configuration (for production builds)
