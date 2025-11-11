@@ -50,31 +50,5 @@ export const createBaseQueryWithAuth = (baseUrl?: string): BaseQueryFn<
 // Default instance with backend URL from environment
 // CRITICAL: ALWAYS use undefined to force truly relative URLs
 // This prevents Mixed Content errors in production (HTTPS pages making HTTP requests)
-// Even if environment variables are set, we ignore them to ensure relative URLs
-const getBaseUrl = (): string | undefined => {
-  // Check if we're in a production build (*.preview.emergentagent.com or similar)
-  const isProduction = typeof window !== 'undefined' && 
-    (window.location.hostname.includes('preview.emergentagent.com') ||
-     window.location.hostname.includes('emergentagent.com') ||
-     window.location.protocol === 'https:')
-  
-  // In production: ALWAYS return undefined to force relative URLs
-  // This ensures HTTPS pages make HTTPS requests automatically
-  if (isProduction) {
-    return undefined
-  }
-  
-  // In development: check environment variables (for custom ports if needed)
-  const envUrl = import.meta.env.VITE_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL
-  
-  // If env URL is set, not empty, and not an HTTP URL, use it
-  if (envUrl && envUrl.trim() !== '' && !envUrl.startsWith('http://')) {
-    return envUrl
-  }
-  
-  // Default: return undefined for relative URLs
-  return undefined
-}
-
-const backendUrl = getBaseUrl()
-export const baseQueryWithAuth = createBaseQueryWithAuth(backendUrl)
+// SOLUTION: Always use undefined to ensure relative URLs work in all environments
+export const baseQueryWithAuth = createBaseQueryWithAuth(undefined)
