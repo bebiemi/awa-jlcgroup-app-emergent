@@ -18,7 +18,7 @@ export const mfaApi = createApi({
     // Setup TOTP
     setupTotp: builder.mutation<TOTPSetupResponse, void>({
       query: () => ({
-        url: '/auth/mfa/setup/totp',
+        url: '/api/auth/mfa/setup/totp',
         method: 'POST',
       }),
     }),
@@ -26,7 +26,7 @@ export const mfaApi = createApi({
     // Verify TOTP during setup
     verifyTotp: builder.mutation<{ success: boolean; message: string }, { code: string }>({
       query: (body) => ({
-        url: '/auth/mfa/setup/totp/verify',
+        url: '/api/auth/mfa/setup/totp/verify',
         method: 'POST',
         body,
       }),
@@ -36,7 +36,7 @@ export const mfaApi = createApi({
     // Setup Email OTP
     setupEmailOtp: builder.mutation<{ success: boolean; message: string; email: string }, void>({
       query: () => ({
-        url: '/auth/mfa/setup/email',
+        url: '/api/auth/mfa/setup/email',
         method: 'POST',
       }),
       invalidatesTags: ['MfaStatus'],
@@ -45,7 +45,7 @@ export const mfaApi = createApi({
     // Disable MFA method
     disableMfaMethod: builder.mutation<{ success: boolean; message: string }, { method: string; password: string }>({
       query: ({ method }) => ({
-        url: `/auth/mfa/method/${method}`,
+        url: `/api/auth/mfa/method/${method}`,
         method: 'DELETE',
       }),
       invalidatesTags: ['MfaStatus'],
@@ -59,7 +59,7 @@ export const mfaApi = createApi({
     // Generate new backup codes
     generateBackupCodes: builder.mutation<RecoveryCodesResponse, { password: string }>({
       query: (body) => ({
-        url: '/auth/mfa/backup-codes/regenerate',
+        url: '/api/auth/mfa/backup-codes/regenerate',
         method: 'POST',
         body,
       }),
@@ -75,7 +75,7 @@ export const mfaApi = createApi({
       }
     >({
       query: (body) => ({
-        url: '/auth/local/login/complete',
+        url: '/api/auth/local/login/complete',
         method: 'POST',
         body,
       }),
