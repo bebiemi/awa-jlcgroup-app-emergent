@@ -464,20 +464,20 @@ export default function CompanySettingsPage() {
               {/* Action Buttons */}
               {isEditing && (
                 <div className="flex justify-end gap-3 pt-4 border-t">
-                  <ActionButton
+                  <Button
                     type="button"
                     onClick={handleCancel}
                     variant="secondary"
                   >
                     Annuler
-                  </ActionButton>
-                  <ActionButton
+                  </Button>
+                  <Button
                     type="submit"
                     variant="primary"
                     loading={isUpdating}
                   >
                     Enregistrer
-                  </ActionButton>
+                  </Button>
                 </div>
               )}
             </div>
