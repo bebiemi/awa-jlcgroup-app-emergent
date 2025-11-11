@@ -47,7 +47,7 @@ export const presenceApi = createApi({
       invalidatesTags: ['Presence'],
     }),
     getOnlineUsers: builder.query<OnlineUsersResponse, void>({
-      query: () => '/online',
+      query: () => '/api/users/presence/online',
       providesTags: ['OnlineUsers'],
     }),
     getUserPresence: builder.query<UserPresence, string>({
