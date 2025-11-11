@@ -55,6 +55,10 @@ class User(BaseModel):
     # Roles (list of role names)
     roles: List[str] = Field(default_factory=list)
     
+    # IAM - Profiles and Groups
+    profile_ids: List[str] = Field(default_factory=list)
+    group_ids: List[str] = Field(default_factory=list)
+    
     # Collaborator flag
     is_collaborator: bool = False
     
