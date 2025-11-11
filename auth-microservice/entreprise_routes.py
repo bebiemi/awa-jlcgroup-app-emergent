@@ -125,7 +125,8 @@ async def get_entreprise(
     user_company_id = getattr(current_user, "company_id", None) or getattr(current_user, "entreprise_id", None)
     
     # If not admin, can only access own company
-    if permissions.get("scope") != "all" and user_company_id != entreprise_id:
+    has_all_scope = "admin" in current_user.roles or "super_admin" in current_user.roles
+    if not has_all_scope and user_company_id != entreprise_id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Accès non autorisé à cette entreprise"
