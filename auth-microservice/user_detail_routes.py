@@ -361,6 +361,11 @@ async def get_user_profiles(
     cursor = db.profiles.find({"id": {"$in": profile_ids}})
     profiles = await cursor.to_list(length=None)
     
+    # Remove MongoDB _id field from each profile
+    for profile in profiles:
+        if "_id" in profile:
+            del profile["_id"]
+    
     return profiles
 
 
