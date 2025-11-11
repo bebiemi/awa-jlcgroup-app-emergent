@@ -25,9 +25,42 @@ export default defineConfig({
       }),
     },
     proxy: {
-      // NOTE: In Emergent preview environments, backend proxying is handled by Kubernetes/nginx
-      // This proxy config is ONLY used in true local development (localhost)
-      // DO NOT proxy /api/* here - let it go directly to backend through K8s routing
+      // IAM endpoints - route to auth-microservice (MUST be before generic /api)
+      '/api/iam': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+        secure: false,
+      },
+      // Auth endpoints - route to auth-microservice
+      '/api/auth': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+        secure: false,
+      },
+      // Config endpoints - route to auth-microservice (MUST be before generic /api)
+      '/api/config': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+        secure: false,
+      },
+      // Security endpoints - route to auth-microservice (MUST be before generic /api)
+      '/api/security': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+        secure: false,
+      },
+      // Besoins endpoints - route to auth-microservice (MUST be before generic /api)
+      '/api/besoins': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+        secure: false,
+      },
+      // Generic API - route to backend
+      '/api': {
+        target: 'http://localhost:8001',  // Use localhost for local dev
+        changeOrigin: true,
+        secure: false,
+      },
       '/auth-api': {
         target: 'http://localhost:8000',  // Use localhost for local dev
         changeOrigin: true,
