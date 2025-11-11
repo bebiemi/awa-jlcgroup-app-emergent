@@ -86,7 +86,8 @@ export const store = configureStore({
       .concat(countryConfigApi.middleware)
       .concat(securityConfigApi.middleware)
       .concat(besoinApi.middleware)
-      .concat(configApi.middleware),
+      .concat(configApi.middleware)
+      .concat(entrepriseApi.middleware),
 })
 
 export type RootState = ReturnType<typeof store.getState>
