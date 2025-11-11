@@ -355,6 +355,14 @@ function App() {
         }
       />
       <Route
+        path="/entreprise/settings"
+        element={
+          <ProtectedRoute requiredPermissions={['entreprises.read']}>
+            <CompanySettingsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/offres"
         element={
           <ProtectedRoute requiredPermissions={['missions.create']}>
