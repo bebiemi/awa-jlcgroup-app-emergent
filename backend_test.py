@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Besoins System Testing - Phase 1
-Tests the complete Besoins (hiring needs) management system
+IAM Permission Initialization Testing
+Tests the IAM permission system after Pydantic validation fixes
 """
 
 import requests
@@ -15,10 +15,27 @@ from datetime import datetime, date
 import re
 from pymongo import MongoClient
 
-# Test configuration
-AUTH_BASE_URL = "http://localhost:8000/api"  # Direct auth service URL
-API_BASE_URL = "http://localhost:8001/api"   # JLC API service URL (for proxy routes)
-FRONTEND_PROXY_URL = "http://localhost:3000/auth-api"  # Through Vite proxy
+# Test configuration - Use frontend .env to get the correct backend URL
+FRONTEND_ENV_PATH = "/app/frontend/.env"
+backend_url = ""
+
+# Read frontend .env to get backend URL
+try:
+    with open(FRONTEND_ENV_PATH, 'r') as f:
+        for line in f:
+            if line.startswith('REACT_APP_BACKEND_URL='):
+                backend_url = line.split('=', 1)[1].strip()
+                break
+except FileNotFoundError:
+    pass
+
+# Use the backend URL from frontend .env, fallback to localhost
+if backend_url:
+    AUTH_BASE_URL = f"{backend_url}/api"
+    API_BASE_URL = f"{backend_url}/api"
+else:
+    AUTH_BASE_URL = "http://localhost:8000/api"  # Direct auth service URL
+    API_BASE_URL = "http://localhost:8001/api"   # JLC API service URL (for proxy routes)
 
 # Global variables to store test data
 test_data = {}
