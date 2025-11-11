@@ -107,7 +107,7 @@ export const countryConfigApi = createApi({
     // Delete country
     deleteCountry: builder.mutation<{ message: string }, string>({
       query: (countryId) => ({
-        url: `/api/config/countries/${countryId}`,
+        url: `/config/countries/${countryId}`,
         method: 'DELETE',
       }),
       invalidatesTags: ['Countries'],
