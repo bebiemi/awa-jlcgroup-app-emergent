@@ -134,6 +134,7 @@ async def check_application_restrictions(
 async def get_current_user(user: User = Depends(get_user_dep)) -> dict:
     """Get current user as dict"""
     return {
+        "id": user.id,
         "sub": user.id,
         "email": user.email,
         "roles": user.roles or [],
