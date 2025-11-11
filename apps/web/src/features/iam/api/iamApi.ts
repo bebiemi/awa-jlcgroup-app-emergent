@@ -110,7 +110,7 @@ export const iamApi = createApi({
     
     createPermission: builder.mutation<Permission, Partial<Permission>>({
       query: (permission) => ({
-        url: '/permissions',
+        url: '/api/iam/permissions',
         method: 'POST',
         body: permission,
       }),
@@ -138,7 +138,7 @@ export const iamApi = createApi({
     
     createProfile: builder.mutation<Profile, ProfileCreate>({
       query: (profile) => ({
-        url: '/profiles',
+        url: '/api/iam/profiles',
         method: 'POST',
         body: profile,
       }),
@@ -175,7 +175,7 @@ export const iamApi = createApi({
     
     createGroup: builder.mutation<Group, GroupCreate>({
       query: (group) => ({
-        url: '/groups',
+        url: '/api/iam/groups',
         method: 'POST',
         body: group,
       }),
