@@ -244,11 +244,11 @@ const ProfilesManagementPage: React.FC = () => {
 
         {/* Category Filter */}
         <Card>
-          <div className="mb-4">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Catégories</h3>
-            <p className="text-sm text-gray-600">Filtrer les profils par catégorie</p>
+          <div className="mb-6">
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">Catégories</h3>
+            <p className="text-base text-gray-600">Filtrer les profils par catégorie</p>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {categories.map((cat) => (
               <Tooltip 
                 key={cat.value} 
@@ -257,15 +257,15 @@ const ProfilesManagementPage: React.FC = () => {
               >
                 <button
                   onClick={() => setFilterCategory(cat.value)}
-                  className={`px-4 py-3 rounded-lg transition-all text-sm font-medium ${
+                  className={`px-6 py-5 rounded-lg transition-all font-medium ${
                     filterCategory === cat.value
                       ? 'bg-jlc-purple-600 text-white shadow-lg scale-105'
                       : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:scale-102 hover:shadow-md'
                   }`}
                 >
-                  <div className="text-2xl mb-1">{cat.icon}</div>
-                  <div className="text-xs">{cat.label}</div>
-                  <div className="text-xs font-bold mt-1">{cat.count}</div>
+                  <div className="text-4xl mb-2">{cat.icon}</div>
+                  <div className="text-base font-semibold">{cat.label}</div>
+                  <div className="text-lg font-bold mt-2">{cat.count}</div>
                 </button>
               </Tooltip>
             ))}
