@@ -265,6 +265,11 @@ async def get_user_groups(
     cursor = db.groups.find({"id": {"$in": group_ids}})
     groups = await cursor.to_list(length=None)
     
+    # Remove MongoDB _id field from each group
+    for group in groups:
+        if "_id" in group:
+            del group["_id"]
+    
     return groups
 
 
