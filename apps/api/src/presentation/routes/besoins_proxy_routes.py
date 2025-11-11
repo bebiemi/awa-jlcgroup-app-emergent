@@ -17,10 +17,12 @@ async def proxy_besoins_requests(path: str, request: Request):
     target_url = f"{AUTH_SERVICE_URL}/api/besoins/{path}" if path else f"{AUTH_SERVICE_URL}/api/besoins"
     
     query_params = dict(request.query_params)
-    headers = {
-        key: value for key, value in request.headers.items()
-        if key.lower() not in ["host", "connection", "content-length"]
-    }
+    # Preserve ALL headers including Authorization
+    headers = dict(request.headers)
+    # Only remove problematic headers
+    headers.pop("host", None)
+    headers.pop("connection", None)
+    headers.pop("content-length", None)
     body = await request.body()
     
     try:
