@@ -51,4 +51,5 @@ export const createBaseQueryWithAuth = (baseUrl?: string): BaseQueryFn<
 // CRITICAL: ALWAYS use undefined to force truly relative URLs
 // This prevents Mixed Content errors in production (HTTPS pages making HTTP requests)
 // SOLUTION: Always use undefined to ensure relative URLs work in all environments
-export const baseQueryWithAuth = createBaseQueryWithAuth(undefined)
+// Force undefined at runtime to ensure no hardcoded URLs
+export const baseQueryWithAuth = createBaseQueryWithAuth(undefined as any)
