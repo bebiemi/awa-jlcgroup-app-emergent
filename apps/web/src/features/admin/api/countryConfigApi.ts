@@ -88,7 +88,7 @@ export const countryConfigApi = createApi({
     // Update country
     updateCountry: builder.mutation<Country, { id: string; data: CountryUpdate }>({
       query: ({ id, data }) => ({
-        url: `/api/config/countries/${id}`,
+        url: `/config/countries/${id}`,
         method: 'PATCH',
         body: data,
       }),
