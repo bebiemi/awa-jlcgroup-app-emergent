@@ -58,7 +58,7 @@ export interface CreateProfileRequest {
 
 export const securityApi = createApi({
   reducerPath: 'securityApi',
-  baseQuery: createBaseQueryWithAuth('/auth-api/auth/security'),
+  baseQuery: baseQueryWithAuth,
   tagTypes: ['Permissions', 'Profiles', 'Groups'],
   endpoints: (builder) => ({
     // Permissions
