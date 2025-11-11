@@ -192,7 +192,7 @@ async def list_entreprises(
 async def create_entreprise(
     entreprise_data: EntrepriseCreate,
     current_user: User = Depends(get_current_user),
-    permissions: dict = Depends(require_permission("entreprises.create")),
+    _: User = Depends(require_permission("entreprises.create")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """
