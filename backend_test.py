@@ -1841,17 +1841,11 @@ def test_company_management_system():
         
         print(f"\n  Test 6.1: Soft Delete Entreprise (Admin)")
         
-        delete_response = test_endpoint(
-            "DELETE",
-            f"{API_BASE_URL}/entreprises/{created_entreprise_id}",
-            headers=admin_headers,
-            expected_status=204,
-            test_name="Admin - Soft Delete Entreprise"
-        )
-        
-        if delete_response is not None:  # 204 returns None but is successful
-            log_test("Admin - Soft Delete", "PASS", "Entreprise soft deleted successfully")
-            test_results.append(("Admin Soft Delete", True))
+        try:
+            response = requests.delete(f"{API_BASE_URL}/entreprises/{created_entreprise_id}", headers=admin_headers, timeout=10)
+            if response.status_code == 204:
+                log_test("Admin - Soft Delete", "PASS", "Entreprise soft deleted successfully (204 No Content)")
+                test_results.append(("Admin Soft Delete", True))
             
             # Verify it's soft deleted (should return 404 or show inactive status)
             verify_delete_response = test_endpoint(
