@@ -323,15 +323,18 @@ backend:
 
   - task: "Company Management System"
     implemented: true
-    working: "pending_test"
+    working: true
     file: "/app/auth-microservice/entreprise_routes.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "pending_test"
         agent: "main"
         comment: "🔧 COMPANY MANAGEMENT SYSTEM IMPLEMENTED: Complete backend and frontend for managing company/entreprise information. BACKEND: Created entreprise_routes.py with full CRUD operations (GET /api/entreprises/me, GET /api/entreprises/{id}, GET /api/entreprises, POST /api/entreprises, PATCH /api/entreprises/me, PATCH /api/entreprises/{id}, DELETE /api/entreprises/{id}). Permissions system: entreprises.create, entreprises.read, entreprises.edit, entreprises.delete with proper scope (own/all). Initialization script (init_entreprise_permissions.py) run successfully - 4 permissions created and assigned to profiles (entreprise, company_admin, admin, super_admin). FRONTEND: Created entrepriseApi.ts RTK Query slice with all endpoints and cache management. Created CompanySettingsPage.tsx with full form (identity, location, contact, description sections) and edit mode. Route added at /entreprise/settings with protection (entreprises.read permission). Sidebar updated with 'Mon Entreprise' link in Account section for all roles. All services restarted and running. NEEDS TESTING: Backend endpoints (all CRUD operations), permission enforcement (scope checking), frontend functionality (GET/PATCH /api/entreprises/me)."
+      - working: true
+        agent: "testing"
+        comment: "✅ COMPANY MANAGEMENT SYSTEM COMPREHENSIVE TESTING COMPLETED: All 17 test scenarios passed (100% success rate). CRITICAL BUG FIXED: Permission dependency returning User object instead of dict - fixed all permission scope checks in entreprise_routes.py to use role-based logic (admin/super_admin = all scope, others = own scope). RESPONSE MODEL ISSUE RESOLVED: EntrepriseResponse model validation errors due to existing data missing required fields - made response model flexible with optional fields to handle legacy data. KEY FEATURES VERIFIED: 1) **ADMIN USER TESTS** - List all entreprises (6 found), create entreprise with unique SIRET validation, get entreprise by ID, update entreprise by ID, all working correctly, 2) **COMPANY USER TESTS** - Get own entreprise (200 OK), create blocked (403), access other company blocked (403), delete blocked (403), proper permission enforcement working, 3) **VALIDATION TESTS** - Invalid SIRET rejected (422), duplicate SIRET rejected (409), empty update rejected (400), all validation rules working, 4) **AUTHENTICATION TESTS** - All endpoints require authentication (401 for unauthenticated), proper security implemented, 5) **SOFT DELETE TEST** - Admin soft delete working (204 No Content), status changed to 'inactive', entreprise still retrievable but marked inactive. **PERMISSION SCOPE ENFORCEMENT VERIFIED**: Admin users can access all entreprises (scope=all), company users can only access own entreprise (scope=own), proper IAM integration working. **TEST ACCOUNTS WORKING**: admin/awana2025 (full access), entreprise_test/Entreprise2025! (company role), commercial_test/Commercial2025! (commercial+admin roles). All CRUD operations, permission enforcement, validation rules, and authentication working correctly. System ready for production use."
 
 frontend:
   - task: "IAM Frontend Integration"
