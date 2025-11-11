@@ -135,7 +135,7 @@ export const countryConfigApi = createApi({
     // Delete city
     deleteCity: builder.mutation<{ message: string }, string>({
       query: (cityId) => ({
-        url: `/api/config/countries/cities/${cityId}`,
+        url: `/config/countries/cities/${cityId}`,
         method: 'DELETE',
       }),
       invalidatesTags: ['Cities'],
