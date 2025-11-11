@@ -230,7 +230,7 @@ async def create_entreprise(
 async def update_my_entreprise(
     entreprise_data: EntrepriseUpdate,
     current_user: User = Depends(get_current_user),
-    permissions: dict = Depends(require_permission("entreprises.edit")),
+    _: User = Depends(require_permission("entreprises.edit")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """
@@ -305,7 +305,7 @@ async def update_entreprise(
     entreprise_id: str,
     entreprise_data: EntrepriseUpdate,
     current_user: User = Depends(get_current_user),
-    permissions: dict = Depends(require_permission("entreprises.edit")),
+    _: User = Depends(require_permission("entreprises.edit")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """
