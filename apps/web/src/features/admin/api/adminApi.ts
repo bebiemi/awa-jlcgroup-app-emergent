@@ -30,16 +30,7 @@ export interface AdminStats {
 
 export const adminApi = createApi({
   reducerPath: 'adminApi',
-  baseQuery: fetchBaseQuery({
-    baseUrl: '/auth-api/auth',
-    prepareHeaders: (headers, { getState }) => {
-      const token = (getState() as RootState).auth.token
-      if (token) {
-        headers.set('authorization', `Bearer ${token}`)
-      }
-      return headers
-    },
-  }),
+  baseQuery: baseQueryWithAuth,
   tagTypes: ['AdminStats'],
   endpoints: (builder) => ({
     getAdminStats: builder.query<AdminStats, void>({

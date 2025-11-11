@@ -40,16 +40,7 @@ export interface LocationUpdate {
 
 export const locationApi = createApi({
   reducerPath: 'locationApi',
-  baseQuery: fetchBaseQuery({
-    baseUrl: '/auth-api',
-    prepareHeaders: (headers, { getState }) => {
-      const token = (getState() as RootState).auth.token
-      if (token) {
-        headers.set('authorization', `Bearer ${token}`)
-      }
-      return headers
-    },
-  }),
+  baseQuery: baseQueryWithAuth,
   tagTypes: ['Location', 'LocationTree'],
   endpoints: (builder) => ({
     getLocations: builder.query<Location[], {

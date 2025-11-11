@@ -34,16 +34,7 @@ export interface EmailStats {
 
 export const emailHistoryApi = createApi({
   reducerPath: 'emailHistoryApi',
-  baseQuery: fetchBaseQuery({
-    baseUrl: API_URL,
-    prepareHeaders: (headers) => {
-      const token = localStorage.getItem('access_token');
-      if (token) {
-        headers.set('Authorization', `Bearer ${token}`);
-      }
-      return headers;
-    },
-  }),
+  baseQuery: baseQueryWithAuth,
   tagTypes: ['EmailHistory'],
   endpoints: (builder) => ({
     getEmailHistory: builder.query<EmailHistoryResponse, {

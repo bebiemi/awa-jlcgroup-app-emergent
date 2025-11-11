@@ -39,16 +39,7 @@ export interface ContractsResponse {
 
 export const contractApi = createApi({
   reducerPath: 'contractApi',
-  baseQuery: fetchBaseQuery({
-    baseUrl: API_URL,
-    prepareHeaders: (headers) => {
-      const token = localStorage.getItem('access_token');
-      if (token) {
-        headers.set('Authorization', `Bearer ${token}`);
-      }
-      return headers;
-    },
-  }),
+  baseQuery: baseQueryWithAuth,
   tagTypes: ['Contracts'],
   endpoints: (builder) => ({
     getMyContracts: builder.query<ContractsResponse, { status_filter?: string; include_ended?: boolean }>({

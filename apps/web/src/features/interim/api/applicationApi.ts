@@ -15,16 +15,7 @@ export interface Application {
 
 export const applicationApi = createApi({
   reducerPath: 'applicationApi',
-  baseQuery: fetchBaseQuery({
-    baseUrl: API_URL,
-    prepareHeaders: (headers) => {
-      const token = localStorage.getItem('access_token');
-      if (token) {
-        headers.set('Authorization', `Bearer ${token}`);
-      }
-      return headers;
-    },
-  }),
+  baseQuery: baseQueryWithAuth,
   tagTypes: ['Applications'],
   endpoints: (builder) => ({
     getMyApplications: builder.query<{ applications: Application[] }, void>({

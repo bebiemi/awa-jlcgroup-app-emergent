@@ -29,16 +29,7 @@ export interface UsersResponse {
 
 export const usersApi = createApi({
   reducerPath: 'usersApi',
-  baseQuery: fetchBaseQuery({
-    baseUrl: '/auth-api/auth',
-    prepareHeaders: (headers, { getState }) => {
-      const token = (getState() as RootState).auth.token
-      if (token) {
-        headers.set('authorization', `Bearer ${token}`)
-      }
-      return headers
-    },
-  }),
+  baseQuery: baseQueryWithAuth,
   tagTypes: ['Users'],
   endpoints: (builder) => ({
     getUsers: builder.query<UsersResponse, { page?: number; page_size?: number; search?: string; status?: string; role?: string }>({

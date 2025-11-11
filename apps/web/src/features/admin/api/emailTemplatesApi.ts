@@ -46,16 +46,7 @@ export interface TemplatePreview {
 
 export const emailTemplatesApi = createApi({
   reducerPath: 'emailTemplatesApi',
-  baseQuery: fetchBaseQuery({
-    baseUrl: API_URL,
-    prepareHeaders: (headers) => {
-      const token = localStorage.getItem('access_token');
-      if (token) {
-        headers.set('Authorization', `Bearer ${token}`);
-      }
-      return headers;
-    },
-  }),
+  baseQuery: baseQueryWithAuth,
   tagTypes: ['EmailTemplates'],
   endpoints: (builder) => ({
     getTemplates: builder.query<{ templates: EmailTemplate[]; count: number }, {

@@ -5,16 +5,7 @@ import type { RootState } from '@/store/store'
 
 export const notificationApi = createApi({
   reducerPath: 'notificationApi',
-  baseQuery: fetchBaseQuery({
-    baseUrl: '/api',
-    prepareHeaders: (headers, { getState }) => {
-      const token = (getState() as RootState).auth.token
-      if (token) {
-        headers.set('authorization', `Bearer ${token}`)
-      }
-      return headers
-    },
-  }),
+  baseQuery: baseQueryWithAuth,
   tagTypes: ['Notification'],
   endpoints: (builder) => ({
     getNotifications: builder.query<

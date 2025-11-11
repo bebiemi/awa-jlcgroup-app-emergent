@@ -6,16 +6,7 @@ import type { RootState } from '@/store/store'
 
 export const mfaApi = createApi({
   reducerPath: 'mfaApi',
-  baseQuery: fetchBaseQuery({
-    baseUrl: AUTH_SERVICE_URL,
-    prepareHeaders: (headers, { getState }) => {
-      const token = (getState() as RootState).auth.token
-      if (token) {
-        headers.set('authorization', `Bearer ${token}`)
-      }
-      return headers
-    },
-  }),
+  baseQuery: baseQueryWithAuth,
   tagTypes: ['MfaStatus'],
   endpoints: (builder) => ({
     // Get MFA status
