@@ -207,8 +207,9 @@ class GroupUpdate(BaseModel):
 
 class UserProfileAssignment(BaseModel):
     """Assign profile directly to user"""
-    user_id: str
-    profile_ids: List[str]
+    profile_id: Optional[str] = None  # Single profile (for frontend compatibility)
+    profile_ids: Optional[List[str]] = None  # Multiple profiles (for bulk assignment)
+    notes: Optional[str] = None  # Optional notes
 
 
 class UserGroupAssignment(BaseModel):
