@@ -244,6 +244,7 @@ export default function Sidebar() {
       {
         title: 'Processus',
         items: [
+          { label: 'Mes Besoins', path: '/entreprise/besoins', icon: DocumentTextIcon },
           { label: 'Mes Missions', path: '/missions', icon: BriefcaseIcon },
         ],
       },
