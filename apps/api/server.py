@@ -95,6 +95,7 @@ app.include_router(security_proxy_routes.router, prefix="/api", tags=["Security 
 app.include_router(auth_api_proxy_routes.router, prefix="/auth-api", tags=["Auth API Proxy"])
 # Proxy /api/besoins to auth-microservice
 app.include_router(besoins_proxy_routes.router, prefix="/api/besoins", tags=["Besoins Proxy"])
+app.include_router(users_proxy_routes.router, prefix="/api/users", tags=["Users Proxy"])
 
 
 @app.get("/health")
