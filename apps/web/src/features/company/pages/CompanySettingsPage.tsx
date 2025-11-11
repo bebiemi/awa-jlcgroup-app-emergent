@@ -164,9 +164,9 @@ export default function CompanySettingsPage() {
             </p>
           </div>
           {!isEditing && (
-            <ActionButton onClick={() => setIsEditing(true)} variant="primary">
+            <Button onClick={() => setIsEditing(true)} variant="primary">
               Modifier
-            </ActionButton>
+            </Button>
           )}
         </div>
 
