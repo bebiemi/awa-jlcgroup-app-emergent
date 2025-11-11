@@ -178,7 +178,12 @@ class IAMService:
             if all_permission_ids:
                 perms_cursor = self.permissions_collection.find({"id": {"$in": list(all_permission_ids)}})
                 async for perm in perms_cursor:
-                    all_permissions.append(Permission(**perm))
+                    try:
+                        # Remove MongoDB _id before creating Pydantic model
+                        perm.pop("_id", None)
+                        all_permissions.append(Permission(**perm))
+                    except Exception as e:
+                        logger.error(f"Error creating Permission model: {e}, permission data: {perm}")
             
             return UserPermissionsResponse(
                 user_id=user_id,
