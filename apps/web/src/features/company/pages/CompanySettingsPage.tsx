@@ -5,7 +5,7 @@
 import React, { useState, useEffect } from 'react'
 import Layout from '@/components/Layout'
 import Card from '@/components/Card'
-import ActionButton from '@/components/ActionButton'
+import Button from '@/components/Button'
 import {
   BuildingOfficeIcon,
   MapPinIcon,
