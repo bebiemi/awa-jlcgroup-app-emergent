@@ -54,7 +54,7 @@ export const countryConfigApi = createApi({
     // Get all countries
     getCountries: builder.query<Country[], { active_only?: boolean }>({
       query: ({ active_only = true }) => ({
-        url: '/api/config/countries',
+        url: '/config/countries',
         params: { active_only },
       }),
       providesTags: ['Countries'],
