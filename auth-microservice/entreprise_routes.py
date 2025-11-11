@@ -374,7 +374,7 @@ async def update_entreprise(
 async def delete_entreprise(
     entreprise_id: str,
     current_user: User = Depends(get_current_user),
-    permissions: dict = Depends(require_permission("entreprises.delete")),
+    _: User = Depends(require_permission("entreprises.delete")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """
