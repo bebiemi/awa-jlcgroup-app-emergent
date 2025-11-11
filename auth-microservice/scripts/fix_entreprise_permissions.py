@@ -75,7 +75,7 @@ async def fix_entreprise_permissions():
             "description": "Permet de supprimer des entreprises (admin seulement)",
             "resource": "entreprises",
             "action": "delete",  # lowercase
-            "scope": "all",
+            "scope": "global",
             "category": "entreprises",
             "is_system": False,
             "created_at": now,
