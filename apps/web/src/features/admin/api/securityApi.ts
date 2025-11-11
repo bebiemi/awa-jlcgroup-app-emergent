@@ -64,7 +64,7 @@ export const securityApi = createApi({
     // Permissions
     getPermissions: builder.query<Permission[], { module?: string }>({
       query: ({ module }) => ({
-        url: '/permissions',
+        url: '/api/security/permissions',
         params: module ? { module } : {},
       }),
       providesTags: ['Permissions'],
@@ -81,7 +81,7 @@ export const securityApi = createApi({
     }),
     createProfile: builder.mutation<Profile, CreateProfileRequest>({
       query: (data) => ({
-        url: '/profiles',
+        url: '/api/security/profiles',
         method: 'POST',
         body: data,
       }),
@@ -114,7 +114,7 @@ export const securityApi = createApi({
     }),
     createGroup: builder.mutation<Group, CreateGroupRequest>({
       query: (data) => ({
-        url: '/groups',
+        url: '/api/security/groups',
         method: 'POST',
         body: data,
       }),
@@ -153,7 +153,7 @@ export const securityApi = createApi({
     // Create User
     createUser: builder.mutation<any, CreateUserRequest>({
       query: (data) => ({
-        url: '/users',
+        url: '/api/security/users',
         method: 'POST',
         body: data,
       }),
