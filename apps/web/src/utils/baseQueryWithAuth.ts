@@ -12,9 +12,9 @@ export const createBaseQueryWithAuth = (baseUrl?: string): BaseQueryFn<
   FetchBaseQueryError
 > => {
   const baseQuery = fetchBaseQuery({
-    // CRITICAL: Always use empty string to force truly relative URLs
-    // fetchBaseQuery with undefined still constructs absolute URLs
-    baseUrl: '',
+    // Use '/api' as baseUrl to create truly relative URLs
+    // This inherits the page protocol (HTTP in dev, HTTPS in preview)
+    baseUrl: baseUrl || '/api',
     prepareHeaders: (headers) => {
       const token = localStorage.getItem('access_token')
       if (token) {
