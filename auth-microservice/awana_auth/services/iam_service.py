@@ -168,7 +168,12 @@ class IAMService:
             if group_profile_ids:
                 profiles_cursor = self.profiles_collection.find({"id": {"$in": list(group_profile_ids)}})
                 async for profile in profiles_cursor:
-                    group_profiles.append(Profile(**profile))
+                    try:
+                        # Remove MongoDB _id before creating Pydantic model
+                        profile.pop("_id", None)
+                        group_profiles.append(Profile(**profile))
+                    except Exception as e:
+                        logger.error(f"Error creating Profile model from group: {e}, profile data: {profile}")
             
             # Get all unique permissions
             all_profile_ids = set(direct_profile_ids) | group_profile_ids
