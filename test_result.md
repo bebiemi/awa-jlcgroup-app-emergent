@@ -306,6 +306,21 @@ backend:
         comment: "✅ IAM PERMISSION INITIALIZATION FIX TESTED (6/7 tests passed - 85.7% success rate). CRITICAL PYDANTIC VALIDATION ERRORS RESOLVED: All permissions now have required fields (resource, action, scope). Key fixes verified: 1) Admin login working correctly with profile_ids and group_ids fields in User model, 2) GET /api/auth/me returns user with profile_ids and group_ids, 3) GET /api/iam/permissions returns all 97 permissions without Pydantic validation errors, 4) GET /api/iam/profiles lists all profiles successfully, 5) Besoin permissions exist with correct structure (besoins.create, besoins.read, besoins.edit, besoins.submit, besoins.comment, besoins.validate, besoins.convert_to_mission), 6) Permission checking for besoins operations working correctly (SuperAdmin bypass functional). FIXES APPLIED: Added PermissionAction enum values (SUBMIT, COMMENT, VALIDATE, CONVERT_TO_MISSION), updated init_besoin_permissions.py with scope field and is_system instead of is_system_permission, ran migrate_all_permissions.py to fix all 97 permissions, fixed uuid import order in iam_models.py. Minor issue: GET /api/iam/users/{user_id}/profiles returns 500 error due to ObjectId serialization (separate issue, doesn't affect core IAM functionality). System ready for Besoin → Mission workflow."
 
 
+  - task: "403 Forbidden Error - Config Endpoints (Fixed)"
+    implemented: true
+    working: true
+    file: "/app/auth-microservice/form_config_routes.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: false
+        agent: "main"
+        comment: "❌ GET /api/config/workflows/besoin returning 403 Forbidden for entreprise users. Investigation needed."
+      - working: true
+        agent: "main"
+        comment: "✅ FIXED: Root cause was users having roles but no IAM profiles (profile_ids: []). Created scripts to assign profiles based on roles. Tested and verified - API now returns 200 OK with workflow data."
+
 frontend:
   - task: "IAM Frontend Integration"
     implemented: true
