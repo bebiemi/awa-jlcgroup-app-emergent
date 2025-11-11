@@ -241,7 +241,7 @@ export const missionApi = createApi({
       limit?: number
     }>({
       query: (params) => ({
-        url: '/missions',
+        url: '/api/missions',
         params,
       }),
       providesTags: ['Mission'],
