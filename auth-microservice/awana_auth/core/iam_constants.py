@@ -86,6 +86,12 @@ class IAMPermissions:
     BESOINS_CONVERT_TO_MISSION = "besoins.convert_to_mission"
     BESOINS_COMMENT = "besoins.comment"
     
+    # Entreprises (Company Management)
+    ENTREPRISES_CREATE = "entreprises.create"
+    ENTREPRISES_READ = "entreprises.read"
+    ENTREPRISES_EDIT = "entreprises.edit"
+    ENTREPRISES_DELETE = "entreprises.delete"
+    
     # Forms & Configuration
     FORMS_MANAGE = "forms.manage"
     CONFIG_READ = "config.read"
