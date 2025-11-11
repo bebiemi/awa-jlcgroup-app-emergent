@@ -1,9 +1,9 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { baseQueryWithAuth } from '@/utils/baseQueryWithAuth'
 import type { User, LoginResponse } from '@/types'
 import type { RootState } from '@/store/store'
 
 // Use relative URLs to go through Vite proxy
-const AUTH_SERVICE_URL = '/auth-api'
 
 export const authApi = createApi({
   reducerPath: 'authApi',

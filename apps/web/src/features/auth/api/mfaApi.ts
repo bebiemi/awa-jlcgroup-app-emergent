@@ -1,8 +1,8 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { baseQueryWithAuth } from '@/utils/baseQueryWithAuth'
 import type { MfaStatus, TOTPSetupResponse, RecoveryCodesResponse, LoginResponse } from '@/types'
 import type { RootState } from '@/store/store'
 
-const AUTH_SERVICE_URL = '/auth-api'
 
 export const mfaApi = createApi({
   reducerPath: 'mfaApi',

@@ -1,4 +1,5 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { baseQueryWithAuth } from '@/utils/baseQueryWithAuth'
 import type { RootState } from '@/store/store'
 
 export interface AdminStats {
