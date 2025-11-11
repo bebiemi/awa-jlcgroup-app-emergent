@@ -33,7 +33,7 @@ export const presenceApi = createApi({
     }),
     updateMyPresence: builder.mutation<UserPresence, { status: PresenceStatus }>({
       query: (body) => ({
-        url: '/me',
+        url: '/api/users/presence/me',
         method: 'PATCH',
         body,
       }),
@@ -41,7 +41,7 @@ export const presenceApi = createApi({
     }),
     updateActivity: builder.mutation<{ success: boolean; timestamp: string }, void>({
       query: () => ({
-        url: '/activity',
+        url: '/api/users/presence/activity',
         method: 'POST',
       }),
       invalidatesTags: ['Presence'],
