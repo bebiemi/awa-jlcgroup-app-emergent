@@ -78,7 +78,7 @@ export const countryConfigApi = createApi({
     // Create country
     createCountry: builder.mutation<Country, CountryCreate>({
       query: (country) => ({
-        url: '/api/config/countries',
+        url: '/config/countries',
         method: 'POST',
         body: country,
       }),
