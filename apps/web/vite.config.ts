@@ -49,6 +49,12 @@ export default defineConfig({
         changeOrigin: true,
         secure: false,
       },
+      // Besoins endpoints - route to auth-microservice (MUST be before generic /api)
+      '/api/besoins': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+        secure: false,
+      },
       // Generic API - route to backend
       '/api': {
         target: 'http://localhost:8001',  // Use localhost for local dev
