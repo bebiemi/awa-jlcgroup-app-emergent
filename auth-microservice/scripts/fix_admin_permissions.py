@@ -24,10 +24,14 @@ async def fix_admin_permissions():
     
     # Define permissions for Admin profile (limited, operational permissions)
     admin_permission_codes = [
+        # Dashboard
+        "admin.dashboard",
+        
         # User management (limited)
         "users.read",
         "users.create",
-        "users.edit",
+        "users.update",
+        "users.manage_status",
         
         # Besoins management
         "besoins.read",
@@ -38,29 +42,46 @@ async def fix_admin_permissions():
         # Missions management
         "missions.read",
         "missions.create",
-        "missions.edit",
+        "missions.update",
         "missions.publish",
+        "missions.approve",
         "missions.browse",
         
         # Applications management
-        "applications.read",
-        "applications.manage",
-        "applications.evaluate",
+        "applications.read_own",
+        "applications.review",
+        
+        # Contracts
+        "contracts.read",
+        "contracts.create",
+        "contracts.update",
+        "contracts.approve",
         
         # Configuration (read-only)
         "config.read",
+        "system.config.read",
         
-        # IAM (limited)
+        # IAM (read-only)
         "iam.profiles.read",
         "iam.permissions.read",
+        "iam.groups.read",
         
         # Reports
-        "reports.read",
+        "reports.view",
         "reports.export",
         
-        # Entreprises (read)
+        # Entreprises (read and edit)
         "entreprises.read",
         "entreprises.edit",
+        
+        # Validations
+        "validations.perform",
+        "validations.approve",
+        "validations.reject",
+        
+        # Emails (read-only)
+        "emails.read_config",
+        "emails.read_history",
     ]
     
     print(f"\n📋 Admin permissions defined: {len(admin_permission_codes)} permissions")
