@@ -254,7 +254,7 @@ export const missionApi = createApi({
 
     createMission: builder.mutation<Mission, MissionCreate>({
       query: (data) => ({
-        url: '/missions',
+        url: '/api/missions',
         method: 'POST',
         body: data,
       }),
