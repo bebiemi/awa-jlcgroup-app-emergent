@@ -114,7 +114,7 @@ async def get_my_entreprise(
 async def get_entreprise(
     entreprise_id: str,
     current_user: User = Depends(get_current_user),
-    permissions: dict = Depends(require_permission("entreprises.read")),
+    _: User = Depends(require_permission("entreprises.read")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """
@@ -153,7 +153,7 @@ async def list_entreprises(
     limit: int = 100,
     status: Optional[str] = None,
     current_user: User = Depends(get_current_user),
-    permissions: dict = Depends(require_permission("entreprises.read")),
+    _: User = Depends(require_permission("entreprises.read")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """
