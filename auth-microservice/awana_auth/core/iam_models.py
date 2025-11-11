@@ -214,8 +214,9 @@ class UserProfileAssignment(BaseModel):
 
 class UserGroupAssignment(BaseModel):
     """Assign user to groups"""
-    user_id: str
-    group_ids: List[str]
+    group_id: Optional[str] = None  # Single group (for frontend compatibility)
+    group_ids: Optional[List[str]] = None  # Multiple groups (for bulk assignment)
+    notes: Optional[str] = None  # Optional notes
 
 
 class PermissionCheckRequest(BaseModel):
