@@ -168,7 +168,8 @@ async def list_entreprises(
         query["status"] = status
     
     # Scope filtering
-    if permissions.get("scope") == "own":
+    has_own_scope = "admin" not in current_user.roles and "super_admin" not in current_user.roles
+    if has_own_scope:
         # User can only see their own company
         user_company_id = getattr(current_user, "company_id", None) or getattr(current_user, "entreprise_id", None)
         if user_company_id:
