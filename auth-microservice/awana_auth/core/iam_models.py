@@ -238,7 +238,3 @@ class UserPermissionsResponse(BaseModel):
     group_profiles: List[Profile] = Field(default_factory=list)
     all_permissions: List[Permission] = Field(default_factory=list)
     groups: List[Group] = Field(default_factory=list)
-
-
-# Import uuid after model definitions
-import uuid
