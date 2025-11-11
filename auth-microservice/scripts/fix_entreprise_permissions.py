@@ -126,7 +126,7 @@ async def fix_entreprise_permissions():
     # Update Admin and SuperAdmin profiles
     all_entreprise_perm_ids = []
     for code in ["entreprises.create", "entreprises.read", "entreprises.edit", "entreprises.delete"]:
-        perm = await db.permissions.find({"code": code})
+        perm = await db.permissions.find_one({"code": code})
         if perm:
             all_entreprise_perm_ids.append(perm["id"])
     
