@@ -382,7 +382,8 @@ async def delete_entreprise(
     Requires: entreprises.delete permission
     Only admins can delete
     """
-    if permissions.get("scope") != "all":
+    has_all_scope = "admin" in current_user.roles or "super_admin" in current_user.roles
+    if not has_all_scope:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Seuls les administrateurs peuvent supprimer une entreprise"
