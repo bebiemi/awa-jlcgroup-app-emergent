@@ -253,6 +253,10 @@ async def get_missions(
     
     missions = await db.missions.find(query).skip(skip).limit(limit).to_list(length=limit)
     
+    # Remove MongoDB _id before creating Pydantic models
+    for mission in missions:
+        mission.pop('_id', None)
+    
     return [Mission(**mission) for mission in missions]
 
 
