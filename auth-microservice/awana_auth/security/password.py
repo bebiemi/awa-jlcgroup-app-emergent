@@ -1,7 +1,7 @@
 """
 Password hashing and validation
 """
-from passlib.context import CryptContext
+import bcrypt
 from ..core.config import AuthConfig
 import re
 
@@ -11,15 +11,20 @@ class PasswordManager:
     
     def __init__(self, config: AuthConfig):
         self.config = config
-        self.pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
     
     def hash_password(self, password: str) -> str:
-        """Hash a password"""
-        return self.pwd_context.hash(password)
+        """Hash a password using bcrypt"""
+        # Bcrypt has a 72 byte limit, truncate if needed
+        password_bytes = password.encode('utf-8')[:72]
+        salt = bcrypt.gensalt()
+        hashed = bcrypt.hashpw(password_bytes, salt)
+        return hashed.decode('utf-8')
     
     def verify_password(self, plain_password: str, hashed_password: str) -> bool:
         """Verify a password against a hash"""
-        return self.pwd_context.verify(plain_password, hashed_password)
+        password_bytes = plain_password.encode('utf-8')[:72]
+        hashed_bytes = hashed_password.encode('utf-8')
+        return bcrypt.checkpw(password_bytes, hashed_bytes)
     
     def validate_password_strength(self, password: str) -> tuple[bool, list[str]]:
         """Validate password meets strength requirements
