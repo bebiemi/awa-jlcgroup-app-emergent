@@ -4,9 +4,9 @@ import { IAM_ENDPOINTS, QUERY_KEYS } from '@/constants/api'
 
 // For IAM endpoints, we need to use the auth service
 // In production, both services are accessible at the same domain with different routes
-// Use undefined to get default /api prefix (will be /api + /iam/users -> /api/iam/users)
-// However, our constants already include /api, so we need to use empty baseUrl
-const baseQueryForIAM = createBaseQueryWithAuth()
+// Our IAM_ENDPOINTS constants already include /api prefix, so we pass empty string
+// to avoid double /api/api prefix
+const baseQueryForIAM = createBaseQueryWithAuth('')
 
 // Extended User Detail Interface
 export interface UserDetail {
