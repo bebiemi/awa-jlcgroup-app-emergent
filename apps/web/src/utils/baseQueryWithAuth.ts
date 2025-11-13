@@ -29,7 +29,7 @@ export const createBaseQueryWithAuth = (baseUrl?: string): BaseQueryFn<
   }
   
   const baseQuery = fetchBaseQuery({
-    baseUrl: baseUrl || '/api',
+    baseUrl: baseUrl === undefined ? '/api' : baseUrl,
     fetchFn: customFetch,
     prepareHeaders: (headers) => {
       const token = localStorage.getItem('access_token')
