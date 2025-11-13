@@ -39,7 +39,7 @@ async def list_permissions(
     permissions_collection = db.permissions
     permissions = []
     
-    cursor = permissions_collection.find({})
+    cursor = permissions_collection.find({}, {"_id": 0})
     async for perm in cursor:
         permissions.append(Permission(**perm))
     
