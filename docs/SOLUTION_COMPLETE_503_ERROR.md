@@ -6,7 +6,7 @@
 
 ### Analyse
 ```
-Browser → https://dynamicconfig.preview.emergentagent.com/api/besoins
+Browser → https://docker-auth-rescue.preview.emergentagent.com/api/besoins
           ↓
           TOUTES les requêtes tombaient sur le frontend (port 3000)
           ↓
@@ -17,7 +17,7 @@ Browser → https://dynamicconfig.preview.emergentagent.com/api/besoins
 
 ### Preuve
 ```bash
-curl https://dynamicconfig.preview.emergentagent.com/health
+curl https://docker-auth-rescue.preview.emergentagent.com/health
 # Retournait: <!doctype html>... (page React)
 # Au lieu de: {"status":"healthy",...}
 ```
@@ -70,7 +70,7 @@ Ajouté `/api/health` dans `server.py` pour compatibilité avec le routing `/api
 ```
 ┌─────────────────────────────────────────────────────┐
 │  Production (Kubernetes/Ingress)                     │
-│  https://dynamicconfig.preview.emergentagent.com │
+│  https://docker-auth-rescue.preview.emergentagent.com │
 └───────────────────────┬─────────────────────────────┘
                         │
                         ▼
