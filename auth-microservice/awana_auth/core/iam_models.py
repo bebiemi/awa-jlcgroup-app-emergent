@@ -54,6 +54,7 @@ class PermissionAction(str, Enum):
     SUBMIT = "submit"           # Submit besoin
     COMMENT = "comment"         # Add comment
     VALIDATE = "validate"       # Validate besoin (JLC)
+    CONVERT = "convert"         # Convert (short form)
     CONVERT_TO_MISSION = "convert_to_mission"  # Convert besoin to mission
 
 
