@@ -125,7 +125,7 @@ async def list_profiles(
     profiles_collection = db.profiles
     profiles = []
     
-    cursor = profiles_collection.find({})
+    cursor = profiles_collection.find({}, {"_id": 0})
     async for profile in cursor:
         profiles.append(Profile(**profile))
     
