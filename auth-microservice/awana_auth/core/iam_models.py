@@ -25,6 +25,7 @@ class PermissionAction(str, Enum):
     READ = "read"
     UPDATE = "update"
     DELETE = "delete"
+    WRITE = "write"             # Legacy: Create/Edit combined
     APPROVE = "approve"
     REJECT = "reject"
     ASSIGN = "assign"
