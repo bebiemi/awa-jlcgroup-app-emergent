@@ -21,6 +21,7 @@ class PermissionScope(str, Enum):
 
 class PermissionAction(str, Enum):
     """Standard CRUD + special actions"""
+    ALL = "*"                   # Wildcard: All actions
     CREATE = "create"
     READ = "read"
     UPDATE = "update"
