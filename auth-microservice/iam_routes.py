@@ -294,7 +294,7 @@ async def list_groups(
     groups_collection = db.groups
     groups = []
     
-    cursor = groups_collection.find({})
+    cursor = groups_collection.find({}, {"_id": 0})
     async for group in cursor:
         groups.append(Group(**group))
     
