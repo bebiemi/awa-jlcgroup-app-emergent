@@ -29,15 +29,17 @@ export default defineConfig({
       // Backend has proxy routes to forward to auth-microservice (port 8000) as needed
       // This architecture works in both dev and production/preview environments
       '/api': {
-        target: 'http://jlc-api:8001',
+        target: 'http://host.docker.internal:8001',
         changeOrigin: true,
         secure: false,
+        ws: true,
       },
       // /auth-api also goes to backend (legacy compatibility)
       '/auth-api': {
-        target: 'http://jlc-api:8001',
+        target: 'http://host.docker.internal:8001',
         changeOrigin: true,
         secure: false,
+        ws: true,
       },
     },
   },
