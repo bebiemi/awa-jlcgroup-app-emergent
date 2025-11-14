@@ -50,7 +50,7 @@ export const configurationApi = createApi({
         validation: Record<string, string[]>
       }
     }, void>({
-      query: () => '/all',
+      query: () => '/auth/config/all',
       // Cache pendant 5 minutes
       keepUnusedDataFor: 300,
     }),
@@ -62,7 +62,7 @@ export const configurationApi = createApi({
       is_active?: boolean
     }>({
       query: (params) => ({
-        url: '/references',
+        url: '/auth/config/references',
         params,
       }),
       providesTags: ['References'],
@@ -70,7 +70,7 @@ export const configurationApi = createApi({
     
     createReference: builder.mutation<{ reference: SystemReference }, Partial<SystemReference>>({
       query: (data) => ({
-        url: '/references',
+        url: '/auth/config/references',
         method: 'POST',
         body: data,
       }),
@@ -103,7 +103,7 @@ export const configurationApi = createApi({
       is_public?: boolean
     }>({
       query: (params) => ({
-        url: '/settings',
+        url: '/auth/config/settings',
         params,
       }),
       providesTags: ['Settings'],
