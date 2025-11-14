@@ -208,16 +208,17 @@ class IAMService:
             return UserPermissionsResponse(user_id=user_id)
     
     async def assign_profiles_to_user(self, user_id: str, profile_ids: List[str]) -> bool:
-        """Assign profiles directly to a user"""
+        """Assign profiles directly to a user (additive - keeps existing profiles)"""
         try:
+            # Use $addToSet to add profiles without duplicates (keeps existing ones)
             result = await self.users_collection.update_one(
                 {"id": user_id},
-                {"$set": {
-                    "profile_ids": profile_ids,
-                    "updated_at": datetime.now(timezone.utc)
-                }}
+                {
+                    "$addToSet": {"profile_ids": {"$each": profile_ids}},
+                    "$set": {"updated_at": datetime.now(timezone.utc)}
+                }
             )
-            return result.modified_count > 0
+            return result.modified_count > 0 or result.matched_count > 0
         except Exception as e:
             logger.error(f"Error assigning profiles to user: {e}")
             return False
