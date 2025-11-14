@@ -154,6 +154,7 @@ export const userDetailsApi = createApi({
       invalidatesTags: (result, error, { userId }) => [
         { type: 'UserGroups', id: userId },
         { type: 'UserDetail', id: userId },
+        'Users',  // Invalide aussi la liste des users
       ],
     }),
 
@@ -166,6 +167,7 @@ export const userDetailsApi = createApi({
       invalidatesTags: (result, error, { userId }) => [
         { type: 'UserGroups', id: userId },
         { type: 'UserDetail', id: userId },
+        'Users',  // Invalide aussi la liste des users
       ],
     }),
 
