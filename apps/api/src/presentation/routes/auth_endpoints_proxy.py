@@ -112,6 +112,33 @@ async def proxy_versions_requests(path: str, request: Request):
     return await _proxy_request(target_url, request)
 
 
+@router.api_route("/validations/{path:path}", methods=["GET", "POST", "PUT", "PATCH", "DELETE"])
+async def proxy_validations_requests(path: str, request: Request):
+    """
+    Proxy all /api/validations/* requests to auth-microservice /api/validations/*
+    """
+    target_url = f"{AUTH_SERVICE_URL}/api/validations/{path}"
+    return await _proxy_request(target_url, request)
+
+
+@router.api_route("/missions/{path:path}", methods=["GET", "POST", "PUT", "PATCH", "DELETE"])
+async def proxy_missions_requests(path: str, request: Request):
+    """
+    Proxy all /api/missions/* requests to auth-microservice /api/missions/*
+    """
+    target_url = f"{AUTH_SERVICE_URL}/api/missions/{path}"
+    return await _proxy_request(target_url, request)
+
+
+@router.api_route("/emails/{path:path}", methods=["GET", "POST", "PUT", "PATCH", "DELETE"])
+async def proxy_emails_requests(path: str, request: Request):
+    """
+    Proxy all /api/emails/* requests to auth-microservice /api/emails/*
+    """
+    target_url = f"{AUTH_SERVICE_URL}/api/emails/{path}"
+    return await _proxy_request(target_url, request)
+
+
 async def _proxy_request(target_url: str, request: Request):
     """
     Common proxy logic for all auth endpoints
