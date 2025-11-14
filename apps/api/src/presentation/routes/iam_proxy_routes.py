@@ -15,13 +15,13 @@ router = APIRouter()
 AUTH_SERVICE_URL = os.getenv('AUTH_SERVICE_URL', 'http://localhost:8000')
 
 
-@router.api_route("/users/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH"])
-async def proxy_iam_users(path: str, request: Request):
+@router.api_route("/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH"])
+async def proxy_iam_requests(path: str, request: Request):
     """
-    Proxy all /api/iam/users/* requests to auth-microservice
+    Proxy all /api/iam/* requests to auth-microservice
     """
     # Build target URL
-    target_url = f"{AUTH_SERVICE_URL}/api/iam/users/{path}"
+    target_url = f"{AUTH_SERVICE_URL}/api/iam/{path}"
     
     # Get request body if present
     body = None
