@@ -17,7 +17,6 @@ export const createBaseQueryWithAuth = (): BaseQueryFn<
 > => {
   const baseQuery = fetchBaseQuery({
     baseUrl: '/api',  // TOUJOURS /api - pas de paramètre
-    // Ne pas utiliser de fetchFn custom pour l'instant - tester si ça résout l'invalidation
     prepareHeaders: (headers) => {
       const token = localStorage.getItem('access_token')
       if (token) {
