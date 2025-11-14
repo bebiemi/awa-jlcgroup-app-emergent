@@ -11,26 +11,8 @@ export const createBaseQueryWithAuth = (baseUrl?: string): BaseQueryFn<
   unknown,
   FetchBaseQueryError
 > => {
-  // Custom fetch function that fixes Mixed Content by forcing HTTPS in preview
-  const customFetch: typeof fetch = async (input, init) => {
-    let url = typeof input === 'string' ? input : input.url
-    
-    // Fix Mixed Content: Convert HTTP to HTTPS when page is HTTPS
-    if (typeof window !== 'undefined' && window.location.protocol === 'https:') {
-      if (url.startsWith('http://')) {
-        url = url.replace('http://', 'https://')
-        console.log('🔒 Fixed Mixed Content URL:', url)
-      }
-    }
-    
-    // Call native fetch with corrected URL
-    const modifiedInput = typeof input === 'string' ? url : new Request(url, input)
-    return fetch(modifiedInput, init)
-  }
-  
   const baseQuery = fetchBaseQuery({
     baseUrl: baseUrl === undefined ? '/api' : baseUrl,
-    fetchFn: customFetch,
     prepareHeaders: (headers) => {
       const token = localStorage.getItem('access_token')
       if (token) {
