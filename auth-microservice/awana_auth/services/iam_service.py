@@ -224,15 +224,15 @@ class IAMService:
             return False
     
     async def assign_groups_to_user(self, user_id: str, group_ids: List[str]) -> bool:
-        """Assign user to groups"""
+        """Assign user to groups (additive - keeps existing groups)"""
         try:
-            # Update user's groups
+            # Use $addToSet to add groups without duplicates (keeps existing ones)
             result = await self.users_collection.update_one(
                 {"id": user_id},
-                {"$set": {
-                    "group_ids": group_ids,
-                    "updated_at": datetime.now(timezone.utc)
-                }}
+                {
+                    "$addToSet": {"group_ids": {"$each": group_ids}},
+                    "$set": {"updated_at": datetime.now(timezone.utc)}
+                }
             )
             
             # Update each group's user list
