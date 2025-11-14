@@ -17,34 +17,35 @@ export const createBaseQueryWithAuth = (): BaseQueryFn<
 > => {
   // Custom fetch function that fixes Mixed Content in production/preview environments
   const customFetch: typeof fetch = async (input, init) => {
-    let url = typeof input === 'string' ? input : input.url
-    
     // Validation en développement
+    const url = typeof input === 'string' ? input : input.url
     if (process.env.NODE_ENV === 'development' && url.includes('/api/api/')) {
       console.error('❌ INVALID ENDPOINT: Duplicate /api/ detected:', url)
     }
     
     // Only apply HTTP → HTTPS conversion in production/preview environments (not local Docker)
+    let needsHttpsConversion = false
     if (typeof window !== 'undefined' && window.location.protocol === 'https:') {
       const hostname = window.location.hostname
       const isEmergentPreview = hostname.includes('preview.emergentagent.com') || hostname.includes('emergent.host')
-      
-      // Only convert HTTP to HTTPS in Emergent preview environments
-      if (isEmergentPreview && url.startsWith('http://')) {
-        url = url.replace('http://', 'https://')
-        console.log('🔒 Fixed Mixed Content URL for Emergent:', url)
-      }
+      needsHttpsConversion = isEmergentPreview && url.startsWith('http://')
     }
     
-    // Call native fetch with corrected URL
-    // IMPORTANT: Si input est une string, passer url et init tels quels
-    // Si input est un Request, il faut recréer le Request avec la nouvelle URL
+    // Si pas de conversion nécessaire, utiliser fetch natif directement
+    if (!needsHttpsConversion) {
+      return fetch(input, init)
+    }
+    
+    // Conversion HTTP → HTTPS nécessaire
+    const httpsUrl = url.replace('http://', 'https://')
+    console.log('🔒 Fixed Mixed Content URL for Emergent:', httpsUrl)
+    
+    // Appliquer la nouvelle URL selon le type d'input
     if (typeof input === 'string') {
-      return fetch(url, init)
+      return fetch(httpsUrl, init)
     } else {
-      // Créer un nouveau Request en préservant TOUS les attributs (body, headers, method, etc.)
-      const newRequest = new Request(url, input)
-      return fetch(newRequest, init)
+      // Pour un Request, on doit passer la nouvelle URL dans init
+      return fetch(httpsUrl, init)
     }
   }
   
