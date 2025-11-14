@@ -165,7 +165,7 @@ async def verify_document(
         action="document_verified",
         resource_type="document",
         resource_id=doc_id,
-        metadata={"verified_by": current_user["username"]}
+        metadata={"verified_by": current_user.username if hasattr(current_user, "username") else current_user.get("username", "unknown")}
     )
     
     return {"success": True, "message": "Document verified successfully"}
@@ -194,7 +194,7 @@ async def delete_document(
         action="document_deleted",
         resource_type="document",
         resource_id=doc_id,
-        metadata={"deleted_by": current_user["username"], "document_type": doc.get("type")}
+        metadata={"deleted_by": current_user.username if hasattr(current_user, "username") else current_user.get("username", "unknown"), "document_type": doc.get("type")}
     )
     
     return {"success": True, "message": "Document deleted successfully"}
@@ -227,7 +227,7 @@ async def upload_document(
         "url": f"/documents/{doc_id}",  # TODO: Actual file storage
         "verified": False,
         "uploaded_at": datetime.now(timezone.utc).isoformat(),
-        "metadata": {"uploaded_by": current_user["username"]}
+        "metadata": {"uploaded_by": current_user.username if hasattr(current_user, "username") else current_user.get("username", "unknown")}
     }
     
     await db.user_documents.insert_one(document)
@@ -306,7 +306,7 @@ async def assign_group(
         action="group_assigned",
         resource_type="group",
         resource_id=assignment.group_id,
-        metadata={"group_name": group.get("name"), "assigned_by": current_user["username"]}
+        metadata={"group_name": group.get("name"), "assigned_by": current_user.username if hasattr(current_user, "username") else current_user.get("username", "unknown")}
     )
     
     return {"success": True, "message": "Group assigned successfully"}
@@ -340,7 +340,7 @@ async def remove_group(
         action="group_removed",
         resource_type="group",
         resource_id=group_id,
-        metadata={"removed_by": current_user["username"]}
+        metadata={"removed_by": current_user.username if hasattr(current_user, "username") else current_user.get("username", "unknown")}
     )
     
     return {"success": True, "message": "Group removed successfully"}
@@ -407,7 +407,7 @@ async def assign_profile(
         action="profile_assigned",
         resource_type="profile",
         resource_id=assignment.profile_id,
-        metadata={"profile_name": profile.get("name"), "assigned_by": current_user["username"]}
+        metadata={"profile_name": profile.get("name"), "assigned_by": current_user.username if hasattr(current_user, "username") else current_user.get("username", "unknown")}
     )
     
     return {"success": True, "message": "Profile assigned successfully"}
@@ -498,7 +498,7 @@ async def reset_password(
         db,
         user_id=user_id,
         action="password_reset",
-        metadata={"reset_by": current_user["username"]}
+        metadata={"reset_by": current_user.username if hasattr(current_user, "username") else current_user.get("username", "unknown")}
     )
     
     return {"success": True, "message": "Password reset initiated"}
@@ -533,7 +533,7 @@ async def reset_mfa(
         db,
         user_id=user_id,
         action="mfa_reset",
-        metadata={"reset_by": current_user["username"]}
+        metadata={"reset_by": current_user.username if hasattr(current_user, "username") else current_user.get("username", "unknown")}
     )
     
     return {"success": True, "message": "MFA reset successfully"}
@@ -559,7 +559,7 @@ async def send_notification(
         user_id=user_id,
         action="notification_sent",
         metadata={
-            "sent_by": current_user["username"],
+            "sent_by": current_user.username if hasattr(current_user, "username") else current_user.get("username", "unknown"),
             "title": notification.title,
             "type": notification.type
         }
