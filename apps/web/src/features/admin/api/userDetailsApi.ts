@@ -239,7 +239,7 @@ export const userDetailsApi = createApi({
     // Archive User
     archiveUser: builder.mutation<{ user_id: string; status: string; archived_at: string; deletion_scheduled_at: string; retention_days: number; message: string }, { userId: string; reason?: string }>({
       query: ({ userId, reason }) => ({
-        url: `/api/iam/users/${userId}/archive`,
+        url: `/iam/users/${userId}/archive`,
         method: 'PATCH',
         body: { reason },
       }),
@@ -249,7 +249,7 @@ export const userDetailsApi = createApi({
     // Restore User
     restoreUser: builder.mutation<{ user_id: string; status: string; restored_at: string; message: string }, { userId: string; reason?: string }>({
       query: ({ userId, reason }) => ({
-        url: `/api/iam/users/${userId}/restore`,
+        url: `/iam/users/${userId}/restore`,
         method: 'PATCH',
         body: { reason },
       }),
@@ -258,13 +258,13 @@ export const userDetailsApi = createApi({
 
     // Get Retention Config
     getRetentionConfig: builder.query<{ retention_days: number; source: string; can_override: boolean }, void>({
-      query: () => '/api/iam/users/config/retention',
+      query: () => '/iam/users/config/retention',
     }),
 
     // Update Retention Config
     updateRetentionConfig: builder.mutation<{ message: string; retention_days: number; source: string }, { retention_days: number }>({
       query: ({ retention_days }) => ({
-        url: '/api/iam/users/config/retention',
+        url: '/iam/users/config/retention',
         method: 'PUT',
         params: { retention_days },
       }),
@@ -273,7 +273,7 @@ export const userDetailsApi = createApi({
     // Purge Expired Users
     purgeExpiredUsers: builder.mutation<{ purged_count: number; purged_user_ids: string[]; message: string }, void>({
       query: () => ({
-        url: '/api/iam/users/purge/expired',
+        url: '/iam/users/purge/expired',
         method: 'DELETE',
       }),
     }),
