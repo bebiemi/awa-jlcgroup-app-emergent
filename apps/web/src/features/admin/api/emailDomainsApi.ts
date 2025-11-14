@@ -40,31 +40,31 @@ export const emailDomainsApi = createApi({
   endpoints: (builder) => ({
     listEmailDomains: builder.query<AllowedEmailDomain[], boolean | undefined>({
       query: (activeOnly) => ({
-        url: '/api/security/email-domains',
+        url: '/security/email-domains',
         params: activeOnly ? { active_only: true } : {},
       }),
       providesTags: ['EmailDomains'],
     }),
 
     getEmailDomain: builder.query<AllowedEmailDomain, string>({
-      query: (id) => `/api/security/email-domains/${id}`,
+      query: (id) => `/security/email-domains/${id}`,
       providesTags: ['EmailDomains'],
     }),
 
     verifyEmailDomain: builder.query<EmailDomainVerification, string>({
       query: (email) => ({
-        url: '/api/security/email-domains/verify',
+        url: '/security/email-domains/verify',
         params: { email },
       }),
     }),
 
     getActiveDomainsList: builder.query<string[], void>({
-      query: () => '/api/security/email-domains/active/list',
+      query: () => '/security/email-domains/active/list',
     }),
 
     createEmailDomain: builder.mutation<AllowedEmailDomain, AllowedEmailDomainCreate>({
       query: (data) => ({
-        url: '/api/security/email-domains',
+        url: '/security/email-domains',
         method: 'POST',
         body: data,
       }),
@@ -73,7 +73,7 @@ export const emailDomainsApi = createApi({
 
     updateEmailDomain: builder.mutation<AllowedEmailDomain, { id: string; data: AllowedEmailDomainUpdate }>({
       query: ({ id, data }) => ({
-        url: `/api/security/email-domains/${id}`,
+        url: `/security/email-domains/${id}`,
         method: 'PUT',
         body: data,
       }),
@@ -82,7 +82,7 @@ export const emailDomainsApi = createApi({
 
     deleteEmailDomain: builder.mutation<void, string>({
       query: (id) => ({
-        url: `/api/security/email-domains/${id}`,
+        url: `/security/email-domains/${id}`,
         method: 'DELETE',
       }),
       invalidatesTags: ['EmailDomains'],
