@@ -184,7 +184,7 @@ export const iamApi = createApi({
     
     updateGroup: builder.mutation<Group, { id: string; data: GroupUpdate }>({
       query: ({ id, data }) => ({
-        url: `/groups/${id}`,
+        url: `/iam/groups/${id}`,
         method: 'PUT',
         body: data,
       }),
@@ -193,7 +193,7 @@ export const iamApi = createApi({
     
     deleteGroup: builder.mutation<void, string>({
       query: (groupId) => ({
-        url: `/groups/${groupId}`,
+        url: `/iam/groups/${groupId}`,
         method: 'DELETE',
       }),
       invalidatesTags: ['Groups'],
