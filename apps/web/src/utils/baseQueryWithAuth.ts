@@ -59,8 +59,26 @@ export const createBaseQueryWithAuth = (): BaseQueryFn<
     return fetch(input, init)
   }
   
+  // Déterminer le baseUrl en fonction de l'environnement
+  // Sur Emergent preview (HTTPS), forcer HTTPS pour éviter Mixed Content
+  const getBaseUrl = () => {
+    if (typeof window === 'undefined') return '/api'
+    
+    const isHTTPS = window.location.protocol === 'https:'
+    const hostname = window.location.hostname
+    const isEmergentPreview = hostname.includes('preview.emergentagent.com') || hostname.includes('emergent.host')
+    
+    if (isHTTPS && isEmergentPreview) {
+      // Forcer HTTPS pour éviter Mixed Content
+      return `https://${hostname}/api`
+    }
+    
+    // Développement local ou autre environnement : utiliser URL relative
+    return '/api'
+  }
+  
   const baseQuery = fetchBaseQuery({
-    baseUrl: '/api',  // TOUJOURS /api - pas de paramètre
+    baseUrl: getBaseUrl(),
     fetchFn: customFetch,
     prepareHeaders: (headers) => {
       const token = localStorage.getItem('access_token')
