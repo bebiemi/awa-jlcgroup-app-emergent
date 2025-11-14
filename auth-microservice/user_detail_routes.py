@@ -441,7 +441,7 @@ async def remove_profile(
         action="profile_removed",
         resource_type="profile",
         resource_id=profile_id,
-        metadata={"removed_by": current_user["username"]}
+        metadata={"removed_by": current_user.username if hasattr(current_user, 'username') else current_user.get("username", "unknown")}
     )
     
     return {"success": True, "message": "Profile removed successfully"}
