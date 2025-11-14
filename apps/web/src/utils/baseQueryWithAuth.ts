@@ -5,8 +5,12 @@ import { logoutAction } from '@/features/auth/slices/authSlice'
 /**
  * Base query with automatic 401 handling
  * Logs out user and redirects to login on authentication failure
+ * 
+ * IMPORTANT: Ne PAS passer de baseUrl en paramètre !
+ * Le baseUrl doit toujours être /api (configuration globale)
+ * Les endpoints doivent être des chemins relatifs sans /api
  */
-export const createBaseQueryWithAuth = (baseUrl?: string): BaseQueryFn<
+export const createBaseQueryWithAuth = (): BaseQueryFn<
   string | FetchArgs,
   unknown,
   FetchBaseQueryError
@@ -14,6 +18,11 @@ export const createBaseQueryWithAuth = (baseUrl?: string): BaseQueryFn<
   // Custom fetch function that fixes Mixed Content in production/preview environments
   const customFetch: typeof fetch = async (input, init) => {
     let url = typeof input === 'string' ? input : input.url
+    
+    // Validation en développement
+    if (process.env.NODE_ENV === 'development' && url.includes('/api/api/')) {
+      console.error('❌ INVALID ENDPOINT: Duplicate /api/ detected:', url)
+    }
     
     // Only apply HTTP → HTTPS conversion in production/preview environments (not local Docker)
     if (typeof window !== 'undefined' && window.location.protocol === 'https:') {
@@ -33,7 +42,7 @@ export const createBaseQueryWithAuth = (baseUrl?: string): BaseQueryFn<
   }
   
   const baseQuery = fetchBaseQuery({
-    baseUrl: baseUrl === undefined ? '/api' : baseUrl,
+    baseUrl: '/api',  // TOUJOURS /api - pas de paramètre
     fetchFn: customFetch,
     prepareHeaders: (headers) => {
       const token = localStorage.getItem('access_token')
