@@ -185,6 +185,7 @@ export const userDetailsApi = createApi({
       invalidatesTags: (result, error, { userId }) => [
         { type: 'UserProfiles', id: userId },
         { type: 'UserDetail', id: userId },
+        'Users',  // Invalide aussi la liste des users pour rafraîchir la colonne Role
       ],
     }),
 
@@ -197,6 +198,7 @@ export const userDetailsApi = createApi({
       invalidatesTags: (result, error, { userId }) => [
         { type: 'UserProfiles', id: userId },
         { type: 'UserDetail', id: userId },
+        'Users',  // Invalide aussi la liste des users pour rafraîchir la colonne Role
       ],
     }),
 
