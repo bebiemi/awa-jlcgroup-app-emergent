@@ -40,6 +40,78 @@ async def proxy_profiles_requests(path: str, request: Request):
     return await _proxy_request(target_url, request)
 
 
+@router.api_route("/locations/{path:path}", methods=["GET", "POST", "PUT", "PATCH", "DELETE"])
+async def proxy_locations_requests(path: str, request: Request):
+    """
+    Proxy all /api/locations/* requests to auth-microservice /api/locations/*
+    """
+    target_url = f"{AUTH_SERVICE_URL}/api/locations/{path}"
+    return await _proxy_request(target_url, request)
+
+
+@router.api_route("/email-settings/{path:path}", methods=["GET", "POST", "PUT", "PATCH", "DELETE"])
+async def proxy_email_settings_requests(path: str, request: Request):
+    """
+    Proxy all /api/email-settings/* requests to auth-microservice /api/email-settings/*
+    """
+    target_url = f"{AUTH_SERVICE_URL}/api/email-settings/{path}"
+    return await _proxy_request(target_url, request)
+
+
+@router.api_route("/email-templates/{path:path}", methods=["GET", "POST", "PUT", "PATCH", "DELETE"])
+async def proxy_email_templates_requests(path: str, request: Request):
+    """
+    Proxy all /api/email-templates/* requests to auth-microservice /api/email-templates/*
+    """
+    target_url = f"{AUTH_SERVICE_URL}/api/email-templates/{path}"
+    return await _proxy_request(target_url, request)
+
+
+@router.api_route("/email-history/{path:path}", methods=["GET", "POST", "PUT", "PATCH", "DELETE"])
+async def proxy_email_history_requests(path: str, request: Request):
+    """
+    Proxy all /api/email-history/* requests to auth-microservice /api/email-history/*
+    """
+    target_url = f"{AUTH_SERVICE_URL}/api/email-history/{path}"
+    return await _proxy_request(target_url, request)
+
+
+@router.api_route("/contracts/{path:path}", methods=["GET", "POST", "PUT", "PATCH", "DELETE"])
+async def proxy_contracts_requests(path: str, request: Request):
+    """
+    Proxy all /api/contracts/* requests to auth-microservice /api/contracts/*
+    """
+    target_url = f"{AUTH_SERVICE_URL}/api/contracts/{path}"
+    return await _proxy_request(target_url, request)
+
+
+@router.api_route("/applications/{path:path}", methods=["GET", "POST", "PUT", "PATCH", "DELETE"])
+async def proxy_applications_requests(path: str, request: Request):
+    """
+    Proxy all /api/applications/* requests to auth-microservice /api/applications/*
+    """
+    target_url = f"{AUTH_SERVICE_URL}/api/applications/{path}"
+    return await _proxy_request(target_url, request)
+
+
+@router.api_route("/feature-flags/{path:path}", methods=["GET", "POST", "PUT", "PATCH", "DELETE"])
+async def proxy_feature_flags_requests(path: str, request: Request):
+    """
+    Proxy all /api/feature-flags/* requests to auth-microservice /api/feature-flags/*
+    """
+    target_url = f"{AUTH_SERVICE_URL}/api/feature-flags/{path}"
+    return await _proxy_request(target_url, request)
+
+
+@router.api_route("/versions/{path:path}", methods=["GET", "POST", "PUT", "PATCH", "DELETE"])
+async def proxy_versions_requests(path: str, request: Request):
+    """
+    Proxy all /api/versions/* requests to auth-microservice /api/versions/*
+    """
+    target_url = f"{AUTH_SERVICE_URL}/api/versions/{path}"
+    return await _proxy_request(target_url, request)
+
+
 async def _proxy_request(target_url: str, request: Request):
     """
     Common proxy logic for all auth endpoints
