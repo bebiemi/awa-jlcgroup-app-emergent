@@ -66,7 +66,7 @@ export const emailTemplatesApi = createApi({
         const params = new URLSearchParams();
         if (template_type) params.append('template_type', template_type);
         if (is_active !== undefined) params.append('is_active', is_active.toString());
-        return `/api/emails/templates?${params.toString()}`;
+        return `/emails/templates?${params.toString()}`;
       },
       providesTags: ['EmailTemplates'],
     }),

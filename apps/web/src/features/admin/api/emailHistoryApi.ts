@@ -58,7 +58,7 @@ export const emailHistoryApi = createApi({
         params.append('page_size', page_size.toString());
         if (status_filter) params.append('status_filter', status_filter);
         if (sent_by) params.append('sent_by', sent_by);
-        return `/api/emails/history?${params.toString()}`;
+        return `/emails/history?${params.toString()}`;
       },
       providesTags: ['EmailHistory'],
     }),
