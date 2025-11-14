@@ -1,18 +1,21 @@
 /**
  * API Constants
  * Centralized API endpoint configuration
+ * 
+ * IMPORTANT: Ces chemins sont RELATIFS et seront préfixés par /api automatiquement
+ * par createBaseQueryWithAuth(). Ne PAS inclure /api dans ces constantes.
  */
 
-// Base API configuration
+// Base paths (SANS /api - sera ajouté par baseQuery)
 export const API_BASE = {
-  AUTH: '/api/auth',
-  IAM: '/api/iam',
-  USERS: '/api/users',
-  ADMIN: '/api/admin',
-  SECURITY: '/api/security',
+  AUTH: 'auth',
+  IAM: 'iam',
+  USERS: 'users',
+  ADMIN: 'admin',
+  SECURITY: 'security',
 } as const
 
-// IAM API Endpoints
+// IAM API Endpoints (chemins relatifs sans /api)
 export const IAM_ENDPOINTS = {
   USERS: {
     LIST: `${API_BASE.IAM}/users`,
