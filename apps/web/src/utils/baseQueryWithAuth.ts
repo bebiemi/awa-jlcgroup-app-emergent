@@ -32,14 +32,25 @@ export const createBaseQueryWithAuth = (): BaseQueryFn<
         const httpsUrl = url.replace('http://', 'https://')
         console.log('🔒 Fixed Mixed Content URL:', httpsUrl)
         
-        // IMPORTANT: Passer input et init tels quels à fetch, juste changer l'URL
+        // IMPORTANT: Reconstruire correctement la requête avec HTTPS
         if (typeof input === 'string') {
           return fetch(httpsUrl, init)
         } else {
-          // Pour un Request object, on doit le reconstruire avec la nouvelle URL
-          // mais en gardant TOUS ses attributs (body, headers, method, etc.)
-          const newRequest = new Request(httpsUrl, input)
-          return fetch(newRequest, init)
+          // Pour un Request object, extraire toutes les propriétés et créer un nouveau Request
+          // Cette approche garantit que le body et tous les headers sont préservés
+          const originalRequest = input as Request
+          const requestInit: RequestInit = {
+            method: originalRequest.method,
+            headers: originalRequest.headers,
+            body: originalRequest.body,
+            mode: originalRequest.mode,
+            credentials: originalRequest.credentials,
+            cache: originalRequest.cache,
+            redirect: originalRequest.redirect,
+            referrer: originalRequest.referrer,
+            integrity: originalRequest.integrity,
+          }
+          return fetch(httpsUrl, { ...requestInit, ...init })
         }
       }
     }
