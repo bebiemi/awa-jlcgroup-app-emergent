@@ -37,7 +37,16 @@ export default function LocationManagementPage() {
   const [selectedType, setSelectedType] = useState<LocationType>('country')
   const [selectedParent, setSelectedParent] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('')
   const [showCreateModal, setShowCreateModal] = useState(false)
+  
+  // Debounce search query
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery)
+    }, 500)
+    return () => clearTimeout(timeoutId)
+  }, [searchQuery])
   const [showEditModal, setShowEditModal] = useState(false)
   const [editingLocation, setEditingLocation] = useState<Location | null>(null)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
