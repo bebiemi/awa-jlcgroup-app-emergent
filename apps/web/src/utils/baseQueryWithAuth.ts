@@ -78,8 +78,21 @@ export const createBaseQueryWithAuth = (): BaseQueryFn<
   }
 }
 
-// Default instance with backend URL from environment
-// CRITICAL: ALWAYS use undefined to force truly relative URLs
-// This prevents Mixed Content errors in production (HTTPS pages making HTTP requests)
-// SOLUTION: Always use undefined to ensure relative URLs work in all environments
-export const baseQueryWithAuth = createBaseQueryWithAuth(undefined)
+/**
+ * Instance par défaut de baseQuery avec authentification
+ * Utilise toujours /api comme baseUrl
+ * 
+ * Usage dans vos API:
+ * ```
+ * export const myApi = createApi({
+ *   reducerPath: 'myApi',
+ *   baseQuery: createBaseQueryWithAuth(),  // ← Pas de paramètre !
+ *   endpoints: (builder) => ({
+ *     getData: builder.query({
+ *       query: () => '/users/me',  // ← Chemin relatif sans /api
+ *     }),
+ *   }),
+ * })
+ * ```
+ */
+export const baseQueryWithAuth = createBaseQueryWithAuth()
