@@ -79,7 +79,7 @@ if upload_dir.exists():
     app.mount("/uploads", StaticFiles(directory=str(upload_dir)), name="uploads")
 
 # Import and include routers
-from src.presentation.routes import profile_routes, validation_routes, notification_routes, admin_routes, iam_proxy_routes, config_proxy_routes, security_proxy_routes, auth_api_proxy_routes, auth_proxy_routes, besoins_proxy_routes, entreprises_proxy_routes
+from src.presentation.routes import profile_routes, validation_routes, notification_routes, admin_routes, iam_proxy_routes, config_proxy_routes, security_proxy_routes, auth_api_proxy_routes, auth_proxy_routes, besoins_proxy_routes, entreprises_proxy_routes, auth_endpoints_proxy
 
 app.include_router(profile_routes.router, prefix="/api")
 app.include_router(validation_routes.router, prefix="/api")
