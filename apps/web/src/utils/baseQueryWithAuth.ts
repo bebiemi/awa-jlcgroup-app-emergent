@@ -36,9 +36,16 @@ export const createBaseQueryWithAuth = (): BaseQueryFn<
       }
     }
     
-    // Call native fetch with corrected URL (or original if no conversion needed)
-    const modifiedInput = typeof input === 'string' ? url : new Request(url, input)
-    return fetch(modifiedInput, init)
+    // Call native fetch with corrected URL
+    // IMPORTANT: Si input est une string, passer url et init tels quels
+    // Si input est un Request, il faut recréer le Request avec la nouvelle URL
+    if (typeof input === 'string') {
+      return fetch(url, init)
+    } else {
+      // Créer un nouveau Request en préservant TOUS les attributs (body, headers, method, etc.)
+      const newRequest = new Request(url, input)
+      return fetch(newRequest, init)
+    }
   }
   
   const baseQuery = fetchBaseQuery({
