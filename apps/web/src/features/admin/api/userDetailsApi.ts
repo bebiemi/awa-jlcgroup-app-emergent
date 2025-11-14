@@ -2,11 +2,10 @@ import { createApi } from '@reduxjs/toolkit/query/react'
 import { createBaseQueryWithAuth } from '@/utils/baseQueryWithAuth'
 import { IAM_ENDPOINTS, QUERY_KEYS } from '@/constants/api'
 
-// For IAM endpoints, we need to use the auth service
+// For IAM endpoints, we need to use the auth service  
 // In production, both services are accessible at the same domain with different routes
-// Our IAM_ENDPOINTS constants already include /api prefix, so we pass empty string
-// to avoid double /api/api prefix
-const baseQueryForIAM = createBaseQueryWithAuth('')
+// Use default baseUrl (/api) and endpoints are relative like /iam/users/...
+const baseQueryForIAM = createBaseQueryWithAuth()
 
 // Extended User Detail Interface
 export interface UserDetail {
