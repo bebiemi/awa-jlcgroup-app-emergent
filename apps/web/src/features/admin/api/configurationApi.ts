@@ -32,7 +32,7 @@ export interface ApplicationSetting {
 
 export const configurationApi = createApi({
   reducerPath: 'configurationApi',
-  baseQuery: createBaseQueryWithAuth('/auth/config'),
+  baseQuery: createBaseQueryWithAuth(),
   tagTypes: ['References', 'Settings'],
   endpoints: (builder) => ({
     // CONFIGURATION GLOBALE
