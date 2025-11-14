@@ -24,14 +24,14 @@ export default defineConfig({
     },
     proxy: {
       '/api': {
-        // ⚠️ IMPORTANT: Utiliser le nom du service Docker (pas localhost)
-        target: 'http://jlc-api:8001',
+        // Backend principal (port 8001)
+        target: 'http://localhost:8001',
         changeOrigin: true,
         secure: false,
       },
       '/auth-api': {
-        // ⚠️ IMPORTANT: Utiliser le nom du service Docker (pas localhost)
-        target: 'http://auth-microservice:8000',
+        // Auth microservice (port 8000)
+        target: 'http://localhost:8000',
         changeOrigin: true,
         secure: false,
         rewrite: (path) => path.replace(/^\/auth-api/, '/api'),
