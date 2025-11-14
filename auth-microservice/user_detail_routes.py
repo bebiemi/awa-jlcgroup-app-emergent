@@ -152,7 +152,7 @@ async def verify_document(
         {
             "$set": {
                 "verified": True,
-                "verified_by": current_user["id"],
+                "verified_by": current_user.id if hasattr(current_user, "id") else current_user.get("id", "unknown"),
                 "verified_at": datetime.now(timezone.utc).isoformat()
             }
         }
