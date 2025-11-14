@@ -112,21 +112,23 @@ async def proxy_versions_requests(path: str, request: Request):
     return await _proxy_request(target_url, request)
 
 
+@router.api_route("/validations", methods=["GET", "POST"])
 @router.api_route("/validations/{path:path}", methods=["GET", "POST", "PUT", "PATCH", "DELETE"])
-async def proxy_validations_requests(path: str, request: Request):
+async def proxy_validations_requests(path: str = "", request: Request = None):
     """
     Proxy all /api/validations/* requests to auth-microservice /api/validations/*
     """
-    target_url = f"{AUTH_SERVICE_URL}/api/validations/{path}"
+    target_url = f"{AUTH_SERVICE_URL}/api/validations/{path}" if path else f"{AUTH_SERVICE_URL}/api/validations"
     return await _proxy_request(target_url, request)
 
 
+@router.api_route("/missions", methods=["GET", "POST"])
 @router.api_route("/missions/{path:path}", methods=["GET", "POST", "PUT", "PATCH", "DELETE"])
-async def proxy_missions_requests(path: str, request: Request):
+async def proxy_missions_requests(path: str = "", request: Request = None):
     """
     Proxy all /api/missions/* requests to auth-microservice /api/missions/*
     """
-    target_url = f"{AUTH_SERVICE_URL}/api/missions/{path}"
+    target_url = f"{AUTH_SERVICE_URL}/api/missions/{path}" if path else f"{AUTH_SERVICE_URL}/api/missions"
     return await _proxy_request(target_url, request)
 
 
