@@ -57,7 +57,7 @@ export default function ConfigurationVersionsPage() {
 
     try {
       const response = await fetch(
-        `/auth-api/versions/snapshot?description=${encodeURIComponent(description)}`,
+        `/api/versions/snapshot?description=${encodeURIComponent(description)}`,
         {
           method: 'POST',
           headers: {
@@ -118,7 +118,7 @@ export default function ConfigurationVersionsPage() {
     }
 
     try {
-      const response = await fetch(`/auth-api/versions/compare/${selectedVersion.id}/${versionToCompare}`)
+      const response = await fetch(`/api/versions/compare/${selectedVersion.id}/${versionToCompare}`)
       const data = await response.json()
       setCompareResult(data)
     } catch (error) {
