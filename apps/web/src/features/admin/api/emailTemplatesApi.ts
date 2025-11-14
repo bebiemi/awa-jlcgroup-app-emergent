@@ -76,7 +76,7 @@ export const emailTemplatesApi = createApi({
     }),
     createTemplate: builder.mutation<any, EmailTemplateCreate>({
       query: (template) => ({
-        url: '/api/emails/templates',
+        url: '/emails/templates',
         method: 'POST',
         body: template,
       }),
@@ -106,7 +106,7 @@ export const emailTemplatesApi = createApi({
     }),
     initDefaultTemplates: builder.mutation<any, void>({
       query: () => ({
-        url: '/api/emails/templates/init-defaults',
+        url: '/emails/templates/init-defaults',
         method: 'POST',
       }),
       invalidatesTags: ['EmailTemplates'],

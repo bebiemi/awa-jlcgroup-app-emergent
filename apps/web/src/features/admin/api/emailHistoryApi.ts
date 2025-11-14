@@ -63,7 +63,7 @@ export const emailHistoryApi = createApi({
       providesTags: ['EmailHistory'],
     }),
     getEmailStats: builder.query<EmailStats, void>({
-      query: () => '/api/emails/history/stats',
+      query: () => '/emails/history/stats',
       providesTags: ['EmailHistory'],
     }),
     clearEmailHistory: builder.mutation<any, number>({

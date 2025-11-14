@@ -105,7 +105,7 @@ export const besoinApi = createApi({
     // List besoins
     getBesoins: builder.query<BesoinListResponse, { status?: string; page?: number; page_size?: number; search?: string }>({
       query: ({ status, page = 1, page_size = 20, search }) => ({
-        url: '/api/besoins',
+        url: '/besoins',
         params: { status_filter: status, page, page_size, search },
       }),
       providesTags: ['Besoins'],
@@ -120,7 +120,7 @@ export const besoinApi = createApi({
     // Create besoin
     createBesoin: builder.mutation<Besoin, BesoinCreate>({
       query: (data) => ({
-        url: '/api/besoins',
+        url: '/besoins',
         method: 'POST',
         body: data,
       }),
