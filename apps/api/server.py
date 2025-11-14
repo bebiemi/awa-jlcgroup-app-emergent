@@ -87,6 +87,8 @@ app.include_router(notification_routes.router, prefix="/api")
 app.include_router(admin_routes.router, prefix="/api")
 # Proxy Auth routes to auth-microservice (MUST be before generic routes)
 app.include_router(auth_proxy_routes.router, prefix="/api/auth", tags=["Auth Proxy"])
+# Proxy Users and Profiles routes to auth-microservice
+app.include_router(auth_endpoints_proxy.router, prefix="/api", tags=["Auth Endpoints Proxy"])
 # Proxy IAM routes to auth-microservice
 app.include_router(iam_proxy_routes.router, prefix="/api/iam", tags=["IAM Proxy"])
 # Proxy Config routes to auth-microservice
