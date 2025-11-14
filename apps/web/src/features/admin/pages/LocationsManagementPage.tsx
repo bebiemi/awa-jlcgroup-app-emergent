@@ -212,7 +212,7 @@ export default function LocationsManagementPage() {
     )
   }
 
-  const filteredTree = searchQuery ? filterTree(tree || [], searchQuery) : tree || []
+  const filteredTree = debouncedSearchQuery ? filterTree(tree || [], debouncedSearchQuery) : tree || []
 
   return (
     <Layout>
