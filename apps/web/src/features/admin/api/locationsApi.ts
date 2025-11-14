@@ -72,7 +72,7 @@ export interface LocationUpdate {
 export const locationsApi = createApi({
   reducerPath: 'locationsApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: '/auth-api',
+    baseUrl: '/api',
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as RootState).auth.token
       if (token) {

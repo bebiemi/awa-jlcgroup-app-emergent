@@ -29,7 +29,7 @@ export interface UsersResponse {
 export const usersApi = createApi({
   reducerPath: 'usersApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: '/auth-api/auth',
+    baseUrl: '/api/auth',
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as RootState).auth.token
       if (token) {

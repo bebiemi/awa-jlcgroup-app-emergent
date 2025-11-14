@@ -51,7 +51,7 @@ export default function LoginPage() {
       if (result.access_token && result.user) {
         // CRITICAL: Set user status to "online" immediately after successful login
         try {
-          await fetch('/auth-api/users/presence/me', {
+          await fetch('/api/users/presence/me', {
             method: 'PATCH',
             headers: {
               'Content-Type': 'application/json',
@@ -102,7 +102,7 @@ export default function LoginPage() {
     setGoogleLoading(true)
     
     try {
-      const response = await fetch('/auth-api/auth/google/login', {
+      const response = await fetch('/api/auth/google/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
