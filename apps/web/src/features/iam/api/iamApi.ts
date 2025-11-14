@@ -169,7 +169,7 @@ export const iamApi = createApi({
     }),
     
     getGroup: builder.query<Group, string>({
-      query: (groupId) => `/groups/${groupId}`,
+      query: (groupId) => `/iam/groups/${groupId}`,
       providesTags: (_result, _error, groupId) => [{ type: 'Groups', id: groupId }],
     }),
     
