@@ -15,8 +15,42 @@ export const createBaseQueryWithAuth = (): BaseQueryFn<
   unknown,
   FetchBaseQueryError
 > => {
+  // Custom fetch pour corriger Mixed Content sur Emergent (HTTPS uniquement)
+  const customFetch: typeof fetch = async (input, init) => {
+    // Validation en développement
+    const url = typeof input === 'string' ? input : input.url
+    if (process.env.NODE_ENV === 'development' && url.includes('/api/api/')) {
+      console.error('❌ INVALID ENDPOINT: Duplicate /api/ detected:', url)
+    }
+    
+    // Conversion HTTP → HTTPS uniquement sur Emergent preview (HTTPS)
+    if (typeof window !== 'undefined' && window.location.protocol === 'https:') {
+      const hostname = window.location.hostname
+      const isEmergentPreview = hostname.includes('preview.emergentagent.com') || hostname.includes('emergent.host')
+      
+      if (isEmergentPreview && url.startsWith('http://')) {
+        const httpsUrl = url.replace('http://', 'https://')
+        console.log('🔒 Fixed Mixed Content URL:', httpsUrl)
+        
+        // IMPORTANT: Passer input et init tels quels à fetch, juste changer l'URL
+        if (typeof input === 'string') {
+          return fetch(httpsUrl, init)
+        } else {
+          // Pour un Request object, on doit le reconstruire avec la nouvelle URL
+          // mais en gardant TOUS ses attributs (body, headers, method, etc.)
+          const newRequest = new Request(httpsUrl, input)
+          return fetch(newRequest, init)
+        }
+      }
+    }
+    
+    // Pas de conversion nécessaire : utiliser fetch natif
+    return fetch(input, init)
+  }
+  
   const baseQuery = fetchBaseQuery({
     baseUrl: '/api',  // TOUJOURS /api - pas de paramètre
+    fetchFn: customFetch,
     prepareHeaders: (headers) => {
       const token = localStorage.getItem('access_token')
       if (token) {
