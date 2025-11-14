@@ -132,7 +132,7 @@ export const iamApi = createApi({
     }),
     
     getProfile: builder.query<Profile, string>({
-      query: (profileId) => `/profiles/${profileId}`,
+      query: (profileId) => `/iam/profiles/${profileId}`,
       providesTags: (_result, _error, profileId) => [{ type: 'Profiles', id: profileId }],
     }),
     
@@ -147,7 +147,7 @@ export const iamApi = createApi({
     
     updateProfile: builder.mutation<Profile, { id: string; data: ProfileUpdate }>({
       query: ({ id, data }) => ({
-        url: `/profiles/${id}`,
+        url: `/iam/profiles/${id}`,
         method: 'PUT',
         body: data,
       }),
@@ -156,7 +156,7 @@ export const iamApi = createApi({
     
     deleteProfile: builder.mutation<void, string>({
       query: (profileId) => ({
-        url: `/profiles/${profileId}`,
+        url: `/iam/profiles/${profileId}`,
         method: 'DELETE',
       }),
       invalidatesTags: ['Profiles'],
