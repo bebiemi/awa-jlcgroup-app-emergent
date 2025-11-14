@@ -66,13 +66,13 @@ export const entrepriseApi = createApi({
   endpoints: (builder) => ({
     // Get current user's entreprise
     getMyEntreprise: builder.query<Entreprise, void>({
-      query: () => '/api/entreprises/me',
+      query: () => '/entreprises/me',
       providesTags: ['Entreprise'],
     }),
 
     // Get entreprise by ID
     getEntreprise: builder.query<Entreprise, string>({
-      query: (id) => `/api/entreprises/${id}`,
+      query: (id) => `/entreprises/${id}`,
       providesTags: (result, error, id) => [{ type: 'Entreprise', id }],
     }),
 
@@ -95,7 +95,7 @@ export const entrepriseApi = createApi({
     // Create entreprise (admin)
     createEntreprise: builder.mutation<Entreprise, EntrepriseCreate>({
       query: (data) => ({
-        url: '/api/entreprises',
+        url: '/entreprises',
         method: 'POST',
         body: data,
       }),
@@ -105,7 +105,7 @@ export const entrepriseApi = createApi({
     // Update current user's entreprise
     updateMyEntreprise: builder.mutation<Entreprise, EntrepriseUpdate>({
       query: (data) => ({
-        url: '/api/entreprises/me',
+        url: '/entreprises/me',
         method: 'PATCH',
         body: data,
       }),
@@ -118,7 +118,7 @@ export const entrepriseApi = createApi({
       { id: string; data: EntrepriseUpdate }
     >({
       query: ({ id, data }) => ({
-        url: `/api/entreprises/${id}`,
+        url: `/entreprises/${id}`,
         method: 'PATCH',
         body: data,
       }),
@@ -131,7 +131,7 @@ export const entrepriseApi = createApi({
     // Delete entreprise (admin)
     deleteEntreprise: builder.mutation<void, string>({
       query: (id) => ({
-        url: `/api/entreprises/${id}`,
+        url: `/entreprises/${id}`,
         method: 'DELETE',
       }),
       invalidatesTags: ['EntrepriseList'],
