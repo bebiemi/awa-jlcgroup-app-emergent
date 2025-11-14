@@ -70,7 +70,9 @@ export const createBaseQueryWithAuth = (): BaseQueryFn<
     
     if (isHTTPS && isEmergentPreview) {
       // Forcer HTTPS pour éviter Mixed Content
-      return `https://${hostname}/api`
+      const httpsBaseUrl = `https://${hostname}/api`
+      console.log('🔒 Emergent Preview detected - Using HTTPS baseUrl:', httpsBaseUrl)
+      return httpsBaseUrl
     }
     
     // Développement local ou autre environnement : utiliser URL relative
