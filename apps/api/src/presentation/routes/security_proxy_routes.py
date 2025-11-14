@@ -49,6 +49,7 @@ async def proxy_security_requests(path: str, request: Request):
                 content=response.content,
                 status_code=response.status_code,
                 headers=dict(response.headers),
+                media_type=response.headers.get('content-type', 'application/json'),
             )
     except httpx.RequestError as e:
         return Response(
