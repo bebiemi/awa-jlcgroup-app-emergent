@@ -1,9 +1,6 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
 import { createBaseQueryWithAuth } from '@/utils/baseQueryWithAuth';
 
-// Use relative URL to go through Vite proxy
-const API_URL = '/api';
-
 export interface EmailProvider {
   value: 'gmail' | 'sendgrid' | 'office365' | 'mailtrap' | 'custom';
   label: string;
