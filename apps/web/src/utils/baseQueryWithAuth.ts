@@ -11,8 +11,30 @@ export const createBaseQueryWithAuth = (baseUrl?: string): BaseQueryFn<
   unknown,
   FetchBaseQueryError
 > => {
+  // Custom fetch function that fixes Mixed Content in production/preview environments
+  const customFetch: typeof fetch = async (input, init) => {
+    let url = typeof input === 'string' ? input : input.url
+    
+    // Only apply HTTP → HTTPS conversion in production/preview environments (not local Docker)
+    if (typeof window !== 'undefined' && window.location.protocol === 'https:') {
+      const hostname = window.location.hostname
+      const isEmergentPreview = hostname.includes('preview.emergentagent.com') || hostname.includes('emergent.host')
+      
+      // Only convert HTTP to HTTPS in Emergent preview environments
+      if (isEmergentPreview && url.startsWith('http://')) {
+        url = url.replace('http://', 'https://')
+        console.log('🔒 Fixed Mixed Content URL for Emergent:', url)
+      }
+    }
+    
+    // Call native fetch with corrected URL (or original if no conversion needed)
+    const modifiedInput = typeof input === 'string' ? url : new Request(url, input)
+    return fetch(modifiedInput, init)
+  }
+  
   const baseQuery = fetchBaseQuery({
     baseUrl: baseUrl === undefined ? '/api' : baseUrl,
+    fetchFn: customFetch,
     prepareHeaders: (headers) => {
       const token = localStorage.getItem('access_token')
       if (token) {
