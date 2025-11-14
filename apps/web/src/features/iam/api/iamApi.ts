@@ -127,7 +127,7 @@ export const iamApi = createApi({
     
     // Profiles
     listProfiles: builder.query<Profile[], void>({
-      query: () => '/profiles',
+      query: () => '/iam/profiles',
       providesTags: ['Profiles'],
     }),
     
@@ -138,7 +138,7 @@ export const iamApi = createApi({
     
     createProfile: builder.mutation<Profile, ProfileCreate>({
       query: (profile) => ({
-        url: '/profiles',
+        url: '/iam/profiles',
         method: 'POST',
         body: profile,
       }),
@@ -164,7 +164,7 @@ export const iamApi = createApi({
     
     // Groups
     listGroups: builder.query<Group[], void>({
-      query: () => '/groups',
+      query: () => '/iam/groups',
       providesTags: ['Groups'],
     }),
     
@@ -175,7 +175,7 @@ export const iamApi = createApi({
     
     createGroup: builder.mutation<Group, GroupCreate>({
       query: (group) => ({
-        url: '/groups',
+        url: '/iam/groups',
         method: 'POST',
         body: group,
       }),
@@ -219,7 +219,7 @@ export const iamApi = createApi({
     }),
     
     getUserPermissions: builder.query<UserPermissionsResponse, string>({
-      query: (userId) => `/users/${userId}/permissions`,
+      query: (userId) => `/iam/users/${userId}/permissions`,
       providesTags: (_result, _error, userId) => [{ type: 'UserPermissions', id: userId }],
     }),
     
