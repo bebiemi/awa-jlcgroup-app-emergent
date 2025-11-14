@@ -96,7 +96,7 @@ async def create_email_domain(
     
     created_domain = await service.create_domain(
         domain_data,
-        created_by=user.get("id")
+        created_by=user.id if hasattr(user, 'id') else user.get("id") if isinstance(user, dict) else str(user)
     )
     
     return created_domain
