@@ -99,18 +99,18 @@ export interface GroupUpdate {
 
 export const iamApi = createApi({
   reducerPath: 'iamApi',
-  baseQuery: createBaseQueryWithAuth('/iam'),
+  baseQuery: createBaseQueryWithAuth(),
   tagTypes: ['Permissions', 'Profiles', 'Groups', 'UserPermissions'],
   endpoints: (builder) => ({
     // Permissions
     listPermissions: builder.query<Permission[], void>({
-      query: () => '/permissions',
+      query: () => '/iam/permissions',
       providesTags: ['Permissions'],
     }),
     
     createPermission: builder.mutation<Permission, Partial<Permission>>({
       query: (permission) => ({
-        url: '/permissions',
+        url: '/iam/permissions',
         method: 'POST',
         body: permission,
       }),
