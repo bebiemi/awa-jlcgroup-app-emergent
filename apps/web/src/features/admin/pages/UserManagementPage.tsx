@@ -35,6 +35,16 @@ import { ArrowPathIcon, ArchiveBoxIcon } from '@heroicons/react/24/outline'
 export default function UserManagementPage() {
   const [page, setPage] = useState(1)
   const [searchQuery, setSearchQuery] = useState('')
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('')
+  
+  // Debounce search query pour éviter trop de requêtes
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery)
+    }, 500) // 500ms de délai
+    
+    return () => clearTimeout(timeoutId)
+  }, [searchQuery])
   const [statusFilter, setStatusFilter] = useState<string>('')
   const [roleFilter, setRoleFilter] = useState<string>('')
   const [showFilters, setShowFilters] = useState(false)
