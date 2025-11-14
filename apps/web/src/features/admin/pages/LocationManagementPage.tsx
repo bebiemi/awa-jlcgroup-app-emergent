@@ -55,7 +55,7 @@ export default function LocationManagementPage() {
   const { data: locations = [], isLoading, refetch } = useGetLocationsQuery({
     type: selectedType,
     ...(selectedParent !== null && { parent_id: selectedParent }),
-    search: searchQuery || undefined,
+    search: debouncedSearchQuery || undefined,
   })
 
   const { data: locationTree = [] } = useGetLocationTreeQuery()
