@@ -178,7 +178,7 @@ export default function FeatureFlagsPage() {
   const handleExport = async () => {
     try {
       const token = localStorage.getItem('access_token')
-      const response = await fetch('/auth-api/feature-flags/export', {
+      const response = await fetch('/api/feature-flags/export', {
         headers: {
           'Authorization': `Bearer ${token}`,
         },

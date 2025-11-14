@@ -55,7 +55,7 @@ export default function Sidebar() {
   const handleLogout = async () => {
     try {
       // 1. FIRST: Set user status to "offline" in backend
-      await fetch('/auth-api/users/presence/me', {
+      await fetch('/api/users/presence/me', {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',

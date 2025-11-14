@@ -20,7 +20,7 @@ export function useInactivityLogout() {
   const logout = useCallback(async () => {
     try {
       // 1. FIRST: Set user status to "offline" in backend
-      await fetch('/auth-api/users/presence/me', {
+      await fetch('/api/users/presence/me', {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -63,7 +63,7 @@ export function useInactivityLogout() {
         // Use direct fetch for immediate response
         const token = localStorage.getItem('access_token')
         if (token) {
-          await fetch('/auth-api/users/presence/me', {
+          await fetch('/api/users/presence/me', {
             method: 'PATCH',
             headers: {
               'Content-Type': 'application/json',

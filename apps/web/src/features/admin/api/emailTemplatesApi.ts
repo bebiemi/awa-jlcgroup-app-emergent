@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 // Use relative URL to go through Vite proxy
-const API_URL = '/auth-api';
+const API_URL = '/api';
 
 export type EmailTemplateType = 'rollback' | 'feature_flag' | 'user_welcome' | 'password_reset' | 'custom';
 

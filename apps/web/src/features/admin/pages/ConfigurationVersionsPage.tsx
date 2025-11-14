@@ -39,7 +39,7 @@ export default function ConfigurationVersionsPage() {
   const loadVersions = async () => {
     setLoading(true)
     try {
-      const response = await fetch('/auth-api/versions/list')
+      const response = await fetch('/api/versions/list')
       const data = await response.json()
       setVersions(data.versions)
     } catch (error) {
@@ -86,7 +86,7 @@ export default function ConfigurationVersionsPage() {
     }
 
     try {
-      const response = await fetch('/auth-api/versions/rollback', {
+      const response = await fetch('/api/versions/rollback', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
