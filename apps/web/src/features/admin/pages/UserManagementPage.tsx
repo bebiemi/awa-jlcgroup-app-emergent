@@ -66,7 +66,7 @@ export default function UserManagementPage() {
   const { data, isLoading, isFetching, refetch } = useGetUsersQuery({
     page,
     page_size: 15,
-    search: searchQuery || undefined,
+    search: debouncedSearchQuery || undefined,
     status: viewMode === 'archived' ? 'archived' : (statusFilter || undefined),
     role: roleFilter || undefined,
   })
