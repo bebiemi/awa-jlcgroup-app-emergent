@@ -20,7 +20,7 @@ export interface OnlineUsersResponse {
 
 export const presenceApi = createApi({
   reducerPath: 'presenceApi',
-  baseQuery: createBaseQueryWithAuth('/users/presence'),
+  baseQuery: createBaseQueryWithAuth(),
   // Prevent infinite retry loops
   refetchOnMountOrArgChange: false,
   refetchOnFocus: false,
@@ -28,7 +28,7 @@ export const presenceApi = createApi({
   tagTypes: ['Presence', 'OnlineUsers'],
   endpoints: (builder) => ({
     getMyPresence: builder.query<UserPresence, void>({
-      query: () => '/me',
+      query: () => '/users/presence/me',
       providesTags: ['Presence'],
     }),
     updateMyPresence: builder.mutation<UserPresence, { status: PresenceStatus }>({
