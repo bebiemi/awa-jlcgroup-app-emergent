@@ -15,43 +15,9 @@ export const createBaseQueryWithAuth = (): BaseQueryFn<
   unknown,
   FetchBaseQueryError
 > => {
-  // Custom fetch function that fixes Mixed Content in production/preview environments
-  const customFetch: typeof fetch = async (input, init) => {
-    // Validation en développement
-    const url = typeof input === 'string' ? input : input.url
-    if (process.env.NODE_ENV === 'development' && url.includes('/api/api/')) {
-      console.error('❌ INVALID ENDPOINT: Duplicate /api/ detected:', url)
-    }
-    
-    // Only apply HTTP → HTTPS conversion in production/preview environments (not local Docker)
-    let needsHttpsConversion = false
-    if (typeof window !== 'undefined' && window.location.protocol === 'https:') {
-      const hostname = window.location.hostname
-      const isEmergentPreview = hostname.includes('preview.emergentagent.com') || hostname.includes('emergent.host')
-      needsHttpsConversion = isEmergentPreview && url.startsWith('http://')
-    }
-    
-    // Si pas de conversion nécessaire, utiliser fetch natif directement
-    if (!needsHttpsConversion) {
-      return fetch(input, init)
-    }
-    
-    // Conversion HTTP → HTTPS nécessaire
-    const httpsUrl = url.replace('http://', 'https://')
-    console.log('🔒 Fixed Mixed Content URL for Emergent:', httpsUrl)
-    
-    // Appliquer la nouvelle URL selon le type d'input
-    if (typeof input === 'string') {
-      return fetch(httpsUrl, init)
-    } else {
-      // Pour un Request, on doit passer la nouvelle URL dans init
-      return fetch(httpsUrl, init)
-    }
-  }
-  
   const baseQuery = fetchBaseQuery({
     baseUrl: '/api',  // TOUJOURS /api - pas de paramètre
-    fetchFn: customFetch,
+    // Ne pas utiliser de fetchFn custom pour l'instant - tester si ça résout l'invalidation
     prepareHeaders: (headers) => {
       const token = localStorage.getItem('access_token')
       if (token) {
