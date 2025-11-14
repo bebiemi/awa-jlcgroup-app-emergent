@@ -20,7 +20,7 @@ export interface OnlineUsersResponse {
 
 export const presenceApi = createApi({
   reducerPath: 'presenceApi',
-  baseQuery: createBaseQueryWithAuth('/api/users/presence'),
+  baseQuery: createBaseQueryWithAuth('/auth-api/users/presence'),
   // Prevent infinite retry loops
   refetchOnMountOrArgChange: false,
   refetchOnFocus: false,

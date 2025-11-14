@@ -42,7 +42,7 @@ export interface ValidationStats {
 export const validationApi = createApi({
   reducerPath: 'validationApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: '/api',
+    baseUrl: '/auth-api',
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as RootState).auth.token
       if (token) {

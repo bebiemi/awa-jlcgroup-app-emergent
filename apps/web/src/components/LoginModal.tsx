@@ -54,7 +54,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
 
   const handleGoogleLogin = async () => {
     try {
-      const response = await fetch('/api/auth/google/login', {
+      const response = await fetch('/auth-api/auth/google/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

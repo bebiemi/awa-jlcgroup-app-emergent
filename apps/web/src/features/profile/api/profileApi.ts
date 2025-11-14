@@ -52,7 +52,7 @@ export interface ProfileResponse {
 export const profileApi = createApi({
   reducerPath: 'profileApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: '/api/profiles',
+    baseUrl: '/auth-api/profiles',
     prepareHeaders: (headers) => {
       const token = localStorage.getItem('access_token')
       if (token) {

@@ -4,7 +4,7 @@ import type { RootState } from '@/store/store'
 import { setCredentials } from '../slices/authSlice'
 
 // Use relative URLs to go through Vite proxy
-const AUTH_SERVICE_URL = '/api'
+const AUTH_SERVICE_URL = '/auth-api'
 
 export const authApi = createApi({
   reducerPath: 'authApi',

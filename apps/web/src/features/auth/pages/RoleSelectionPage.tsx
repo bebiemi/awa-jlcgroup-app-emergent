@@ -39,7 +39,7 @@ export default function RoleSelectionPage() {
 
     try {
       // Call backend to update user role
-      const response = await fetch('/api/auth/google/complete-registration', {
+      const response = await fetch('/auth-api/auth/google/complete-registration', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

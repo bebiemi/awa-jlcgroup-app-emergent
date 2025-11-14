@@ -62,7 +62,7 @@ export interface AuditEvent {
 export const featureFlagApi = createApi({
   reducerPath: 'featureFlagApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: '/api',
+    baseUrl: '/auth-api',
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as RootState).auth.token
       if (token) {

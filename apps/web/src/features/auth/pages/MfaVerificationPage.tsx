@@ -36,7 +36,7 @@ export default function MfaVerificationPage({ sessionId, mfaMethod, onBack }: Mf
       if (result.success && result.access_token && result.user) {
         // CRITICAL: Set user status to "online" immediately after successful MFA login
         try {
-          await fetch('/api/users/presence/me', {
+          await fetch('/auth-api/users/presence/me', {
             method: 'PATCH',
             headers: {
               'Content-Type': 'application/json',

@@ -37,7 +37,7 @@ export default function GoogleCallback() {
         // Call backend to exchange code for tokens
         const redirectUri = `${window.location.origin}/auth/google/callback`
         
-        const response = await fetch('/api/auth/google/callback', {
+        const response = await fetch('/auth-api/auth/google/callback', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
