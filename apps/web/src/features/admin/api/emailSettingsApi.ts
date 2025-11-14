@@ -53,7 +53,7 @@ export interface EmailTestResponse {
 
 export const emailSettingsApi = createApi({
   reducerPath: 'emailSettingsApi',
-  baseQuery: createBaseQueryWithAuth(API_URL),
+  baseQuery: createBaseQueryWithAuth(),
   tagTypes: ['EmailSettings'],
   endpoints: (builder) => ({
     getEmailSettings: builder.query<EmailConfig, void>({
