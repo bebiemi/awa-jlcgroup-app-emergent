@@ -327,6 +327,14 @@ function App() {
         }
       />
       <Route
+        path="/postulant"
+        element={
+          <ProtectedRoute requiredPermissions={['profile.manage_own']}>
+            <PostulantDashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/dashboard"
         element={
           <ProtectedRoute>
