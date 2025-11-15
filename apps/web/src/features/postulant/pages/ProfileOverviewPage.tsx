@@ -19,7 +19,7 @@ import {
   SparklesIcon,
 } from '@heroicons/react/24/outline'
 
-export default function PostulantDashboard() {
+export default function ProfileOverviewPage() {
   const { data: profileData, isLoading } = useGetMyProfileQuery()
   const [isSendingEmail, setIsSendingEmail] = useState(false)
 
