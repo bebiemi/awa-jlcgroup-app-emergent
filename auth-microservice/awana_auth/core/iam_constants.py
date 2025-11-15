@@ -172,6 +172,7 @@ def get_profile_for_role(role: str) -> str:
     """Map a role to its corresponding profile"""
     role_to_profile = {
         UserRoles.CANDIDAT: IAMProfiles.CANDIDAT,
+        UserRoles.POSTULANT: IAMProfiles.POSTULANT,  # Phase 3
         UserRoles.INTERIM: IAMProfiles.INTERIM_USER,
         UserRoles.COMPANY: IAMProfiles.COMPANY_ADMIN,
         UserRoles.COLLABORATEUR: IAMProfiles.COLLABORATEUR,
