@@ -6,6 +6,7 @@ import {
   useUpdateUserStatusMutation,
   useUpdateUserMutation,
   useDeleteUserMutation,
+  useMarkUserAsViewedMutation,
   type User,
 } from '../api/usersApi'
 import {
