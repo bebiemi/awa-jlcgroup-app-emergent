@@ -276,10 +276,9 @@ async def bulk_delete_users(
 
 
 @bulk_router.post("/export-csv")
-@require_permission("users.read")
 async def export_users_csv(
     request: BulkOperationRequest,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_permission("users.read")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """Export selected users to CSV"""
