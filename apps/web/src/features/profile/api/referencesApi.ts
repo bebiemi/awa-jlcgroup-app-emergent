@@ -39,7 +39,7 @@ export const referencesApi = createApi({
   endpoints: (builder) => ({
     getDocumentTypes: builder.query<DocumentTypesResponse, { requiredOnly?: boolean }>({
       query: ({ requiredOnly = false }) => ({
-        url: `/api/system-references/document-types${requiredOnly ? '?required_only=true' : ''}`,
+        url: `/system-references/document-types${requiredOnly ? '?required_only=true' : ''}`,
         method: 'GET',
       }),
       providesTags: ['DocumentTypes'],
@@ -47,7 +47,7 @@ export const referencesApi = createApi({
     
     getReferencesByCategory: builder.query<any, string>({
       query: (category) => ({
-        url: `/api/system-references/categories/${category}`,
+        url: `/system-references/categories/${category}`,
         method: 'GET',
       }),
       providesTags: (_result, _error, category) => [{ type: 'References' as const, id: category }],
