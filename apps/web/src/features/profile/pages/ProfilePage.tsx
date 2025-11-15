@@ -89,6 +89,9 @@ export default function ProfilePage() {
             <>
               {profileType === 'interim' && <InterimProfileForm profile={profile} />}
               {profileType === 'company' && <CompanyProfileForm profile={profile} />}
+              {(profileType === 'candidat' || profileType === 'postulant' || !profileType) && (
+                <CandidatProfileForm profile={profile} />
+              )}
               {profileType === 'collaborator' && (
                 <div className="text-center py-12 text-gray-500">
                   <p>Profil collaborateur - Configuration minimale</p>
