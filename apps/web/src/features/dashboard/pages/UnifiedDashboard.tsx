@@ -10,6 +10,7 @@ import { useDashboardWidgets } from '@/features/config/api/appConfigApi'
 import ProfileCompletionWidget from '../components/ProfileCompletionWidget'
 import MissingDocumentsWidget from '../components/MissingDocumentsWidget'
 import RecentNotificationsWidget from '../components/RecentNotificationsWidget'
+import RecommendedMissionsWidget from '../components/RecommendedMissionsWidget'
 import { SparklesIcon } from '@heroicons/react/24/solid'
 
 export default function UnifiedDashboard() {
