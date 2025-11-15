@@ -316,6 +316,7 @@ export const {
   useGetUserActivityQuery,
   useResetPasswordMutation,
   useResetMfaMutation,
+  useToggleEmailVerificationMutation,
   useSendNotificationMutation,
   useArchiveUserMutation,
   useRestoreUserMutation,
