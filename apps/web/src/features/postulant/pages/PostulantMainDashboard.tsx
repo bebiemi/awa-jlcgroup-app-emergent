@@ -21,6 +21,8 @@ import {
 
 export default function PostulantMainDashboard() {
   const { data: profileData, isLoading, error } = useGetMyProfileQuery()
+  const { data: documentTypesData, isLoading: isLoadingDocTypes } = useGetDocumentTypesQuery({ requiredOnly: false })
+  const { data: missionsData, isLoading: isLoadingMissions } = useGetMissionsQuery({ published_only: true, limit: 5 })
 
   if (isLoading) {
     return (
