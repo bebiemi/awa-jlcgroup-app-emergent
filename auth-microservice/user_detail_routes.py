@@ -99,6 +99,7 @@ async def get_user_detail(
         permissions=permission_codes,
         mfa_enabled=user.get("mfa_enabled", False),
         mfa_method=user.get("mfa_method"),
+        is_verified=user.get("is_verified", False),  # Email verification status
         phone=user.get("phone"),
         location=user.get("location"),
         location_label=user.get("location_label"),
