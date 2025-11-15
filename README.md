@@ -1,4 +1,8 @@
-# JLC Monorepo
+# JLC Group Platform
+
+**Version actuelle** : 1.0.0-stable ✅  
+**Status** : Production Ready  
+**Date de release** : 15 Novembre 2025
 
 Application de gestion d'intérim pour JLC Group.
 
