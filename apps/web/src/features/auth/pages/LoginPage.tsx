@@ -71,7 +71,7 @@ export default function LoginPage() {
         const userRoles = result.user?.roles || []
         let dashboardPath = '/profile'
 
-        // Priority order: commercial > admin > interim > company > agency
+        // Priority order: commercial > admin > interim > company > agency > postulant/candidat
         if (userRoles.includes('commercial')) {
           dashboardPath = '/commercial'
         } else if (userRoles.includes(UserRoles.ADMIN) || userRoles.includes(UserRoles.SUPER_ADMIN)) {
@@ -82,6 +82,8 @@ export default function LoginPage() {
           dashboardPath = '/entreprise'
         } else if (userRoles.includes('agency')) {
           dashboardPath = '/agence'
+        } else if (userRoles.includes('postulant') || userRoles.includes('candidat')) {
+          dashboardPath = '/postulant'
         }
 
         navigate(dashboardPath, { replace: true })
