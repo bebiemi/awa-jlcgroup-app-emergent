@@ -21,6 +21,7 @@ export interface InterimProfile {
   document_ids: string[]
   profile_completed: boolean
   profile_completion_percentage: number
+  is_verified: boolean  // Email verification status from user
   updated_at: string
 }
 
