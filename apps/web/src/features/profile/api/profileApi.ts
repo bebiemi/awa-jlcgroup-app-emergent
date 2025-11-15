@@ -31,6 +31,7 @@ export interface CompanyManagerProfile {
   department?: string
   document_ids: string[]
   profile_completed: boolean
+  is_verified: boolean  // Email verification status from user
   updated_at: string
 }
 
