@@ -47,10 +47,9 @@ class BulkOperationResponse(BaseModel):
 
 
 @bulk_router.post("/bulk-block", response_model=BulkOperationResponse)
-@require_permission("users.update")
 async def bulk_block_users(
     request: BulkOperationRequest,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_permission("users.update")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """Block multiple users at once"""
