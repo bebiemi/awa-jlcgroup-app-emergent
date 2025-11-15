@@ -46,6 +46,7 @@ import ApplicationsManagementPage from './features/missions/pages/ApplicationsMa
 import MyApplicationsPage from './features/missions/pages/MyApplicationsPage'
 import CompanyDashboard from './features/company/pages/CompanyDashboard'
 import CompanySettingsPage from './features/company/pages/CompanySettingsPage'
+import EntreprisesManagementPage from './features/admin/pages/EntreprisesManagementPage'
 import AgencyDashboard from './features/agency/pages/AgencyDashboard'
 import CommercialDashboard from './features/commercial/pages/CommercialDashboard'
 import ProtectedRoute from './features/auth/components/ProtectedRoute'
