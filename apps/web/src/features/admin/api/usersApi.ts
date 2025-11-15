@@ -96,4 +96,5 @@ export const {
   useUpdateUserMutation,
   useDeleteUserMutation,
   useResetUserMfaMutation,
+  useMarkUserAsViewedMutation,
 } = usersApi
