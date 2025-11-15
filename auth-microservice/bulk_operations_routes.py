@@ -5,8 +5,7 @@ Handles mass operations on multiple users at once
 from fastapi import APIRouter, Depends, HTTPException
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from awana_auth.core.models import User
-from awana_auth.core.database import get_database
-from awana_auth.core.security import get_current_user
+from awana_auth.core.dependencies import get_database, get_current_user
 from awana_auth.core.rbac import require_permission
 from pydantic import BaseModel
 from typing import List, Optional
