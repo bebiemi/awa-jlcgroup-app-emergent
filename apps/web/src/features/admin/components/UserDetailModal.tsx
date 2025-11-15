@@ -19,6 +19,8 @@ export default function UserDetailModal({ isOpen, onClose, userId }: UserDetailM
   const { data: userDetail, isLoading, error } = useGetUserDetailQuery(userId, {
     skip: !isOpen || !userId,
   })
+  const [toggleEmailVerification, { isLoading: isToggling }] = useToggleEmailVerificationMutation()
+  const [isVerifying, setIsVerifying] = useState(false)
 
   const tabs = [
     { ...USER_DETAIL_TABS.INFO, component: UserInfoTab },
@@ -26,6 +28,32 @@ export default function UserDetailModal({ isOpen, onClose, userId }: UserDetailM
     { ...USER_DETAIL_TABS.PERMISSIONS, component: UserPermissionsTab },
     { ...USER_DETAIL_TABS.ACTIVITY, component: UserActivityTab },
   ]
+
+  const handleToggleEmailVerification = async () => {
+    if (!userDetail) return
+    
+    const newStatus = !userDetail.is_verified
+    const action = newStatus ? 'vérifier' : 'dévérifier'
+    
+    if (!confirm(`Êtes-vous sûr de vouloir ${action} l'email de ${userDetail.username} ?`)) {
+      return
+    }
+
+    setIsVerifying(true)
+    try {
+      await toggleEmailVerification({
+        user_id: userDetail.id,
+        is_verified: newStatus,
+        reason: `Manuel ${action}ication par admin depuis la modal utilisateur`
+      }).unwrap()
+      
+      toast.success(`Email ${newStatus ? 'vérifié' : 'dévérifié'} avec succès`)
+    } catch (error: any) {
+      toast.error(error?.data?.detail || 'Erreur lors de la modification')
+    } finally {
+      setIsVerifying(false)
+    }
+  }
 
   return (
     <Transition appear show={isOpen} as={Fragment}>
