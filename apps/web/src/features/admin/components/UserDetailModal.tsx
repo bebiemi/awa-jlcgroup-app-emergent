@@ -20,7 +20,17 @@ export default function UserDetailModal({ isOpen, onClose, userId }: UserDetailM
     skip: !isOpen || !userId,
   })
   const [toggleEmailVerification, { isLoading: isToggling }] = useToggleEmailVerificationMutation()
+  const [markUserAsViewed] = useMarkUserAsViewedMutation()
   const [isVerifying, setIsVerifying] = useState(false)
+
+  // Mark user as viewed when modal opens
+  useEffect(() => {
+    if (isOpen && userId) {
+      markUserAsViewed(userId).catch(() => {
+        // Silently fail - not critical
+      })
+    }
+  }, [isOpen, userId, markUserAsViewed])
 
   const tabs = [
     { ...USER_DETAIL_TABS.INFO, component: UserInfoTab },
