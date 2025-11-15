@@ -194,6 +194,10 @@ async def get_my_profile(
                 "updated_at": datetime.now(timezone.utc).isoformat()
             }
             await db.company_manager_profiles.insert_one(profile)
+        
+        # Add is_verified from user to profile response
+        profile["is_verified"] = current_user.is_verified
+        
         return {"profile_type": cfg.get_company_role(), "profile": profile}
     
     else:
@@ -205,6 +209,10 @@ async def get_my_profile(
                 "updated_at": datetime.now(timezone.utc).isoformat()
             }
             await db.collaborator_profiles.insert_one(profile)
+        
+        # Add is_verified from user to profile response
+        profile["is_verified"] = current_user.is_verified
+        
         return {"profile_type": "collaborator", "profile": profile}
 
 
