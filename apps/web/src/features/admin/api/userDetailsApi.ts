@@ -247,6 +247,18 @@ export const userDetailsApi = createApi({
       ],
     }),
 
+    // Mark User As Viewed (remove "NOUVEAU" badge)
+    markUserAsViewed: builder.mutation<{ success: boolean; message: string; user_id: string }, string>({
+      query: (user_id) => ({
+        url: `/admin/users/${user_id}/mark-as-viewed`,
+        method: 'POST',
+      }),
+      invalidatesTags: (result, error, user_id) => [
+        { type: 'UserDetail', id: user_id },
+        'Users',
+      ],
+    }),
+
     // Send Notification
     sendNotification: builder.mutation<{ success: boolean; message: string }, { userId: string; data: { title: string; message: string; type?: string } }>({
       query: ({ userId, data}) => ({
