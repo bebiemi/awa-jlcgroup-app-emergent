@@ -19,7 +19,7 @@ import {
   PhoneIcon,
   ExclamationCircleIcon,
 } from '@heroicons/react/24/outline'
-import { useGetAllEntreprisesQuery, useUpdateEntrepriseMutation } from '@/features/company/api/entrepriseApi'
+import { useListEntreprisesQuery, useUpdateEntrepriseMutation } from '@/features/company/api/entrepriseApi'
 import type { Entreprise, EntrepriseUpdate } from '@/features/company/api/entrepriseApi'
 
 export default function EntreprisesManagementPage() {
