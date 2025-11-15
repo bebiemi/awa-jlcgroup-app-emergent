@@ -260,8 +260,8 @@ export default function Sidebar() {
         ],
       }
     )
-  } else if (user?.roles?.includes('postulant')) {
-    // Postulant role (applicant in onboarding process)
+  } else if (user?.roles?.includes('postulant') || user?.roles?.includes('candidat')) {
+    // Postulant/Candidat role (applicant in onboarding process)
     navigationSections.push(
       {
         title: 'Tableau de bord',
