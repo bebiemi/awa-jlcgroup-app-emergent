@@ -43,24 +43,24 @@ async def fix_permissions():
         resource = parts[0] if len(parts) > 0 else "general"
         action = parts[1] if len(parts) > 1 else "manage"
         
-        # Map action to valid enum values
+        # Map action to valid enum values (lowercase)
         action_mapping = {
-            "read": "READ",
-            "create": "CREATE",
-            "edit": "UPDATE",
-            "update": "UPDATE",
-            "delete": "DELETE",
-            "manage": "MANAGE",
-            "configure": "MANAGE",
-            "read_own": "READ",
-            "read_all": "READ",
-            "read_config": "READ",
-            "read_history": "READ",
-            "manage_templates": "MANAGE",
-            "dashboard": "READ",
+            "read": "read",
+            "create": "create",
+            "edit": "update",
+            "update": "update",
+            "delete": "delete",
+            "manage": "manage",
+            "configure": "configure",
+            "read_own": "read_own",
+            "read_all": "read",
+            "read_config": "read_config",
+            "read_history": "read_history",
+            "manage_templates": "manage_templates",
+            "dashboard": "dashboard",
         }
         
-        action_value = action_mapping.get(action, "MANAGE")
+        action_value = action_mapping.get(action, "manage")
         
         # Update the permission
         update_data = {
