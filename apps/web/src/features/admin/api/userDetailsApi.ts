@@ -21,6 +21,7 @@ export interface UserDetail {
   permissions: string[]
   mfa_enabled: boolean
   mfa_method?: 'totp' | 'email'
+  is_verified: boolean  // Email verification status
   phone?: string
   location?: string
   location_label?: string
