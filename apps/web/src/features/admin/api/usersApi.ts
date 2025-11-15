@@ -87,6 +87,14 @@ export const usersApi = createApi({
       }),
       invalidatesTags: ['Users'],
     }),
+    toggleEmailVerification: builder.mutation<{ success: boolean; message: string }, { user_id: string; is_verified: boolean; reason: string }>({
+      query: ({ user_id, is_verified, reason }) => ({
+        url: `/admin/email-verification/manual-verify`,
+        method: 'POST',
+        body: { user_id, is_verified, reason },
+      }),
+      invalidatesTags: ['Users'],
+    }),
   }),
 })
 
