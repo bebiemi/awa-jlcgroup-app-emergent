@@ -31,12 +31,13 @@ async def proxy_users_requests(path: str, request: Request):
     return await _proxy_request(target_url, request)
 
 
+@router.api_route("/profiles", methods=["GET", "POST"])
 @router.api_route("/profiles/{path:path}", methods=["GET", "POST", "PUT", "PATCH", "DELETE"])
-async def proxy_profiles_requests(path: str, request: Request):
+async def proxy_profiles_requests(path: str = "", request: Request = None):
     """
     Proxy all /api/profiles/* requests to auth-microservice /api/profiles/*
     """
-    target_url = f"{AUTH_SERVICE_URL}/api/profiles/{path}"
+    target_url = f"{AUTH_SERVICE_URL}/api/profiles/{path}" if path else f"{AUTH_SERVICE_URL}/api/profiles"
     return await _proxy_request(target_url, request)
 
 
