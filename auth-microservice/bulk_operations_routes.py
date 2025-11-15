@@ -153,10 +153,9 @@ async def bulk_unblock_users(
 
 
 @bulk_router.post("/bulk-archive", response_model=BulkOperationResponse)
-@require_permission("users.update")
 async def bulk_archive_users(
     request: BulkOperationRequest,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_permission("users.update")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """Archive multiple users at once"""
