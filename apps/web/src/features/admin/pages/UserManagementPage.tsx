@@ -73,6 +73,9 @@ export default function UserManagementPage() {
     role: roleFilter || undefined,
   })
 
+  // Mark user as viewed mutation
+  const [markUserAsViewed] = useMarkUserAsViewedMutation()
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
     setPage(1) // Reset to first page on search
