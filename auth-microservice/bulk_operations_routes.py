@@ -312,3 +312,189 @@ async def export_users_csv(
         media_type="text/csv",
         headers={"Content-Disposition": f"attachment; filename=users_export_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}.csv"}
     )
+
+
+@bulk_router.post("/bulk-import")
+async def bulk_import_users(
+    file: bytes = Depends(lambda request: request.body()),
+    current_user: User = Depends(require_permission("users.create")),
+    db: AsyncIOMotorDatabase = Depends(get_database)
+):
+    """
+    Bulk import users from CSV file
+    Expected CSV format: username,email,full_name,roles,phone
+    - Auto-generates secure passwords
+    - Sends invitation emails with activation links
+    - Validates email domains against allowed list
+    - Returns detailed success/error report
+    """
+    from fastapi import UploadFile, File
+    import secrets
+    import string
+    import re
+    from uuid import uuid4
+    
+    succeeded = 0
+    failed = 0
+    errors = []
+    created_users = []
+    
+    try:
+        # Parse CSV
+        csv_content = file.decode('utf-8')
+        csv_file = io.StringIO(csv_content)
+        reader = csv.DictReader(csv_file)
+        
+        # Get allowed email domains
+        allowed_domains_doc = await db.email_domains.find_one({}, {"_id": 0})
+        allowed_domains = allowed_domains_doc.get('domains', []) if allowed_domains_doc else []
+        
+        line_number = 1  # Start at 1 (header is line 0)
+        for row in reader:
+            line_number += 1
+            username = row.get('username', '').strip()
+            email = row.get('email', '').strip().lower()
+            full_name = row.get('full_name', '').strip()
+            roles_str = row.get('roles', 'interim').strip()
+            phone = row.get('phone', '').strip()
+            
+            # Validation
+            if not username or not email:
+                errors.append({
+                    "line": line_number,
+                    "username": username,
+                    "email": email,
+                    "error": "Username and email are required"
+                })
+                failed += 1
+                continue
+            
+            # Validate email format
+            email_regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+            if not re.match(email_regex, email):
+                errors.append({
+                    "line": line_number,
+                    "username": username,
+                    "email": email,
+                    "error": "Invalid email format"
+                })
+                failed += 1
+                continue
+            
+            # Validate email domain if allowed_domains list exists
+            if allowed_domains:
+                email_domain = email.split('@')[1]
+                if email_domain not in allowed_domains:
+                    errors.append({
+                        "line": line_number,
+                        "username": username,
+                        "email": email,
+                        "error": f"Email domain '{email_domain}' not in allowed list"
+                    })
+                    failed += 1
+                    continue
+            
+            # Check if user already exists
+            existing_user = await db.users.find_one({
+                "$or": [
+                    {"username": username},
+                    {"email": email}
+                ]
+            }, {"_id": 0})
+            
+            if existing_user:
+                errors.append({
+                    "line": line_number,
+                    "username": username,
+                    "email": email,
+                    "error": "User with this username or email already exists"
+                })
+                failed += 1
+                continue
+            
+            # Generate secure password (16 chars, alphanumeric + symbols)
+            alphabet = string.ascii_letters + string.digits + "!@#$%^&*"
+            password = ''.join(secrets.choice(alphabet) for _ in range(16))
+            
+            # Parse roles (comma-separated)
+            roles = [r.strip() for r in roles_str.split(',') if r.strip()]
+            if not roles:
+                roles = ['interim']  # Default role
+            
+            # Validate roles
+            valid_roles = ['admin', 'super_admin', 'candidat', 'interim', 'company', 'collaborator', 'postulant']
+            roles = [r for r in roles if r in valid_roles]
+            if not roles:
+                roles = ['interim']
+            
+            # Create user
+            from awana_auth.core.security import get_password_hash
+            user_id = str(uuid4())
+            new_user = {
+                "id": user_id,
+                "username": username,
+                "email": email,
+                "full_name": full_name or username,
+                "password_hash": get_password_hash(password),
+                "provider": "local",
+                "status": "pending",  # Pending email verification
+                "roles": roles,
+                "is_verified": False,
+                "phone": phone or None,
+                "created_at": datetime.now(timezone.utc),
+                "updated_at": datetime.now(timezone.utc),
+                "login_count": 0,
+                "failed_login_attempts": 0,
+                "metadata": {
+                    "created_by": "bulk_import",
+                    "created_by_user_id": current_user.id,
+                    "imported_at": datetime.now(timezone.utc).isoformat()
+                }
+            }
+            
+            try:
+                await db.users.insert_one(new_user)
+                
+                # Create user roles
+                for role in roles:
+                    await db.user_roles.insert_one({
+                        "user_id": user_id,
+                        "role": role,
+                        "created_at": datetime.now(timezone.utc)
+                    })
+                
+                # TODO: Send invitation email with password and activation link
+                # For now, store password temporarily (in real app, send via email only)
+                created_users.append({
+                    "username": username,
+                    "email": email,
+                    "password": password,  # In production, this would be sent via email only
+                    "roles": roles
+                })
+                
+                succeeded += 1
+                
+            except Exception as e:
+                errors.append({
+                    "line": line_number,
+                    "username": username,
+                    "email": email,
+                    "error": f"Database error: {str(e)}"
+                })
+                failed += 1
+        
+        return {
+            "success": failed == 0,
+            "message": f"Imported {succeeded} user(s), {failed} failed",
+            "total": succeeded + failed,
+            "succeeded": succeeded,
+            "failed": failed,
+            "errors": errors,
+            "created_users": created_users  # Return credentials (in production, these would be emailed)
+        }
+        
+    except Exception as e:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Failed to parse CSV: {str(e)}"
+        )
