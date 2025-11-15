@@ -176,7 +176,7 @@ async def init_references():
             })
             
             reference_doc = {
-                "id": existing["id"] if existing else str(uuid4()),
+                "id": existing.get("id", str(uuid4())) if existing else str(uuid4()),
                 "category": category,
                 "code": code,
                 "label_fr": item["label_fr"],
@@ -185,7 +185,7 @@ async def init_references():
                 "order": item["order"],
                 "is_active": existing.get("is_active", True) if existing else True,
                 "metadata": existing.get("metadata", {}) if existing else {},
-                "created_at": existing["created_at"] if existing else now,
+                "created_at": existing.get("created_at", now) if existing else now,
                 "updated_at": now,
             }
             
