@@ -146,6 +146,16 @@ async def proxy_emails_requests(path: str = "", request: Request = None):
     return await _proxy_request(target_url, request)
 
 
+@router.api_route("/system-references", methods=["GET"])
+@router.api_route("/system-references/{path:path}", methods=["GET"])
+async def proxy_system_references_requests(path: str = "", request: Request = None):
+    """
+    Proxy all /api/system-references/* requests to auth-microservice /api/system-references/*
+    """
+    target_url = f"{AUTH_SERVICE_URL}/api/system-references/{path}" if path else f"{AUTH_SERVICE_URL}/api/system-references"
+    return await _proxy_request(target_url, request)
+
+
 async def _proxy_request(target_url: str, request: Request):
     """
     Common proxy logic for all auth endpoints
