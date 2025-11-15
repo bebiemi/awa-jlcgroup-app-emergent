@@ -80,6 +80,13 @@ export const usersApi = createApi({
       }),
       invalidatesTags: ['Users'],
     }),
+    markUserAsViewed: builder.mutation<{ success: boolean; message: string; user_id: string }, string>({
+      query: (user_id) => ({
+        url: `/admin/users/${user_id}/mark-as-viewed`,
+        method: 'POST',
+      }),
+      invalidatesTags: ['Users'],
+    }),
   }),
 })
 
