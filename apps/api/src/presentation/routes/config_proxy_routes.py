@@ -69,19 +69,37 @@ async def proxy_config_countries_with_path(path: str, request: Request):
     return await proxy_config_request(f"countries/{path}", request)
 
 
+@router.api_route("/forms", methods=["GET", "POST", "PUT", "PATCH", "DELETE"])
+async def proxy_config_forms_base(request: Request):
+    """Proxy /api/config/forms requests to auth-microservice"""
+    return await proxy_config_request("forms", request)
+
+
 @router.api_route("/forms/{path:path}", methods=["GET", "POST", "PUT", "PATCH", "DELETE"])
-async def proxy_config_forms(path: str, request: Request):
+async def proxy_config_forms_with_path(path: str, request: Request):
     """Proxy all /api/config/forms/* requests to auth-microservice"""
     return await proxy_config_request(f"forms/{path}", request)
 
 
+@router.api_route("/workflows", methods=["GET", "POST", "PUT", "PATCH", "DELETE"])
+async def proxy_config_workflows_base(request: Request):
+    """Proxy /api/config/workflows requests to auth-microservice"""
+    return await proxy_config_request("workflows", request)
+
+
 @router.api_route("/workflows/{path:path}", methods=["GET", "POST", "PUT", "PATCH", "DELETE"])
-async def proxy_config_workflows(path: str, request: Request):
+async def proxy_config_workflows_with_path(path: str, request: Request):
     """Proxy all /api/config/workflows/* requests to auth-microservice"""
     return await proxy_config_request(f"workflows/{path}", request)
 
 
+@router.api_route("/references", methods=["GET", "POST", "PUT", "PATCH", "DELETE"])
+async def proxy_config_references_base(request: Request):
+    """Proxy /api/config/references requests to auth-microservice"""
+    return await proxy_config_request("references", request)
+
+
 @router.api_route("/references/{path:path}", methods=["GET", "POST", "PUT", "PATCH", "DELETE"])
-async def proxy_config_references(path: str, request: Request):
+async def proxy_config_references_with_path(path: str, request: Request):
     """Proxy all /api/config/references/* requests to auth-microservice"""
     return await proxy_config_request(f"references/{path}", request)
