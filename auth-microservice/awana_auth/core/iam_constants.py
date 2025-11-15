@@ -160,6 +160,7 @@ def get_group_for_role(role: str) -> str:
     """Map a role to its corresponding group"""
     role_to_group = {
         UserRoles.CANDIDAT: IAMGroups.CANDIDAT,
+        UserRoles.POSTULANT: IAMGroups.POSTULANT,  # Phase 3
         UserRoles.INTERIM: IAMGroups.INTERIMAIRE,
         UserRoles.COMPANY: IAMGroups.COMPANY,
         UserRoles.COLLABORATEUR: IAMGroups.COLLABORATEUR,
