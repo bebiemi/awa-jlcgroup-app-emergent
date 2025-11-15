@@ -330,7 +330,7 @@ function App() {
       <Route
         path="/postulant"
         element={
-          <ProtectedRoute requiredPermissions={['profile.manage_own']}>
+          <ProtectedRoute>
             <PostulantDashboard />
           </ProtectedRoute>
         }
