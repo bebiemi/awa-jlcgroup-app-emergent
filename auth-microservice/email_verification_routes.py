@@ -203,15 +203,26 @@ async def get_verification_status(
         "expires_at": {"$gte": datetime.now(timezone.utc)}
     })
     
+    # Calculate can_resend
+    can_resend = True
+    if pending_token:
+        created_at = pending_token["created_at"]
+        # Handle timezone-aware/naive datetime conversion
+        if isinstance(created_at, str):
+            created_at = datetime.fromisoformat(created_at.replace('Z', '+00:00'))
+        if not created_at.tzinfo:
+            created_at = created_at.replace(tzinfo=timezone.utc)
+        
+        elapsed_seconds = (datetime.now(timezone.utc) - created_at).total_seconds()
+        can_resend = elapsed_seconds > 300  # Can resend after 5 minutes
+    
     return {
         "is_verified": current_user.is_verified,
         "email": current_user.email,
         "feature_enabled": feature_enabled,
         "verification_required": feature_enabled and not current_user.is_verified,
         "pending_verification": pending_token is not None,
-        "can_resend": pending_token is None or (
-            datetime.now(timezone.utc) - pending_token["created_at"]
-        ).total_seconds() > 300  # Can resend after 5 minutes
+        "can_resend": can_resend
     }
 
 
