@@ -204,6 +204,76 @@ export default function UserManagementPage() {
     setSelectAll(false)
   }, [data])
 
+  // Bulk operation handlers
+  const handleBulkBlock = async () => {
+    if (!confirm(`Êtes-vous sûr de vouloir bloquer ${selectedUserIds.length} utilisateur(s) ?`)) return
+    
+    try {
+      const result = await bulkBlockUsers({ user_ids: selectedUserIds, reason: 'Blocage en masse par admin' }).unwrap()
+      toast.success(`${result.succeeded} utilisateur(s) bloqué(s)${result.failed > 0 ? `, ${result.failed} échec(s)` : ''}`)
+      setSelectedUserIds([])
+      setSelectAll(false)
+    } catch (error: any) {
+      toast.error(error?.data?.detail || 'Erreur lors du blocage')
+    }
+  }
+
+  const handleBulkUnblock = async () => {
+    if (!confirm(`Êtes-vous sûr de vouloir débloquer ${selectedUserIds.length} utilisateur(s) ?`)) return
+    
+    try {
+      const result = await bulkUnblockUsers({ user_ids: selectedUserIds, reason: 'Déblocage en masse par admin' }).unwrap()
+      toast.success(`${result.succeeded} utilisateur(s) débloqué(s)${result.failed > 0 ? `, ${result.failed} échec(s)` : ''}`)
+      setSelectedUserIds([])
+      setSelectAll(false)
+    } catch (error: any) {
+      toast.error(error?.data?.detail || 'Erreur lors du déblocage')
+    }
+  }
+
+  const handleBulkArchive = async () => {
+    if (!confirm(`Êtes-vous sûr de vouloir archiver ${selectedUserIds.length} utilisateur(s) ?`)) return
+    
+    try {
+      const result = await bulkArchiveUsers({ user_ids: selectedUserIds, reason: 'Archivage en masse par admin' }).unwrap()
+      toast.success(`${result.succeeded} utilisateur(s) archivé(s)${result.failed > 0 ? `, ${result.failed} échec(s)` : ''}`)
+      setSelectedUserIds([])
+      setSelectAll(false)
+    } catch (error: any) {
+      toast.error(error?.data?.detail || 'Erreur lors de l\'archivage')
+    }
+  }
+
+  const handleBulkDelete = async () => {
+    if (!confirm(`⚠️ ATTENTION : Êtes-vous sûr de vouloir supprimer définitivement ${selectedUserIds.length} utilisateur(s) ?\n\nCette action est irréversible.`)) return
+    
+    try {
+      const result = await bulkDeleteUsers({ user_ids: selectedUserIds, permanent: false, reason: 'Suppression en masse par admin' }).unwrap()
+      toast.success(`${result.succeeded} utilisateur(s) supprimé(s)${result.failed > 0 ? `, ${result.failed} échec(s)` : ''}`)
+      setSelectedUserIds([])
+      setSelectAll(false)
+    } catch (error: any) {
+      toast.error(error?.data?.detail || 'Erreur lors de la suppression')
+    }
+  }
+
+  const handleExportCSV = async () => {
+    try {
+      const blob = await exportUsersCSV({ user_ids: selectedUserIds }).unwrap()
+      const url = window.URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `users_export_${new Date().toISOString().split('T')[0]}.csv`
+      document.body.appendChild(a)
+      a.click()
+      window.URL.revokeObjectURL(url)
+      document.body.removeChild(a)
+      toast.success(`${selectedUserIds.length} utilisateur(s) exporté(s)`)
+    } catch (error: any) {
+      toast.error(error?.data?.detail || 'Erreur lors de l\'export')
+    }
+  }
+
   const getStatusBadge = (status: string) => {
     const statusConfig = {
       active: {
