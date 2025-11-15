@@ -32,14 +32,18 @@ export default function PostulantMainDashboard() {
 
   const profile = profileData?.profile
   const completionPercentage = profile?.profile_completion_percentage || 0
-  const isEmailVerified = profileData?.is_verified || false
+  // Use is_verified from profile (comes from user entity)
+  const isEmailVerified = profile?.is_verified || false
 
   // Calculate KPIs
   const documentsCount = profile?.document_ids?.length || 0
-  const requiredDocuments = 5 // cv, id, photo, etc.
-  const skillsCount = profile?.skills?.length || 0
+  // TODO: Get required documents count from business rules/configuration
+  const requiredDocuments = 5 // cv, id, photo, diploma, work_permit
+  const skillsCount = Array.isArray(profile?.skills) 
+    ? profile.skills.length 
+    : (typeof profile?.skills === 'string' ? profile.skills.split(',').filter(Boolean).length : 0)
   
-  // Mock data for applications (à remplacer par vraies données)
+  // TODO: Replace with real data from missions API
   const applicationsCount = 0
   const interviewsCount = 0
   const offersCount = 0
