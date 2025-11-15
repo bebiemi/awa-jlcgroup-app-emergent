@@ -81,14 +81,17 @@ if upload_dir.exists():
 # Import and include routers
 from src.presentation.routes import profile_routes, validation_routes, notification_routes, admin_routes, iam_proxy_routes, config_proxy_routes, security_proxy_routes, auth_api_proxy_routes, auth_proxy_routes, besoins_proxy_routes, entreprises_proxy_routes, auth_endpoints_proxy
 
+# ⚠️ IMPORTANT: Proxy routes MUST be mounted BEFORE local routes to avoid conflicts
+# Proxy Auth routes to auth-microservice
+app.include_router(auth_proxy_routes.router, prefix="/api/auth", tags=["Auth Proxy"])
+# Proxy Users and Profiles routes to auth-microservice (includes /profiles/me)
+app.include_router(auth_endpoints_proxy.router, prefix="/api", tags=["Auth Endpoints Proxy"])
+
+# Local backend routes (mounted after proxies to avoid conflicts)
 app.include_router(profile_routes.router, prefix="/api")
 app.include_router(validation_routes.router, prefix="/api")
 app.include_router(notification_routes.router, prefix="/api")
 app.include_router(admin_routes.router, prefix="/api")
-# Proxy Auth routes to auth-microservice (MUST be before generic routes)
-app.include_router(auth_proxy_routes.router, prefix="/api/auth", tags=["Auth Proxy"])
-# Proxy Users and Profiles routes to auth-microservice
-app.include_router(auth_endpoints_proxy.router, prefix="/api", tags=["Auth Endpoints Proxy"])
 # Proxy IAM routes to auth-microservice
 app.include_router(iam_proxy_routes.router, prefix="/api/iam", tags=["IAM Proxy"])
 # Proxy Config routes to auth-microservice
