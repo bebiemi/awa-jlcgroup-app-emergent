@@ -88,8 +88,10 @@ export default function PostulantMainDashboard() {
     },
   ]
 
-  // Status messages
+  // Status messages - Only show alerts for incomplete items
   const alerts = []
+  
+  // Alert 1: Email verification (only if not verified)
   if (!isEmailVerified) {
     alerts.push({
       type: 'warning',
@@ -98,6 +100,8 @@ export default function PostulantMainDashboard() {
       link: '/postulant/profile-overview',
     })
   }
+  
+  // Alert 2: Profile completion (only if < 100%)
   if (completionPercentage < 100) {
     alerts.push({
       type: 'info',
@@ -106,11 +110,14 @@ export default function PostulantMainDashboard() {
       link: '/postulant/profile-overview',
     })
   }
+  
+  // Alert 3: Documents (only if missing)
   if (documentsCount < requiredDocuments) {
+    const missingCount = requiredDocuments - documentsCount
     alerts.push({
       type: 'warning',
       title: 'Documents manquants',
-      message: `${requiredDocuments - documentsCount} document(s) requis manquant(s)`,
+      message: `${missingCount} document(s) requis manquant(s)`,
       link: '/profile?tab=documents',
     })
   }
