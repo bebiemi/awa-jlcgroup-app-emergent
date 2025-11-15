@@ -380,6 +380,14 @@ export default function UserManagementPage() {
           </div>
           <div className="flex gap-3">
             <button
+              onClick={() => setShowBulkImportModal(true)}
+              className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+              title="Importer plusieurs utilisateurs via CSV"
+            >
+              <CloudArrowUpIcon className="h-5 w-5" />
+              Importer CSV
+            </button>
+            <button
               onClick={() => setShowQuickAddModal(true)}
               className="flex items-center gap-2 px-4 py-2 bg-white border-2 border-jlc-purple-600 text-jlc-purple-600 rounded-lg hover:bg-jlc-purple-50 transition-colors"
             >
