@@ -49,6 +49,7 @@ from besoin_routes import router as besoin_router
 from entreprise_routes import router as entreprise_router
 from form_config_routes import router as form_config_router
 from notification_routes import router as notification_router
+from app_config_routes import router as app_config_router
 from rate_limit import limiter
 
 client = None
