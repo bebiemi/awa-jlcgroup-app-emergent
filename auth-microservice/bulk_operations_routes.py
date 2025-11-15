@@ -104,10 +104,9 @@ async def bulk_block_users(
 
 
 @bulk_router.post("/bulk-unblock", response_model=BulkOperationResponse)
-@require_permission("users.update")
 async def bulk_unblock_users(
     request: BulkOperationRequest,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_permission("users.update")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """Unblock multiple users at once"""
