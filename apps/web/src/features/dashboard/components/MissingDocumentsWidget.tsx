@@ -7,11 +7,12 @@ import Card from '@/components/Card'
 import { Link } from 'react-router-dom'
 import { DocumentTextIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline'
 import { useDocumentCategories } from '@/features/config/api/appConfigApi'
-import { useAuth } from '@/hooks/useAuth'
+import { useSelector } from 'react-redux'
+import { RootState } from '@/store/store'
 
 export default function MissingDocumentsWidget() {
   const { data: categories, isLoading } = useDocumentCategories()
-  const { user } = useAuth()
+  const user = useSelector((state: RootState) => state.auth.user)
 
   if (isLoading) {
     return (
