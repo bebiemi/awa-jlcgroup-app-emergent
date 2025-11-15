@@ -148,4 +148,9 @@ export const {
   useResetUserMfaMutation,
   useMarkUserAsViewedMutation,
   useToggleEmailVerificationMutation,
+  useBulkBlockUsersMutation,
+  useBulkUnblockUsersMutation,
+  useBulkArchiveUsersMutation,
+  useBulkDeleteUsersMutation,
+  useExportUsersCSVMutation,
 } = usersApi
