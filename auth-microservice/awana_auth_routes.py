@@ -2491,3 +2491,47 @@ async def reset_password(
             detail="Erreur lors de la réinitialisation du mot de passe"
         )
 
+
+
+# ============================================================================
+# User Profile View Tracking
+# ============================================================================
+
+@users_router.post("/{user_id}/mark-as-viewed")
+async def mark_user_as_viewed(
+    user_id: str,
+    current_user: User = Depends(require_permission("users.read")),
+    db: AsyncIOMotorDatabase = Depends(get_database)
+):
+    """
+    Mark a user profile as viewed (removes 'new' badge)
+    Sets first_profile_view_at timestamp
+    """
+    users_collection = db.users
+    
+    # Find the user
+    user = await users_collection.find_one({"id": user_id}, {"_id": 0})
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"User {user_id} not found"
+        )
+    
+    # Only update if not already viewed
+    if not user.get("first_profile_view_at"):
+        await users_collection.update_one(
+            {"id": user_id},
+            {
+                "$set": {
+                    "first_profile_view_at": datetime.now(timezone.utc).isoformat()
+                }
+            }
+        )
+        logger.info(f"User {user_id} marked as viewed by {current_user.username}")
+    
+    return {
+        "success": True,
+        "message": "User marked as viewed",
+        "user_id": user_id
+    }
+
