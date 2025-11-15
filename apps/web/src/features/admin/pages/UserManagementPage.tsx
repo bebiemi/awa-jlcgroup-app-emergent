@@ -355,8 +355,12 @@ export default function UserManagementPage() {
                             </div>
                           </div>
                           <div className="ml-4">
-                            <div className="text-sm font-medium text-gray-900">
+                            <div className="text-sm font-medium text-gray-900 flex items-center gap-2">
                               {user.full_name || user.username}
+                              <NewBadge 
+                                createdAt={user.created_at} 
+                                firstProfileViewAt={user.first_profile_view_at}
+                              />
                             </div>
                             <div className="text-sm text-gray-500">@{user.username}</div>
                           </div>
