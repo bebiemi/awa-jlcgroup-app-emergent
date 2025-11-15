@@ -272,33 +272,75 @@ export default function PostulantMainDashboard() {
         <Card>
           <h2 className="text-xl font-semibold text-gray-900 mb-4">Activité Récente</h2>
           <div className="space-y-3">
-            <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
-              <ClockIcon className="h-5 w-5 text-gray-400 mt-0.5" />
-              <div className="flex-1">
-                <p className="text-sm text-gray-900">Inscription réussie</p>
-                <p className="text-xs text-gray-500">
-                  {profile?.created_at
-                    ? new Date(profile.created_at).toLocaleDateString('fr-FR', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric',
-                      })
-                    : 'Aujourd\'hui'}
-                </p>
+            {/* Profile creation */}
+            {profile?.created_at && (
+              <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+                <ClockIcon className="h-5 w-5 text-gray-400 mt-0.5" />
+                <div className="flex-1">
+                  <p className="text-sm text-gray-900">Inscription réussie</p>
+                  <p className="text-xs text-gray-500">
+                    {new Date(profile.created_at).toLocaleDateString('fr-FR', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                    })}
+                  </p>
+                </div>
               </div>
-            </div>
+            )}
 
+            {/* Email verification */}
             {isEmailVerified && (
               <div className="flex items-start gap-3 p-3 bg-green-50 rounded-lg">
                 <CheckCircleIcon className="h-5 w-5 text-green-600 mt-0.5" />
                 <div className="flex-1">
-                  <p className="text-sm text-gray-900">Email vérifié</p>
+                  <p className="text-sm text-gray-900">Email vérifié ✓</p>
                   <p className="text-xs text-gray-500">Votre compte est actif</p>
                 </div>
               </div>
             )}
 
-            {completionPercentage === 0 && (
+            {/* Profile completion milestone */}
+            {completionPercentage >= 50 && completionPercentage < 100 && (
+              <div className="flex items-start gap-3 p-3 bg-blue-50 rounded-lg">
+                <CheckCircleIcon className="h-5 w-5 text-blue-600 mt-0.5" />
+                <div className="flex-1">
+                  <p className="text-sm text-gray-900">Profil à {completionPercentage}% !</p>
+                  <p className="text-xs text-gray-500">Continue comme ça, plus que {100 - completionPercentage}%</p>
+                </div>
+              </div>
+            )}
+
+            {/* Profile completed */}
+            {completionPercentage === 100 && (
+              <div className="flex items-start gap-3 p-3 bg-green-50 rounded-lg">
+                <CheckCircleIcon className="h-5 w-5 text-green-600 mt-0.5" />
+                <div className="flex-1">
+                  <p className="text-sm text-gray-900">Profil 100% complet ! 🎉</p>
+                  <p className="text-xs text-gray-500">Tu es prêt(e) pour postuler aux missions</p>
+                </div>
+              </div>
+            )}
+
+            {/* Last profile update */}
+            {profile?.updated_at && profile.updated_at !== profile.created_at && (
+              <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+                <ClockIcon className="h-5 w-5 text-gray-400 mt-0.5" />
+                <div className="flex-1">
+                  <p className="text-sm text-gray-900">Profil mis à jour</p>
+                  <p className="text-xs text-gray-500">
+                    {new Date(profile.updated_at).toLocaleDateString('fr-FR', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                    })}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* Empty state */}
+            {!profile?.created_at && !isEmailVerified && completionPercentage === 0 && (
               <div className="text-center py-8 text-gray-500">
                 <p className="text-sm">Aucune activité récente</p>
                 <p className="text-xs mt-1">Commencez par compléter votre profil</p>
