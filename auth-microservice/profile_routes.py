@@ -179,6 +179,9 @@ async def get_my_profile(
         elif 'postulant' in current_user.roles:
             profile_type_to_return = 'postulant'
         
+        # Add is_verified from user to profile response for email verification status consistency
+        profile["is_verified"] = current_user.is_verified
+        
         return {"profile_type": profile_type_to_return, "profile": profile}
     
     elif cfg.get_company_role() in current_user.roles:
