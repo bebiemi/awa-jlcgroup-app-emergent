@@ -22,6 +22,7 @@ class IAMGroups:
 class IAMProfiles:
     """IAM Profile codes"""
     CANDIDAT = "role.candidat"
+    POSTULANT = "role.postulant"  # Phase 3
     INTERIM_USER = "role.interim_user"
     COMPANY_ADMIN = "role.company_admin"
     COLLABORATEUR = "role.collaborateur"
