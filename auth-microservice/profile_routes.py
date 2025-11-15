@@ -171,7 +171,14 @@ async def get_my_profile(
                 profile["profile_completion_percentage"] = completion
                 profile["profile_completed"] = completion >= 80
         
-        return {"profile_type": cfg.get_interim_role(), "profile": profile}
+        # Determine profile_type to return based on actual user role
+        profile_type_to_return = cfg.get_interim_role()
+        if 'candidat' in current_user.roles:
+            profile_type_to_return = 'candidat'
+        elif 'postulant' in current_user.roles:
+            profile_type_to_return = 'postulant'
+        
+        return {"profile_type": profile_type_to_return, "profile": profile}
     
     elif cfg.get_company_role() in current_user.roles:
         profile = await db.company_manager_profiles.find_one({"user_id": current_user.id}, {"_id": 0})
