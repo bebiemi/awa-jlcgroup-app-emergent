@@ -26,6 +26,17 @@ export default function NewBadge({ createdAt, firstProfileViewAt, className = ''
   const now = new Date()
   const daysSinceCreation = Math.floor((now.getTime() - createdDate.getTime()) / (1000 * 60 * 60 * 24))
 
+  // Debug log (temporary)
+  if (daysSinceCreation <= 7) {
+    console.log('[NewBadge]', {
+      createdAt,
+      daysSinceCreation,
+      firstProfileViewAt,
+      expiration_mode,
+      expiration_days
+    })
+  }
+
   let shouldShowBadge = false
 
   if (expiration_mode === 'creation_date') {
