@@ -50,6 +50,7 @@ import CompanySettingsPage from './features/company/pages/CompanySettingsPage'
 import EntreprisesManagementPage from './features/admin/pages/EntreprisesManagementPage'
 import AgencyDashboard from './features/agency/pages/AgencyDashboard'
 import CommercialDashboard from './features/commercial/pages/CommercialDashboard'
+import PostulantDashboard from './features/postulant/pages/PostulantDashboard'
 import ProtectedRoute from './features/auth/components/ProtectedRoute'
 
 function App() {
