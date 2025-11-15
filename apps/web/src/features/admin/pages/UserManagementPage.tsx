@@ -86,6 +86,13 @@ export default function UserManagementPage() {
   // Mark user as viewed mutation
   const [markUserAsViewed] = useMarkUserAsViewedMutation()
 
+  // Bulk operation mutations
+  const [bulkBlockUsers] = useBulkBlockUsersMutation()
+  const [bulkUnblockUsers] = useBulkUnblockUsersMutation()
+  const [bulkArchiveUsers] = useBulkArchiveUsersMutation()
+  const [bulkDeleteUsers] = useBulkDeleteUsersMutation()
+  const [exportUsersCSV] = useExportUsersCSVMutation()
+
   // Manual email verification toggle
   const handleToggleEmailVerification = async (user: User) => {
     const newStatus = !user.is_verified
