@@ -228,13 +228,24 @@ export default function PostulantDashboard() {
                     {/* Action button */}
                     {!step.completed && step.action && (
                       <div className="mt-3">
-                        <Link
-                          to={step.action.link}
-                          className="inline-flex items-center px-4 py-2 bg-jlc-purple-600 text-white text-sm font-medium rounded-lg hover:bg-jlc-purple-700 transition-colors"
-                        >
-                          {step.action.label}
-                          <ArrowRightIcon className="h-4 w-4 ml-2" />
-                        </Link>
+                        {step.action.handler === 'sendVerificationEmail' ? (
+                          <button
+                            onClick={handleSendVerificationEmail}
+                            disabled={isSendingEmail}
+                            className="inline-flex items-center px-4 py-2 bg-jlc-purple-600 text-white text-sm font-medium rounded-lg hover:bg-jlc-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            {isSendingEmail ? 'Envoi...' : step.action.label}
+                            <ArrowRightIcon className="h-4 w-4 ml-2" />
+                          </button>
+                        ) : (
+                          <Link
+                            to={step.action.link}
+                            className="inline-flex items-center px-4 py-2 bg-jlc-purple-600 text-white text-sm font-medium rounded-lg hover:bg-jlc-purple-700 transition-colors"
+                          >
+                            {step.action.label}
+                            <ArrowRightIcon className="h-4 w-4 ml-2" />
+                          </Link>
+                        )}
                       </div>
                     )}
                   </div>
