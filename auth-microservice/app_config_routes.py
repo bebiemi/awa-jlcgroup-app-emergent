@@ -5,7 +5,7 @@ Dynamic configuration endpoints
 from fastapi import APIRouter, Depends, HTTPException, Query
 from typing import List, Any, Dict, Optional
 from pydantic import BaseModel
-from awana_auth.core.database import get_database
+from awana_auth.core.dependencies import get_database
 from awana_auth.services.config_service import ConfigService
 from awana_auth.core.dependencies import get_current_user
 from motor.motor_asyncio import AsyncIOMotorDatabase
