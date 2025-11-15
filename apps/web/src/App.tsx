@@ -51,7 +51,8 @@ import CompanySettingsPage from './features/company/pages/CompanySettingsPage'
 import EntreprisesManagementPage from './features/admin/pages/EntreprisesManagementPage'
 import AgencyDashboard from './features/agency/pages/AgencyDashboard'
 import CommercialDashboard from './features/commercial/pages/CommercialDashboard'
-import PostulantDashboard from './features/postulant/pages/PostulantDashboard'
+import PostulantMainDashboard from './features/postulant/pages/PostulantMainDashboard'
+import ProfileOverviewPage from './features/postulant/pages/ProfileOverviewPage'
 import ProtectedRoute from './features/auth/components/ProtectedRoute'
 
 function App() {
