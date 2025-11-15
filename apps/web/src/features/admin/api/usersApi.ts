@@ -95,6 +95,48 @@ export const usersApi = createApi({
       }),
       invalidatesTags: ['Users'],
     }),
+    
+    // Bulk operations
+    bulkBlockUsers: builder.mutation<{ success: boolean; message: string; total: number; succeeded: number; failed: number; errors: any[] }, { user_ids: string[]; reason?: string }>({
+      query: ({ user_ids, reason }) => ({
+        url: `/admin/users/bulk-block`,
+        method: 'POST',
+        body: { user_ids, reason },
+      }),
+      invalidatesTags: ['Users'],
+    }),
+    bulkUnblockUsers: builder.mutation<{ success: boolean; message: string; total: number; succeeded: number; failed: number; errors: any[] }, { user_ids: string[]; reason?: string }>({
+      query: ({ user_ids, reason }) => ({
+        url: `/admin/users/bulk-unblock`,
+        method: 'POST',
+        body: { user_ids, reason },
+      }),
+      invalidatesTags: ['Users'],
+    }),
+    bulkArchiveUsers: builder.mutation<{ success: boolean; message: string; total: number; succeeded: number; failed: number; errors: any[] }, { user_ids: string[]; reason?: string }>({
+      query: ({ user_ids, reason }) => ({
+        url: `/admin/users/bulk-archive`,
+        method: 'POST',
+        body: { user_ids, reason },
+      }),
+      invalidatesTags: ['Users'],
+    }),
+    bulkDeleteUsers: builder.mutation<{ success: boolean; message: string; total: number; succeeded: number; failed: number; errors: any[] }, { user_ids: string[]; permanent?: boolean; reason?: string }>({
+      query: ({ user_ids, permanent, reason }) => ({
+        url: `/admin/users/bulk-delete`,
+        method: 'POST',
+        body: { user_ids, permanent, reason },
+      }),
+      invalidatesTags: ['Users'],
+    }),
+    exportUsersCSV: builder.mutation<Blob, { user_ids: string[] }>({
+      query: ({ user_ids }) => ({
+        url: `/admin/users/export-csv`,
+        method: 'POST',
+        body: { user_ids },
+        responseHandler: (response) => response.blob(),
+      }),
+    }),
   }),
 })
 
