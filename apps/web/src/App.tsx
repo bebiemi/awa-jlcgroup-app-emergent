@@ -326,6 +326,14 @@ function App() {
         }
       />
       <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute>
+            <UnifiedDashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/missions-interim"
         element={
           <ProtectedRoute requiredPermissions={['missions.browse']}>
