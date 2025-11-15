@@ -333,7 +333,7 @@ async def upload_document(
     await db.documents.insert_one(document)
     
     # Update profile with document ID
-    if cfg.get_interim_role() in current_user.roles:
+    if cfg.get_interim_role() in current_user.roles or 'candidat' in current_user.roles or 'postulant' in current_user.roles:
         collection = db.interim_profiles
     elif cfg.get_company_role() in current_user.roles:
         collection = db.company_manager_profiles
