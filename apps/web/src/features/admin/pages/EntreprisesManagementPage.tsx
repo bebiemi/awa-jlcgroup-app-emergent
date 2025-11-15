@@ -23,7 +23,7 @@ import { useListEntreprisesQuery, useUpdateEntrepriseMutation } from '@/features
 import type { Entreprise, EntrepriseUpdate } from '@/features/company/api/entrepriseApi'
 
 export default function EntreprisesManagementPage() {
-  const { data, isLoading, error } = useGetAllEntreprisesQuery()
+  const { data, isLoading, error } = useListEntreprisesQuery({ limit: 1000 })
   const [updateEntreprise] = useUpdateEntrepriseMutation()
   
   const [searchTerm, setSearchTerm] = useState('')
