@@ -228,6 +228,23 @@ export const userDetailsApi = createApi({
         url: IAM_ENDPOINTS.USERS.RESET_MFA(userId),
         method: 'POST',
       }),
+      invalidatesTags: (result, error, userId) => [
+        { type: 'UserDetail', id: userId },
+        'Users',
+      ],
+    }),
+
+    // Toggle Email Verification (Manual Verify/Unverify)
+    toggleEmailVerification: builder.mutation<{ success: boolean; message: string }, { user_id: string; is_verified: boolean; reason: string }>({
+      query: ({ user_id, is_verified, reason }) => ({
+        url: '/admin/email-verification/manual-verify',
+        method: 'POST',
+        body: { user_id, is_verified, reason },
+      }),
+      invalidatesTags: (result, error, { user_id }) => [
+        { type: 'UserDetail', id: user_id },
+        'Users',
+      ],
       invalidatesTags: (result, error, userId) => [{ type: 'UserDetail', id: userId }],
     }),
 
