@@ -136,12 +136,13 @@ async def proxy_missions_requests(path: str = "", request: Request = None):
     return await _proxy_request(target_url, request)
 
 
+@router.api_route("/emails", methods=["GET", "POST"])
 @router.api_route("/emails/{path:path}", methods=["GET", "POST", "PUT", "PATCH", "DELETE"])
-async def proxy_emails_requests(path: str, request: Request):
+async def proxy_emails_requests(path: str = "", request: Request = None):
     """
     Proxy all /api/emails/* requests to auth-microservice /api/emails/*
     """
-    target_url = f"{AUTH_SERVICE_URL}/api/emails/{path}"
+    target_url = f"{AUTH_SERVICE_URL}/api/emails/{path}" if path else f"{AUTH_SERVICE_URL}/api/emails"
     return await _proxy_request(target_url, request)
 
 
