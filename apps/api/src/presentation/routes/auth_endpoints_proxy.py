@@ -94,12 +94,13 @@ async def proxy_applications_requests(path: str, request: Request):
     return await _proxy_request(target_url, request)
 
 
+@router.api_route("/feature-flags", methods=["GET", "POST"])
 @router.api_route("/feature-flags/{path:path}", methods=["GET", "POST", "PUT", "PATCH", "DELETE"])
-async def proxy_feature_flags_requests(path: str, request: Request):
+async def proxy_feature_flags_requests(path: str = "", request: Request = None):
     """
     Proxy all /api/feature-flags/* requests to auth-microservice /api/feature-flags/*
     """
-    target_url = f"{AUTH_SERVICE_URL}/api/feature-flags/{path}"
+    target_url = f"{AUTH_SERVICE_URL}/api/feature-flags/{path}" if path else f"{AUTH_SERVICE_URL}/api/feature-flags"
     return await _proxy_request(target_url, request)
 
 
