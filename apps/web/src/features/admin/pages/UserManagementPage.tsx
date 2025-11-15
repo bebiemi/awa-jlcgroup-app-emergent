@@ -483,30 +483,35 @@ export default function UserManagementPage() {
               </span>
               <div className="flex items-center gap-2">
                 <button
+                  onClick={handleBulkBlock}
                   className="px-4 py-2 bg-white text-jlc-purple-600 rounded hover:bg-gray-100 transition-colors text-sm font-medium"
                   title="Bloquer les utilisateurs sélectionnés"
                 >
                   Bloquer
                 </button>
                 <button
+                  onClick={handleBulkUnblock}
                   className="px-4 py-2 bg-white text-jlc-purple-600 rounded hover:bg-gray-100 transition-colors text-sm font-medium"
                   title="Débloquer les utilisateurs sélectionnés"
                 >
                   Débloquer
                 </button>
                 <button
+                  onClick={handleBulkArchive}
                   className="px-4 py-2 bg-white text-jlc-purple-600 rounded hover:bg-gray-100 transition-colors text-sm font-medium"
                   title="Archiver les utilisateurs sélectionnés"
                 >
                   Archiver
                 </button>
                 <button
+                  onClick={handleBulkDelete}
                   className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors text-sm font-medium"
                   title="Supprimer les utilisateurs sélectionnés"
                 >
                   Supprimer
                 </button>
                 <button
+                  onClick={handleExportCSV}
                   className="px-4 py-2 bg-white text-jlc-purple-600 rounded hover:bg-gray-100 transition-colors text-sm font-medium"
                   title="Exporter en CSV"
                 >
