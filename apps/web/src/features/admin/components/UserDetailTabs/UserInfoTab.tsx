@@ -87,6 +87,16 @@ export default function UserInfoTab({ userDetail }: UserInfoTabProps) {
             </div>
           </div>
           <div>
+            <label className="text-sm font-medium text-gray-500">Email vérifié</label>
+            <div className="mt-1">
+              <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${
+                userDetail.is_verified ? BADGE_VARIANTS.success : BADGE_VARIANTS.warning
+              }`}>
+                {userDetail.is_verified ? '✓ Vérifié' : '⚠️ Non vérifié'}
+              </span>
+            </div>
+          </div>
+          <div>
             <label className="text-sm font-medium text-gray-500">Tentatives de connexion échouées</label>
             <p className="text-gray-900 mt-1">{userDetail.failed_login_attempts || 0}</p>
           </div>
