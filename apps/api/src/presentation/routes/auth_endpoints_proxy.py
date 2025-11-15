@@ -13,16 +13,6 @@ router = APIRouter()
 AUTH_SERVICE_URL = os.getenv("AUTH_SERVICE_URL", "http://localhost:8000")
 
 
-@router.api_route("/auth/admin/users/{path:path}", methods=["GET", "POST", "PUT", "PATCH", "DELETE"])
-async def proxy_auth_admin_users_requests(path: str, request: Request):
-    """
-    Proxy all /api/auth/admin/users/* requests to auth-microservice /api/admin/users/*
-    Note: This must be before the general /api/auth/{path} route for proper matching
-    """
-    target_url = f"{AUTH_SERVICE_URL}/api/admin/users/{path}"
-    return await _proxy_request(target_url, request)
-
-
 @router.api_route("/auth/{path:path}", methods=["GET", "POST", "PUT", "PATCH", "DELETE"])
 async def proxy_auth_requests(path: str, request: Request):
     """
