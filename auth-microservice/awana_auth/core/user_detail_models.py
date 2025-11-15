@@ -76,6 +76,7 @@ class UserDetailResponse(BaseModel):
     permissions: List[str] = []
     mfa_enabled: bool = False
     mfa_method: Optional[str] = None
+    is_verified: bool = False  # Email verification status
     phone: Optional[str] = None
     location: Optional[str] = None
     location_label: Optional[str] = None
