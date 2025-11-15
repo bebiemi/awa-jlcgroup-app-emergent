@@ -334,7 +334,15 @@ function App() {
         path="/postulant"
         element={
           <ProtectedRoute>
-            <PostulantDashboard />
+            <PostulantMainDashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/postulant/profile-overview"
+        element={
+          <ProtectedRoute>
+            <ProfileOverviewPage />
           </ProtectedRoute>
         }
       />
