@@ -79,9 +79,11 @@ if upload_dir.exists():
     app.mount("/uploads", StaticFiles(directory=str(upload_dir)), name="uploads")
 
 # Import and include routers
-from src.presentation.routes import profile_routes, validation_routes, notification_routes, admin_routes, iam_proxy_routes, config_proxy_routes, security_proxy_routes, auth_api_proxy_routes, auth_proxy_routes, besoins_proxy_routes, entreprises_proxy_routes, auth_endpoints_proxy, email_verification_proxy_routes
+from src.presentation.routes import profile_routes, validation_routes, notification_routes, admin_routes, iam_proxy_routes, config_proxy_routes, security_proxy_routes, auth_api_proxy_routes, auth_proxy_routes, besoins_proxy_routes, entreprises_proxy_routes, auth_endpoints_proxy, email_verification_proxy_routes, auth_admin_users_proxy
 
 # ⚠️ IMPORTANT: Proxy routes MUST be mounted BEFORE local routes to avoid conflicts
+# Proxy Auth Admin Users routes (must be before general auth routes for specificity)
+app.include_router(auth_admin_users_proxy.router, prefix="/api/auth/admin/users", tags=["Auth Admin Users Proxy"])
 # Proxy Auth routes to auth-microservice
 app.include_router(auth_proxy_routes.router, prefix="/api/auth", tags=["Auth Proxy"])
 # Proxy Users and Profiles routes to auth-microservice (includes /profiles/me)
