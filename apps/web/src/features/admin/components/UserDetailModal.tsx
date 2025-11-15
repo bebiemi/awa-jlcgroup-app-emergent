@@ -1,12 +1,13 @@
-import { Fragment } from 'react'
+import { Fragment, useState } from 'react'
 import { Dialog, Transition, Tab } from '@headlessui/react'
-import { XMarkIcon } from '@heroicons/react/24/outline'
+import { XMarkIcon, ShieldCheckIcon } from '@heroicons/react/24/outline'
 import { USER_DETAIL_TABS, MODAL_SIZES, SHADOWS, ROUNDED } from '@/constants/ui'
-import { useGetUserDetailQuery } from '../api/userDetailsApi'
+import { useGetUserDetailQuery, useToggleEmailVerificationMutation } from '../api/userDetailsApi'
 import UserInfoTab from './UserDetailTabs/UserInfoTab'
 import UserDocumentsTab from './UserDetailTabs/UserDocumentsTab'
 import UserPermissionsTab from './UserDetailTabs/UserPermissionsTab'
 import UserActivityTab from './UserDetailTabs/UserActivityTab'
+import toast from 'react-hot-toast'
 
 interface UserDetailModalProps {
   isOpen: boolean
