@@ -1816,13 +1816,19 @@ async def delete_user(
             detail="Cannot delete your own account"
         )
     
-    # Delete user
-    await db.users.delete_one({"id": user_id})
+    # Archive user instead of deleting (soft delete)
+    await db.users.update_one(
+        {"id": user_id},
+        {
+            "$set": {
+                "status": "archived",
+                "archived_at": datetime.now(timezone.utc),
+                "updated_at": datetime.now(timezone.utc)
+            }
+        }
+    )
     
-    # Delete user roles
-    await db.user_roles.delete_many({"user_id": user_id})
-    
-    # Delete user sessions
+    # Delete user sessions (for archived users)
     await db.sessions.delete_many({"user_id": user_id})
     
     # Audit log
@@ -1836,10 +1842,11 @@ async def delete_user(
         resource_type="user",
         resource_id=user_id,
         ip_address=get_client_ip(request),
-        user_agent=get_user_agent(request)
+        user_agent=get_user_agent(request),
+        details={"note": "User archived (soft delete)"}
     )
     
-    return {"message": "User deleted successfully"}
+    return {"message": "User archived successfully"}
 
 
 @auth_router.post("/admin/users/{user_id}/mfa/reset")
