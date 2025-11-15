@@ -26,6 +26,7 @@ import { securityConfigApi } from '@/features/admin/api/securityConfigApi'
 import { besoinApi } from '@/features/besoins/api/besoinApi'
 import { configApi } from '@/features/besoins/api/configApi'
 import { entrepriseApi } from '@/features/company/api/entrepriseApi'
+import { appConfigApi } from '@/features/config/api/appConfigApi'
 import authReducer from '@/features/auth/slices/authSlice'
 
 export const store = configureStore({
