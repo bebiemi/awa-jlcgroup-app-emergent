@@ -343,8 +343,8 @@ Cette release marque la **première version stable et production-ready** de la p
 - Hot Reload : Activé
 
 ### Emergent Preview (Staging)
-- URL : `https://bugs-to-bugs.preview.emergentagent.com`
-- API : `https://bugs-to-bugs.preview.emergentagent.com/api`
+- URL : `https://postulant-app.preview.emergentagent.com`
+- API : `https://postulant-app.preview.emergentagent.com/api`
 - HTTPS : Forcé
 - Mixed Content : Résolu ✅
 
