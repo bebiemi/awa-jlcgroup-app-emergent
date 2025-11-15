@@ -266,13 +266,14 @@ export default function Sidebar() {
       {
         title: 'Tableau de bord',
         items: [
-          { label: 'Mon parcours', path: '/postulant', icon: HomeIcon },
+          { label: 'Vue d\'ensemble', path: '/postulant', icon: HomeIcon },
         ],
       },
       {
         title: 'Mon profil',
         items: [
-          { label: 'Compléter mon profil', path: '/profile', icon: UserCircleIcon },
+          { label: 'Compléter mon profil', path: '/postulant/profile-overview', icon: UserCircleIcon },
+          { label: 'Éditer mon profil', path: '/profile', icon: UserCircleIcon },
           { label: 'Mes documents', path: '/profile?tab=documents', icon: DocumentTextIcon },
         ],
       },
