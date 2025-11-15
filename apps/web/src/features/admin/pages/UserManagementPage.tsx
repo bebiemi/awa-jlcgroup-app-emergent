@@ -395,7 +395,11 @@ export default function UserManagementPage() {
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
                   {data.users.map((user) => (
-                    <tr key={user.id} className="hover:bg-gray-50 transition-colors">
+                    <tr 
+                      key={user.id} 
+                      onClick={() => handleViewDetails(user)}
+                      className="hover:bg-gray-50 transition-colors cursor-pointer"
+                    >
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
                           <div className="flex-shrink-0 h-10 w-10">
