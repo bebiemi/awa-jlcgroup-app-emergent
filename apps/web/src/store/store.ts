@@ -59,6 +59,7 @@ export const store = configureStore({
     [besoinApi.reducerPath]: besoinApi.reducer,
     [configApi.reducerPath]: configApi.reducer,
     [entrepriseApi.reducerPath]: entrepriseApi.reducer,
+    [appConfigApi.reducerPath]: appConfigApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
