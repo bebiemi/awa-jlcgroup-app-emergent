@@ -243,13 +243,13 @@ async def bulk_delete_users(
                 else:
                     failed += 1
             else:
-                # Soft delete (mark as deleted)
+                # Soft delete (archive user instead of marking as deleted)
                 result = await db.users.update_one(
                     {"id": user_id},
                     {
                         "$set": {
-                            "status": "deleted",
-                            "deleted_at": datetime.now(timezone.utc),
+                            "status": "archived",
+                            "archived_at": datetime.now(timezone.utc),
                             "updated_at": datetime.now(timezone.utc)
                         }
                     }
