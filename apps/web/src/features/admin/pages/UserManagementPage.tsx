@@ -391,6 +391,58 @@ export default function UserManagementPage() {
           </form>
         </Card>
 
+        {/* Bulk Actions Bar */}
+        {selectedUserIds.length > 0 && (
+          <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50">
+            <div className="bg-jlc-purple-600 text-white px-6 py-4 rounded-lg shadow-2xl flex items-center gap-6">
+              <span className="font-medium">
+                {selectedUserIds.length} utilisateur(s) sélectionné(s)
+              </span>
+              <div className="flex items-center gap-2">
+                <button
+                  className="px-4 py-2 bg-white text-jlc-purple-600 rounded hover:bg-gray-100 transition-colors text-sm font-medium"
+                  title="Bloquer les utilisateurs sélectionnés"
+                >
+                  Bloquer
+                </button>
+                <button
+                  className="px-4 py-2 bg-white text-jlc-purple-600 rounded hover:bg-gray-100 transition-colors text-sm font-medium"
+                  title="Débloquer les utilisateurs sélectionnés"
+                >
+                  Débloquer
+                </button>
+                <button
+                  className="px-4 py-2 bg-white text-jlc-purple-600 rounded hover:bg-gray-100 transition-colors text-sm font-medium"
+                  title="Archiver les utilisateurs sélectionnés"
+                >
+                  Archiver
+                </button>
+                <button
+                  className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors text-sm font-medium"
+                  title="Supprimer les utilisateurs sélectionnés"
+                >
+                  Supprimer
+                </button>
+                <button
+                  className="px-4 py-2 bg-white text-jlc-purple-600 rounded hover:bg-gray-100 transition-colors text-sm font-medium"
+                  title="Exporter en CSV"
+                >
+                  Exporter CSV
+                </button>
+                <button
+                  onClick={() => {
+                    setSelectedUserIds([])
+                    setSelectAll(false)
+                  }}
+                  className="px-4 py-2 bg-white/20 text-white rounded hover:bg-white/30 transition-colors text-sm font-medium"
+                >
+                  Annuler
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Users Table */}
         <Card>
           {isLoading ? (
