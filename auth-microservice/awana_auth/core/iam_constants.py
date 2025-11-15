@@ -132,6 +132,7 @@ class IAMPermissions:
 class ValidationTypes:
     """Validation types for user registration"""
     CANDIDAT = "candidat"
+    POSTULANT = "postulant"  # Phase 3
     INTERIM = "interim"
     COMPANY = "company"
     COLLABORATEUR = "collaborateur"
