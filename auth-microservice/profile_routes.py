@@ -89,7 +89,8 @@ async def get_my_profile(
 ):
     """Get current user's profile based on their role"""
     # Determine profile collection based on role
-    if cfg.get_interim_role() in current_user.roles:
+    # Support for interim, candidat, and postulant roles
+    if cfg.get_interim_role() in current_user.roles or 'candidat' in current_user.roles or 'postulant' in current_user.roles:
         profile = await db.interim_profiles.find_one({"user_id": current_user.id}, {"_id": 0})
         
         # Parse full_name into first_name and last_name if available
