@@ -57,8 +57,14 @@ async def proxy_config_request(endpoint_path: str, request: Request):
         raise HTTPException(status_code=502, detail="Auth service unavailable")
 
 
+@router.api_route("/countries", methods=["GET", "POST", "PUT", "PATCH", "DELETE"])
+async def proxy_config_countries_base(request: Request):
+    """Proxy /api/config/countries requests to auth-microservice"""
+    return await proxy_config_request("countries", request)
+
+
 @router.api_route("/countries/{path:path}", methods=["GET", "POST", "PUT", "PATCH", "DELETE"])
-async def proxy_config_countries(path: str, request: Request):
+async def proxy_config_countries_with_path(path: str, request: Request):
     """Proxy all /api/config/countries/* requests to auth-microservice"""
     return await proxy_config_request(f"countries/{path}", request)
 
