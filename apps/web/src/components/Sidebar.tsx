@@ -172,10 +172,18 @@ export default function Sidebar() {
         ],
       },
       {
+        title: 'Gestion',
+        items: [
+          { label: 'Utilisateurs', path: '/admin/users', icon: UserGroupIcon },
+          { label: 'Localisations', path: '/admin/locations', icon: MapPinIcon },
+          { label: 'Validations', path: '/admin/validations', icon: ClipboardDocumentCheckIcon },
+          { label: 'Entreprises', path: '/admin/entreprises', icon: BuildingOfficeIcon },
+        ],
+      },
+      {
         title: 'Compte',
         items: [
           { label: 'Mon Profil', path: '/profile', icon: UserCircleIcon },
-          { label: 'Mon Entreprise', path: '/entreprise/settings', icon: BuildingOfficeIcon },
           { label: 'Sécurité', path: '/security', icon: ShieldCheckIcon },
         ],
       }
@@ -203,10 +211,18 @@ export default function Sidebar() {
         ],
       },
       {
+        title: 'Gestion',
+        items: [
+          { label: 'Utilisateurs', path: '/admin/users', icon: UserGroupIcon },
+          { label: 'Localisations', path: '/admin/locations', icon: MapPinIcon },
+          { label: 'Validations', path: '/admin/validations', icon: ClipboardDocumentCheckIcon },
+          { label: 'Entreprises', path: '/admin/entreprises', icon: BuildingOfficeIcon },
+        ],
+      },
+      {
         title: 'Compte',
         items: [
           { label: 'Mon Profil', path: '/profile', icon: UserCircleIcon },
-          { label: 'Mon Entreprise', path: '/entreprise/settings', icon: BuildingOfficeIcon },
           { label: 'Sécurité', path: '/security', icon: ShieldCheckIcon },
         ],
       }
@@ -227,10 +243,18 @@ export default function Sidebar() {
         ],
       },
       {
+        title: 'Gestion',
+        items: [
+          { label: 'Utilisateurs', path: '/admin/users', icon: UserGroupIcon },
+          { label: 'Localisations', path: '/admin/locations', icon: MapPinIcon },
+          { label: 'Validations', path: '/admin/validations', icon: ClipboardDocumentCheckIcon },
+          { label: 'Entreprises', path: '/admin/entreprises', icon: BuildingOfficeIcon },
+        ],
+      },
+      {
         title: 'Compte',
         items: [
           { label: 'Mon Profil', path: '/profile', icon: UserCircleIcon },
-          { label: 'Mon Entreprise', path: '/entreprise/settings', icon: BuildingOfficeIcon },
           { label: 'Sécurité', path: '/security', icon: ShieldCheckIcon },
         ],
       }
@@ -252,10 +276,18 @@ export default function Sidebar() {
         ],
       },
       {
+        title: 'Gestion',
+        items: [
+          { label: 'Utilisateurs', path: '/admin/users', icon: UserGroupIcon },
+          { label: 'Localisations', path: '/admin/locations', icon: MapPinIcon },
+          { label: 'Validations', path: '/admin/validations', icon: ClipboardDocumentCheckIcon },
+          { label: 'Entreprises', path: '/admin/entreprises', icon: BuildingOfficeIcon },
+        ],
+      },
+      {
         title: 'Compte',
         items: [
           { label: 'Mon Profil', path: '/profile', icon: UserCircleIcon },
-          { label: 'Mon Entreprise', path: '/entreprise/settings', icon: BuildingOfficeIcon },
           { label: 'Sécurité', path: '/security', icon: ShieldCheckIcon },
         ],
       }
