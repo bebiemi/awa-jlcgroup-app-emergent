@@ -311,6 +311,101 @@ export default function PostulantMainDashboard() {
           </div>
         </Card>
 
+        {/* User Status Badge */}
+        <Card>
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-xl font-semibold text-gray-900">Votre Statut</h2>
+              <p className="text-sm text-gray-600 mt-1">Niveau actuel dans le processus de recrutement</p>
+            </div>
+            <div className={`px-6 py-3 rounded-full font-bold text-lg ${
+              userStatus === 'Intérimaire' 
+                ? 'bg-green-100 text-green-800' 
+                : userStatus === 'Candidat' 
+                ? 'bg-blue-100 text-blue-800' 
+                : 'bg-gray-100 text-gray-800'
+            }`}>
+              {userStatus}
+            </div>
+          </div>
+        </Card>
+
+        {/* Missing Documents */}
+        {missingDocuments.length > 0 && (
+          <Card className="border-l-4 border-orange-400">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">
+              Documents Manquants ({missingDocuments.length})
+            </h2>
+            <p className="text-sm text-gray-600 mb-4">
+              Pour compléter votre dossier, veuillez fournir les documents suivants :
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {missingDocuments.map((doc) => (
+                <div 
+                  key={doc.id} 
+                  className="flex items-center gap-3 p-3 bg-orange-50 rounded-lg border border-orange-200"
+                >
+                  <DocumentTextIcon className="h-5 w-5 text-orange-600 flex-shrink-0" />
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-gray-900">{doc.label_fr}</p>
+                    {doc.description && (
+                      <p className="text-xs text-gray-600">{doc.description}</p>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+            <Link
+              to="/profile?tab=documents"
+              className="inline-block mt-4 text-sm font-medium text-jlc-purple-600 hover:text-jlc-purple-700"
+            >
+              Uploader mes documents →
+            </Link>
+          </Card>
+        )}
+
+        {/* Available Missions */}
+        {!isLoadingMissions && availableMissions.length > 0 && (
+          <Card>
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h2 className="text-xl font-semibold text-gray-900">Missions Disponibles</h2>
+                <p className="text-sm text-gray-600 mt-1">
+                  {availableMissions.length} mission(s) correspondent à votre profil
+                </p>
+              </div>
+              <Link
+                to="/offres"
+                className="text-sm font-medium text-jlc-purple-600 hover:text-jlc-purple-700"
+              >
+                Voir toutes →
+              </Link>
+            </div>
+            <div className="space-y-3">
+              {availableMissions.slice(0, 3).map((mission) => (
+                <Link
+                  key={mission.id}
+                  to={`/offres/${mission.id}`}
+                  className="block p-4 bg-gray-50 hover:bg-purple-50 rounded-lg border border-gray-200 hover:border-jlc-purple-300 transition-all"
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-gray-900">{mission.title}</h3>
+                      <p className="text-sm text-gray-600 mt-1 line-clamp-2">{mission.description}</p>
+                      <div className="flex items-center gap-4 mt-2 text-xs text-gray-500">
+                        <span>📍 {mission.location}</span>
+                        <span>💰 {mission.salary_range}</span>
+                        <span>⏱️ {mission.duration}</span>
+                      </div>
+                    </div>
+                    <BriefcaseIcon className="h-6 w-6 text-gray-400 flex-shrink-0 ml-3" />
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </Card>
+        )}
+
         {/* Recent Activity */}
         <Card>
           <h2 className="text-xl font-semibold text-gray-900 mb-4">Activité Récente</h2>
