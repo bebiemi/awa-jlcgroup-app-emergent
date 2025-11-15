@@ -273,7 +273,7 @@ export default function Sidebar() {
         title: 'Mon profil',
         items: [
           { label: 'Compléter mon profil', path: '/postulant/profile-overview', icon: UserCircleIcon },
-          { label: 'Éditer mon profil', path: '/profile', icon: UserCircleIcon },
+          { label: 'Mon Profil', path: '/profile', icon: UserCircleIcon },
           { label: 'Mes documents', path: '/profile?tab=documents', icon: DocumentTextIcon },
         ],
       },
