@@ -246,9 +246,15 @@ async def update_my_profile(
                     await db.system_references.insert_one(new_skill_ref)
     
     # Determine collection based on role
-    if cfg.get_interim_role() in current_user.roles:
+    if cfg.get_interim_role() in current_user.roles or 'candidat' in current_user.roles or 'postulant' in current_user.roles:
         collection = db.interim_profiles
-        profile_type = cfg.get_interim_role()
+        # Use actual role for profile_type
+        if 'candidat' in current_user.roles:
+            profile_type = 'candidat'
+        elif 'postulant' in current_user.roles:
+            profile_type = 'postulant'
+        else:
+            profile_type = cfg.get_interim_role()
     elif cfg.get_company_role() in current_user.roles:
         collection = db.company_manager_profiles
         profile_type = cfg.get_company_role()
