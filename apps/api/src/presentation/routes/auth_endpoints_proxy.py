@@ -104,12 +104,13 @@ async def proxy_feature_flags_requests(path: str = "", request: Request = None):
     return await _proxy_request(target_url, request)
 
 
+@router.api_route("/versions", methods=["GET", "POST"])
 @router.api_route("/versions/{path:path}", methods=["GET", "POST", "PUT", "PATCH", "DELETE"])
-async def proxy_versions_requests(path: str, request: Request):
+async def proxy_versions_requests(path: str = "", request: Request = None):
     """
     Proxy all /api/versions/* requests to auth-microservice /api/versions/*
     """
-    target_url = f"{AUTH_SERVICE_URL}/api/versions/{path}"
+    target_url = f"{AUTH_SERVICE_URL}/api/versions/{path}" if path else f"{AUTH_SERVICE_URL}/api/versions"
     return await _proxy_request(target_url, request)
 
 
