@@ -329,6 +329,7 @@ export const {
   useResetPasswordMutation,
   useResetMfaMutation,
   useToggleEmailVerificationMutation,
+  useMarkUserAsViewedMutation,
   useSendNotificationMutation,
   useArchiveUserMutation,
   useRestoreUserMutation,
