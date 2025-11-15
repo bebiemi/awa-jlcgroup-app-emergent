@@ -76,6 +76,43 @@ export default function UserManagementPage() {
   // Mark user as viewed mutation
   const [markUserAsViewed] = useMarkUserAsViewedMutation()
 
+  // Manual email verification toggle
+  const handleToggleEmailVerification = async (user: User) => {
+    const newStatus = !user.is_verified
+    const action = newStatus ? 'vérifier' : 'dévérifier'
+    
+    if (!confirm(`Êtes-vous sûr de vouloir ${action} l'email de ${user.username} ?`)) {
+      return
+    }
+
+    try {
+      const token = localStorage.getItem('access_token')
+      const response = await fetch('/api/admin/email-verification/manual-verify', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          user_id: user.id,
+          is_verified: newStatus,
+          reason: `Manuel ${action}ication par admin pour tests`
+        }),
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        toast.success(`Email ${newStatus ? 'vérifié' : 'dévérifié'} avec succès`)
+        refetch()
+      } else {
+        toast.error(data.detail || 'Erreur lors de la modification')
+      }
+    } catch (error) {
+      toast.error('Erreur de connexion')
+    }
+  }
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
     setPage(1) // Reset to first page on search
