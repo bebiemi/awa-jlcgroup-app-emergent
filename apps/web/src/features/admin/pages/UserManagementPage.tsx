@@ -453,7 +453,7 @@ export default function UserManagementPage() {
                         })}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <div className="flex justify-end gap-2">
+                        <div className="flex justify-end gap-2" onClick={(e) => e.stopPropagation()}>
                           <button
                             onClick={() => handleViewDetails(user)}
                             className="p-2 text-jlc-purple-600 hover:bg-jlc-purple-50 rounded-lg transition-colors"
