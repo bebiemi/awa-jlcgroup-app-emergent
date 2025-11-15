@@ -2,7 +2,7 @@
 Bulk Operations Routes for User Management
 Handles mass operations on multiple users at once
 """
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from awana_auth.core.models import User
 from awana_auth.core.dependencies import get_database, get_current_user
