@@ -116,28 +116,54 @@ export default function UserDetailModal({ isOpen, onClose, userId }: UserDetailM
 
                   {/* Status Bar */}
                   {userDetail && (
-                    <div className="flex items-center gap-3 mt-4">
-                      <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                        userDetail.status === 'active' 
-                          ? 'bg-green-500 text-white' 
-                          : userDetail.status === 'pending'
-                          ? 'bg-yellow-500 text-white'
-                          : 'bg-red-500 text-white'
-                      }`}>
-                        {userDetail.status === 'active' ? '✓ Actif' : 
-                         userDetail.status === 'pending' ? '⏱ En attente' : 
-                         '⊗ Suspendu'}
-                      </span>
-                      {userDetail.mfa_enabled && (
-                        <span className="px-3 py-1 rounded-full text-xs font-semibold bg-blue-500 text-white">
-                          🔐 MFA Activé
+                    <div className="flex items-center justify-between mt-4">
+                      <div className="flex items-center gap-3">
+                        <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                          userDetail.status === 'active' 
+                            ? 'bg-green-500 text-white' 
+                            : userDetail.status === 'pending'
+                            ? 'bg-yellow-500 text-white'
+                            : 'bg-red-500 text-white'
+                        }`}>
+                          {userDetail.status === 'active' ? '✓ Actif' : 
+                           userDetail.status === 'pending' ? '⏱ En attente' : 
+                           '⊗ Suspendu'}
                         </span>
-                      )}
-                      {userDetail.last_activity_at && (
-                        <span className="text-xs text-white/70">
-                          Dernière activité: {new Date(userDetail.last_activity_at).toLocaleString('fr-FR')}
+                        <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                          userDetail.is_verified 
+                            ? 'bg-green-500 text-white' 
+                            : 'bg-yellow-500 text-white'
+                        }`}>
+                          {userDetail.is_verified ? '✓ Email vérifié' : '⚠️ Email non vérifié'}
                         </span>
-                      )}
+                        {userDetail.mfa_enabled && (
+                          <span className="px-3 py-1 rounded-full text-xs font-semibold bg-blue-500 text-white">
+                            🔐 MFA Activé
+                          </span>
+                        )}
+                        {userDetail.last_activity_at && (
+                          <span className="text-xs text-white/70">
+                            Dernière activité: {new Date(userDetail.last_activity_at).toLocaleString('fr-FR')}
+                          </span>
+                        )}
+                      </div>
+                      
+                      {/* Quick Actions */}
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={handleToggleEmailVerification}
+                          disabled={isVerifying}
+                          className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                            userDetail.is_verified
+                              ? 'bg-white/20 hover:bg-white/30 text-white'
+                              : 'bg-yellow-500 hover:bg-yellow-600 text-white'
+                          } disabled:opacity-50 disabled:cursor-not-allowed`}
+                          title={userDetail.is_verified ? 'Dévérifier l\'email (tests)' : 'Vérifier l\'email manuellement'}
+                        >
+                          <ShieldCheckIcon className="h-4 w-4" />
+                          {isVerifying ? 'Modification...' : userDetail.is_verified ? 'Dévérifier' : 'Vérifier email'}
+                        </button>
+                      </div>
                     </div>
                   )}
                 </div>
