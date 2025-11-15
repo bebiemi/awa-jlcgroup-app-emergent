@@ -153,6 +153,7 @@ app.include_router(besoin_router, prefix="/api/besoins", tags=["Besoins"])
 app.include_router(entreprise_router, prefix="/api/entreprises", tags=["Entreprises"])
 app.include_router(form_config_router, prefix="/api/config", tags=["Dynamic Configuration"])
 app.include_router(notification_router, prefix="/api/notifications", tags=["Notifications"])
+app.include_router(app_config_router, prefix="/api", tags=["App Configuration"])
 
 @app.get("/health")
 async def health_check():
