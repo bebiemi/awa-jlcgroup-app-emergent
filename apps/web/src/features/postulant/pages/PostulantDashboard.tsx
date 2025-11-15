@@ -42,7 +42,7 @@ export default function PostulantDashboard() {
       title: 'Vérifier mon email',
       description: 'Confirmez votre adresse email pour activer votre compte',
       completed: isEmailVerified,
-      action: isEmailVerified ? null : { label: 'Vérifier maintenant', link: '/verify-email' },
+      action: isEmailVerified ? null : { label: 'Envoyer email', link: null, handler: 'sendVerificationEmail' },
       priority: 1,
     },
     {
