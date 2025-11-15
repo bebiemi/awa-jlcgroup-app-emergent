@@ -925,6 +925,11 @@ export default function UserManagementPage() {
         </>
       )}
       <QuickAddUserModal isOpen={showQuickAddModal} onClose={() => setShowQuickAddModal(false)} />
+      <BulkImportUsersModal 
+        isOpen={showBulkImportModal} 
+        onClose={() => setShowBulkImportModal(false)}
+        onSuccess={handleModalSuccess}
+      />
     </Layout>
   )
 }
