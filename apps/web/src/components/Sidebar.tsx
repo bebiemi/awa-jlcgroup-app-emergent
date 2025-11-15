@@ -90,6 +90,7 @@ export default function Sidebar() {
     if (user.roles.includes(roles.interim)) return '/interimaire'
     if (user.roles.includes(roles.company)) return '/entreprise'
     if (user.roles.includes(roles.agency)) return '/agence'
+    if (user.roles.includes('postulant')) return '/postulant'
     return '/profile'
   }
 
