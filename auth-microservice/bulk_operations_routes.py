@@ -328,7 +328,6 @@ async def bulk_import_users(
     - Validates email domains against allowed list
     - Returns detailed success/error report
     """
-    from fastapi import UploadFile, File
     import secrets
     import string
     import re
@@ -341,8 +340,9 @@ async def bulk_import_users(
     
     try:
         # Parse CSV
-        csv_content = file.decode('utf-8')
-        csv_file = io.StringIO(csv_content)
+        csv_content = await file.read()
+        csv_text = csv_content.decode('utf-8')
+        csv_file = io.StringIO(csv_text)
         reader = csv.DictReader(csv_file)
         
         # Get allowed email domains
