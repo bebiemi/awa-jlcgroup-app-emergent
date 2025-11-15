@@ -425,6 +425,19 @@ export default function UserManagementPage() {
                       <td className="px-6 py-4 whitespace-nowrap">
                         {getStatusBadge(user.status)}
                       </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <button
+                          onClick={() => handleToggleEmailVerification(user)}
+                          className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium transition-colors ${
+                            user.is_verified
+                              ? 'bg-green-100 text-green-800 hover:bg-green-200'
+                              : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
+                          }`}
+                          title={user.is_verified ? 'Cliquez pour dévérifier (tests)' : 'Cliquez pour vérifier manuellement'}
+                        >
+                          {user.is_verified ? '✓ Vérifié' : '✗ Non vérifié'}
+                        </button>
+                      </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {new Date(user.created_at).toLocaleDateString('fr-FR', {
                           year: 'numeric',
