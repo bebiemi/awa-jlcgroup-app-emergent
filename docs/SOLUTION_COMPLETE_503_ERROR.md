@@ -6,7 +6,7 @@
 
 ### Analyse
 ```
-Browser → https://api-harmony-4.preview.emergentagent.com/api/besoins
+Browser → https://bugs-to-bugs.preview.emergentagent.com/api/besoins
           ↓
           TOUTES les requêtes tombaient sur le frontend (port 3000)
           ↓
@@ -17,7 +17,7 @@ Browser → https://api-harmony-4.preview.emergentagent.com/api/besoins
 
 ### Preuve
 ```bash
-curl https://api-harmony-4.preview.emergentagent.com/health
+curl https://bugs-to-bugs.preview.emergentagent.com/health
 # Retournait: <!doctype html>... (page React)
 # Au lieu de: {"status":"healthy",...}
 ```
@@ -70,7 +70,7 @@ Ajouté `/api/health` dans `server.py` pour compatibilité avec le routing `/api
 ```
 ┌─────────────────────────────────────────────────────┐
 │  Production (Kubernetes/Ingress)                     │
-│  https://api-harmony-4.preview.emergentagent.com │
+│  https://bugs-to-bugs.preview.emergentagent.com │
 └───────────────────────┬─────────────────────────────┘
                         │
                         ▼

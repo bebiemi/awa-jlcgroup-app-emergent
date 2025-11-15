@@ -1,121 +1,418 @@
 <analysis>**original_problem_statement:**
-L'utilisateur a initialement signalé une cascade de problèmes sur son environnement Docker local, notamment un échec de connexion, une erreur 500 sur la page IAM, un affichage de 0 permission, des permissions manquantes, une erreur 404 sur les détails de l'utilisateur et un échec de la création d'utilisateur avec une erreur .
+L'utilisateur a signalé une série de régressions et de bugs apparus après que l'agent a commencé à implémenter de nouvelles fonctionnalités :
+1.  **Menu Dupliqué :** Il y a deux sections Gestion dans le menu de gauche, et les sous-éléments (Utilisateurs, Localisation, Validations) sont également dupliqués.
+2.  **Erreur API Entreprises :** Une erreur de préfixe d'URL dupliqué () se produit lors de l'appel à l'endpoint des entreprises, entraînant une erreur 404.
+3.  **Badge Nouveau non persistant :** Le badge Nouveau sur un profil utilisateur ne disparaît pas après avoir consulté les détails de l'utilisateur dans la modale.
+4.  **Erreur API Permissions :** L'endpoint  renvoie une erreur 500 (Internal Server Error).
 
-La session de travail actuelle a été une longue série de débogages et de corrections qui ont révélé des problèmes systémiques plus profonds, notamment des incohérences dans les URL de l'API (préfixes , mélange de  et ), des régressions entre l'environnement local et l'environnement de prévisualisation (Emergent), et des bugs dans la logique backend (validation Pydantic, remplacement de données au lieu de l'ajout).
-
-L'utilisateur a ensuite demandé un audit complet et une normalisation de tous les endpoints de l'API pour créer une base de code stable.
+En plus de la correction de ces bugs, l'utilisateur a demandé l'implémentation d'un ensemble complet de nouvelles fonctionnalités, décrites en plusieurs phases, visant à améliorer la gestion des profils (Postulant, Intérimaire, Collaborateur), le dashboard, la gestion des documents, les notifications et le matching de missions.
 
 **PRODUCT REQUIREMENTS:**
-1.  **Stabilité de l'application :** Rendre l'application entièrement fonctionnelle sur l'environnement Docker local et l'environnement de prévisualisation Emergent.
-2.  **Normalisation des API :** Assurer que tous les appels d'API front-end suivent un modèle d'URL uniforme () et que le backend route ces appels de manière cohérente.
-3.  **Absence de régression :** S'assurer que les corrections n'introduisent pas de nouveaux bugs ou ne cassent pas les fonctionnalités existantes.
-4.  **Fonctionnalité CRUD complète :** Toutes les opérations de création, lecture, mise à jour et suppression (utilisateurs, groupes, profils, etc.) depuis l'interface doivent fonctionner de manière fiable.
+1.  **Correction des régressions :** Résoudre immédiatement tous les bugs signalés (menu dupliqué, erreur , persistance du badge, erreur 500 sur les permissions).
+2.  **Pas de nouvelles régressions :** S'assurer que les corrections et les nouvelles fonctionnalités ne cassent pas le code existant.
+3.  **Phase 1 (Quick Wins) :**
+    *   Finaliser le déplacement de Mon entreprise vers la section Gestion.
+    *   Pour les administrateurs, afficher une table vide avec un message informatif si aucune entreprise n'est enregistrée.
+    *   Permettre de déplier une entreprise pour voir et modifier ses informations.
+4.  **Phase 2 (Dashboard & Profils) :**
+    *   Ajouter un badge Nouveau sur les nouveaux comptes, qui disparaît après visualisation ou après une durée configurable. (Partiellement implémenté, bug à corriger).
+    *   Créer un dashboard unifié avec des widgets pour la progression du profil, les documents manquants, et les notifications. (Partiellement implémenté).
+5.  **Phases futures (Postulant, Intérimaire, etc.) :** Implémenter le reste des fonctionnalités demandées (nouveau rôle postulant, CV automatique, chat, signature électronique, etc.) en respectant l'architecture existante et les contraintes de non-régression.
 
 **User's preferred language**: French
 
 **what currently exists?**
-L'agent a effectué un refactoring massif de la construction des URL de l'API côté frontend. Un fichier central  gère désormais l'ajout du préfixe  et la conversion HTTP vers HTTPS pour l'environnement de prévisualisation. Tous les fichiers  ont été modifiés pour utiliser des chemins relatifs, éliminant les duplications  et les incohérences. De nombreux bugs backend ont été corrigés, notamment des erreurs de logique ( remplacé par ), des erreurs d'accès aux objets Pydantic ( remplacé par ), et des proxys manquants ont été ajoutés. La création d'utilisateurs, la gestion des permissions (assignation/retrait), et la gestion des groupes/profils sont maintenant majoritairement fonctionnelles. Des optimisations de performance (debounce sur les barres de recherche) ont été implémentées.
+L'agent a d'abord stabilisé l'application en corrigeant des problèmes critiques de  et de redirections  en s'assurant que l'API gateway (le proxy backend) gère correctement toutes les routes de base. Une régression critique (404 sur ) due à un mauvais ordre des routeurs dans le backend a également été corrigée. Une version stable  a été taguée.
+
+Ensuite, l'agent a commencé l'implémentation des nouvelles fonctionnalités. Il a créé une nouvelle page de gestion des entreprises, un système de configuration dynamique (backend et frontend) pour gérer les features flags comme le badge Nouveau, un composant  fonctionnel (mais avec un bug de persistance), et un début de Dashboard Unifié avec des widgets réutilisables. Cependant, ce travail a introduit les régressions critiques listées ci-dessus.
 
 **Last working item**:
--   **Last item agent was working:** Correction d'une régression : l'erreur  est réapparue sur la page des Feature Flags.
+-   **Last item agent was working:** L'agent venait de prendre connaissance des régressions signalées par l'utilisateur et s'apprêtait à commencer la correction, en commençant par le problème des menus dupliqués dans le .
 -   **Status:** IN PROGRESS
 -   **Agent Testing Done:** N
--   **Which testing method agent to use?** Frontend testing agent. Il s'agit d'une régression qui affecte la compatibilité entre les environnements. Un test complet est nécessaire pour valider que la correction résout le problème de  sans réintroduire le bug précédent (perte du corps des requêtes POST) et sans casser d'autres pages.
--   **User Testing Done:** Y (L'utilisateur a signalé le problème).
+-   **Which testing method agent to use?** Frontend testing agent. Les problèmes sont une combinaison de bugs d'interface (Sidebar), d'appels API (préfixe dupliqué, erreur 500) et de logique applicative (badge). Un test de régression complet est nécessaire après avoir corrigé ces 4 problèmes pour s'assurer que tout est stable.
+-   **User Testing Done:** Y (L'utilisateur a signalé les problèmes).
 
 **All Pending/In progress Issue list**:
--   **Issue 1: (P0) Régression de  sur la page Feature Flags**
-    -   **Attempted fixes:** L'agent a correctement identifié que le  dans , qui gère la conversion HTTP vers HTTPS, a été supprimé lors d'une correction précédente et doit être restauré.
-    -   **Next debug checklist:**
-        1.  Réintégrer la logique de  dans  en s'assurant qu'elle gère deux cas :
-            -   **Conversion HTTPS :** Si l'environnement est Emergent () et l'URL de la requête commence par , la convertir en .
-            -   **Préservation du corps de la requête :** S'assurer que la nouvelle instance de  ou l'appel  propage correctement tous les attributs de la requête originale (, , , etc.). La dernière tentative de l'agent (message #779) semble être la bonne approche.
-        2.  Après la correction, tester la page  sur l'environnement de prévisualisation pour confirmer que l'erreur a disparu.
-        3.  Tester à nouveau une création (ex: utilisateur) pour s'assurer que le corps de la requête POST n'est pas perdu.
-    -   **Why fix this issue and what will be achieved with the fix?** C'est une régression qui casse des fonctionnalités clés sur l'environnement de prévisualisation (Emergent).
-    -   **Status:** IN PROGRESS
-    -   **Is recurring issue?** Y
-    -   **Should Test frontend/backend/both after fix?** Frontend
+-   **Issue 1: (P0) Duplication dans le menu de navigation**
+-   **Issue 2: (P1) Erreur de préfixe d'URL dupliqué  sur l'endpoint des entreprises**
+-   **Issue 3: (P2) L'endpoint  retourne une erreur 500**
+-   **Issue 4: (P3) Le badge Nouveau ne disparaît pas après la consultation du profil**
+
+  **Issues Detail:**
+  - **Issue 1: Duplication dans le menu de navigation**
+     - **Attempted fixes:** Aucun. L'agent s'apprêtait à investiguer.
+     - **Next debug checklist:**
+        1. Examiner .
+        2. Identifier pourquoi la section Gestion et ses sous-liens (Utilisateurs, etc.) apparaissent deux fois.
+        3. Probablement, l'agent a ajouté une nouvelle section sans supprimer ou modifier l'ancienne. Consolider les deux sections en une seule.
+     - **Why fix this issue and what will be achieved with the fix?** Corriger un bug d'interface utilisateur évident et déroutant.
+     - **Status:** NOT STARTED
+     - **Is recurring issue?** N
+     - **Should Test frontend/backend/both after fix?** Frontend (via screenshot du sidebar).
+     - **Blocked on other issue:** None
+
+  - **Issue 2: Erreur de préfixe d'URL dupliqué **
+     - **Attempted fixes:** Aucun.
+     - **Next debug checklist:**
+        1. Examiner le fichier de la nouvelle page  et le fichier API associé .
+        2. Trouver où l'appel RTK Query est défini.
+        3. L'erreur vient très probablement d'un chemin d'URL qui a été défini avec un préfixe  en dur (ex: ) au lieu d'un chemin relatif (ex: ).
+        4. Supprimer le préfixe  pour laisser le  le gérer automatiquement.
+     - **Why fix this issue and what will be achieved with the fix?** Corriger une régression critique qui empêche une fonctionnalité clé (gestion des entreprises) de fonctionner.
+     - **Status:** NOT STARTED
+     - **Is recurring issue?** Y
+     - **Should Test frontend/backend/both after fix?** Frontend (vérifier l'onglet réseau du navigateur sur la page des entreprises).
+     - **Blocked on other issue:** None
+
+  - **Issue 3: L'endpoint  retourne une erreur 500**
+     - **Attempted fixes:** Aucun.
+     - **Next debug checklist:**
+        1. Vérifier les logs du service  (==> /var/log/supervisor/auth-microservice.err.log <==
+2025-11-15 17:00:37,608 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918af53947c8c0583acb3d2"}, "driverConnectionId": 1, "serverConnectionId": 121, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "message": "Server heartbeat started"}
+2025-11-15 17:00:40,924 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918afa6947c8c0583acb3d3"}, "driverConnectionId": 1, "serverConnectionId": 128, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "durationMS": 10009.855812997557, "reply": "{\"isWritablePrimary\": true, \"topologyVersion\": {\"processId\": {\"$oid\": \"69189e922b179d207bd8e23d\"}}, \"maxBsonObjectSize\": 16777216, \"maxMessageSizeBytes\": 48000000, \"maxWriteBatchSize\": 100000, \"localTime\": {\"$date\": \"2025-11-15T17:00:40.924Z\"}, \"logicalSessionTimeoutMinutes\": 30, \"connectionId\": 128, \"maxWireVersion\": 21, \"ok\": 1.0}", "message": "Server heartbeat succeeded"}
+2025-11-15 17:00:40,925 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918afa6947c8c0583acb3d3"}, "driverConnectionId": 1, "serverConnectionId": 128, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "message": "Server heartbeat started"}
+2025-11-15 17:00:44,139 - pymongo.serverSelection - DEBUG - {"message": "Server selection started", "selector": "Primary()", "operation": "find", "topologyDescription": "<TopologyDescription id: 6918afa6947c8c0583acb3d3, topology_type: Single, servers: [<ServerDescription ('localhost', 27017) server_type: Standalone, rtt: 0.0003675706715231327>]>", "clientId": {"$oid": "6918afa6947c8c0583acb3d3"}}
+2025-11-15 17:00:44,139 - pymongo.serverSelection - DEBUG - {"message": "Server selection succeeded", "selector": "Primary()", "operation": "find", "topologyDescription": "<TopologyDescription id: 6918afa6947c8c0583acb3d3, topology_type: Single, servers: [<ServerDescription ('localhost', 27017) server_type: Standalone, rtt: 0.0003675706715231327>]>", "clientId": {"$oid": "6918afa6947c8c0583acb3d3"}, "serverHost": "localhost", "serverPort": 27017}
+2025-11-15 17:00:44,139 - pymongo.connection - DEBUG - {"clientId": {"$oid": "6918afa6947c8c0583acb3d3"}, "message": "Connection checkout started", "serverHost": "localhost", "serverPort": 27017}
+2025-11-15 17:00:44,139 - pymongo.connection - DEBUG - {"clientId": {"$oid": "6918afa6947c8c0583acb3d3"}, "message": "Connection checked out", "serverHost": "localhost", "serverPort": 27017, "driverConnectionId": 5, "durationMS": 5.935895023867488e-05}
+2025-11-15 17:00:44,139 - pymongo.command - DEBUG - {"clientId": {"$oid": "6918afa6947c8c0583acb3d3"}, "message": "Command started", "command": "{\"find\": \"sessions\", \"filter\": {\"id\": \"5e027fac-4981-4fb2-bd5e-64a1025ce488\"}, \"limit\": 1, \"singleBatch\": true, \"lsid\": {\"id\": {\"$binary\": {\"base64\": \"AMX0nphLSSqEJ/GVCIOunQ==\", \"subType\": \"04\"}}}, \"$db\": \"auth_db\"}", "commandName": "find", "databaseName": "auth_db", "requestId": 260152959, "operationId": 260152959, "driverConnectionId": 5, "serverConnectionId": 134, "serverHost": "localhost", "serverPort": 27017}
+2025-11-15 17:00:44,140 - pymongo.command - DEBUG - {"clientId": {"$oid": "6918afa6947c8c0583acb3d3"}, "message": "Command succeeded", "durationMS": 0.877, "reply": "{\"cursor\": {\"firstBatch\": [{\"_id\": {\"$oid\": \"6918ac46f872ace9f839f51f\"}, \"id\": \"5e027fac-4981-4fb2-bd5e-64a1025ce488\", \"user_id\": \"ba66f503-2b9c-4d5d-9c59-d72658dd1986\", \"access_token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJiYTY2ZjUwMy0yYjljLTRkNWQtOWM1OS1kNzI2NThkZDE5ODYiLCJlbWFpbCI6ImFkbWluQGF3YW5hZ3JvdXAuY29tIiwicm9sZXMiOlsiYWRtaW4iLCJzdXBlcl9hZG1pbiJdLCJzZXNzaW9uX2lkIjoiNWUwMjdmYWMtNDk4MS00ZmIyLWJkNWUtNjRhMTAyNWNlNDg4IiwiZXhwIjoxNzYzMjI4MjQ2LjkwMjkyMiwiaWF0IjoxNzYzMjI0NjQ2LjkwMjk1MSwidHlwZSI6ImFjY2VzcyJ9.AvmqiGEvQs3y7GHl2kZupvCxmZ6Dg1YNtsVafIdZ0g0\", \"refresh_token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJiYTY2ZjUwMy0yYjljLTRkNWQtOWM1OS1kNzI2NThkZDE5ODYiLCJlbWFpbCI6ImFkbWluQGF3YW5hZ3JvdXAuY29tIiwicm9sZXMiOlsiYWRtaW4iLCJzdXBlcl9hZG1pbiJdLCJzZXNzaW9uX2lkIjoiNWUwMjdmYWMtNDk4MS00ZmIyLWJkNWUtNjRhMTAyNWNlNDg4IiwiZXhwIjoxNzYzODI5NDQ2LjkwMzA1MiwiaWF0IjoxNzYzMjI0NjQ2LjkwMzA2LCJ0eXBlIjoicmVmcmVzaCJ9._rLyPhToeTIYEHnJqpKELCPQtFjEg6hGngmaL1BckL4\", \"ip_address\": \"127.0.0.1\", ...", "commandName": "find", "databaseName": "auth_db", "requestId": 260152959, "operationId": 260152959, "driverConnectionId": 5, "serverConnectionId": 134, "serverHost": "localhost", "serverPort": 27017}
+2025-11-15 17:00:44,140 - pymongo.connection - DEBUG - {"clientId": {"$oid": "6918afa6947c8c0583acb3d3"}, "message": "Connection checked in", "serverHost": "localhost", "serverPort": 27017, "driverConnectionId": 5}
+2025-11-15 17:00:44,140 - pymongo.serverSelection - DEBUG - {"message": "Server selection started", "selector": "Primary()", "operation": "find", "topologyDescription": "<TopologyDescription id: 6918afa6947c8c0583acb3d3, topology_type: Single, servers: [<ServerDescription ('localhost', 27017) server_type: Standalone, rtt: 0.0003675706715231327>]>", "clientId": {"$oid": "6918afa6947c8c0583acb3d3"}}
+2025-11-15 17:00:44,141 - pymongo.serverSelection - DEBUG - {"message": "Server selection succeeded", "selector": "Primary()", "operation": "find", "topologyDescription": "<TopologyDescription id: 6918afa6947c8c0583acb3d3, topology_type: Single, servers: [<ServerDescription ('localhost', 27017) server_type: Standalone, rtt: 0.0003675706715231327>]>", "clientId": {"$oid": "6918afa6947c8c0583acb3d3"}, "serverHost": "localhost", "serverPort": 27017}
+2025-11-15 17:00:44,141 - pymongo.connection - DEBUG - {"clientId": {"$oid": "6918afa6947c8c0583acb3d3"}, "message": "Connection checkout started", "serverHost": "localhost", "serverPort": 27017}
+2025-11-15 17:00:44,141 - pymongo.connection - DEBUG - {"clientId": {"$oid": "6918afa6947c8c0583acb3d3"}, "message": "Connection checked out", "serverHost": "localhost", "serverPort": 27017, "driverConnectionId": 5, "durationMS": 4.171894397586584e-05}
+2025-11-15 17:00:44,141 - pymongo.command - DEBUG - {"clientId": {"$oid": "6918afa6947c8c0583acb3d3"}, "message": "Command started", "command": "{\"find\": \"users\", \"filter\": {\"id\": \"ba66f503-2b9c-4d5d-9c59-d72658dd1986\"}, \"limit\": 1, \"singleBatch\": true, \"lsid\": {\"id\": {\"$binary\": {\"base64\": \"AMX0nphLSSqEJ/GVCIOunQ==\", \"subType\": \"04\"}}}, \"$db\": \"auth_db\"}", "commandName": "find", "databaseName": "auth_db", "requestId": 1472713773, "operationId": 1472713773, "driverConnectionId": 5, "serverConnectionId": 134, "serverHost": "localhost", "serverPort": 27017}
+2025-11-15 17:00:44,141 - pymongo.command - DEBUG - {"clientId": {"$oid": "6918afa6947c8c0583acb3d3"}, "message": "Command succeeded", "durationMS": 0.36200000000000004, "reply": "{\"cursor\": {\"firstBatch\": [{\"id\": \"ba66f503-2b9c-4d5d-9c59-d72658dd1986\", \"username\": \"admin\", \"email\": \"admin@awanagroup.com\", \"full_name\": \"Admin\", \"provider\": \"local\", \"provider_user_id\": \"local_admin\", \"status\": \"active\", \"roles\": [\"admin\", \"super_admin\"], \"created_at\": \"2025-11-02T18:50:18.906441+00:00\", \"updated_at\": {\"$date\": \"2025-11-15T16:51:52.182Z\"}, \"last_login_at\": \"2025-11-15T16:51:52.124623+00:00\", \"last_activity_at\": {\"$date\": \"2025-11-15T16:51:52.182Z\"}, \"presence_status\": \"online\", \"presence_updated_at\": {\"$date\": \"2025-11-15T16:51:52.182Z\"}, \"profile_ids\": [\"ea955599-ba7c-41cf-9056-8e47804d892e\"], \"company_id\": \"7cf2f4dd-369e-4879-a08c-0cc9c2cea282\", \"entreprise_id\": \"7cf2f4dd-369e-4879-a08c-0cc9c2cea282\", \"password_hash\": \"$2b$12$hsdlkvh3ZRlrZtr8EKTRquZImnMFaD8OP.N5uaGISHJkvxCUkZ832\"}], \"ns\": \"auth_db.users\"}, \"ok\": 1.0}", "commandName": "find", "databaseName": "auth_db", "requestId": 1472713773, "operationId": 1472713773, "driverConnectionId": 5, "serverConnectionId": 134, "serverHost": "localhost", "serverPort": 27017}
+2025-11-15 17:00:44,141 - pymongo.connection - DEBUG - {"clientId": {"$oid": "6918afa6947c8c0583acb3d3"}, "message": "Connection checked in", "serverHost": "localhost", "serverPort": 27017, "driverConnectionId": 5}
+2025-11-15 17:00:47,612 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918af53947c8c0583acb3d2"}, "driverConnectionId": 1, "serverConnectionId": 121, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "durationMS": 10003.372728999238, "reply": "{\"isWritablePrimary\": true, \"topologyVersion\": {\"processId\": {\"$oid\": \"69189e922b179d207bd8e23d\"}}, \"maxBsonObjectSize\": 16777216, \"maxMessageSizeBytes\": 48000000, \"maxWriteBatchSize\": 100000, \"localTime\": {\"$date\": \"2025-11-15T17:00:47.612Z\"}, \"logicalSessionTimeoutMinutes\": 30, \"connectionId\": 121, \"maxWireVersion\": 21, \"ok\": 1.0}", "message": "Server heartbeat succeeded"}
+2025-11-15 17:00:47,612 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918af53947c8c0583acb3d2"}, "driverConnectionId": 1, "serverConnectionId": 121, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "message": "Server heartbeat started"}
+2025-11-15 17:00:50,934 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918afa6947c8c0583acb3d3"}, "driverConnectionId": 1, "serverConnectionId": 128, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "durationMS": 10008.85601999471, "reply": "{\"isWritablePrimary\": true, \"topologyVersion\": {\"processId\": {\"$oid\": \"69189e922b179d207bd8e23d\"}}, \"maxBsonObjectSize\": 16777216, \"maxMessageSizeBytes\": 48000000, \"maxWriteBatchSize\": 100000, \"localTime\": {\"$date\": \"2025-11-15T17:00:50.933Z\"}, \"logicalSessionTimeoutMinutes\": 30, \"connectionId\": 128, \"maxWireVersion\": 21, \"ok\": 1.0}", "message": "Server heartbeat succeeded"}
+2025-11-15 17:00:50,934 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918afa6947c8c0583acb3d3"}, "driverConnectionId": 1, "serverConnectionId": 128, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "message": "Server heartbeat started"}
+2025-11-15 17:00:57,616 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918af53947c8c0583acb3d2"}, "driverConnectionId": 1, "serverConnectionId": 121, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "durationMS": 10003.864117024932, "reply": "{\"isWritablePrimary\": true, \"topologyVersion\": {\"processId\": {\"$oid\": \"69189e922b179d207bd8e23d\"}}, \"maxBsonObjectSize\": 16777216, \"maxMessageSizeBytes\": 48000000, \"maxWriteBatchSize\": 100000, \"localTime\": {\"$date\": \"2025-11-15T17:00:57.616Z\"}, \"logicalSessionTimeoutMinutes\": 30, \"connectionId\": 121, \"maxWireVersion\": 21, \"ok\": 1.0}", "message": "Server heartbeat succeeded"}
+2025-11-15 17:00:57,616 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918af53947c8c0583acb3d2"}, "driverConnectionId": 1, "serverConnectionId": 121, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "message": "Server heartbeat started"}
+2025-11-15 17:01:00,943 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918afa6947c8c0583acb3d3"}, "driverConnectionId": 1, "serverConnectionId": 128, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "durationMS": 10008.980203943793, "reply": "{\"isWritablePrimary\": true, \"topologyVersion\": {\"processId\": {\"$oid\": \"69189e922b179d207bd8e23d\"}}, \"maxBsonObjectSize\": 16777216, \"maxMessageSizeBytes\": 48000000, \"maxWriteBatchSize\": 100000, \"localTime\": {\"$date\": \"2025-11-15T17:01:00.943Z\"}, \"logicalSessionTimeoutMinutes\": 30, \"connectionId\": 128, \"maxWireVersion\": 21, \"ok\": 1.0}", "message": "Server heartbeat succeeded"}
+2025-11-15 17:01:00,943 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918afa6947c8c0583acb3d3"}, "driverConnectionId": 1, "serverConnectionId": 128, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "message": "Server heartbeat started"}
+2025-11-15 17:01:07,624 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918af53947c8c0583acb3d2"}, "driverConnectionId": 1, "serverConnectionId": 121, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "durationMS": 10007.542970008217, "reply": "{\"isWritablePrimary\": true, \"topologyVersion\": {\"processId\": {\"$oid\": \"69189e922b179d207bd8e23d\"}}, \"maxBsonObjectSize\": 16777216, \"maxMessageSizeBytes\": 48000000, \"maxWriteBatchSize\": 100000, \"localTime\": {\"$date\": \"2025-11-15T17:01:07.624Z\"}, \"logicalSessionTimeoutMinutes\": 30, \"connectionId\": 121, \"maxWireVersion\": 21, \"ok\": 1.0}", "message": "Server heartbeat succeeded"}
+2025-11-15 17:01:07,624 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918af53947c8c0583acb3d2"}, "driverConnectionId": 1, "serverConnectionId": 121, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "message": "Server heartbeat started"}
+2025-11-15 17:01:10,949 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918afa6947c8c0583acb3d3"}, "driverConnectionId": 1, "serverConnectionId": 128, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "durationMS": 10005.82141301129, "reply": "{\"isWritablePrimary\": true, \"topologyVersion\": {\"processId\": {\"$oid\": \"69189e922b179d207bd8e23d\"}}, \"maxBsonObjectSize\": 16777216, \"maxMessageSizeBytes\": 48000000, \"maxWriteBatchSize\": 100000, \"localTime\": {\"$date\": \"2025-11-15T17:01:10.949Z\"}, \"logicalSessionTimeoutMinutes\": 30, \"connectionId\": 128, \"maxWireVersion\": 21, \"ok\": 1.0}", "message": "Server heartbeat succeeded"}
+2025-11-15 17:01:10,950 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918afa6947c8c0583acb3d3"}, "driverConnectionId": 1, "serverConnectionId": 128, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "message": "Server heartbeat started"}
+2025-11-15 17:01:17,634 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918af53947c8c0583acb3d2"}, "driverConnectionId": 1, "serverConnectionId": 121, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "durationMS": 10009.222739026882, "reply": "{\"isWritablePrimary\": true, \"topologyVersion\": {\"processId\": {\"$oid\": \"69189e922b179d207bd8e23d\"}}, \"maxBsonObjectSize\": 16777216, \"maxMessageSizeBytes\": 48000000, \"maxWriteBatchSize\": 100000, \"localTime\": {\"$date\": \"2025-11-15T17:01:17.633Z\"}, \"logicalSessionTimeoutMinutes\": 30, \"connectionId\": 121, \"maxWireVersion\": 21, \"ok\": 1.0}", "message": "Server heartbeat succeeded"}
+2025-11-15 17:01:17,634 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918af53947c8c0583acb3d2"}, "driverConnectionId": 1, "serverConnectionId": 121, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "message": "Server heartbeat started"}
+2025-11-15 17:01:20,959 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918afa6947c8c0583acb3d3"}, "driverConnectionId": 1, "serverConnectionId": 128, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "durationMS": 10008.826514997054, "reply": "{\"isWritablePrimary\": true, \"topologyVersion\": {\"processId\": {\"$oid\": \"69189e922b179d207bd8e23d\"}}, \"maxBsonObjectSize\": 16777216, \"maxMessageSizeBytes\": 48000000, \"maxWriteBatchSize\": 100000, \"localTime\": {\"$date\": \"2025-11-15T17:01:20.958Z\"}, \"logicalSessionTimeoutMinutes\": 30, \"connectionId\": 128, \"maxWireVersion\": 21, \"ok\": 1.0}", "message": "Server heartbeat succeeded"}
+2025-11-15 17:01:20,959 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918afa6947c8c0583acb3d3"}, "driverConnectionId": 1, "serverConnectionId": 128, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "message": "Server heartbeat started"}
+2025-11-15 17:01:27,644 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918af53947c8c0583acb3d2"}, "driverConnectionId": 1, "serverConnectionId": 121, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "durationMS": 10009.51622001594, "reply": "{\"isWritablePrimary\": true, \"topologyVersion\": {\"processId\": {\"$oid\": \"69189e922b179d207bd8e23d\"}}, \"maxBsonObjectSize\": 16777216, \"maxMessageSizeBytes\": 48000000, \"maxWriteBatchSize\": 100000, \"localTime\": {\"$date\": \"2025-11-15T17:01:27.643Z\"}, \"logicalSessionTimeoutMinutes\": 30, \"connectionId\": 121, \"maxWireVersion\": 21, \"ok\": 1.0}", "message": "Server heartbeat succeeded"}
+2025-11-15 17:01:27,644 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918af53947c8c0583acb3d2"}, "driverConnectionId": 1, "serverConnectionId": 121, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "message": "Server heartbeat started"}
+2025-11-15 17:01:30,968 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918afa6947c8c0583acb3d3"}, "driverConnectionId": 1, "serverConnectionId": 128, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "durationMS": 10008.499397954438, "reply": "{\"isWritablePrimary\": true, \"topologyVersion\": {\"processId\": {\"$oid\": \"69189e922b179d207bd8e23d\"}}, \"maxBsonObjectSize\": 16777216, \"maxMessageSizeBytes\": 48000000, \"maxWriteBatchSize\": 100000, \"localTime\": {\"$date\": \"2025-11-15T17:01:30.967Z\"}, \"logicalSessionTimeoutMinutes\": 30, \"connectionId\": 128, \"maxWireVersion\": 21, \"ok\": 1.0}", "message": "Server heartbeat succeeded"}
+2025-11-15 17:01:30,968 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918afa6947c8c0583acb3d3"}, "driverConnectionId": 1, "serverConnectionId": 128, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "message": "Server heartbeat started"}
+2025-11-15 17:01:37,645 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918af53947c8c0583acb3d2"}, "driverConnectionId": 1, "serverConnectionId": 121, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "durationMS": 10000.805919989944, "reply": "{\"isWritablePrimary\": true, \"topologyVersion\": {\"processId\": {\"$oid\": \"69189e922b179d207bd8e23d\"}}, \"maxBsonObjectSize\": 16777216, \"maxMessageSizeBytes\": 48000000, \"maxWriteBatchSize\": 100000, \"localTime\": {\"$date\": \"2025-11-15T17:01:37.645Z\"}, \"logicalSessionTimeoutMinutes\": 30, \"connectionId\": 121, \"maxWireVersion\": 21, \"ok\": 1.0}", "message": "Server heartbeat succeeded"}
+2025-11-15 17:01:37,645 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918af53947c8c0583acb3d2"}, "driverConnectionId": 1, "serverConnectionId": 121, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "message": "Server heartbeat started"}
+2025-11-15 17:01:40,977 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918afa6947c8c0583acb3d3"}, "driverConnectionId": 1, "serverConnectionId": 128, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "durationMS": 10009.353817964438, "reply": "{\"isWritablePrimary\": true, \"topologyVersion\": {\"processId\": {\"$oid\": \"69189e922b179d207bd8e23d\"}}, \"maxBsonObjectSize\": 16777216, \"maxMessageSizeBytes\": 48000000, \"maxWriteBatchSize\": 100000, \"localTime\": {\"$date\": \"2025-11-15T17:01:40.977Z\"}, \"logicalSessionTimeoutMinutes\": 30, \"connectionId\": 128, \"maxWireVersion\": 21, \"ok\": 1.0}", "message": "Server heartbeat succeeded"}
+2025-11-15 17:01:40,978 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918afa6947c8c0583acb3d3"}, "driverConnectionId": 1, "serverConnectionId": 128, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "message": "Server heartbeat started"}
+2025-11-15 17:01:47,654 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918af53947c8c0583acb3d2"}, "driverConnectionId": 1, "serverConnectionId": 121, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "durationMS": 10009.007268003188, "reply": "{\"isWritablePrimary\": true, \"topologyVersion\": {\"processId\": {\"$oid\": \"69189e922b179d207bd8e23d\"}}, \"maxBsonObjectSize\": 16777216, \"maxMessageSizeBytes\": 48000000, \"maxWriteBatchSize\": 100000, \"localTime\": {\"$date\": \"2025-11-15T17:01:47.654Z\"}, \"logicalSessionTimeoutMinutes\": 30, \"connectionId\": 121, \"maxWireVersion\": 21, \"ok\": 1.0}", "message": "Server heartbeat succeeded"}
+2025-11-15 17:01:47,655 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918af53947c8c0583acb3d2"}, "driverConnectionId": 1, "serverConnectionId": 121, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "message": "Server heartbeat started"}
+2025-11-15 17:01:50,988 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918afa6947c8c0583acb3d3"}, "driverConnectionId": 1, "serverConnectionId": 128, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "durationMS": 10009.889508015476, "reply": "{\"isWritablePrimary\": true, \"topologyVersion\": {\"processId\": {\"$oid\": \"69189e922b179d207bd8e23d\"}}, \"maxBsonObjectSize\": 16777216, \"maxMessageSizeBytes\": 48000000, \"maxWriteBatchSize\": 100000, \"localTime\": {\"$date\": \"2025-11-15T17:01:50.987Z\"}, \"logicalSessionTimeoutMinutes\": 30, \"connectionId\": 128, \"maxWireVersion\": 21, \"ok\": 1.0}", "message": "Server heartbeat succeeded"}
+2025-11-15 17:01:50,988 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918afa6947c8c0583acb3d3"}, "driverConnectionId": 1, "serverConnectionId": 128, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "message": "Server heartbeat started"}
+2025-11-15 17:01:57,665 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918af53947c8c0583acb3d2"}, "driverConnectionId": 1, "serverConnectionId": 121, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "durationMS": 10009.88781201886, "reply": "{\"isWritablePrimary\": true, \"topologyVersion\": {\"processId\": {\"$oid\": \"69189e922b179d207bd8e23d\"}}, \"maxBsonObjectSize\": 16777216, \"maxMessageSizeBytes\": 48000000, \"maxWriteBatchSize\": 100000, \"localTime\": {\"$date\": \"2025-11-15T17:01:57.664Z\"}, \"logicalSessionTimeoutMinutes\": 30, \"connectionId\": 121, \"maxWireVersion\": 21, \"ok\": 1.0}", "message": "Server heartbeat succeeded"}
+2025-11-15 17:01:57,665 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918af53947c8c0583acb3d2"}, "driverConnectionId": 1, "serverConnectionId": 121, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "message": "Server heartbeat started"}
+2025-11-15 17:02:00,998 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918afa6947c8c0583acb3d3"}, "driverConnectionId": 1, "serverConnectionId": 128, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "durationMS": 10009.491578966845, "reply": "{\"isWritablePrimary\": true, \"topologyVersion\": {\"processId\": {\"$oid\": \"69189e922b179d207bd8e23d\"}}, \"maxBsonObjectSize\": 16777216, \"maxMessageSizeBytes\": 48000000, \"maxWriteBatchSize\": 100000, \"localTime\": {\"$date\": \"2025-11-15T17:02:00.997Z\"}, \"logicalSessionTimeoutMinutes\": 30, \"connectionId\": 128, \"maxWireVersion\": 21, \"ok\": 1.0}", "message": "Server heartbeat succeeded"}
+2025-11-15 17:02:00,998 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918afa6947c8c0583acb3d3"}, "driverConnectionId": 1, "serverConnectionId": 128, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "message": "Server heartbeat started"}
+2025-11-15 17:02:07,670 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918af53947c8c0583acb3d2"}, "driverConnectionId": 1, "serverConnectionId": 121, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "durationMS": 10004.812592000235, "reply": "{\"isWritablePrimary\": true, \"topologyVersion\": {\"processId\": {\"$oid\": \"69189e922b179d207bd8e23d\"}}, \"maxBsonObjectSize\": 16777216, \"maxMessageSizeBytes\": 48000000, \"maxWriteBatchSize\": 100000, \"localTime\": {\"$date\": \"2025-11-15T17:02:07.670Z\"}, \"logicalSessionTimeoutMinutes\": 30, \"connectionId\": 121, \"maxWireVersion\": 21, \"ok\": 1.0}", "message": "Server heartbeat succeeded"}
+2025-11-15 17:02:07,670 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918af53947c8c0583acb3d2"}, "driverConnectionId": 1, "serverConnectionId": 121, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "message": "Server heartbeat started"}
+2025-11-15 17:02:11,007 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918afa6947c8c0583acb3d3"}, "driverConnectionId": 1, "serverConnectionId": 128, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "durationMS": 10009.169888973702, "reply": "{\"isWritablePrimary\": true, \"topologyVersion\": {\"processId\": {\"$oid\": \"69189e922b179d207bd8e23d\"}}, \"maxBsonObjectSize\": 16777216, \"maxMessageSizeBytes\": 48000000, \"maxWriteBatchSize\": 100000, \"localTime\": {\"$date\": \"2025-11-15T17:02:11.007Z\"}, \"logicalSessionTimeoutMinutes\": 30, \"connectionId\": 128, \"maxWireVersion\": 21, \"ok\": 1.0}", "message": "Server heartbeat succeeded"}
+2025-11-15 17:02:11,008 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918afa6947c8c0583acb3d3"}, "driverConnectionId": 1, "serverConnectionId": 128, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "message": "Server heartbeat started"}
+2025-11-15 17:02:17,677 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918af53947c8c0583acb3d2"}, "driverConnectionId": 1, "serverConnectionId": 121, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "durationMS": 10006.461666023824, "reply": "{\"isWritablePrimary\": true, \"topologyVersion\": {\"processId\": {\"$oid\": \"69189e922b179d207bd8e23d\"}}, \"maxBsonObjectSize\": 16777216, \"maxMessageSizeBytes\": 48000000, \"maxWriteBatchSize\": 100000, \"localTime\": {\"$date\": \"2025-11-15T17:02:17.676Z\"}, \"logicalSessionTimeoutMinutes\": 30, \"connectionId\": 121, \"maxWireVersion\": 21, \"ok\": 1.0}", "message": "Server heartbeat succeeded"}
+2025-11-15 17:02:17,677 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918af53947c8c0583acb3d2"}, "driverConnectionId": 1, "serverConnectionId": 121, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "message": "Server heartbeat started"}
+2025-11-15 17:02:21,017 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918afa6947c8c0583acb3d3"}, "driverConnectionId": 1, "serverConnectionId": 128, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "durationMS": 10009.803362947423, "reply": "{\"isWritablePrimary\": true, \"topologyVersion\": {\"processId\": {\"$oid\": \"69189e922b179d207bd8e23d\"}}, \"maxBsonObjectSize\": 16777216, \"maxMessageSizeBytes\": 48000000, \"maxWriteBatchSize\": 100000, \"localTime\": {\"$date\": \"2025-11-15T17:02:21.017Z\"}, \"logicalSessionTimeoutMinutes\": 30, \"connectionId\": 128, \"maxWireVersion\": 21, \"ok\": 1.0}", "message": "Server heartbeat succeeded"}
+2025-11-15 17:02:21,018 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918afa6947c8c0583acb3d3"}, "driverConnectionId": 1, "serverConnectionId": 128, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "message": "Server heartbeat started"}
+2025-11-15 17:02:27,680 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918af53947c8c0583acb3d2"}, "driverConnectionId": 1, "serverConnectionId": 121, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "durationMS": 10003.344452998135, "reply": "{\"isWritablePrimary\": true, \"topologyVersion\": {\"processId\": {\"$oid\": \"69189e922b179d207bd8e23d\"}}, \"maxBsonObjectSize\": 16777216, \"maxMessageSizeBytes\": 48000000, \"maxWriteBatchSize\": 100000, \"localTime\": {\"$date\": \"2025-11-15T17:02:27.680Z\"}, \"logicalSessionTimeoutMinutes\": 30, \"connectionId\": 121, \"maxWireVersion\": 21, \"ok\": 1.0}", "message": "Server heartbeat succeeded"}
+2025-11-15 17:02:27,681 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918af53947c8c0583acb3d2"}, "driverConnectionId": 1, "serverConnectionId": 121, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "message": "Server heartbeat started"}
+2025-11-15 17:02:31,020 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918afa6947c8c0583acb3d3"}, "driverConnectionId": 1, "serverConnectionId": 128, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "durationMS": 10001.990474003833, "reply": "{\"isWritablePrimary\": true, \"topologyVersion\": {\"processId\": {\"$oid\": \"69189e922b179d207bd8e23d\"}}, \"maxBsonObjectSize\": 16777216, \"maxMessageSizeBytes\": 48000000, \"maxWriteBatchSize\": 100000, \"localTime\": {\"$date\": \"2025-11-15T17:02:31.020Z\"}, \"logicalSessionTimeoutMinutes\": 30, \"connectionId\": 128, \"maxWireVersion\": 21, \"ok\": 1.0}", "message": "Server heartbeat succeeded"}
+2025-11-15 17:02:31,020 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918afa6947c8c0583acb3d3"}, "driverConnectionId": 1, "serverConnectionId": 128, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "message": "Server heartbeat started"}
+2025-11-15 17:02:37,684 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918af53947c8c0583acb3d2"}, "driverConnectionId": 1, "serverConnectionId": 121, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "durationMS": 10002.859236032236, "reply": "{\"isWritablePrimary\": true, \"topologyVersion\": {\"processId\": {\"$oid\": \"69189e922b179d207bd8e23d\"}}, \"maxBsonObjectSize\": 16777216, \"maxMessageSizeBytes\": 48000000, \"maxWriteBatchSize\": 100000, \"localTime\": {\"$date\": \"2025-11-15T17:02:37.683Z\"}, \"logicalSessionTimeoutMinutes\": 30, \"connectionId\": 121, \"maxWireVersion\": 21, \"ok\": 1.0}", "message": "Server heartbeat succeeded"}
+2025-11-15 17:02:37,684 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918af53947c8c0583acb3d2"}, "driverConnectionId": 1, "serverConnectionId": 121, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "message": "Server heartbeat started"}
+2025-11-15 17:02:41,021 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918afa6947c8c0583acb3d3"}, "driverConnectionId": 1, "serverConnectionId": 128, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "durationMS": 10000.468701997306, "reply": "{\"isWritablePrimary\": true, \"topologyVersion\": {\"processId\": {\"$oid\": \"69189e922b179d207bd8e23d\"}}, \"maxBsonObjectSize\": 16777216, \"maxMessageSizeBytes\": 48000000, \"maxWriteBatchSize\": 100000, \"localTime\": {\"$date\": \"2025-11-15T17:02:41.020Z\"}, \"logicalSessionTimeoutMinutes\": 30, \"connectionId\": 128, \"maxWireVersion\": 21, \"ok\": 1.0}", "message": "Server heartbeat succeeded"}
+2025-11-15 17:02:41,021 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918afa6947c8c0583acb3d3"}, "driverConnectionId": 1, "serverConnectionId": 128, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "message": "Server heartbeat started"}
+2025-11-15 17:02:47,694 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918af53947c8c0583acb3d2"}, "driverConnectionId": 1, "serverConnectionId": 121, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "durationMS": 10009.494800993707, "reply": "{\"isWritablePrimary\": true, \"topologyVersion\": {\"processId\": {\"$oid\": \"69189e922b179d207bd8e23d\"}}, \"maxBsonObjectSize\": 16777216, \"maxMessageSizeBytes\": 48000000, \"maxWriteBatchSize\": 100000, \"localTime\": {\"$date\": \"2025-11-15T17:02:47.693Z\"}, \"logicalSessionTimeoutMinutes\": 30, \"connectionId\": 121, \"maxWireVersion\": 21, \"ok\": 1.0}", "message": "Server heartbeat succeeded"}
+2025-11-15 17:02:47,694 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918af53947c8c0583acb3d2"}, "driverConnectionId": 1, "serverConnectionId": 121, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "message": "Server heartbeat started"}
+2025-11-15 17:02:51,030 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918afa6947c8c0583acb3d3"}, "driverConnectionId": 1, "serverConnectionId": 128, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "durationMS": 10008.960244012997, "reply": "{\"isWritablePrimary\": true, \"topologyVersion\": {\"processId\": {\"$oid\": \"69189e922b179d207bd8e23d\"}}, \"maxBsonObjectSize\": 16777216, \"maxMessageSizeBytes\": 48000000, \"maxWriteBatchSize\": 100000, \"localTime\": {\"$date\": \"2025-11-15T17:02:51.030Z\"}, \"logicalSessionTimeoutMinutes\": 30, \"connectionId\": 128, \"maxWireVersion\": 21, \"ok\": 1.0}", "message": "Server heartbeat succeeded"}
+2025-11-15 17:02:51,030 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918afa6947c8c0583acb3d3"}, "driverConnectionId": 1, "serverConnectionId": 128, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "message": "Server heartbeat started"}
+2025-11-15 17:02:57,701 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918af53947c8c0583acb3d2"}, "driverConnectionId": 1, "serverConnectionId": 121, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "durationMS": 10007.207488990389, "reply": "{\"isWritablePrimary\": true, \"topologyVersion\": {\"processId\": {\"$oid\": \"69189e922b179d207bd8e23d\"}}, \"maxBsonObjectSize\": 16777216, \"maxMessageSizeBytes\": 48000000, \"maxWriteBatchSize\": 100000, \"localTime\": {\"$date\": \"2025-11-15T17:02:57.701Z\"}, \"logicalSessionTimeoutMinutes\": 30, \"connectionId\": 121, \"maxWireVersion\": 21, \"ok\": 1.0}", "message": "Server heartbeat succeeded"}
+2025-11-15 17:02:57,702 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918af53947c8c0583acb3d2"}, "driverConnectionId": 1, "serverConnectionId": 121, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "message": "Server heartbeat started"}
+2025-11-15 17:03:01,037 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918afa6947c8c0583acb3d3"}, "driverConnectionId": 1, "serverConnectionId": 128, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "durationMS": 10006.851762009319, "reply": "{\"isWritablePrimary\": true, \"topologyVersion\": {\"processId\": {\"$oid\": \"69189e922b179d207bd8e23d\"}}, \"maxBsonObjectSize\": 16777216, \"maxMessageSizeBytes\": 48000000, \"maxWriteBatchSize\": 100000, \"localTime\": {\"$date\": \"2025-11-15T17:03:01.037Z\"}, \"logicalSessionTimeoutMinutes\": 30, \"connectionId\": 128, \"maxWireVersion\": 21, \"ok\": 1.0}", "message": "Server heartbeat succeeded"}
+2025-11-15 17:03:01,038 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918afa6947c8c0583acb3d3"}, "driverConnectionId": 1, "serverConnectionId": 128, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "message": "Server heartbeat started"}
+2025-11-15 17:03:07,711 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918af53947c8c0583acb3d2"}, "driverConnectionId": 1, "serverConnectionId": 121, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "durationMS": 10009.869717992842, "reply": "{\"isWritablePrimary\": true, \"topologyVersion\": {\"processId\": {\"$oid\": \"69189e922b179d207bd8e23d\"}}, \"maxBsonObjectSize\": 16777216, \"maxMessageSizeBytes\": 48000000, \"maxWriteBatchSize\": 100000, \"localTime\": {\"$date\": \"2025-11-15T17:03:07.711Z\"}, \"logicalSessionTimeoutMinutes\": 30, \"connectionId\": 121, \"maxWireVersion\": 21, \"ok\": 1.0}", "message": "Server heartbeat succeeded"}
+2025-11-15 17:03:07,712 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918af53947c8c0583acb3d2"}, "driverConnectionId": 1, "serverConnectionId": 121, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "message": "Server heartbeat started"}
+2025-11-15 17:03:11,048 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918afa6947c8c0583acb3d3"}, "driverConnectionId": 1, "serverConnectionId": 128, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "durationMS": 10009.771557990462, "reply": "{\"isWritablePrimary\": true, \"topologyVersion\": {\"processId\": {\"$oid\": \"69189e922b179d207bd8e23d\"}}, \"maxBsonObjectSize\": 16777216, \"maxMessageSizeBytes\": 48000000, \"maxWriteBatchSize\": 100000, \"localTime\": {\"$date\": \"2025-11-15T17:03:11.047Z\"}, \"logicalSessionTimeoutMinutes\": 30, \"connectionId\": 128, \"maxWireVersion\": 21, \"ok\": 1.0}", "message": "Server heartbeat succeeded"}
+2025-11-15 17:03:11,048 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918afa6947c8c0583acb3d3"}, "driverConnectionId": 1, "serverConnectionId": 128, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "message": "Server heartbeat started"}
+2025-11-15 17:03:17,720 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918af53947c8c0583acb3d2"}, "driverConnectionId": 1, "serverConnectionId": 121, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "durationMS": 10008.59932100866, "reply": "{\"isWritablePrimary\": true, \"topologyVersion\": {\"processId\": {\"$oid\": \"69189e922b179d207bd8e23d\"}}, \"maxBsonObjectSize\": 16777216, \"maxMessageSizeBytes\": 48000000, \"maxWriteBatchSize\": 100000, \"localTime\": {\"$date\": \"2025-11-15T17:03:17.720Z\"}, \"logicalSessionTimeoutMinutes\": 30, \"connectionId\": 121, \"maxWireVersion\": 21, \"ok\": 1.0}", "message": "Server heartbeat succeeded"}
+2025-11-15 17:03:17,721 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918af53947c8c0583acb3d2"}, "driverConnectionId": 1, "serverConnectionId": 121, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "message": "Server heartbeat started"}
+2025-11-15 17:03:21,055 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918afa6947c8c0583acb3d3"}, "driverConnectionId": 1, "serverConnectionId": 128, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "durationMS": 10006.844132964034, "reply": "{\"isWritablePrimary\": true, \"topologyVersion\": {\"processId\": {\"$oid\": \"69189e922b179d207bd8e23d\"}}, \"maxBsonObjectSize\": 16777216, \"maxMessageSizeBytes\": 48000000, \"maxWriteBatchSize\": 100000, \"localTime\": {\"$date\": \"2025-11-15T17:03:21.055Z\"}, \"logicalSessionTimeoutMinutes\": 30, \"connectionId\": 128, \"maxWireVersion\": 21, \"ok\": 1.0}", "message": "Server heartbeat succeeded"}
+2025-11-15 17:03:21,055 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918afa6947c8c0583acb3d3"}, "driverConnectionId": 1, "serverConnectionId": 128, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "message": "Server heartbeat started"}
+2025-11-15 17:03:27,730 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918af53947c8c0583acb3d2"}, "driverConnectionId": 1, "serverConnectionId": 121, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "durationMS": 10008.887371979654, "reply": "{\"isWritablePrimary\": true, \"topologyVersion\": {\"processId\": {\"$oid\": \"69189e922b179d207bd8e23d\"}}, \"maxBsonObjectSize\": 16777216, \"maxMessageSizeBytes\": 48000000, \"maxWriteBatchSize\": 100000, \"localTime\": {\"$date\": \"2025-11-15T17:03:27.729Z\"}, \"logicalSessionTimeoutMinutes\": 30, \"connectionId\": 121, \"maxWireVersion\": 21, \"ok\": 1.0}", "message": "Server heartbeat succeeded"}
+2025-11-15 17:03:27,730 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918af53947c8c0583acb3d2"}, "driverConnectionId": 1, "serverConnectionId": 121, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "message": "Server heartbeat started"}
+2025-11-15 17:03:31,064 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918afa6947c8c0583acb3d3"}, "driverConnectionId": 1, "serverConnectionId": 128, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "durationMS": 10008.867768046912, "reply": "{\"isWritablePrimary\": true, \"topologyVersion\": {\"processId\": {\"$oid\": \"69189e922b179d207bd8e23d\"}}, \"maxBsonObjectSize\": 16777216, \"maxMessageSizeBytes\": 48000000, \"maxWriteBatchSize\": 100000, \"localTime\": {\"$date\": \"2025-11-15T17:03:31.064Z\"}, \"logicalSessionTimeoutMinutes\": 30, \"connectionId\": 128, \"maxWireVersion\": 21, \"ok\": 1.0}", "message": "Server heartbeat succeeded"}
+2025-11-15 17:03:31,064 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918afa6947c8c0583acb3d3"}, "driverConnectionId": 1, "serverConnectionId": 128, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "message": "Server heartbeat started"}
+2025-11-15 17:03:37,737 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918af53947c8c0583acb3d2"}, "driverConnectionId": 1, "serverConnectionId": 121, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "durationMS": 10006.861495028716, "reply": "{\"isWritablePrimary\": true, \"topologyVersion\": {\"processId\": {\"$oid\": \"69189e922b179d207bd8e23d\"}}, \"maxBsonObjectSize\": 16777216, \"maxMessageSizeBytes\": 48000000, \"maxWriteBatchSize\": 100000, \"localTime\": {\"$date\": \"2025-11-15T17:03:37.737Z\"}, \"logicalSessionTimeoutMinutes\": 30, \"connectionId\": 121, \"maxWireVersion\": 21, \"ok\": 1.0}", "message": "Server heartbeat succeeded"}
+2025-11-15 17:03:37,737 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918af53947c8c0583acb3d2"}, "driverConnectionId": 1, "serverConnectionId": 121, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "message": "Server heartbeat started"}
+2025-11-15 17:03:41,073 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918afa6947c8c0583acb3d3"}, "driverConnectionId": 1, "serverConnectionId": 128, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "durationMS": 10008.805949997623, "reply": "{\"isWritablePrimary\": true, \"topologyVersion\": {\"processId\": {\"$oid\": \"69189e922b179d207bd8e23d\"}}, \"maxBsonObjectSize\": 16777216, \"maxMessageSizeBytes\": 48000000, \"maxWriteBatchSize\": 100000, \"localTime\": {\"$date\": \"2025-11-15T17:03:41.073Z\"}, \"logicalSessionTimeoutMinutes\": 30, \"connectionId\": 128, \"maxWireVersion\": 21, \"ok\": 1.0}", "message": "Server heartbeat succeeded"}
+2025-11-15 17:03:41,074 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918afa6947c8c0583acb3d3"}, "driverConnectionId": 1, "serverConnectionId": 128, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "message": "Server heartbeat started"}
+2025-11-15 17:03:47,746 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918af53947c8c0583acb3d2"}, "driverConnectionId": 1, "serverConnectionId": 121, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "durationMS": 10008.172507048585, "reply": "{\"isWritablePrimary\": true, \"topologyVersion\": {\"processId\": {\"$oid\": \"69189e922b179d207bd8e23d\"}}, \"maxBsonObjectSize\": 16777216, \"maxMessageSizeBytes\": 48000000, \"maxWriteBatchSize\": 100000, \"localTime\": {\"$date\": \"2025-11-15T17:03:47.745Z\"}, \"logicalSessionTimeoutMinutes\": 30, \"connectionId\": 121, \"maxWireVersion\": 21, \"ok\": 1.0}", "message": "Server heartbeat succeeded"}
+2025-11-15 17:03:47,746 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918af53947c8c0583acb3d2"}, "driverConnectionId": 1, "serverConnectionId": 121, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "message": "Server heartbeat started"}
+2025-11-15 17:03:51,083 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918afa6947c8c0583acb3d3"}, "driverConnectionId": 1, "serverConnectionId": 128, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "durationMS": 10009.123441996053, "reply": "{\"isWritablePrimary\": true, \"topologyVersion\": {\"processId\": {\"$oid\": \"69189e922b179d207bd8e23d\"}}, \"maxBsonObjectSize\": 16777216, \"maxMessageSizeBytes\": 48000000, \"maxWriteBatchSize\": 100000, \"localTime\": {\"$date\": \"2025-11-15T17:03:51.083Z\"}, \"logicalSessionTimeoutMinutes\": 30, \"connectionId\": 128, \"maxWireVersion\": 21, \"ok\": 1.0}", "message": "Server heartbeat succeeded"}
+2025-11-15 17:03:51,083 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918afa6947c8c0583acb3d3"}, "driverConnectionId": 1, "serverConnectionId": 128, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "message": "Server heartbeat started"}
+2025-11-15 17:03:57,756 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918af53947c8c0583acb3d2"}, "driverConnectionId": 1, "serverConnectionId": 121, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "durationMS": 10009.502265020274, "reply": "{\"isWritablePrimary\": true, \"topologyVersion\": {\"processId\": {\"$oid\": \"69189e922b179d207bd8e23d\"}}, \"maxBsonObjectSize\": 16777216, \"maxMessageSizeBytes\": 48000000, \"maxWriteBatchSize\": 100000, \"localTime\": {\"$date\": \"2025-11-15T17:03:57.755Z\"}, \"logicalSessionTimeoutMinutes\": 30, \"connectionId\": 121, \"maxWireVersion\": 21, \"ok\": 1.0}", "message": "Server heartbeat succeeded"}
+2025-11-15 17:03:57,756 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918af53947c8c0583acb3d2"}, "driverConnectionId": 1, "serverConnectionId": 121, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "message": "Server heartbeat started"}
+2025-11-15 17:04:01,093 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918afa6947c8c0583acb3d3"}, "driverConnectionId": 1, "serverConnectionId": 128, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "durationMS": 10009.882283979096, "reply": "{\"isWritablePrimary\": true, \"topologyVersion\": {\"processId\": {\"$oid\": \"69189e922b179d207bd8e23d\"}}, \"maxBsonObjectSize\": 16777216, \"maxMessageSizeBytes\": 48000000, \"maxWriteBatchSize\": 100000, \"localTime\": {\"$date\": \"2025-11-15T17:04:01.093Z\"}, \"logicalSessionTimeoutMinutes\": 30, \"connectionId\": 128, \"maxWireVersion\": 21, \"ok\": 1.0}", "message": "Server heartbeat succeeded"}
+2025-11-15 17:04:01,093 - pymongo.topology - DEBUG - {"topologyId": {"$oid": "6918afa6947c8c0583acb3d3"}, "driverConnectionId": 1, "serverConnectionId": 128, "serverHost": "localhost", "serverPort": 27017, "awaited": true, "message": "Server heartbeat started"}
+INFO:     Will watch for changes in these directories: ['/app/auth-microservice']
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [42] using WatchFiles
+
+==> /var/log/supervisor/auth-microservice.out.log <==
+INFO:     127.0.0.1:38730 - "GET /api/auth/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45834 - "GET /api/auth/config/all HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54020 - "POST /api/auth/local/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54026 - "GET /api/auth/me HTTP/1.1" 200 OK
+INFO:     35.191.131.98:0 - "GET /api/iam/users/ba66f503-2b9c-4d5d-9c59-d72658dd1986/permissions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54044 - "GET /api/users/presence/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54038 - "GET /api/auth/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54058 - "GET /api/auth/admin/stats HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41030 - "GET /api/auth/admin/stats HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57830 - "GET /api/auth/security/groups HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57822 - "GET /api/auth/users?page=1&page_size=15 HTTP/1.1" 200 OK
+INFO:     35.191.87.28:0 - "GET /api/config/app/value?key=profiles.badge_new_user HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54860 - "GET /api/auth/users?page=2&page_size=15 HTTP/1.1" 200 OK
+INFO:     35.191.87.30:0 - "GET /api/iam/users/aadff1c9-52fd-4274-a99b-39f8b3d623bb HTTP/1.1" 200 OK
+INFO:     35.191.87.28:0 - "GET /api/iam/users/68b168f6-a245-4af4-b55a-4153198a0aee HTTP/1.1" 200 OK
+INFO:     35.191.87.28:0 - "GET /api/iam/users/config/retention HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42394 - "GET /api/auth/users?page=1&page_size=15&status=archived HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37234 - "GET /api/auth/config/references?category=contract_types&is_active=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37228 - "GET /api/missions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37250 - "GET /api/auth/config/references?category=mission_statuses&is_active=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39604 - "GET /api/auth/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39614 - "GET /api/auth/config/all HTTP/1.1" 200 OK
+INFO:     35.191.127.9:0 - "GET /api/iam/users/ba66f503-2b9c-4d5d-9c59-d72658dd1986/permissions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39652 - "GET /api/auth/config/references?category=contract_types&is_active=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39626 - "GET /api/users/presence/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39634 - "GET /api/auth/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39638 - "GET /api/missions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39658 - "GET /api/auth/config/references?category=mission_statuses&is_active=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39670 - "GET /api/auth/admin/stats HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39682 - "GET /api/auth/security/groups HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39692 - "GET /api/auth/users?page=1&page_size=15 HTTP/1.1" 200 OK
+INFO:     35.191.127.9:0 - "GET /api/config/app/value?key=profiles.badge_new_user HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39716 - "GET /api/locations?type=country HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39708 - "GET /api/locations/tree HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39740 - "GET /api/auth/config/references?category=validation_statuses&is_active=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39728 - "GET /api/auth/config/references?category=validation_types&is_active=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39746 - "GET /api/validations?validation_type=candidat&status=pending&page=1&page_size=50 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39758 - "GET /api/auth/users?page=1&page_size=200 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39756 - "GET /api/validations/stats HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51484 - "GET /api/missions/2a43cf72-fb6b-4c25-be9f-5f3439e802e6 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51486 - "GET /api/missions/2a43cf72-fb6b-4c25-be9f-5f3439e802e6/applications HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51474 - "GET /api/missions/2a43cf72-fb6b-4c25-be9f-5f3439e802e6/stats HTTP/1.1" 200 OK
+INFO:     35.191.127.8:0 - "GET /api/iam/profiles HTTP/1.1" 200 OK
+INFO:     35.191.127.8:0 - "GET /api/iam/permissions HTTP/1.1" 200 OK
+INFO:     35.191.127.9:0 - "GET /api/iam/groups HTTP/1.1" 200 OK
+INFO:     35.191.127.9:0 - "GET /api/iam/users/config/retention HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39792 - "GET /api/security/email-domains HTTP/1.1" 200 OK
+INFO:     35.191.127.10:0 - "GET /api/config/countries?active_only=false HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40726 - "GET /api/auth/config/references?category=mission_statuses HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56604 - "GET /api/feature-flags?include_inactive=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56618 - "GET /api/versions/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56620 - "GET /api/versions/list HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56622 - "GET /api/emails/settings HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46492 - "GET /api/profiles/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44572 - "GET /api/auth/mfa/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50442 - "GET /api/auth/admin/stats HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41338 - "GET /api/auth/config/references?category=contract_types&is_active=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41340 - "GET /api/missions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41356 - "GET /api/auth/config/references?category=mission_statuses&is_active=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37490 - "GET /api/users/presence/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37588 - "GET /api/auth/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37586 - "GET /api/auth/config/all HTTP/1.1" 200 OK
+INFO:     35.191.7.226:0 - "GET /api/iam/users/ba66f503-2b9c-4d5d-9c59-d72658dd1986/permissions HTTP/1.1" 200 OK
+INFO:     35.191.7.226:0 - "GET /api/config/app/value?key=dashboard.widgets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37614 - "GET /api/auth/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37630 - "GET /api/users/presence/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39076 - "GET /api/auth/config/all HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39080 - "GET /api/auth/config/all HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39094 - "POST /api/auth/local/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39098 - "PATCH /api/users/presence/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39104 - "GET /api/auth/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39112 - "GET /api/iam/users/ba66f503-2b9c-4d5d-9c59-d72658dd1986/permissions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39136 - "GET /api/auth/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39126 - "GET /api/users/presence/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39144 - "GET /api/auth/admin/stats HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39158 - "GET /api/auth/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39180 - "GET /api/auth/config/all HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39174 - "GET /api/iam/users/ba66f503-2b9c-4d5d-9c59-d72658dd1986/permissions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39204 - "GET /api/config/app/value?key=dashboard.widgets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39220 - "GET /api/auth/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39192 - "GET /api/users/presence/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39656 - "GET /api/users/presence/me HTTP/1.1" 200 OK
+INFO:     35.191.135.53:0 - "GET /api/iam/users/ba66f503-2b9c-4d5d-9c59-d72658dd1986/permissions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55930 - "GET /api/auth/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55946 - "GET /api/auth/config/all HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55948 - "GET /api/users/presence/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55960 - "GET /api/auth/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46766 - "GET /api/auth/admin/stats HTTP/1.1" 200 OK
+INFO:     35.191.130.226:0 - "GET /api/iam/profiles HTTP/1.1" 200 OK
+INFO:     35.191.130.225:0 - "GET /api/iam/groups HTTP/1.1" 200 OK
+INFO:     35.191.130.227:0 - "GET /api/iam/permissions HTTP/1.1" 500 Internal Server Error
+INFO:     127.0.0.1:55334 - "GET /api/auth/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55336 - "GET /api/auth/config/all HTTP/1.1" 200 OK
+INFO:     35.191.130.224:0 - "GET /api/iam/users/ba66f503-2b9c-4d5d-9c59-d72658dd1986/permissions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55368 - "GET /api/users/presence/me HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55390 - "GET /api/auth/me HTTP/1.1" 200 OK
+INFO:     35.191.130.224:0 - "GET /api/iam/profiles HTTP/1.1" 200 OK
+INFO:     35.191.130.226:0 - "GET /api/iam/groups HTTP/1.1" 200 OK
+INFO:     35.191.130.225:0 - "GET /api/iam/permissions HTTP/1.1" 500 Internal Server Error
+INFO:     127.0.0.1:53058 - "GET /api/users/presence/me HTTP/1.1" 200 OK) pour trouver la trace de l'erreur 500.
+        2. Examiner les changements récents dans le microservice, notamment dans  et les scripts d'initialisation. L'erreur pourrait provenir d'un nouveau rôle ou d'une nouvelle permission mal configurée.
+        3. Déboguer la route qui sert  dans le code du microservice.
+     - **Why fix this issue and what will be achieved with the fix?** L'impossibilité de charger les permissions peut casser de nombreuses fonctionnalités liées à l'IAM (Identity and Access Management).
+     - **Status:** NOT STARTED
+     - **Is recurring issue?** N
+     - **Should Test frontend/backend/both after fix?** Backend (avec ).
+     - **Blocked on other issue:** None
+
+  - **Issue 4: Le badge Nouveau ne disparaît pas**
+     - **Attempted fixes:** Aucun.
+     - **Next debug checklist:**
+        1. Il manque la logique pour marquer un profil comme vu.
+        2. Créer une nouvelle mutation dans une slice RTK Query (ex: ) pour appeler un nouvel endpoint backend (ex: ).
+        3. Cet endpoint mettra à jour le champ  dans la base de données pour l'utilisateur concerné.
+        4. Déclencher cette mutation depuis le frontend lorsque la modale de détails de l'utilisateur est ouverte (ex: dans un  sur la ).
+        5. Assurer que la liste des utilisateurs est invalidée () pour forcer un re-fetch et faire disparaître le badge.
+     - **Why fix this issue and what will be achieved with the fix?** Finaliser la fonctionnalité du badge Nouveau pour qu'elle fonctionne comme prévu.
+     - **Status:** NOT STARTED
+     - **Is recurring issue?** N
+     - **Should Test frontend/backend/both after fix?** Both.
+     - **Blocked on other issue:** None
 
 **In progress Task List**:
-N/A
+- **Task 1: Implémentation des nouvelles fonctionnalités (P1)**
+     - **Where to resume:** Le travail a été interrompu pour corriger les régressions. Une fois les bugs ci-dessus résolus, il faudra reprendre l'implémentation des fonctionnalités demandées.
+     - **What will be achieved with this?** L'ajout progressif des fonctionnalités demandées par l'utilisateur.
+     - **Status:** BLOCKED
+     - **Should Test frontend/backend/both after fix?** Both.
+     - **Blocked on something:** Bloqué par la résolution des 4 issues prioritaires.
 
 **Upcoming and Future Tasks**
--   **Upcoming Tasks:**
-    -   (P1) Vérifier que l'optimisation des barres de recherche (debounce) a bien résolu le problème de performance perçu par l'utilisateur (le logo qui se rechargeait).
-    -   (P2) Finaliser le module Missions (édition, suppression, workflow).
-    -   (P3) Finaliser le frontend de la Company Management Page.
--   **Future Tasks:**
-    -   (P4) Revoir la gestion des Rôles par rapport aux Profils pour une V2, comme convenu avec l'utilisateur.
-    -   (P5) Implémenter les traductions i18n.
-    -   (P6) Mettre en place des tests automatisés pour le frontend.
+- **Upcoming Tasks:**
+    - (P0) Finaliser la Phase 1 : Rendre les entreprises dépliables avec édition inline.
+    - (P1) Finaliser la Phase 2 :
+        - Remplacer les dashboards existants par le nouveau Dashboard Unifié.
+        - Connecter les widgets du dashboard à de vraies données API (profil, documents, notifications).
+    - (P2) Commencer la Phase 3 :
+        - Implémenter la logique de contrainte pour le profil Postulant (validation d'email, etc.).
+        - Créer la page de profil dédiée au postulant (affichage du statut, complétion, etc.).
+
+- **Future Tasks:**
+    - Intégration IA pour le matching de missions (OpenAI, Claude, etc.).
+    - Génération de CV automatique (PDF/PNG/JPG).
+    - Gestion améliorée des documents (catégorisation, rappels d'expiration).
+    - Système de chat/messagerie.
+    - Page d'aide/FAQ/Tutoriels.
+    - Notifications temps réel (Websockets/Polling).
+    - Fonctionnalités spécifiques aux Intérimaires (historique missions, pointages, signature électronique, gamification).
+    - Gestion des provinces, districts et quartiers (demande V2).
 
 **Completed work in this session**
--   **Normalisation des API :** Audit et refactoring complet de tous les endpoints frontend pour utiliser un préfixe  unique via une configuration centrale, éliminant les duplications  et les erreurs .
--   **Corrections Backend :**
-    -   Ajout de proxys manquants pour rendre tous les services du microservice d'authentification accessibles via .
-    -   Correction de la logique d'assignation des profils pour ajouter () au lieu de remplacer ().
-    -   Correction de nombreuses erreurs  en remplaçant l'accès par dictionnaire () par l'accès par attribut () sur les modèles Pydantic.
--   **Corrections Frontend :**
-    -   Correction des endpoints 404 pour la suppression/mise à jour des groupes et profils en utilisant le bon chemin ().
-    -   Correction du rafraîchissement de la liste des utilisateurs après modification en ajoutant les  corrects () aux mutations RTK Query.
-    -   Correction de la perte du corps des requêtes POST qui était une régression introduite dans .
--   **Performance :** Implémentation d'un  sur les barres de recherche des pages de listes pour éviter les appels API à chaque frappe.
+- **Correction Stabilité & API (DONE)**:
+  - Résolution définitive du problème de  en forçant l'URL de base en HTTPS et en conservant un  de secours dans .
+  - Éradication des erreurs  en ajoutant des routes de base pour tous les endpoints de proxy dans l'API gateway ().
+  - Correction d'une régression critique 404 sur  en réorganisant l'ordre de montage des routeurs dans le backend .
+- **Release Management (DONE)**:
+  - Création d'un tag Git  et de la documentation associée (, , ).
+- **Début nouvelles fonctionnalités (IN PROGRESS, WITH BUGS)**:
+  - Réorganisation du menu .
+  - Création de la page  avec un état vide correct.
+  - Implémentation d'un système de configuration dynamique (backend + frontend).
+  - Création d'un badge Nouveau fonctionnel pour les nouveaux utilisateurs.
+  - Création d'un Dashboard Unifié avec des widgets réutilisables.
+  - Création du profil IAM Postulant côté backend.
 
 **Earlier issues found/mentioned but not fixed**
--   Aucun. Tous les problèmes soulevés ont été soit résolus, soit ajoutés à la liste des tâches futures (ex: Rôles vs Profils).
+-   Aucun. Tous les problèmes signalés avant la vague de régressions actuelle ont été résolus.
 
 **Known issue recurrence from previous fork**
--   **Issue recurrence:** Les erreurs  et les incohérences d'URL () sont devenues les problèmes récurrents de cette session, menant à un refactoring majeur pour les éradiquer.
--   **Recurrence count:** Multiple (plus de 5 fois pour chaque).
--   **Status:** RESOLVED (pour ), IN PROGRESS (pour ).
+-   **Issue recurrence:** Erreur de préfixe d'URL dupliqué (). C'est le même type de problème qui a nécessité le refactoring majeur de la session précédente.
+-   **Recurrence count:** 1 (dans cette session).
+-   **Status:** NOT STARTED
 
 **Code Architecture**
 
 
 **Key Technical Concepts**
--   **RTK Query:** La session a nécessité une compréhension approfondie de , , , ,  et  pour corriger les problèmes de rafraîchissement de l'interface.
--   **FastAPI Proxying:** Le backend principal () sert de proxy vers le . Le débogage a impliqué la vérification et l'ajout de routes de proxy.
--   **Pydantic Models:** Des erreurs récurrentes provenaient d'un accès incorrect aux modèles Pydantic comme s'ils étaient des dictionnaires.
--   **Debouncing:** Un hook  a été créé et implémenté pour optimiser les performances des barres de recherche.
+-   **API Gateway/Proxy:** La session a démontré l'importance critique de la configuration des routes de proxy (gestion des routes de base vs. path) et de l'ordre de montage des routeurs dans FastAPI.
+-   **RTK Query :** La solution au  a impliqué une modification avancée du , en manipulant dynamiquement le  et en utilisant le .
+-   **Dynamic Backend Configuration:** Un nouveau système a été mis en place, utilisant une collection MongoDB et un service/API dédiés pour permettre la configuration de fonctionnalités depuis le backend sans redéploiement.
+-   **Git Tagging:** L'agent a utilisé git pour marquer des versions stables, montrant une compréhension des pratiques de gestion de version.
 
 **key DB schema**
--   **users:** 
--   **profiles:** 
--   **groups:** 
+-   **app_configs:**  (NOUVEAU - pour stocker les configurations dynamiques)
 
 **changes in tech stack**
--   Aucun changement majeur de technologie, mais un renforcement significatif des standards de codage et de l'architecture API côté frontend.
+-   Aucun changement de technologie, mais l'ajout de nouveaux patterns architecturaux (service de configuration).
 
 **All files**
--   : Fichier critique, modifié à plusieurs reprises pour gérer la standardisation des URL, la conversion HTTPS, et la transmission correcte des corps de requêtes.
--   Tous les fichiers  dans : Tous ont été refactorisés pour supprimer les préfixes d'URL en dur.
--    (et autres pages de listes) : Modifiés pour ajouter un  à la recherche.
--   : Modifié pour corriger l'accès aux attributs des objets Pydantic.
--   : Modifié pour utiliser  au lieu de .
+-   : **Source du bug de menu dupliqué.**
+-   : **Source probable du bug .**
+-   : Fichier critique, stabilisé pour gérer les .
+-   : Fichier critique, l'ordre des  est essentiel.
+-   : Tous les fichiers de proxy ont été modifiés pour corriger les erreurs 307.
+-   : Modifié pour ajouter le rôle/permissions postulant, **source possible de l'erreur 500**.
+-   Nouveaux fichiers liés au dashboard, au badge, et au système de configuration.
+
+**Areas that need refactoring**:
+-   Le  nécessite une consolidation pour éliminer les duplications.
+
+**key api endpoints**
+-   : Actuellement cassé (erreur ).
+-   : Actuellement cassé (erreur 500).
+-   : Nouvel endpoint pour récupérer la configuration dynamique.
+-   : Endpoint critique qui a été réparé.
 
 **Critical Info for New Agent**
--   Une normalisation massive des URL de l'API a été effectuée. Tous les endpoints du frontend doivent maintenant utiliser des chemins relatifs (ex: ) dans leurs définitions RTK Query. Le fichier central  ajoute automatiquement le préfixe .
--   Le fichier  est très sensible. Il gère la conversion HTTP->HTTPS sur Emergent et la validation des API. Toute modification doit être testée pour éviter les régressions (perte de corps de requête, erreurs ).
--   La distinction entre  et  est importante. La colonne Role de la liste des utilisateurs affiche , tandis que les modifications dans la modale de détails affectent . L'utilisateur a accepté de reporter la clarification de cette logique à une V2.
+-   **ATTENTION AUX RÉGRESSIONS :** Le bug du préfixe  est de retour. Soyez extrêmement vigilant à **NE JAMAIS** coder en dur le préfixe  dans les définitions d'endpoints RTK Query. Utilisez toujours des chemins relatifs (ex: ).
+-   **ORDRE DES ROUTEURS BACKEND :** L'ordre dans lequel les routeurs sont inclus dans  est **critique**. Les routeurs de proxy génériques doivent être montés **avant** les routeurs spécifiques pour éviter les conflits.
+-   **PRIORITÉ AUX BUGS :** Vous devez d'abord corriger les 4 bugs critiques signalés par l'utilisateur avant de poursuivre toute nouvelle implémentation.
+
+**documents created in this job**
+-   
+-   
+-   
+-   
+-    (mis à jour à v1.0.1)
+-    (obsolète)
+-   
+-   
+-   
 
 **Last 5 User Messages and any pending user messages**
-1.  **Utilisateur :** Confirme que la liste des utilisateurs ne se met toujours pas à jour après un changement de permission.
-2.  **Agent :** Réalise que la colonne Role affiche les  et non les , ce qui explique pourquoi elle ne se met pas à jour. Demande une clarification sur le comportement attendu.
-3.  **Utilisateur :** Accepte de reporter la discussion sur les Rôles vs Profils à une V2 et de continuer avec la logique actuelle.
-4.  **Utilisateur :** Signale que la suppression et la mise à jour des groupes ne fonctionnent pas (erreur 404).
-5.  **Utilisateur :** Signale que le problème de  est revenu sur la page feature-flags, indiquant une régression.
+1.  **Utilisateur (msg #499):** ok continue alors - Donne son accord pour continuer après l'implémentation du dashboard unifié. (Tâche en cours)
+2.  **Utilisateur (msg #515):** Aucune réponse textuelle, mais le contexte implique la poursuite du travail sur le profil postulant. (Tâche en cours)
+3.  **Utilisateur (msg #535):** Aucune réponse textuelle, mais le contexte implique la poursuite du travail sur le dashboard. (Tâche en cours)
+4.  **Utilisateur (msg #538):** **MESSAGE CRITIQUE.** Signale 4 régressions majeures : menu dupliqué, erreur , badge non persistant, et erreur 500 sur les permissions. (Tâche en attente - **HAUTE PRIORITÉ**)
+5.  **Utilisateur (msg #539):** L'agent a commencé à répondre à ce message, reconnaissant les problèmes.
 
 **Project Health Check:**
--   **Broken:** La page Feature Flags et potentiellement d'autres sur l'environnement de prévisualisation (Emergent) sont cassées à cause d'une erreur .
+-   **Broken:** Plusieurs régressions critiques empêchent des fonctionnalités clés de fonctionner.
+    -   La navigation est confuse (menu dupliqué).
+    -   La gestion des entreprises est cassée.
+    -   La gestion des permissions est cassée.
 
 **Testing status**
--   Testing agent used after significant changes: NO
+-   Testing agent used after significant changes: YES
 -   Troubleshoot agent used after agent stuck in loop: YES
--   Test files created:
-    -   
+-   Test files created: []
 -   Known regressions:
-    -   Erreur  sur plusieurs pages de l'environnement de prévisualisation.
+    -   Duplication du préfixe d'URL ()
+    -   Erreur 500 sur l'API des permissions
 
 **Credentials to test flow:**
 -   **Local & Emergent Super Admin:**
@@ -123,4 +420,4 @@ N/A
     -   Password: 
 
 **What agent forgot to execute**
--   L'agent a correctement identifié que la réintroduction du  pour corriger les  était nécessaire mais n'a pas appliqué la correction finale (message #779) avant la fin de la session.</analysis>
+-   L'agent n'a pas oublié de tâche, mais a introduit des régressions en implémentant de nouvelles fonctionnalités. Plus précisément, il a oublié la règle fondamentale de ne pas coder en dur le préfixe  dans le code frontend, ce qui a causé la réapparition d'un bug déjà résolu. Il n'a pas non plus testé de manière exhaustive l'impact de ses modifications sur le menu et les API existantes.</analysis>

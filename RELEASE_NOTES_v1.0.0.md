@@ -343,8 +343,8 @@ Cette release marque la **première version stable et production-ready** de la p
 - Hot Reload : Activé
 
 ### Emergent Preview (Staging)
-- URL : `https://docker-iam-fixer.preview.emergentagent.com`
-- API : `https://api-harmony-4.preview.emergentagent.com/api`
+- URL : `https://bugs-to-bugs.preview.emergentagent.com`
+- API : `https://bugs-to-bugs.preview.emergentagent.com/api`
 - HTTPS : Forcé
 - Mixed Content : Résolu ✅
 

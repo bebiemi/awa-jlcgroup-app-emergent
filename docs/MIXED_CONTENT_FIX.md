@@ -4,7 +4,7 @@
 
 En production HTTPS, les pages chargeaient avec des erreurs:
 ```
-Mixed Content: The page at 'https://api-harmony-4.preview.emergentagent.com/admin/countries' 
+Mixed Content: The page at 'https://bugs-to-bugs.preview.emergentagent.com/admin/countries' 
 was loaded over HTTPS, but requested an insecure resource 
 'http://xxx.preview.emergentagent.com/api/config/countries/?active_only=false'. 
 This request has been blocked; the content must be served over HTTPS.
@@ -13,7 +13,7 @@ This request has been blocked; the content must be served over HTTPS.
 Et aussi des erreurs CORS:
 ```
 Access to fetch at 'http://localhost:8000/api/security/email-domains' 
-from origin 'https://api-harmony-4.preview.emergentagent.com' has been blocked by CORS policy
+from origin 'https://bugs-to-bugs.preview.emergentagent.com' has been blocked by CORS policy
 ```
 
 ## Cause Racine
