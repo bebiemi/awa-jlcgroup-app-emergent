@@ -431,7 +431,10 @@ export default function UserManagementPage() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <button
-                          onClick={() => handleToggleEmailVerification(user)}
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            handleToggleEmailVerification(user)
+                          }}
                           className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium transition-colors ${
                             user.is_verified
                               ? 'bg-green-100 text-green-800 hover:bg-green-200'
