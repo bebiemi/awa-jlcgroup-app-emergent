@@ -38,7 +38,8 @@ os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 def calculate_profile_completion(profile_data: dict, profile_type: str) -> int:
     """Calculate profile completion percentage based on filled fields"""
-    if profile_type == "interim":
+    # Use same logic for interim, candidat, and postulant profiles
+    if profile_type in ["interim", "candidat", "postulant"]:
         total_fields = 20  # Augmenté pour inclure les champs de base
         filled = 0
         
