@@ -157,6 +157,7 @@ app.include_router(form_config_router, prefix="/api/config", tags=["Dynamic Conf
 app.include_router(notification_router, prefix="/api/notifications", tags=["Notifications"])
 app.include_router(app_config_router, prefix="/api", tags=["App Configuration"])
 app.include_router(email_verification_router, tags=["Email Verification"])
+app.include_router(admin_email_verification_router, tags=["Admin Email Verification"])
 
 @app.get("/health")
 async def health_check():
