@@ -26,6 +26,7 @@ import {
   UserPlusIcon,
   ShieldExclamationIcon,
   EyeIcon,
+  CloudArrowUpIcon,
 } from '@heroicons/react/24/outline'
 import { Link } from 'react-router-dom'
 import EditUserModal from '../components/EditUserModal'
@@ -34,6 +35,7 @@ import BlockUserModal from '../components/BlockUserModal'
 import QuickAddUserModal from '../components/QuickAddUserModal'
 import ResetMfaModal from '../components/ResetMfaModal'
 import UserDetailModal from '../components/UserDetailModal'
+import BulkImportUsersModal from '../components/BulkImportUsersModal'
 import ArchiveUserModal from '../components/ArchiveUserModal'
 import RestoreUserModal from '../components/RestoreUserModal'
 import { UserRoles, RoleLabels, RoleColors } from '@/constants/iamConstants'
