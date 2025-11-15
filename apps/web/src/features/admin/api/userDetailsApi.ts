@@ -245,7 +245,6 @@ export const userDetailsApi = createApi({
         { type: 'UserDetail', id: user_id },
         'Users',
       ],
-      invalidatesTags: (result, error, userId) => [{ type: 'UserDetail', id: userId }],
     }),
 
     // Send Notification
