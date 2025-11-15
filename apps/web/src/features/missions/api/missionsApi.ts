@@ -65,7 +65,7 @@ export const missionsApi = createApi({
         if (params.skip !== undefined) queryString.append('skip', String(params.skip))
         if (params.limit !== undefined) queryString.append('limit', String(params.limit))
         
-        const url = `/api/missions${queryString.toString() ? `?${queryString.toString()}` : ''}`
+        const url = `/missions${queryString.toString() ? `?${queryString.toString()}` : ''}`
         return {
           url,
           method: 'GET',
