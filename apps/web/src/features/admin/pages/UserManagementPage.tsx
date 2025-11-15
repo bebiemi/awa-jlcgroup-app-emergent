@@ -52,6 +52,10 @@ export default function UserManagementPage() {
   const [showFilters, setShowFilters] = useState(false)
   const [viewMode, setViewMode] = useState<'active' | 'archived'>('active')
 
+  // Bulk selection states
+  const [selectedUserIds, setSelectedUserIds] = useState<string[]>([])
+  const [selectAll, setSelectAll] = useState(false)
+
   // Modal states
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
   const [selectedUserId, setSelectedUserId] = useState<string>('')
