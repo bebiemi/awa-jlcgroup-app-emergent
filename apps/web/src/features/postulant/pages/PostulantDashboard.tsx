@@ -3,11 +3,12 @@
  * Dashboard for users in application/candidature phase
  * Shows profile completion steps, required documents, and next actions
  */
-import React from 'react'
+import React, { useState } from 'react'
 import Layout from '@/components/Layout'
 import Card from '@/components/Card'
 import { useGetMyProfileQuery } from '@/features/profile/api/profileApi'
 import { Link } from 'react-router-dom'
+import { toast } from 'react-hot-toast'
 import {
   CheckCircleIcon,
   ClockIcon,
@@ -20,6 +21,32 @@ import {
 
 export default function PostulantDashboard() {
   const { data: profileData, isLoading } = useGetMyProfileQuery()
+  const [isSendingEmail, setIsSendingEmail] = useState(false)
+
+  const handleSendVerificationEmail = async () => {
+    setIsSendingEmail(true)
+    try {
+      const token = localStorage.getItem('access_token')
+      const response = await fetch('/api/email-verification/send', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        toast.success('Email de vérification envoyé ! Vérifiez votre boîte de réception.')
+      } else {
+        toast.error(data.detail || 'Erreur lors de l\'envoi')
+      }
+    } catch (error) {
+      toast.error('Erreur de connexion')
+    } finally {
+      setIsSendingEmail(false)
+    }
+  }
 
   if (isLoading) {
     return (
