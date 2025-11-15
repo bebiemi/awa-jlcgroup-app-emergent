@@ -81,9 +81,16 @@ export default function UserManagementPage() {
     setPage(1) // Reset to first page on search
   }
 
-  const handleViewDetails = (user: User) => {
+  const handleViewDetails = async (user: User) => {
     setSelectedUserId(user.id)
     setShowDetailModal(true)
+    
+    // Mark user as viewed to remove "New" badge
+    try {
+      await markUserAsViewed(user.id).unwrap()
+    } catch (error) {
+      console.error('Failed to mark user as viewed:', error)
+    }
   }
 
   const handleEdit = (user: User) => {
