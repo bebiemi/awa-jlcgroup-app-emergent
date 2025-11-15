@@ -9,6 +9,7 @@ Centralized constants for roles, groups, and permissions
 class IAMGroups:
     """IAM Group codes"""
     CANDIDAT = "grp.candidat"
+    POSTULANT = "grp.postulant"  # Phase 3
     INTERIMAIRE = "grp.interimaire"
     COMPANY = "grp.company"
     COLLABORATEUR = "grp.collaborateur"
