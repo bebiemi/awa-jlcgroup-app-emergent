@@ -13,7 +13,7 @@ import RecentNotificationsWidget from '../components/RecentNotificationsWidget'
 import { SparklesIcon } from '@heroicons/react/24/solid'
 
 export default function UnifiedDashboard() {
-  const { user } = useAuth()
+  const user = useSelector((state: RootState) => state.auth.user)
   const { data: widgetsConfig, isLoading } = useDashboardWidgets()
 
   if (isLoading) {
