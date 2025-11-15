@@ -143,6 +143,7 @@ class ValidationTypes:
 class UserRoles:
     """Legacy user roles - being replaced by IAM"""
     CANDIDAT = "candidat"
+    POSTULANT = "postulant"  # Phase 3
     INTERIM = "interim"
     COMPANY = "company"
     COLLABORATEUR = "collaborateur"
