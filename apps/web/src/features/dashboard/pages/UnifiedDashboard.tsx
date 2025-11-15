@@ -67,8 +67,7 @@ export default function UnifiedDashboard() {
         // TODO: Create ActiveApplicationsWidget
         return null
       case 'recommended_missions':
-        // TODO: Create RecommendedMissionsWidget
-        return null
+        return <RecommendedMissionsWidget />
       default:
         return null
     }
