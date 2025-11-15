@@ -316,7 +316,7 @@ async def export_users_csv(
 
 @bulk_router.post("/bulk-import")
 async def bulk_import_users(
-    file: bytes = Depends(lambda request: request.body()),
+    file: UploadFile = File(...),
     current_user: User = Depends(require_permission("users.create")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
