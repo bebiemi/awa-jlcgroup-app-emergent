@@ -87,7 +87,7 @@ export const entrepriseApi = createApi({
           limit: limit.toString(),
         })
         if (status) params.append('status', status)
-        return `/api/entreprises?${params.toString()}`
+        return `/entreprises?${params.toString()}`
       },
       providesTags: ['EntrepriseList'],
     }),

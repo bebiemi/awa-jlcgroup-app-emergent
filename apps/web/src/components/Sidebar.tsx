@@ -136,6 +136,7 @@ export default function Sidebar() {
           { label: 'Utilisateurs', path: '/admin/users', icon: UserGroupIcon },
           { label: 'Localisations', path: '/admin/locations', icon: MapPinIcon },
           { label: 'Validations', path: '/admin/validations', icon: ClipboardDocumentCheckIcon },
+          { label: 'Entreprises', path: '/admin/entreprises', icon: BuildingOfficeIcon },
         ],
       },
       {
@@ -172,15 +173,6 @@ export default function Sidebar() {
         ],
       },
       {
-        title: 'Gestion',
-        items: [
-          { label: 'Utilisateurs', path: '/admin/users', icon: UserGroupIcon },
-          { label: 'Localisations', path: '/admin/locations', icon: MapPinIcon },
-          { label: 'Validations', path: '/admin/validations', icon: ClipboardDocumentCheckIcon },
-          { label: 'Entreprises', path: '/admin/entreprises', icon: BuildingOfficeIcon },
-        ],
-      },
-      {
         title: 'Compte',
         items: [
           { label: 'Mon Profil', path: '/profile', icon: UserCircleIcon },
@@ -202,21 +194,14 @@ export default function Sidebar() {
         items: [
           { label: 'Utilisateurs', path: '/admin/users', icon: UserGroupIcon },
           { label: 'Localisations', path: '/admin/locations', icon: MapPinIcon },
+          { label: 'Validations', path: '/admin/validations', icon: ClipboardDocumentCheckIcon },
+          { label: 'Entreprises', path: '/admin/entreprises', icon: BuildingOfficeIcon },
         ],
       },
       {
         title: 'Processus',
         items: [
           { label: 'Missions', path: '/missions', icon: BriefcaseIcon },
-        ],
-      },
-      {
-        title: 'Gestion',
-        items: [
-          { label: 'Utilisateurs', path: '/admin/users', icon: UserGroupIcon },
-          { label: 'Localisations', path: '/admin/locations', icon: MapPinIcon },
-          { label: 'Validations', path: '/admin/validations', icon: ClipboardDocumentCheckIcon },
-          { label: 'Entreprises', path: '/admin/entreprises', icon: BuildingOfficeIcon },
         ],
       },
       {
@@ -243,15 +228,6 @@ export default function Sidebar() {
         ],
       },
       {
-        title: 'Gestion',
-        items: [
-          { label: 'Utilisateurs', path: '/admin/users', icon: UserGroupIcon },
-          { label: 'Localisations', path: '/admin/locations', icon: MapPinIcon },
-          { label: 'Validations', path: '/admin/validations', icon: ClipboardDocumentCheckIcon },
-          { label: 'Entreprises', path: '/admin/entreprises', icon: BuildingOfficeIcon },
-        ],
-      },
-      {
         title: 'Compte',
         items: [
           { label: 'Mon Profil', path: '/profile', icon: UserCircleIcon },
@@ -273,15 +249,6 @@ export default function Sidebar() {
         items: [
           { label: 'Mes Besoins', path: '/entreprise/besoins', icon: DocumentTextIcon },
           { label: 'Mes Missions', path: '/missions', icon: BriefcaseIcon },
-        ],
-      },
-      {
-        title: 'Gestion',
-        items: [
-          { label: 'Utilisateurs', path: '/admin/users', icon: UserGroupIcon },
-          { label: 'Localisations', path: '/admin/locations', icon: MapPinIcon },
-          { label: 'Validations', path: '/admin/validations', icon: ClipboardDocumentCheckIcon },
-          { label: 'Entreprises', path: '/admin/entreprises', icon: BuildingOfficeIcon },
         ],
       },
       {
