@@ -428,14 +428,16 @@ async def bulk_import_users(
                 roles = ['interim']
             
             # Create user
-            from awana_auth.core.security import get_password_hash
+            import bcrypt
             user_id = str(uuid4())
+            password_hash = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+            
             new_user = {
                 "id": user_id,
                 "username": username,
                 "email": email,
                 "full_name": full_name or username,
-                "password_hash": get_password_hash(password),
+                "password_hash": password_hash,
                 "provider": "local",
                 "status": "pending",  # Pending email verification
                 "roles": roles,
