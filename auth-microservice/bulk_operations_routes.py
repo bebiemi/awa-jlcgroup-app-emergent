@@ -210,10 +210,9 @@ async def bulk_archive_users(
 
 
 @bulk_router.post("/bulk-delete", response_model=BulkOperationResponse)
-@require_permission("users.delete")
 async def bulk_delete_users(
     request: BulkDeleteRequest,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_permission("users.delete")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """Delete multiple users at once (soft delete by default)"""
