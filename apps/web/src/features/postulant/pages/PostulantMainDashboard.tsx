@@ -53,18 +53,57 @@ export default function PostulantMainDashboard() {
   // Use is_verified from profile (comes from user entity)
   const isEmailVerified = profile?.is_verified || false
 
+  // Get all document types from references
+  const allDocumentTypes = documentTypesData?.data || []
+  const requiredDocTypes = allDocumentTypes.filter(dt => 
+    dt.is_system || dt.metadata?.required_for?.includes('onboarding')
+  )
+  
+  // Get user's uploaded documents
+  const userDocuments = profile?.documents || []
+  const userDocumentCodes = userDocuments.map((doc: any) => doc.type || doc.document_type)
+  
+  // Calculate missing documents
+  const missingDocuments = requiredDocTypes.filter(
+    reqDoc => !userDocumentCodes.includes(reqDoc.code)
+  )
+  
   // Calculate KPIs
-  const documentsCount = profile?.document_ids?.length || 0
-  // TODO: Get required documents count from business rules/configuration
-  const requiredDocuments = 5 // cv, id, photo, diploma, work_permit
+  const documentsCount = userDocuments.length
+  const requiredDocuments = requiredDocTypes.length
   const skillsCount = Array.isArray(profile?.skills) 
     ? profile.skills.length 
     : (typeof profile?.skills === 'string' ? profile.skills.split(',').filter(Boolean).length : 0)
   
-  // TODO: Replace with real data from missions API
-  const applicationsCount = 0
-  const interviewsCount = 0
-  const offersCount = 0
+  // Real missions data
+  const availableMissions = missionsData || []
+  const applicationsCount = 0 // TODO: Get from applications API
+  
+  // Determine user status based on profile data
+  const getUserStatus = () => {
+    // Check if user has active contracts
+    if (profile?.contracts && profile.contracts.length > 0) {
+      const hasActiveContract = profile.contracts.some((c: any) => c.status === 'active')
+      if (hasActiveContract) return 'Intérimaire'
+    }
+    
+    // Check if user has been shortlisted/selected for any mission
+    if (profile?.applications && profile.applications.length > 0) {
+      const hasShortlistedApp = profile.applications.some((a: any) => 
+        ['shortlisted', 'selected', 'hired'].includes(a.status)
+      )
+      if (hasShortlistedApp) return 'Candidat'
+    }
+    
+    // Check completion percentage
+    if (completionPercentage >= 80) {
+      return 'Candidat'
+    }
+    
+    return 'Postulant'
+  }
+  
+  const userStatus = getUserStatus()
 
   // Define KPI cards
   const kpis = [
