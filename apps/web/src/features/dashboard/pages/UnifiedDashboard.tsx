@@ -4,7 +4,8 @@
  */
 import React from 'react'
 import Layout from '@/components/Layout'
-import { useAuth } from '@/hooks/useAuth'
+import { useSelector } from 'react-redux'
+import { RootState } from '@/store/store'
 import { useDashboardWidgets } from '@/features/config/api/appConfigApi'
 import ProfileCompletionWidget from '../components/ProfileCompletionWidget'
 import MissingDocumentsWidget from '../components/MissingDocumentsWidget'
