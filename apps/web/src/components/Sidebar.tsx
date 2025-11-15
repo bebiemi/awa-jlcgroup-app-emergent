@@ -260,6 +260,29 @@ export default function Sidebar() {
         ],
       }
     )
+  } else if (user?.roles?.includes('postulant')) {
+    // Postulant role (applicant in onboarding process)
+    navigationSections.push(
+      {
+        title: 'Tableau de bord',
+        items: [
+          { label: 'Mon parcours', path: '/postulant', icon: HomeIcon },
+        ],
+      },
+      {
+        title: 'Mon profil',
+        items: [
+          { label: 'Compléter mon profil', path: '/profile', icon: UserCircleIcon },
+          { label: 'Mes documents', path: '/profile?tab=documents', icon: DocumentTextIcon },
+        ],
+      },
+      {
+        title: 'Compte',
+        items: [
+          { label: 'Sécurité', path: '/security', icon: ShieldCheckIcon },
+        ],
+      }
+    )
   }
 
   const isActive = (path: string) => {
