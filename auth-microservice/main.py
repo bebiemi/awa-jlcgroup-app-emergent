@@ -51,6 +51,7 @@ from form_config_routes import router as form_config_router
 from notification_routes import router as notification_router
 from app_config_routes import router as app_config_router
 from email_verification_routes import router as email_verification_router
+from admin_email_verification_routes import router as admin_email_verification_router
 from rate_limit import limiter
 
 client = None
