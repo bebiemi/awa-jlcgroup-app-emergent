@@ -18,13 +18,27 @@ import {
 } from '@heroicons/react/24/outline'
 
 export default function PostulantMainDashboard() {
-  const { data: profileData, isLoading } = useGetMyProfileQuery()
+  const { data: profileData, isLoading, error } = useGetMyProfileQuery()
 
   if (isLoading) {
     return (
       <Layout>
         <div className="flex items-center justify-center py-12">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-jlc-purple-600"></div>
+        </div>
+      </Layout>
+    )
+  }
+
+  if (error || !profileData) {
+    return (
+      <Layout>
+        <div className="flex items-center justify-center py-12">
+          <div className="text-center">
+            <ExclamationTriangleIcon className="h-12 w-12 text-red-500 mx-auto mb-4" />
+            <p className="text-gray-700 font-medium">Erreur lors du chargement de votre profil</p>
+            <p className="text-sm text-gray-500 mt-2">Veuillez réessayer dans quelques instants</p>
+          </div>
         </div>
       </Layout>
     )
