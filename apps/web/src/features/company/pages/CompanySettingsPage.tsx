@@ -131,6 +131,42 @@ export default function CompanySettingsPage() {
   }
 
   if (error) {
+    // Check if it's a "not found" error (user not associated with company)
+    const errorDetail = 'data' in error && error.data && typeof error.data === 'object' && 'detail' in error.data
+      ? String(error.data.detail)
+      : null
+    
+    const isNotAssociated = errorDetail?.includes('not associated') || errorDetail?.includes('non associé') || ('status' in error && error.status === 404)
+    
+    if (isNotAssociated) {
+      return (
+        <Layout>
+          <div className="space-y-6">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">
+                Paramètres de l'Entreprise
+              </h1>
+              <p className="mt-2 text-gray-600">
+                Gérez les informations de votre entreprise
+              </p>
+            </div>
+            
+            <Card className="text-center py-12">
+              <BuildingOfficeIcon className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 mb-2">
+                Aucune entreprise associée
+              </h3>
+              <p className="text-gray-600">
+                Vous n'êtes actuellement pas associé à une entreprise.
+                {' '}Veuillez contacter un administrateur pour être associé à une société.
+              </p>
+            </Card>
+          </div>
+        </Layout>
+      )
+    }
+    
+    // Other errors
     return (
       <Layout>
         <Card className="bg-red-50 border-red-200">
@@ -139,9 +175,7 @@ export default function CompanySettingsPage() {
             <div>
               <h3 className="font-semibold">Erreur de chargement</h3>
               <p className="text-sm">
-                {'data' in error && error.data && typeof error.data === 'object' && 'detail' in error.data
-                  ? String(error.data.detail)
-                  : 'Impossible de charger les informations de votre entreprise.'}
+                {errorDetail || 'Impossible de charger les informations de votre entreprise.'}
               </p>
             </div>
           </div>
