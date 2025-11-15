@@ -163,6 +163,34 @@ export default function UserManagementPage() {
     refetch()
   }
 
+  // Bulk selection handlers
+  const handleSelectAll = () => {
+    if (selectAll) {
+      setSelectedUserIds([])
+      setSelectAll(false)
+    } else {
+      const allIds = data?.users.map(user => user.id) || []
+      setSelectedUserIds(allIds)
+      setSelectAll(true)
+    }
+  }
+
+  const handleSelectUser = (userId: string) => {
+    setSelectedUserIds(prev => {
+      if (prev.includes(userId)) {
+        return prev.filter(id => id !== userId)
+      } else {
+        return [...prev, userId]
+      }
+    })
+  }
+
+  // Reset selection when data changes
+  useEffect(() => {
+    setSelectedUserIds([])
+    setSelectAll(false)
+  }, [data])
+
   const getStatusBadge = (status: string) => {
     const statusConfig = {
       active: {
