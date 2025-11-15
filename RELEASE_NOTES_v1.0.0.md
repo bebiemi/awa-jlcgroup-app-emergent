@@ -343,8 +343,8 @@ Cette release marque la **première version stable et production-ready** de la p
 - Hot Reload : Activé
 
 ### Emergent Preview (Staging)
-- URL : `https://postulant-app.preview.emergentagent.com`
-- API : `https://postulant-app.preview.emergentagent.com/api`
+- URL : `https://csv-import-export.preview.emergentagent.com`
+- API : `https://csv-import-export.preview.emergentagent.com/api`
 - HTTPS : Forcé
 - Mixed Content : Résolu ✅
 
