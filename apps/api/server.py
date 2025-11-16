@@ -92,7 +92,8 @@ app.include_router(auth_proxy_routes.router, prefix="/api/auth", tags=["Auth Pro
 app.include_router(auth_endpoints_proxy.router, prefix="/api", tags=["Auth Endpoints Proxy"])
 
 # Local backend routes (mounted after proxies to avoid conflicts)
-app.include_router(profile_routes.router, prefix="/api")
+# DISABLED: profile_routes conflicts with auth_endpoints_proxy which handles ALL /profiles/* routes
+# app.include_router(profile_routes.router, prefix="/api")
 app.include_router(validation_routes.router, prefix="/api")
 app.include_router(notification_routes.router, prefix="/api")
 app.include_router(admin_routes.router, prefix="/api")
