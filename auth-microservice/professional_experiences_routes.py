@@ -311,8 +311,10 @@ async def update_experience(
         - Validation des dates si modifiées
     """
     try:
+        collection_name = _get_profile_collection_name(current_user.roles)
+        
         # Récupérer le profil et vérifier l'existence de l'expérience
-        profile = await db.profiles.find_one({"user_id": current_user.id})
+        profile = await db[collection_name].find_one({"user_id": current_user.id})
         
         if not profile:
             raise HTTPException(
