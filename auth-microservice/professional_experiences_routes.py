@@ -212,7 +212,7 @@ async def create_experience(
         }
         
         # Ajouter l'expérience au profil
-        result = await db.profiles.update_one(
+        result = await db[collection_name].update_one(
             {"user_id": current_user.id},
             {
                 "$push": {"professional_experiences": new_experience},
