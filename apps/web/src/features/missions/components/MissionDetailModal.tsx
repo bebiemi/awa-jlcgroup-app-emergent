@@ -336,18 +336,38 @@ export default function MissionDetailModal({
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold text-gray-900">Candidature rapide</h3>
                 
-                {/* Alerte si pas de CV */}
-                {cvDocuments.length === 0 && !defaultCvId && (
-                  <div className="flex items-start gap-3 p-4 bg-orange-50 border border-orange-200 rounded-lg">
-                    <ExclamationTriangleIcon className="h-5 w-5 text-orange-600 flex-shrink-0 mt-0.5" />
-                    <div>
-                      <p className="text-sm font-medium text-orange-900">Aucun CV trouvé</p>
-                      <p className="text-sm text-orange-700 mt-1">
-                        Veuillez uploader un CV dans votre profil avant de postuler.
-                      </p>
-                    </div>
+                {/* Upload CV si aucun CV disponible */}
+                {(cvDocuments.length === 0 && !defaultCvId) || showCvUpload ? (
+                  <div className="space-y-3">
+                    {!uploadedCvId ? (
+                      <>
+                        <div className="flex items-start gap-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                          <DocumentTextIcon className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                          <div>
+                            <p className="text-sm font-medium text-blue-900">CV requis pour postuler</p>
+                            <p className="text-sm text-blue-700 mt-1">
+                              Uploadez votre CV ci-dessous pour continuer votre candidature
+                            </p>
+                          </div>
+                        </div>
+                        
+                        <InlineDocumentUpload
+                          documentType="cv"
+                          onUploadSuccess={handleCvUploadSuccess}
+                          maxSizeMB={5}
+                          allowedFormats={['pdf', 'doc', 'docx']}
+                          label="Votre CV"
+                          helperText="Votre CV sera enregistré dans votre profil et utilisé pour cette candidature"
+                        />
+                      </>
+                    ) : (
+                      <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-lg">
+                        <CheckCircleIcon className="h-5 w-5 text-green-600" />
+                        <span className="text-sm text-green-900">CV uploadé avec succès</span>
+                      </div>
+                    )}
                   </div>
-                )}
+                ) : null}
 
                 {/* Sélection du CV */}
                 {(cvDocuments.length > 0 || defaultCvId) && (
