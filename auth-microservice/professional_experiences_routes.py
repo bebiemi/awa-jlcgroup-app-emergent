@@ -343,7 +343,7 @@ async def update_experience(
         set_operations["updated_at"] = update_fields["updated_at"]
         
         # Exécuter la mise à jour
-        result = await db.profiles.update_one(
+        result = await db[collection_name].update_one(
             {"user_id": current_user.id},
             {"$set": set_operations}
         )
@@ -355,7 +355,7 @@ async def update_experience(
             )
         
         # Récupérer et retourner l'expérience mise à jour
-        updated_profile = await db.profiles.find_one({"user_id": current_user.id})
+        updated_profile = await db[collection_name].find_one({"user_id": current_user.id})
         updated_experience = updated_profile["professional_experiences"][exp_index]
         
         return updated_experience
