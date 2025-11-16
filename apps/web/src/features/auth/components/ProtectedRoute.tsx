@@ -43,7 +43,7 @@ export default function ProtectedRoute({
   const effectiveToken = token || localToken
   
   const { data: user, isLoading } = useGetCurrentUserQuery(undefined, {
-    skip: !token,
+    skip: !effectiveToken,
   })
   
   // Permission checks (IAM)
