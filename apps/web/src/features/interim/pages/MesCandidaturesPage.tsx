@@ -106,11 +106,19 @@ function ApplicationTimeline({ currentStatus }: { currentStatus: string }) {
 
 function ApplicationCard({ application, showMissionName }: { application: Application; showMissionName: boolean }) {
   const [showDetails, setShowDetails] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [additionalInfo, setAdditionalInfo] = useState(application.additional_info || '');
+  const [cancellationReason, setCancellationReason] = useState('');
+  
+  const [updateApplication, { isLoading: isUpdating }] = useUpdateMyApplicationMutation();
+  const [cancelApplication, { isLoading: isCancelling }] = useCancelMyApplicationMutation();
   
   const getStatusBadge = (status: string) => {
     const statusConfig: Record<string, { label: string; color: string; icon: any }> = {
       pending: { label: 'En attente', color: 'bg-yellow-100 text-yellow-800', icon: ClockIcon },
       submitted: { label: 'Envoyée', color: 'bg-blue-100 text-blue-800', icon: CheckCircleIcon },
+      under_review: { label: 'En cours d\'examen', color: 'bg-purple-100 text-purple-800', icon: EyeIcon },
       review: { label: 'En analyse', color: 'bg-purple-100 text-purple-800', icon: EyeIcon },
       interviewed: { label: 'Entretien', color: 'bg-indigo-100 text-indigo-800', icon: EyeIcon },
       selected: { label: 'Sélectionné', color: 'bg-green-100 text-green-800', icon: CheckCircleIcon },
@@ -131,44 +139,195 @@ function ApplicationCard({ application, showMissionName }: { application: Applic
     );
   };
 
+  // Vérifier si la candidature peut être modifiée
+  const canEdit = ['submitted', 'under_review'].includes(application.status);
+  
+  // Vérifier si la candidature peut être annulée
+  const canCancel = !['hired', 'withdrawn', 'contract_signed'].includes(application.status);
+
+  const handleEdit = async () => {
+    try {
+      await updateApplication({
+        application_id: application.id,
+        additional_info: additionalInfo,
+      }).unwrap();
+      
+      toast.success('✅ Candidature mise à jour');
+      setShowEditModal(false);
+    } catch (error: any) {
+      toast.error(`❌ ${error?.data?.detail || 'Erreur lors de la mise à jour'}`);
+    }
+  };
+
+  const handleCancel = async () => {
+    try {
+      await cancelApplication({
+        application_id: application.id,
+        cancellation_reason: cancellationReason,
+      }).unwrap();
+      
+      toast.success('✅ Candidature annulée');
+      setShowCancelModal(false);
+    } catch (error: any) {
+      toast.error(`❌ ${error?.data?.detail || 'Erreur lors de l\'annulation'}`);
+    }
+  };
+
   const missionDisplayName = showMissionName
     ? application.mission_title
     : 'Mission en cours de sélection';
 
   return (
-    <Card className="hover:shadow-md transition-shadow">
-      <div className="space-y-4">
-        {/* En-tête */}
-        <div className="flex items-start justify-between">
-          <div className="flex-1">
-            <h3 className="text-lg font-semibold text-gray-900">{missionDisplayName}</h3>
-            <p className="text-sm text-gray-600 mt-1">{application.company_name}</p>
+    <>
+      <Card className="hover:shadow-md transition-shadow">
+        <div className="space-y-4">
+          {/* En-tête */}
+          <div className="flex items-start justify-between">
+            <div className="flex-1">
+              <h3 className="text-lg font-semibold text-gray-900">{missionDisplayName}</h3>
+              <p className="text-sm text-gray-600 mt-1">{application.company_name}</p>
+              <p className="text-xs text-gray-500 mt-1">
+                Candidature envoyée le {new Date(application.created_at).toLocaleDateString('fr-FR')}
+              </p>
+            </div>
+            <div>{getStatusBadge(application.status)}</div>
+          </div>
+
+          {/* Informations additionnelles */}
+          {application.additional_info && showDetails && (
+            <div className="pt-2 border-t border-gray-200">
+              <p className="text-sm text-gray-600">
+                <span className="font-semibold">Informations additionnelles :</span> {application.additional_info}
+              </p>
+            </div>
+          )}
+
+          {/* Timeline */}
+          {showDetails && (
+            <div className="mt-6 pt-4 border-t border-gray-200">
+              <h4 className="text-sm font-semibold text-gray-700 mb-4">Progression de votre candidature</h4>
+              <ApplicationTimeline currentStatus={application.status} />
+            </div>
+          )}
+
+          {/* Actions */}
+          <div className="flex items-center justify-between pt-2 border-t border-gray-200">
+            <div className="flex gap-2">
+              {canEdit && (
+                <button
+                  onClick={() => setShowEditModal(true)}
+                  className="inline-flex items-center px-3 py-1.5 text-sm text-jlc-purple-600 hover:text-jlc-purple-800 font-medium border border-jlc-purple-300 rounded-lg hover:bg-jlc-purple-50 transition"
+                >
+                  <PencilIcon className="h-4 w-4 mr-1" />
+                  Modifier
+                </button>
+              )}
+              {canCancel && (
+                <button
+                  onClick={() => setShowCancelModal(true)}
+                  className="inline-flex items-center px-3 py-1.5 text-sm text-red-600 hover:text-red-800 font-medium border border-red-300 rounded-lg hover:bg-red-50 transition"
+                >
+                  <TrashIcon className="h-4 w-4 mr-1" />
+                  Annuler
+                </button>
+              )}
+            </div>
+            <button
+              onClick={() => setShowDetails(!showDetails)}
+              className="text-sm text-jlc-purple-600 hover:text-jlc-purple-800 font-medium"
+            >
+              {showDetails ? 'Masquer les détails' : 'Voir les détails'}
+            </button>
+          </div>
+        </div>
+      </Card>
+
+      {/* Modal de modification */}
+      <Modal
+        isOpen={showEditModal}
+        onClose={() => setShowEditModal(false)}
+        title="Modifier ma candidature"
+      >
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Informations additionnelles
+            </label>
+            <textarea
+              value={additionalInfo}
+              onChange={(e) => setAdditionalInfo(e.target.value)}
+              rows={4}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-jlc-purple-500 focus:border-transparent"
+              placeholder="Ajoutez des informations complémentaires..."
+            />
             <p className="text-xs text-gray-500 mt-1">
-              Candidature envoyée le {new Date(application.created_at).toLocaleDateString('fr-FR')}
+              💡 Vous pouvez ajouter des détails sur votre motivation, vos disponibilités, etc.
             </p>
           </div>
-          <div>{getStatusBadge(application.status)}</div>
-        </div>
-
-        {/* Timeline */}
-        {showDetails && (
-          <div className="mt-6 pt-4 border-t border-gray-200">
-            <h4 className="text-sm font-semibold text-gray-700 mb-4">Progression de votre candidature</h4>
-            <ApplicationTimeline currentStatus={application.status} />
+          <div className="flex gap-3 justify-end">
+            <Button
+              variant="secondary"
+              onClick={() => setShowEditModal(false)}
+              disabled={isUpdating}
+            >
+              Annuler
+            </Button>
+            <Button
+              variant="primary"
+              onClick={handleEdit}
+              isLoading={isUpdating}
+              disabled={isUpdating}
+            >
+              Enregistrer
+            </Button>
           </div>
-        )}
-
-        {/* Actions */}
-        <div className="flex justify-end">
-          <button
-            onClick={() => setShowDetails(!showDetails)}
-            className="text-sm text-jlc-purple-600 hover:text-jlc-purple-800 font-medium"
-          >
-            {showDetails ? 'Masquer les détails' : 'Voir les détails'}
-          </button>
         </div>
-      </div>
-    </Card>
+      </Modal>
+
+      {/* Modal d'annulation */}
+      <Modal
+        isOpen={showCancelModal}
+        onClose={() => setShowCancelModal(false)}
+        title="Annuler ma candidature"
+      >
+        <div className="space-y-4">
+          <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+            <p className="text-sm text-yellow-800">
+              ⚠️ Cette action est irréversible. Vous ne pourrez plus postuler à cette mission.
+            </p>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Raison de l'annulation (optionnel)
+            </label>
+            <textarea
+              value={cancellationReason}
+              onChange={(e) => setCancellationReason(e.target.value)}
+              rows={3}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+              placeholder="Pourquoi annulez-vous cette candidature ?"
+            />
+          </div>
+          <div className="flex gap-3 justify-end">
+            <Button
+              variant="secondary"
+              onClick={() => setShowCancelModal(false)}
+              disabled={isCancelling}
+            >
+              Retour
+            </Button>
+            <Button
+              variant="danger"
+              onClick={handleCancel}
+              isLoading={isCancelling}
+              disabled={isCancelling}
+            >
+              Confirmer l'annulation
+            </Button>
+          </div>
+        </div>
+      </Modal>
+    </>
   );
 }
 
