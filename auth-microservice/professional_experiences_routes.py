@@ -256,7 +256,9 @@ async def get_experience(
         404: Si l'expérience n'existe pas ou n'appartient pas à l'utilisateur
     """
     try:
-        profile = await db.profiles.find_one(
+        collection_name = _get_profile_collection_name(current_user.roles)
+        
+        profile = await db[collection_name].find_one(
             {"user_id": current_user.id},
             {"_id": 0, "professional_experiences": 1}
         )
