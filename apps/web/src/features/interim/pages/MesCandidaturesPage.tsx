@@ -1,8 +1,11 @@
 import { useState } from 'react';
 import Layout from '@/components/Layout';
 import Card from '@/components/Card';
+import Button from '@/components/Button';
+import Modal from '@/components/Modal';
 import { useGetMyApplicationsQuery } from '../api/applicationApi';
 import { useGetActiveContractQuery } from '@/features/contracts/api/contractApi';
+import { useUpdateMyApplicationMutation, useCancelMyApplicationMutation } from '@/features/missions/api/missionApi';
 import { useApplicationStatuses } from '@/hooks/useAppConfig';
 import {
   ClockIcon,
@@ -10,9 +13,12 @@ import {
   XCircleIcon,
   EyeIcon,
   BriefcaseIcon,
+  PencilIcon,
+  TrashIcon,
 } from '@heroicons/react/24/outline';
 import clsx from 'clsx';
 import { useAppSelector } from '@/store/hooks';
+import toast from 'react-hot-toast';
 
 // Timeline des étapes de candidature
 const WORKFLOW_STEPS = [
