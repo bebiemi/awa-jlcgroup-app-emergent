@@ -5,16 +5,25 @@ import {
   ClockIcon,
   ExclamationTriangleIcon,
   InformationCircleIcon,
+  PencilIcon,
+  CheckIcon,
+  XMarkIcon,
+  PlusIcon,
+  ChartBarIcon,
 } from '@heroicons/react/24/outline'
 import {
-  useGetRetentionConfigQuery,
-  useUpdateRetentionConfigMutation,
-} from '../api/securityConfigApi'
+  useGetRetentionPoliciesQuery,
+  useGetRetentionStatsQuery,
+  useUpdateRetentionPolicyMutation,
+  useInitializeDefaultPoliciesMutation,
+} from '../api/retentionPoliciesApi'
 import { toast } from 'react-hot-toast'
 
 export default function RetentionConfigPage() {
-  const { data: config, isLoading, refetch } = useGetRetentionConfigQuery()
-  const [updateRetention, { isLoading: isUpdating }] = useUpdateRetentionConfigMutation()
+  const { data: policiesData, isLoading, refetch } = useGetRetentionPoliciesQuery({})
+  const { data: stats } = useGetRetentionStatsQuery()
+  const [updatePolicy, { isLoading: isUpdating }] = useUpdateRetentionPolicyMutation()
+  const [initDefaults, { isLoading: isInitializing }] = useInitializeDefaultPoliciesMutation()
 
   const [retentionDays, setRetentionDays] = useState<number>(90)
   const [hasChanges, setHasChanges] = useState(false)
