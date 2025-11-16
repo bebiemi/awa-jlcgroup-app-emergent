@@ -87,6 +87,7 @@ class User(BaseModel):
     # Archivage (soft delete)
     archived_at: Optional[datetime] = None
     archived_by: Optional[str] = None  # User ID who archived
+    marked_for_deletion_at: Optional[datetime] = None  # When user was marked for deletion
     deletion_scheduled_at: Optional[datetime] = None  # When to permanently delete
     archive_reason: Optional[str] = None
     
