@@ -404,7 +404,7 @@ frontend:
     implemented: true
     working: false
     file: "/app/apps/web/src/features/missions/components/MissionDetailModal.tsx"
-    stuck_count: 1
+    stuck_count: 2
     priority: "high"
     needs_retesting: true
     status_history:
@@ -417,6 +417,9 @@ frontend:
       - working: false
         agent: "testing"
         comment: "❌ CRITICAL FRONTEND AUTHENTICATION ISSUE: Comprehensive testing reveals frontend authentication session management problems preventing end-to-end testing. **BACKEND VERIFICATION SUCCESSFUL**: 1) Nina login API working (nina/azerty123456!!), 2) 3 published missions available (Dev Full Stack, Développeur Full Stack JavaScript, Bureautique), 3) Nina has 2 previous applications (both withdrawn status), 4) Nina's profile shows no CV (cv_document_id: null), 5) Mission application API working (Nina successfully applied to Bureautique mission via API). **FRONTEND ISSUES IDENTIFIED**: 1) Authentication session not persisting between page navigations, 2) 'Trouver une mission' button redirects to /register instead of /offres, 3) Direct navigation to /offres requires authentication but session is lost, 4) Login modal appears but authentication flow has issues. **COMPONENT ANALYSIS CONFIRMED**: All required components exist and have correct logic - MissionDetailModal.tsx (lines 84-110 checkInterimEligibility function), InlineDocumentUpload.tsx (CV upload functionality), OffresPage.tsx (mission listing and modal integration). **SCENARIOS STATUS**: All 4 scenarios have correct backend logic and frontend components, but cannot be tested end-to-end due to authentication session issues. **CRITICAL ISSUE**: Frontend authentication/session management needs fixing before mission application process can be properly tested."
+      - working: false
+        agent: "testing"
+        comment: "❌ CRITICAL FRONTEND AUTHENTICATION SESSION PERSISTENCE ISSUE CONFIRMED: Comprehensive E2E testing confirms the authentication session management problem identified in review request. **BACKEND VERIFICATION 100% SUCCESSFUL**: 1) Auth microservice (port 8000) working perfectly - Nina login returns valid JWT tokens (nina/azerty123456!!), 2) Main API (port 8001) working - 4 missions available (3 published: Dev Full Stack, Développeur Full Stack JavaScript, Bureautique), 3) Nina has 3 applications (2 withdrawn, 1 submitted), 4) Nina has CV (cv_document_id: 2df241f5-87e2-407c-9b96-b4ca42cdc339), profile completion 55%, 5) All mission APIs responding correctly with proper authentication. **FRONTEND AUTHENTICATION FAILURE**: Login modal accepts credentials and appears successful, but ProtectedRoute logs show: localStorage token: false, localStorage user: false, Redux isAuthenticated: false, Redux token: false. **ROOT CAUSE**: Authentication tokens from successful login are NOT being stored in localStorage or Redux state, causing immediate redirect to /login when accessing protected routes like /offres. **IMPACT**: Cannot test any mission application scenarios because authentication session is lost immediately after login. **COMPONENTS VERIFIED**: All mission components exist and have correct logic (MissionDetailModal.tsx, OffresPage.tsx, InlineDocumentUpload.tsx). **CRITICAL FIX NEEDED**: Frontend authentication token storage/persistence mechanism in authSlice.ts or login flow."
 
   - task: "P1 Issue 2 - Modification/Annulation Candidatures"
     implemented: true
