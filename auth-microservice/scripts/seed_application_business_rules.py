@@ -8,9 +8,9 @@ Règles créées :
 3. CV obligatoire pour candidature
 """
 import asyncio
+import os
 from datetime import datetime
 from motor.motor_asyncio import AsyncIOMotorClient
-from config import config
 
 async def seed_application_rules():
     """Créer les règles métiers pour les candidatures"""
