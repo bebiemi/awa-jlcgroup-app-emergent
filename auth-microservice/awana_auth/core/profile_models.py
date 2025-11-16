@@ -159,6 +159,9 @@ class InterimProfile(BaseModel):
     cv_document_id: Optional[str] = None
     document_ids: List[str] = Field(default_factory=list)
     
+    # Professional Experiences
+    professional_experiences: List[ProfessionalExperience] = Field(default_factory=list)
+    
     # Metadata
     profile_completed: bool = False
     profile_completion_percentage: int = 0
