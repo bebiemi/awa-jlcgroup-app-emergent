@@ -449,7 +449,9 @@ metadata:
   run_ui: false
 
 test_plan:
-  current_focus: []
+  current_focus:
+    - "P1 Issue 2 - Modification/Annulation Candidatures"
+    - "P1 Issue 3 - Page Documents Management"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
