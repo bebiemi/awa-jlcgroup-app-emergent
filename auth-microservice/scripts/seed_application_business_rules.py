@@ -16,7 +16,7 @@ async def seed_application_rules():
     """Créer les règles métiers pour les candidatures"""
     
     # Connexion MongoDB
-    mongo_url = config.get('database.mongo_url', default='mongodb://localhost:27017')
+    mongo_url = os.getenv('MONGO_URL', 'mongodb://localhost:27017')
     client = AsyncIOMotorClient(mongo_url)
     db = client['auth_db']
     
