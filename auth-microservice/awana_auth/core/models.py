@@ -86,12 +86,20 @@ class User(BaseModel):
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     last_login_at: Optional[datetime] = None
     
-    # Archivage (soft delete)
+    # Archivage (soft delete) et rétention
     archived_at: Optional[datetime] = None
     archived_by: Optional[str] = None  # User ID who archived
-    marked_for_deletion_at: Optional[datetime] = None  # When user was marked for deletion
-    deletion_scheduled_at: Optional[datetime] = None  # When to permanently delete
+    deletion_scheduled_at: Optional[datetime] = None  # Final deletion date (J)
     archive_reason: Optional[str] = None
+    
+    # Workflow de suppression progressive
+    pending_deletion_at: Optional[datetime] = None  # J-7: Premier rappel
+    to_delete_at: Optional[datetime] = None  # J: Suppression visibilité
+    soft_deleted_at: Optional[datetime] = None  # J+3: Suppression définitive
+    
+    # Tracking des notifications
+    notifications_sent: Optional[List[dict]] = Field(default_factory=list)  # Historique des notifications
+    last_notification_at: Optional[datetime] = None
     
     # Additional user data
     metadata: Dict[str, Any] = Field(default_factory=dict)
