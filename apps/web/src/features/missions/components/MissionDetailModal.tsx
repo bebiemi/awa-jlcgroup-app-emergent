@@ -321,18 +321,33 @@ export default function MissionDetailModal({
         )}
 
         {/* Section candidature rapide */}
-        {!hasAlreadyApplied && (
-          <div className="border-t pt-6">
-            {!showQuickApply ? (
-              <Button
-                variant="primary"
-                onClick={() => setShowQuickApply(true)}
-                className="w-full"
-              >
-                <BriefcaseIcon className="h-5 w-5 mr-2" />
-                Postuler rapidement
-              </Button>
-            ) : (
+        {!hasAlreadyApplied && (() => {
+          const eligibility = checkInterimEligibility()
+          
+          return (
+            <div className="border-t pt-6">
+              {/* Message pour intérimaire avec contrat actif non éligible */}
+              {!eligibility.canApply && eligibility.message && (
+                <div className="flex items-start gap-3 p-4 bg-yellow-50 border border-yellow-200 rounded-lg mb-4">
+                  <ExclamationTriangleIcon className="h-5 w-5 text-yellow-600 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium text-yellow-900">Candidature temporairement indisponible</p>
+                    <p className="text-sm text-yellow-700 mt-1">{eligibility.message}</p>
+                  </div>
+                </div>
+              )}
+
+              {!showQuickApply ? (
+                <Button
+                  variant="primary"
+                  onClick={() => setShowQuickApply(true)}
+                  className="w-full"
+                  disabled={!eligibility.canApply}
+                >
+                  <BriefcaseIcon className="h-5 w-5 mr-2" />
+                  Postuler rapidement
+                </Button>
+              ) : (
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold text-gray-900">Candidature rapide</h3>
                 
