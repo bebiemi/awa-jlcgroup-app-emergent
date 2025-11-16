@@ -836,7 +836,8 @@ async def update_my_application(
     Modifier sa propre candidature (Candidat/Postulant)
     Permet de mettre à jour les informations additionnelles avant validation
     """
-    user_id = current_user.get("sub")
+    # Support both dict and User object
+    user_id = current_user.get("sub") if isinstance(current_user, dict) else current_user.id
     
     # Vérifier que la candidature appartient à l'utilisateur
     application = await db.applications.find_one({
