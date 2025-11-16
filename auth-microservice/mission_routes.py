@@ -887,7 +887,8 @@ async def cancel_my_application(
     Annuler sa propre candidature (Candidat/Postulant)
     Change le statut à WITHDRAWN (Retirée)
     """
-    user_id = current_user.get("sub")
+    # Support both dict and User object
+    user_id = current_user.get("sub") if isinstance(current_user, dict) else current_user.id
     
     # Vérifier que la candidature appartient à l'utilisateur
     application = await db.applications.find_one({
