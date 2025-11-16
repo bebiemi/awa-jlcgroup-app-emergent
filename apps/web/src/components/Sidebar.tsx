@@ -237,30 +237,6 @@ export default function Sidebar() {
         ],
       }
     )
-  } else if (user?.roles.includes('candidat') || user?.roles.includes('postulant')) {
-    // Candidat/Postulant role - applying to missions
-    navigationSections.push(
-      {
-        title: 'Tableau de bord',
-        items: [
-          { label: 'Vue d\'ensemble', path: '/postulant', icon: HomeIcon },
-        ],
-      },
-      {
-        title: 'Missions',
-        items: [
-          { label: 'Offres disponibles', path: '/offres', icon: BriefcaseIcon },
-          { label: 'Mes Candidatures', path: '/mes-candidatures', icon: ClipboardDocumentCheckIcon },
-        ],
-      },
-      {
-        title: 'Compte',
-        items: [
-          { label: 'Mon Profil', path: '/profile', icon: UserCircleIcon },
-          { label: 'Sécurité', path: '/security', icon: ShieldCheckIcon },
-        ],
-      }
-    )
   } else if (userPermissions['missions.create']) {
     // Company role (can create missions)
     navigationSections.push(
