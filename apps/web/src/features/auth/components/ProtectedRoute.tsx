@@ -26,11 +26,21 @@ export default function ProtectedRoute({
   const localToken = localStorage.getItem('access_token')
   const localUser = localStorage.getItem('user')
   
-  // If no token in state OR localStorage, redirect to login
-  if (!isAuthenticated || !token || !localToken || !localUser) {
-    console.warn('🚨 ProtectedRoute: No valid authentication found, redirecting to login')
+  // FIXED: Check localStorage first (source of truth), then Redux state
+  // This handles the case where Redux store hasn't hydrated yet
+  const hasValidAuth = (localToken && localUser) || (isAuthenticated && token)
+  
+  if (!hasValidAuth) {
+    console.warn('🚨 ProtectedRoute: No valid authentication found')
+    console.warn('  - localStorage token:', !!localToken)
+    console.warn('  - localStorage user:', !!localUser)
+    console.warn('  - Redux isAuthenticated:', isAuthenticated)
+    console.warn('  - Redux token:', !!token)
     return <Navigate to="/login" replace />
   }
+  
+  // Use localToken as fallback if Redux token not yet loaded
+  const effectiveToken = token || localToken
   
   const { data: user, isLoading } = useGetCurrentUserQuery(undefined, {
     skip: !token,
