@@ -2,11 +2,14 @@
  * Main Dashboard for Postulants/Candidats
  * Overview with KPIs and metrics
  */
+import { useState } from 'react'
 import Layout from '@/components/Layout'
 import Card from '@/components/Card'
 import { useGetMyProfileQuery } from '@/features/profile/api/profileApi'
 import { useGetDocumentTypesQuery } from '@/features/profile/api/referencesApi'
 import { useGetMissionsQuery } from '@/features/missions/api/missionsApi'
+import { useGetMyApplicationsQuery } from '@/features/missions/api/missionApi'
+import MissionDetailModal from '@/features/missions/components/MissionDetailModal'
 import { Link } from 'react-router-dom'
 import {
   CheckCircleIcon,
@@ -18,11 +21,34 @@ import {
   ArrowTrendingUpIcon,
   ExclamationTriangleIcon,
 } from '@heroicons/react/24/outline'
+import type { Mission } from '@/features/missions/api/missionApi'
 
 export default function PostulantMainDashboard() {
   const { data: profileData, isLoading, error } = useGetMyProfileQuery()
   const { data: documentTypesData, isLoading: isLoadingDocTypes } = useGetDocumentTypesQuery({ requiredOnly: false })
   const { data: missionsData, isLoading: isLoadingMissions } = useGetMissionsQuery({ published_only: true, limit: 5 })
+  const { data: myApplications = [] } = useGetMyApplicationsQuery()
+  
+  // État pour la modale de détail de mission
+  const [selectedMission, setSelectedMission] = useState<Mission | null>(null)
+  const [isMissionModalOpen, setIsMissionModalOpen] = useState(false)
+  
+  // Fonction pour ouvrir la modale
+  const handleMissionClick = (mission: Mission) => {
+    setSelectedMission(mission)
+    setIsMissionModalOpen(true)
+  }
+  
+  // Fonction pour fermer la modale
+  const handleCloseMissionModal = () => {
+    setIsMissionModalOpen(false)
+    setTimeout(() => setSelectedMission(null), 300)
+  }
+  
+  // Vérifier si l'utilisateur a déjà postulé à une mission
+  const hasAppliedToMission = (missionId: string) => {
+    return myApplications.some((app: any) => app.mission_id === missionId)
+  }
 
   if (isLoading) {
     return (
