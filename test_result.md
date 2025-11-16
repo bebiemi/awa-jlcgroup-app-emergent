@@ -414,6 +414,30 @@ frontend:
       - working: true
         agent: "testing"
         comment: "✅ COMPLETE END-TO-END MISSION APPLICATION PROCESS TESTING SUCCESSFUL: All 3 scenarios verified and working correctly. **SCENARIO 1 (Nina WITH CV)**: Login successful (nina/azerty123456!!), /offres page loads with 2 missions, statistics show 2 candidatures (Nina applied to both), mission cards display '✓ Candidature envoyée' badges, MissionDetailModal opens correctly showing 'Candidature déjà envoyée' message with proper blue styling and redirect to 'Mes Candidatures'. This behavior is CORRECT as per review request. **SCENARIO 2 (User WITHOUT CV)**: Skipped as requested - would require new account creation. **SCENARIO 3 (Interim Eligibility Logic)**: Verified checkInterimEligibility() function exists (lines 84-110) with proper logic: checks isInterimaire role, validates active contract, calculates remaining days, blocks application if >5 days remaining, displays warning message with ExclamationTriangleIcon, disables 'Postuler rapidement' button. **TECHNICAL VERIFICATION**: Modal routing fixed (OffresPage.tsx uses MissionDetailModal instead of navigation), authentication working, mission cards clickable, modal displays mission details correctly, CV selector logic implemented for users with existing CVs, inline upload component ready for users without CVs. All components and workflows functioning as designed."
+
+  - task: "P1 Issue 2 - Modification/Annulation Candidatures"
+    implemented: true
+    working: "NA"
+    file: "/app/apps/web/src/features/interim/pages/MesCandidaturesPage.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "P1 Issue 2 implemented: Endpoints for modifying/canceling applications with frontend integration. MesCandidaturesPage includes 'Modifier' and 'Annuler' buttons for eligible applications, modals for editing additional info and cancellation reasons, API integration with updateMyApplication and cancelMyApplication mutations. Needs comprehensive testing."
+
+  - task: "P1 Issue 3 - Page Documents Management"
+    implemented: true
+    working: "NA"
+    file: "/app/apps/web/src/features/profile/pages/DocumentsPage.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "P1 Issue 3 implemented: Dedicated document management page at /documents route. Features include document categorization (Administrative, Professional, Personal), upload functionality, search/filtering, statistics display, and placeholder for future integrations. Needs comprehensive testing."
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
