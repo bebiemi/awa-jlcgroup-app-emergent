@@ -192,8 +192,13 @@ async def get_verification_status(
     Get email verification status for current user
     """
     # Check feature flag
-    # TODO: Fix feature flag service for ROLE type
-    feature_enabled = True  # Temporarily enabled for all users
+    service = FeatureFlagService(db)
+    context = FeatureFlagContext(
+        user_id=current_user.id,
+        roles=current_user.roles if current_user.roles else [],
+        environment="production"
+    )
+    feature_enabled = await service.is_enabled("feature.validation.email", context)
     
     # Check if there's a pending token
     pending_token = await db.email_verification_tokens.find_one({
