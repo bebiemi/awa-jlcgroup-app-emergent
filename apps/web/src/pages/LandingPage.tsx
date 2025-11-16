@@ -148,14 +148,14 @@ export default function LandingPage() {
               ) : (
                 <>
                   <Link
-                    to="/register"
+                    to={isAuthenticated ? "/offres" : "/register"}
                     className="bg-white text-jlc-purple-700 hover:bg-gray-100 px-8 py-3 rounded-lg text-lg font-semibold inline-flex items-center justify-center"
                   >
                     Trouver une mission
                     <ArrowRightIcon className="ml-2 h-5 w-5" />
                   </Link>
                   <Link
-                    to="/register"
+                    to={isAuthenticated ? "/postulant" : "/register"}
                     className="bg-jlc-purple-800 hover:bg-jlc-purple-900 text-white px-8 py-3 rounded-lg text-lg font-semibold inline-flex items-center justify-center"
                   >
                     Recruter des talents
