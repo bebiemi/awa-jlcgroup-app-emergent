@@ -12,6 +12,7 @@ import {
   BriefcaseIcon,
 } from '@heroicons/react/24/outline';
 import clsx from 'clsx';
+import { useAppSelector } from '@/store/hooks';
 
 // Timeline des étapes de candidature
 const WORKFLOW_STEPS = [
