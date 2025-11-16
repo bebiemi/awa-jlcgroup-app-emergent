@@ -281,6 +281,14 @@ export default function OffresPage() {
           ))}
         </div>
       </div>
+
+      {/* Modale de détail de mission */}
+      <MissionDetailModal
+        mission={selectedMission}
+        isOpen={isMissionModalOpen}
+        onClose={handleCloseMissionModal}
+        hasAlreadyApplied={selectedMission ? hasApplied(selectedMission.id) : false}
+      />
     </Layout>
   )
 }
