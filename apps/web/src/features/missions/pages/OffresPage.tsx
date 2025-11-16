@@ -8,6 +8,7 @@ import {
   type Mission,
 } from '../api/missionApi'
 import { useGetActiveContractQuery } from '@/features/contracts/api/contractApi'
+import MissionDetailModal from '../components/MissionDetailModal'
 import {
   BriefcaseIcon,
   MapPinIcon,
@@ -23,6 +24,10 @@ import { useAppSelector } from '@/store/hooks'
 export default function OffresPage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedJobType, setSelectedJobType] = useState<string>('all')
+  
+  // État pour la modale de détail de mission
+  const [selectedMission, setSelectedMission] = useState<Mission | null>(null)
+  const [isMissionModalOpen, setIsMissionModalOpen] = useState(false)
 
   const currentUser = useAppSelector((state) => state.auth.user)
   const isInterimaire = currentUser?.roles?.includes('intérimaire') ?? false
