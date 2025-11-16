@@ -389,8 +389,10 @@ async def delete_experience(
         - Suppression définitive (pas de soft delete)
     """
     try:
+        collection_name = _get_profile_collection_name(current_user.roles)
+        
         # Vérifier que l'expérience existe
-        profile = await db.profiles.find_one({"user_id": current_user.id})
+        profile = await db[collection_name].find_one({"user_id": current_user.id})
         
         if not profile:
             raise HTTPException(
