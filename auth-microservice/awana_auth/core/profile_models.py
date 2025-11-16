@@ -29,6 +29,45 @@ class LanguageLevel(str):
     NATIVE = "native"
 
 
+class ExperienceType(str):
+    """Types of professional experience"""
+    INTERNAL_JLC = "internal_jlc"  # Mission via JLC
+    EXTERNAL = "external"  # Expérience externe
+
+
+# ==================== Sub-Models ====================
+
+class ProfessionalExperience(BaseModel):
+    """Model for a single professional experience"""
+    id: Optional[str] = None  # Generated on creation
+    type: str = ExperienceType.EXTERNAL  # internal_jlc or external
+    
+    # Basic Information
+    job_title: str  # Intitulé du poste
+    company_name: str  # Nom de l'entreprise
+    location: Optional[str] = None  # Lieu
+    
+    # Dates
+    start_date: str  # ISO date format (YYYY-MM-DD)
+    end_date: Optional[str] = None  # ISO date, None if ongoing
+    is_current: bool = False  # Poste actuel
+    
+    # Description
+    description: Optional[str] = None  # Description des missions
+    achievements: List[str] = Field(default_factory=list)  # Réalisations clés
+    
+    # Skills & Competencies
+    skills_used: List[str] = Field(default_factory=list)  # Compétences utilisées
+    
+    # JLC-specific (if type = internal_jlc)
+    mission_id: Optional[str] = None  # Reference to JLC mission
+    contract_id: Optional[str] = None  # Reference to contract
+    
+    # Metadata
+    created_at: str = Field(default_factory=lambda: datetime.utcnow().isoformat())
+    updated_at: str = Field(default_factory=lambda: datetime.utcnow().isoformat())
+
+
 class MissionType(str):
     """Types of missions"""
     SHORT_TERM = "short_term"  # Court terme
