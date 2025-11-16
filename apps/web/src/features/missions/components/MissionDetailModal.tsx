@@ -45,11 +45,15 @@ export default function MissionDetailModal({
   hasAlreadyApplied = false,
 }: MissionDetailModalProps) {
   const currentUser = useAppSelector((state) => state.auth.user)
-  const { data: profileData } = useGetMyProfileQuery()
+  const { data: profileData, refetch: refetchProfile } = useGetMyProfileQuery()
   const [applyToMission, { isLoading: isApplying }] = useApplyToMissionMutation()
+  const isInterimaire = currentUser?.roles?.includes('intérimaire') ?? false
+  const { data: contractData } = useGetActiveContractQuery(undefined, { skip: !isInterimaire })
   
   const [selectedCvId, setSelectedCvId] = useState<string>('')
   const [showQuickApply, setShowQuickApply] = useState(false)
+  const [showCvUpload, setShowCvUpload] = useState(false)
+  const [uploadedCvId, setUploadedCvId] = useState<string>('')
 
   if (!mission) return null
 
