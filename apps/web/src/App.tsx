@@ -288,11 +288,11 @@ function App() {
         }
       />
       
-      {/* Routes Offres - Accessible aux postulants, candidats et intérimaires */}
+      {/* Routes Offres - IAM Permissions (postulants, candidats, intérimaires) */}
       <Route
         path="/offres"
         element={
-          <ProtectedRoute requiredRoles={['postulant', 'candidat', 'interimaire']}>
+          <ProtectedRoute requiredPermissions={['missions.browse']}>
             <OffresPage />
           </ProtectedRoute>
         }
@@ -300,7 +300,7 @@ function App() {
       <Route
         path="/offres/:id"
         element={
-          <ProtectedRoute requiredRoles={['postulant', 'candidat', 'interimaire']}>
+          <ProtectedRoute requiredPermissions={['missions.read']}>
             <MissionDetailPage />
           </ProtectedRoute>
         }
@@ -308,7 +308,7 @@ function App() {
       <Route
         path="/offres/:id/postuler"
         element={
-          <ProtectedRoute requiredRoles={['postulant', 'candidat', 'interimaire']}>
+          <ProtectedRoute requiredPermissions={['applications.create']}>
             <ApplyMissionPage />
           </ProtectedRoute>
         }
@@ -316,7 +316,7 @@ function App() {
       <Route
         path="/mes-candidatures"
         element={
-          <ProtectedRoute requiredRoles={['postulant', 'candidat', 'interimaire']}>
+          <ProtectedRoute requiredPermissions={['applications.read_own']}>
             <MyApplicationsPage />
           </ProtectedRoute>
         }
