@@ -168,6 +168,40 @@ class InterimProfile(BaseModel):
     updated_at: str = Field(default_factory=lambda: datetime.utcnow().isoformat())
 
 
+class CandidatProfile(BaseModel):
+    """Profile for candidates/postulants"""
+    user_id: str
+    
+    # Personal Information
+    photo_url: Optional[str] = None
+    nationality: Optional[str] = None
+    
+    # Education & Experience
+    education_level: Optional[str] = None
+    years_of_experience: Optional[int] = None
+    
+    # Professional Information
+    sectors: List[str] = Field(default_factory=list)
+    skills: List[Dict] = Field(default_factory=list)
+    languages: List[Dict] = Field(default_factory=list)
+    
+    # Driving
+    has_driving_license: bool = False
+    driving_license_types: List[str] = Field(default_factory=list)
+    
+    # Documents
+    cv_document_id: Optional[str] = None
+    document_ids: List[str] = Field(default_factory=list)
+    
+    # Professional Experiences
+    professional_experiences: List[ProfessionalExperience] = Field(default_factory=list)
+    
+    # Metadata
+    profile_completed: bool = False
+    profile_completion_percentage: int = 0
+    updated_at: str = Field(default_factory=lambda: datetime.utcnow().isoformat())
+
+
 class CompanyManagerProfile(BaseModel):
     """Profile for company managers"""
     user_id: str
