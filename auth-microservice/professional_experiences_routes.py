@@ -14,9 +14,8 @@ from pydantic import BaseModel, Field, validator
 from typing import List, Optional
 from datetime import datetime
 import uuid
-from awana_auth.core.dependencies import get_database
+from awana_auth.core.dependencies import get_database, get_current_user
 from awana_auth.core.profile_models import ProfessionalExperience, ExperienceType
-from awana_auth.dependencies.auth_dependencies import get_current_user
 from awana_auth.core.models import User
 
 router = APIRouter(prefix="/profiles/me/experiences", tags=["Professional Experiences"])
