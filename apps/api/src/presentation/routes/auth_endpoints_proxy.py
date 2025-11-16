@@ -166,6 +166,16 @@ async def proxy_retention_requests(path: str = "", request: Request = None):
     return await _proxy_request(target_url, request)
 
 
+@router.api_route("/retention-policies", methods=["GET", "POST", "PUT", "DELETE"])
+@router.api_route("/retention-policies/{path:path}", methods=["GET", "POST", "PUT", "DELETE"])
+async def proxy_retention_policies_requests(path: str = "", request: Request = None):
+    """
+    Proxy all /api/retention-policies/* requests to auth-microservice /api/retention-policies/*
+    """
+    target_url = f"{AUTH_SERVICE_URL}/api/retention-policies/{path}" if path else f"{AUTH_SERVICE_URL}/api/retention-policies"
+    return await _proxy_request(target_url, request)
+
+
 async def _proxy_request(target_url: str, request: Request):
     """
     Common proxy logic for all auth endpoints
