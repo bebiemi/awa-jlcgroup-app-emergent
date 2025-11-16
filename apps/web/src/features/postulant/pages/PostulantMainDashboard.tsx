@@ -408,26 +408,37 @@ export default function PostulantMainDashboard() {
               </Link>
             </div>
             <div className="space-y-3">
-              {availableMissions.slice(0, 3).map((mission) => (
-                <Link
-                  key={mission.id}
-                  to={`/offres/${mission.id}`}
-                  className="block p-4 bg-gray-50 hover:bg-purple-50 rounded-lg border border-gray-200 hover:border-jlc-purple-300 transition-all"
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-gray-900">{mission.title}</h3>
-                      <p className="text-sm text-gray-600 mt-1 line-clamp-2">{mission.description}</p>
-                      <div className="flex items-center gap-4 mt-2 text-xs text-gray-500">
-                        <span>📍 {mission.location}</span>
-                        <span>💰 {mission.salary_range}</span>
-                        <span>⏱️ {mission.duration}</span>
+              {availableMissions.slice(0, 3).map((mission) => {
+                const hasApplied = hasAppliedToMission(mission.id)
+                
+                return (
+                  <button
+                    key={mission.id}
+                    onClick={() => handleMissionClick(mission)}
+                    className="w-full text-left p-4 bg-gray-50 hover:bg-purple-50 rounded-lg border border-gray-200 hover:border-jlc-purple-300 transition-all"
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2">
+                          <h3 className="font-semibold text-gray-900">{mission.title}</h3>
+                          {hasApplied && (
+                            <span className="px-2 py-0.5 text-xs bg-blue-100 text-blue-700 rounded-full">
+                              Candidature envoyée
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-sm text-gray-600 mt-1 line-clamp-2">{mission.description}</p>
+                        <div className="flex items-center gap-4 mt-2 text-xs text-gray-500">
+                          <span>📍 {mission.location}</span>
+                          <span>💰 {mission.salary_range}</span>
+                          <span>⏱️ {mission.duration}</span>
+                        </div>
                       </div>
+                      <BriefcaseIcon className="h-6 w-6 text-gray-400 flex-shrink-0 ml-3" />
                     </div>
-                    <BriefcaseIcon className="h-6 w-6 text-gray-400 flex-shrink-0 ml-3" />
-                  </div>
-                </Link>
-              ))}
+                  </button>
+                )
+              })}
             </div>
           </Card>
         )}
