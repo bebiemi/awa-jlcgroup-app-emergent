@@ -524,6 +524,14 @@ export default function PostulantMainDashboard() {
           </div>
         </Card>
       </div>
+
+      {/* Modale de détail de mission */}
+      <MissionDetailModal
+        mission={selectedMission}
+        isOpen={isMissionModalOpen}
+        onClose={handleCloseMissionModal}
+        hasAlreadyApplied={selectedMission ? hasAppliedToMission(selectedMission.id) : false}
+      />
     </Layout>
   )
 }
