@@ -167,8 +167,14 @@ function ApplicationCard({ application, showMissionName }: { application: Applic
 }
 
 export default function MesCandidaturesPage() {
+  const currentUser = useAppSelector((state) => state.auth.user);
+  const isInterimaire = currentUser?.roles?.includes('intérimaire') ?? false;
+
   const { data: applicationsData, isLoading: applicationsLoading } = useGetMyApplicationsQuery();
-  const { data: contractData } = useGetActiveContractQuery();
+  // Only fetch active contract for intérimaires
+  const { data: contractData } = useGetActiveContractQuery(undefined, {
+    skip: !isInterimaire,
+  });
   const applicationStatuses = useApplicationStatuses();
 
   const activeContract = contractData?.active_contract;
