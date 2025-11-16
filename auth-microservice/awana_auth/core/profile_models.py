@@ -263,3 +263,17 @@ class DocumentUploadResponse(BaseModel):
     filename: str
     file_size: int
     message: str
+
+
+
+# ==================== API Response Models ====================
+
+class DocumentUploadResponse(BaseModel):
+    """Response model for document upload"""
+    success: bool
+    document_id: str
+    filename: str
+    file_size: int
+    file_url: Optional[str] = None
+    message: str = "Document uploadé avec succès"
+
