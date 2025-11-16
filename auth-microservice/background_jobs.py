@@ -12,66 +12,31 @@ import uuid
 logger = logging.getLogger(__name__)
 
 
-async def execute_retention_policy_job(db: AsyncIOMotorDatabase):
+async def execute_retention_workflow_job(db: AsyncIOMotorDatabase):
     """
-    Background job to execute retention policy
+    Background job to execute retention workflow
     Runs daily at 2:00 AM
+    Gère tout le cycle de vie: J-7, J-3, J, J+3
     """
     try:
-        logger.info("🔄 Starting scheduled retention policy execution...")
-        start_time = datetime.now(timezone.utc)
+        from awana_auth.services.retention_workflow_service import RetentionWorkflowService
         
-        # Import the functions from retention_policy_routes
-        from retention_policy_routes import (
-            mark_users_for_deletion,
-            permanently_delete_users,
-            get_retention_config
-        )
+        workflow_service = RetentionWorkflowService(db)
+        results = await workflow_service.execute_full_workflow()
         
-        config = await get_retention_config(db)
-        
-        # Stage 1: Mark for deletion
-        marked_result = await mark_users_for_deletion(
-            db, 
-            config.days_to_mark_for_deletion
-        )
-        
-        # Stage 2: Permanently delete
-        deleted_result = await permanently_delete_users(
-            db,
-            config.days_to_permanent_delete
-        )
-        
-        # Log audit event
-        await db.audit_events.insert_one({
-            "id": str(uuid.uuid4()),
-            "action": "retention_policy.scheduled_execution",
-            "actor_id": "system",
-            "actor_username": "background_job",
-            "target_type": "users",
-            "target_id": "batch",
-            "payload": {
-                "marked_for_deletion": marked_result["count"],
-                "permanently_deleted": deleted_result["count"],
-                "execution_time": start_time.isoformat(),
-                "config": config.dict()
-            },
-            "timestamp": start_time,
-            "ip_address": None,
-            "user_agent": "scheduler"
-        })
-        
-        execution_time = (datetime.now(timezone.utc) - start_time).total_seconds()
-        
-        logger.info(
-            f"✅ Retention policy completed: "
-            f"{marked_result['count']} marked, "
-            f"{deleted_result['count']} deleted "
-            f"(took {execution_time:.2f}s)"
-        )
+        if results.get("status") == "success":
+            summary = results.get("summary", {})
+            logger.info(
+                f"✅ Scheduled retention workflow completed: "
+                f"{summary.get('total_users_processed', 0)} processed, "
+                f"{summary.get('total_notifications_sent', 0)} notifications sent, "
+                f"{summary.get('total_permanently_deleted', 0)} permanently deleted"
+            )
+        else:
+            logger.error(f"❌ Retention workflow failed: {results.get('error')}")
         
     except Exception as e:
-        logger.error(f"❌ Error executing retention policy: {str(e)}", exc_info=True)
+        logger.error(f"❌ Error executing retention workflow: {str(e)}", exc_info=True)
 
 
 def setup_background_jobs(db: AsyncIOMotorDatabase):
