@@ -99,7 +99,17 @@ async def lifespan(app: FastAPI):
     await email_domain_service.initialize_default_domains()
     logger.info("✅ Email domains initialized")
     
+    # Initialiser les tâches de fond
+    from background_jobs import setup_background_jobs
+    scheduler = setup_background_jobs(db)
+    logger.info("✅ Background jobs initialized")
+    
     yield
+    
+    # Arrêter le scheduler
+    if scheduler:
+        scheduler.shutdown()
+        logger.info("🛑 Background jobs stopped")
     
     if client:
         logger.info("🔌 Closing MongoDB connection...")
