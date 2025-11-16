@@ -270,6 +270,13 @@ export default function Sidebar() {
         ],
       },
       {
+        title: 'Missions',
+        items: [
+          { label: 'Offres disponibles', path: '/offres', icon: BriefcaseIcon },
+          { label: 'Mes Candidatures', path: '/mes-candidatures', icon: ClipboardDocumentCheckIcon },
+        ],
+      },
+      {
         title: 'Mon profil',
         items: [
           { label: 'Compléter mon profil', path: '/postulant/profile-overview', icon: UserCircleIcon },
