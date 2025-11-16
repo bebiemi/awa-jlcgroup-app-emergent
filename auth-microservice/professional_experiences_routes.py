@@ -410,7 +410,7 @@ async def delete_experience(
             )
         
         # Supprimer l'expérience
-        result = await db.profiles.update_one(
+        result = await db[collection_name].update_one(
             {"user_id": current_user.id},
             {
                 "$pull": {"professional_experiences": {"id": experience_id}},
