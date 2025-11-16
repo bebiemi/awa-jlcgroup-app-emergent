@@ -30,6 +30,7 @@ import { appConfigApi } from '@/features/config/api/appConfigApi'
 import { referencesApi } from '@/features/profile/api/referencesApi'
 import { missionsApi } from '@/features/missions/api/missionsApi'
 import { retentionPoliciesApi } from '@/features/admin/api/retentionPoliciesApi'
+import { experiencesApi } from '@/features/profile/api/experiencesApi'
 import authReducer from '@/features/auth/slices/authSlice'
 
 export const store = configureStore({
