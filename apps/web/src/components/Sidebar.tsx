@@ -213,12 +213,37 @@ export default function Sidebar() {
         ],
       }
     )
-  } else if (userPermissions['missions.browse']) {
+  } else if (user?.roles.includes(roles.interim) || user?.roles.includes('intérimaire')) {
+    // Intérimaire role - has contracts and missions
     navigationSections.push(
       {
         title: 'Tableau de bord',
         items: [
           { label: 'Vue d\'ensemble', path: '/interimaire', icon: HomeIcon },
+        ],
+      },
+      {
+        title: 'Missions',
+        items: [
+          { label: 'Offres disponibles', path: '/offres', icon: BriefcaseIcon },
+          { label: 'Mes Candidatures', path: '/mes-candidatures', icon: ClipboardDocumentCheckIcon },
+        ],
+      },
+      {
+        title: 'Compte',
+        items: [
+          { label: 'Mon Profil', path: '/profile', icon: UserCircleIcon },
+          { label: 'Sécurité', path: '/security', icon: ShieldCheckIcon },
+        ],
+      }
+    )
+  } else if (user?.roles.includes('candidat') || user?.roles.includes('postulant')) {
+    // Candidat/Postulant role - applying to missions
+    navigationSections.push(
+      {
+        title: 'Tableau de bord',
+        items: [
+          { label: 'Vue d\'ensemble', path: '/postulant', icon: HomeIcon },
         ],
       },
       {
