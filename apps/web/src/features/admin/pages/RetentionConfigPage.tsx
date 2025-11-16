@@ -25,47 +25,90 @@ export default function RetentionConfigPage() {
   const [updatePolicy, { isLoading: isUpdating }] = useUpdateRetentionPolicyMutation()
   const [initDefaults, { isLoading: isInitializing }] = useInitializeDefaultPoliciesMutation()
 
-  const [retentionDays, setRetentionDays] = useState<number>(90)
-  const [hasChanges, setHasChanges] = useState(false)
+  const [editingPolicy, setEditingPolicy] = useState<string | null>(null)
+  const [editValues, setEditValues] = useState<{ [key: string]: number }>({})
 
-  useEffect(() => {
-    if (config) {
-      setRetentionDays(config.retention_days)
-      setHasChanges(false)
+  const policies = policiesData?.policies || []
+
+  const handleInitDefaults = async () => {
+    try {
+      const result = await initDefaults().unwrap()
+      toast.success(result.message)
+      refetch()
+    } catch (error: any) {
+      toast.error(error?.data?.detail || 'Erreur lors de l\'initialisation')
     }
-  }, [config])
-
-  const handleChange = (value: number) => {
-    setRetentionDays(value)
-    setHasChanges(value !== config?.retention_days)
   }
 
-  const handleSave = async () => {
-    if (!config?.can_override) {
-      toast.error('Les modifications de la période de rétention ne sont pas autorisées')
-      return
-    }
+  const startEditing = (policyId: string, currentDays: number) => {
+    setEditingPolicy(policyId)
+    setEditValues({ ...editValues, [policyId]: currentDays })
+  }
 
-    if (retentionDays < 1 || retentionDays > 365) {
-      toast.error('La période de rétention doit être entre 1 et 365 jours')
+  const cancelEditing = () => {
+    setEditingPolicy(null)
+  }
+
+  const savePolicy = async (policyId: string) => {
+    const newDays = editValues[policyId]
+    
+    if (newDays < 7 || newDays > 3650) {
+      toast.error('La période de rétention doit être entre 7 et 3650 jours (10 ans)')
       return
     }
 
     try {
-      const result = await updateRetention(retentionDays).unwrap()
-      toast.success(result.message || 'Configuration mise à jour avec succès')
-      setHasChanges(false)
+      await updatePolicy({
+        policyId,
+        data: { retention_days: newDays }
+      }).unwrap()
+      
+      toast.success('Politique mise à jour avec succès')
+      setEditingPolicy(null)
       refetch()
     } catch (error: any) {
       toast.error(error?.data?.detail || 'Erreur lors de la mise à jour')
     }
   }
 
-  const handleReset = () => {
-    if (config) {
-      setRetentionDays(config.retention_days)
-      setHasChanges(false)
+  const togglePolicy = async (policyId: string, currentState: boolean) => {
+    try {
+      await updatePolicy({
+        policyId,
+        data: { is_enabled: !currentState }
+      }).unwrap()
+      
+      toast.success(`Politique ${!currentState ? 'activée' : 'désactivée'}`)
+      refetch()
+    } catch (error: any) {
+      toast.error(error?.data?.detail || 'Erreur lors de la modification')
     }
+  }
+
+  const getEntityIcon = (entityType: string) => {
+    switch (entityType) {
+      case 'users': return '👤'
+      case 'documents': return '📄'
+      case 'missions': return '💼'
+      case 'companies': return '🏢'
+      case 'applications': return '📝'
+      case 'contracts': return '📋'
+      case 'audit_logs': return '🔍'
+      default: return '📦'
+    }
+  }
+
+  const getRetentionLabel = (days: number) => {
+    if (days < 30) return `${days} jours`
+    if (days < 365) {
+      const months = Math.floor(days / 30)
+      return `${months} mois (${days}j)`
+    }
+    const years = Math.floor(days / 365)
+    const remainingDays = days % 365
+    return remainingDays > 0 
+      ? `${years} an${years > 1 ? 's' : ''} et ${remainingDays}j`
+      : `${years} an${years > 1 ? 's' : ''}`
   }
 
   return (
