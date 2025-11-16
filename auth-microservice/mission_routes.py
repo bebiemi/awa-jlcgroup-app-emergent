@@ -493,17 +493,21 @@ async def apply_to_mission(
 ):
     """
     Postuler à une mission (Étape 4)
-    Accessible par: Intérimaires
-    """
-    # Vérifier que c'est un intérimaire
-    user_roles = current_user.get("roles", [])
-    if cfg.get_interim_role() not in user_roles:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Seuls les intérimaires peuvent postuler"
-        )
+    Accessible par: Candidats, Postulants, Intérimaires (selon règles métiers)
     
-    # Vérifier que la mission existe et est publiée
+    Vérifie :
+    - Rôles autorisés (règles métiers)
+    - Permissions IAM
+    - Contrat actif pour intérimaires
+    - CV requis
+    - Candidature dupliquée
+    """
+    from awana_auth.services.application_eligibility_service import ApplicationEligibilityService
+    
+    user_id = current_user.get("sub")
+    user_roles = current_user.get("roles", [])
+    
+    # Vérifier que la mission existe
     mission = await db.missions.find_one({"id": mission_id})
     if not mission:
         raise HTTPException(
@@ -511,22 +515,21 @@ async def apply_to_mission(
             detail="Mission non trouvée"
         )
     
-    if mission["status"] != MissionStatus.PUBLISHED:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Cette mission n'accepte plus de candidatures"
-        )
+    mission_status = mission.get("status")
     
-    # Vérifier si l'utilisateur a déjà postulé
-    existing = await db.applications.find_one({
-        "mission_id": mission_id,
-        "user_id": current_user["sub"]
-    })
+    # Vérifier éligibilité via service avec règles métiers
+    eligibility_service = ApplicationEligibilityService(db)
+    is_eligible, error_message, metadata = await eligibility_service.check_eligibility(
+        user_id=user_id,
+        user_roles=user_roles,
+        mission_id=mission_id,
+        mission_status=mission_status
+    )
     
-    if existing:
+    if not is_eligible:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Vous avez déjà postulé à cette mission"
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=error_message
         )
     
     # Créer la candidature
