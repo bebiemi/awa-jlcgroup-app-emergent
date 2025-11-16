@@ -393,6 +393,8 @@ export const {
   useApplyToMissionMutation,
   useGetMissionApplicationsQuery,
   useGetMyApplicationsQuery,
+  useUpdateMyApplicationMutation,
+  useCancelMyApplicationMutation,
   useUpdateApplicationMutation,
   useShortlistApplicationMutation,
   useUploadMedicalDocumentMutation,
