@@ -64,7 +64,7 @@ export const experiencesApi = createApi({
     baseUrl: `${API_URL}/api`,
     credentials: 'include',
     prepareHeaders: (headers) => {
-      const token = localStorage.getItem('token')
+      const token = localStorage.getItem('access_token')
       if (token) {
         headers.set('Authorization', `Bearer ${token}`)
       }
