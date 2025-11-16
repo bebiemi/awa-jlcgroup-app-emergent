@@ -71,21 +71,68 @@ export default function MissionDetailModal({
   // Vérifier si l'utilisateur a un CV par défaut
   const defaultCvId = profile?.cv_document_id
 
+  // Gérer l'upload CV réussi
+  const handleCvUploadSuccess = (documentId: string, filename: string) => {
+    setUploadedCvId(documentId)
+    setShowCvUpload(false)
+    toast.success(`✅ CV "${filename}" uploadé avec succès`)
+    // Recharger le profil pour avoir le nouveau CV
+    refetchProfile()
+  }
+
+  // Vérifier éligibilité intérimaire avec contrat
+  const checkInterimEligibility = (): { canApply: boolean; message?: string } => {
+    if (!isInterimaire || !contractData) {
+      return { canApply: true }
+    }
+
+    const contract = contractData.contract
+    if (!contract || contract.status !== 'active') {
+      return { canApply: true }
+    }
+
+    // Calculer jours restants
+    const endDate = new Date(contract.end_date)
+    const now = new Date()
+    const daysRemaining = Math.ceil((endDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24))
+
+    // Vérifier règle métier (5 jours avant fin)
+    if (daysRemaining > 5) {
+      return {
+        canApply: false,
+        message: `Vous êtes actuellement en mission. Vous pourrez postuler à partir de 5 jours avant la fin de votre contrat (dans ${daysRemaining - 5} jours).`
+      }
+    }
+
+    // TODO: Vérifier prolongations/avenants (si endpoint disponible)
+    
+    return { canApply: true }
+  }
+
   const handleQuickApply = async () => {
     if (!currentUser) {
       toast.error('Vous devez être connecté pour postuler')
       return
     }
 
-    // Validation : au moins un CV doit être sélectionné ou disponible
-    if (!selectedCvId && !defaultCvId) {
-      toast.error('Veuillez sélectionner un CV ou uploader un CV dans votre profil')
+    // Vérifier éligibilité intérimaire
+    const eligibility = checkInterimEligibility()
+    if (!eligibility.canApply && eligibility.message) {
+      toast.error(eligibility.message, { duration: 6000 })
+      return
+    }
+
+    // Utiliser le CV uploadé ou sélectionné ou par défaut
+    const cvId = uploadedCvId || selectedCvId || defaultCvId
+
+    // Si pas de CV, afficher l'upload
+    if (!cvId) {
+      setShowCvUpload(true)
+      toast.error('Veuillez uploader votre CV pour continuer')
       return
     }
 
     try {
-      const cvId = selectedCvId || defaultCvId
-
       await applyToMission({
         mission_id: mission.id,
         user_id: currentUser.id,
@@ -101,23 +148,22 @@ export default function MissionDetailModal({
         onClose()
         setShowQuickApply(false)
         setSelectedCvId('')
+        setUploadedCvId('')
+        setShowCvUpload(false)
       }, 1500)
     } catch (error: any) {
       console.error('❌ Erreur lors de la candidature:', error)
       
-      // Gestion d'erreurs robuste et originale
+      // Gestion d'erreurs robuste et originale (messages du backend)
       const errorMessage = error?.data?.detail || error?.message || 'Une erreur est survenue'
       
       if (error?.status === 403) {
-        toast.error('⛔ Accès refusé : Vous n\'avez pas les permissions nécessaires', {
-          duration: 5000,
+        // Message du backend (règles métiers)
+        toast.error(`⛔ ${errorMessage}`, {
+          duration: 6000,
         })
-      } else if (error?.status === 409) {
-        toast.error('⚠️ Vous avez déjà postulé à cette mission', {
-          duration: 4000,
-        })
-      } else if (error?.status === 400) {
-        toast.error(`📋 ${errorMessage}`, {
+      } else if (error?.status === 409 || error?.status === 400) {
+        toast.error(`⚠️ ${errorMessage}`, {
           duration: 5000,
         })
       } else if (error?.status >= 500) {
