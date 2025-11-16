@@ -190,117 +190,146 @@ export default function RetentionConfigPage() {
             <div className="h-32 bg-gray-200 rounded-2xl" />
             <div className="h-48 bg-gray-200 rounded-2xl" />
           </div>
+        ) : policies.length === 0 ? (
+          <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-12 text-center">
+            <InformationCircleIcon className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">Aucune politique configurée</h3>
+            <p className="text-gray-600 mb-6">
+              Initialisez les politiques de rétention par défaut pour commencer
+            </p>
+            <button
+              onClick={handleInitDefaults}
+              disabled={isInitializing}
+              className="px-6 py-3 bg-jlc-purple-600 text-white rounded-lg hover:bg-jlc-purple-700 transition-colors disabled:opacity-50"
+            >
+              {isInitializing ? 'Initialisation...' : 'Initialiser les politiques par défaut'}
+            </button>
+          </div>
         ) : (
           <>
-            {/* Configuration Card */}
+            {/* Policies List */}
             <div className="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
               <div className="bg-gradient-to-r from-jlc-purple-50 to-indigo-50 px-6 py-4 border-b border-gray-200">
                 <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
                   <ClockIcon className="h-6 w-6 text-jlc-purple-600" />
-                  Période de Rétention
+                  Politiques de Rétention Configurées
                 </h2>
               </div>
 
-              <div className="p-6 space-y-6">
-                {/* Current Config Info */}
-                <div className="flex items-start gap-3 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                  <InformationCircleIcon className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-blue-900">
-                      Configuration actuelle : {config?.retention_days} jours
-                    </p>
-                    <p className="text-sm text-blue-700 mt-1">
-                      Source : {config?.source === 'database' ? 'Base de données (personnalisé)' : 'Configuration YAML (par défaut)'}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Retention Days Input */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Nombre de jours avant suppression définitive
-                  </label>
-                  <div className="flex items-center gap-4">
-                    <input
-                      type="range"
-                      min="1"
-                      max="365"
-                      value={retentionDays}
-                      onChange={(e) => handleChange(parseInt(e.target.value))}
-                      disabled={!config?.can_override}
-                      className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                      style={{
-                        background: config?.can_override
-                          ? `linear-gradient(to right, #6d28d9 0%, #6d28d9 ${((retentionDays - 1) / 364) * 100}%, #e5e7eb ${((retentionDays - 1) / 364) * 100}%, #e5e7eb 100%)`
-                          : '#e5e7eb',
-                      }}
-                    />
-                    <input
-                      type="number"
-                      min="1"
-                      max="365"
-                      value={retentionDays}
-                      onChange={(e) => handleChange(parseInt(e.target.value) || 1)}
-                      disabled={!config?.can_override}
-                      className="w-24 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-jlc-purple-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
-                    />
-                    <span className="text-sm font-medium text-gray-600 whitespace-nowrap">
-                      jours
-                    </span>
-                  </div>
-                  <p className="text-sm text-gray-500 mt-2">
-                    Les utilisateurs archivés seront automatiquement supprimés après cette période
-                  </p>
-                </div>
-
-                {/* Warning Message */}
-                {retentionDays < 30 && (
-                  <div className="flex items-start gap-3 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                    <ExclamationTriangleIcon className="h-5 w-5 text-yellow-600 flex-shrink-0 mt-0.5" />
-                    <div>
-                      <p className="text-sm font-medium text-yellow-900">
-                        Attention : Période de rétention courte
-                      </p>
-                      <p className="text-sm text-yellow-700 mt-1">
-                        Une période de rétention inférieure à 30 jours peut ne pas laisser suffisamment de temps pour restaurer des utilisateurs en cas d'erreur.
-                      </p>
+              <div className="divide-y divide-gray-200">
+                {policies.map((policy) => {
+                  const isEditing = editingPolicy === policy.id
+                  const currentValue = isEditing ? editValues[policy.id] : policy.retention_days
+                  
+                  return (
+                    <div key={policy.id} className="p-6 hover:bg-gray-50 transition-colors">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-3 mb-2">
+                            <span className="text-2xl">{getEntityIcon(policy.entity_type)}</span>
+                            <div>
+                              <h3 className="text-lg font-semibold text-gray-900">
+                                {policy.entity_label}
+                              </h3>
+                              <p className="text-sm text-gray-600">{policy.description}</p>
+                            </div>
+                          </div>
+                          
+                          <div className="flex items-center gap-6 mt-4">
+                            {/* Retention Days */}
+                            <div className="flex items-center gap-3">
+                              <span className="text-sm font-medium text-gray-700">Délai de rétention :</span>
+                              {isEditing ? (
+                                <div className="flex items-center gap-2">
+                                  <input
+                                    type="number"
+                                    min="7"
+                                    max="3650"
+                                    value={currentValue}
+                                    onChange={(e) => setEditValues({ 
+                                      ...editValues, 
+                                      [policy.id]: parseInt(e.target.value) || 7 
+                                    })}
+                                    className="w-24 px-3 py-1 border border-gray-300 rounded-lg focus:ring-2 focus:ring-jlc-purple-500"
+                                  />
+                                  <span className="text-sm text-gray-600">jours</span>
+                                </div>
+                              ) : (
+                                <span className="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm font-medium">
+                                  {getRetentionLabel(policy.retention_days)}
+                                </span>
+                              )}
+                            </div>
+                            
+                            {/* Workflow Stages */}
+                            {policy.workflow_stages_count > 0 && (
+                              <div className="flex items-center gap-2 text-sm text-gray-600">
+                                <span>🔄</span>
+                                <span>{policy.workflow_stages_count} étapes configurées</span>
+                              </div>
+                            )}
+                            
+                            {/* Status Badge */}
+                            <div>
+                              <button
+                                onClick={() => togglePolicy(policy.id, policy.is_enabled)}
+                                className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+                                  policy.is_enabled
+                                    ? 'bg-green-100 text-green-800 hover:bg-green-200'
+                                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                                }`}
+                              >
+                                {policy.is_enabled ? '✓ Active' : '✕ Inactive'}
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        {/* Actions */}
+                        <div className="flex items-center gap-2 ml-4">
+                          {isEditing ? (
+                            <>
+                              <button
+                                onClick={() => savePolicy(policy.id)}
+                                disabled={isUpdating}
+                                className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors disabled:opacity-50"
+                                title="Enregistrer"
+                              >
+                                <CheckIcon className="h-5 w-5" />
+                              </button>
+                              <button
+                                onClick={cancelEditing}
+                                disabled={isUpdating}
+                                className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50"
+                                title="Annuler"
+                              >
+                                <XMarkIcon className="h-5 w-5" />
+                              </button>
+                            </>
+                          ) : (
+                            <button
+                              onClick={() => startEditing(policy.id, policy.retention_days)}
+                              className="p-2 text-jlc-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
+                              title="Modifier"
+                            >
+                              <PencilIcon className="h-5 w-5" />
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                      
+                      {/* Warning for short retention */}
+                      {currentValue < 30 && (
+                        <div className="mt-4 flex items-start gap-2 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                          <ExclamationTriangleIcon className="h-5 w-5 text-yellow-600 flex-shrink-0" />
+                          <p className="text-sm text-yellow-800">
+                            Attention : Période de rétention très courte. Recommandé : minimum 30 jours.
+                          </p>
+                        </div>
+                      )}
                     </div>
-                  </div>
-                )}
-
-                {!config?.can_override && (
-                  <div className="flex items-start gap-3 p-4 bg-red-50 border border-red-200 rounded-lg">
-                    <ExclamationTriangleIcon className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
-                    <div>
-                      <p className="text-sm font-medium text-red-900">
-                        Modifications non autorisées
-                      </p>
-                      <p className="text-sm text-red-700 mt-1">
-                        La période de rétention est verrouillée par la configuration YAML. Contactez l'administrateur système pour la modifier.
-                      </p>
-                    </div>
-                  </div>
-                )}
-
-                {/* Action Buttons */}
-                {config?.can_override && (
-                  <div className="flex gap-3 pt-4 border-t border-gray-200">
-                    <button
-                      onClick={handleSave}
-                      disabled={!hasChanges || isUpdating}
-                      className="px-6 py-2 bg-gradient-to-r from-jlc-purple-600 to-indigo-600 text-white rounded-lg hover:from-jlc-purple-700 hover:to-indigo-700 shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:from-jlc-purple-600 disabled:hover:to-indigo-600"
-                    >
-                      {isUpdating ? 'Enregistrement...' : 'Enregistrer'}
-                    </button>
-                    <button
-                      onClick={handleReset}
-                      disabled={!hasChanges || isUpdating}
-                      className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      Annuler
-                    </button>
-                  </div>
-                )}
+                  )
+                })}
               </div>
             </div>
 
