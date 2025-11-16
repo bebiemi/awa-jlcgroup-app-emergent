@@ -280,7 +280,7 @@ export default function Sidebar() {
       {
         title: 'Mon profil',
         items: [
-          { label: 'Compléter mon profil', path: '/postulant/profile-overview', icon: UserCircleIcon },
+          { label: 'Overview', path: '/postulant/profile-overview', icon: UserCircleIcon },
           { label: 'Mon Profil', path: '/profile', icon: UserCircleIcon },
           { label: 'Mes documents', path: '/documents', icon: DocumentTextIcon },
         ],
