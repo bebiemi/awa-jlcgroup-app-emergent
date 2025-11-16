@@ -27,8 +27,16 @@ export const authApi = createApi({
       }),
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
+          console.log('📡 localLogin onQueryStarted - waiting for API response...')
           const { data } = await queryFulfilled
+          console.log('📡 localLogin onQueryStarted - API response received:', {
+            hasToken: !!data.access_token,
+            hasUser: !!data.user,
+            hasMFA: !!data.mfa_required
+          })
+          
           if (data.access_token && data.user) {
+            console.log('💾 Storing credentials in Redux + localStorage')
             // Store credentials in Redux store
             dispatch(
               setCredentials({
@@ -43,8 +51,12 @@ export const authApi = createApi({
               localStorage.setItem('refresh_token', data.refresh_token)
             }
             localStorage.setItem('user', JSON.stringify(data.user))
+            console.log('✅ Credentials stored successfully')
+          } else {
+            console.warn('⚠️  No credentials to store (MFA flow or incomplete response)')
           }
         } catch (error) {
+          console.error('❌ localLogin onQueryStarted error:', error)
           // Error handled by mutation
         }
       },
