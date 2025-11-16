@@ -45,18 +45,18 @@ def setup_background_jobs(db: AsyncIOMotorDatabase):
     """
     scheduler = AsyncIOScheduler()
     
-    # Schedule retention policy to run daily at 2:00 AM
+    # Schedule retention workflow to run daily at 2:00 AM
     scheduler.add_job(
-        execute_retention_policy_job,
+        execute_retention_workflow_job,
         CronTrigger(hour=2, minute=0),  # Run at 2:00 AM every day
         args=[db],
-        id="retention_policy_job",
-        name="Retention Policy Execution",
+        id="retention_workflow_job",
+        name="Retention Workflow Execution (J-7, J-3, J, J+3)",
         replace_existing=True
     )
     
     logger.info("📅 Background jobs scheduled:")
-    logger.info("   - Retention Policy: Daily at 2:00 AM")
+    logger.info("   - Retention Workflow: Daily at 2:00 AM (4-stage process)")
     
     scheduler.start()
     
