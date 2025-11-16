@@ -172,32 +172,32 @@ async def create_experience(
         - Génération automatique de l'ID unique
     """
     try:
+        # Déterminer la collection selon le rôle
+        collection_name = _get_profile_collection_name(current_user.roles)
+        
         # Vérifier que le profil existe, sinon le créer automatiquement
-        profile = await db.profiles.find_one({"user_id": current_user.id})
+        profile = await db[collection_name].find_one({"user_id": current_user.id})
         
         if not profile:
             # Créer un profil minimal automatiquement pour l'utilisateur
-            # Déterminer le type de profil basé sur les rôles
-            profile_type = "candidat"
-            if "intérimaire" in current_user.roles:
-                profile_type = "interim"
-            elif "entreprise" in current_user.roles or "company" in current_user.roles:
-                profile_type = "company"
-            elif "collaborator" in current_user.roles:
-                profile_type = "collaborator"
-            
             now = datetime.utcnow().isoformat()
             new_profile = {
                 "user_id": current_user.id,
-                "profile_type": profile_type,
                 "professional_experiences": [],
-                "created_at": now,
+                "sectors": [],
+                "skills": [],
+                "languages": [],
+                "driving_license_types": [],
+                "document_ids": [],
+                "has_driving_license": False,
+                "available_immediately": False,
+                "blocked_dates": [],
                 "updated_at": now,
                 "profile_completed": False,
                 "profile_completion_percentage": 0
             }
             
-            await db.profiles.insert_one(new_profile)
+            await db[collection_name].insert_one(new_profile)
             profile = new_profile
         
         # Créer l'expérience avec un ID unique
