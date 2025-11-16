@@ -12,9 +12,11 @@
 import { useState } from 'react'
 import Modal from '@/components/Modal'
 import Button from '@/components/Button'
+import InlineDocumentUpload from '@/components/InlineDocumentUpload'
 import { useAppSelector } from '@/store/hooks'
 import { useGetMyProfileQuery } from '@/features/profile/api/profileApi'
 import { useApplyToMissionMutation, type Mission } from '../api/missionApi'
+import { useGetActiveContractQuery } from '@/features/contracts/api/contractApi'
 import {
   BriefcaseIcon,
   MapPinIcon,
