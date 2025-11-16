@@ -402,11 +402,11 @@ frontend:
 
   - task: "P0 - Test complet du processus de candidature"
     implemented: true
-    working: true
+    working: false
     file: "/app/apps/web/src/features/missions/components/MissionDetailModal.tsx"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
       - working: false
         agent: "testing"
@@ -414,6 +414,9 @@ frontend:
       - working: true
         agent: "testing"
         comment: "✅ COMPLETE END-TO-END MISSION APPLICATION PROCESS TESTING SUCCESSFUL: All 3 scenarios verified and working correctly. **SCENARIO 1 (Nina WITH CV)**: Login successful (nina/azerty123456!!), /offres page loads with 2 missions, statistics show 2 candidatures (Nina applied to both), mission cards display '✓ Candidature envoyée' badges, MissionDetailModal opens correctly showing 'Candidature déjà envoyée' message with proper blue styling and redirect to 'Mes Candidatures'. This behavior is CORRECT as per review request. **SCENARIO 2 (User WITHOUT CV)**: Skipped as requested - would require new account creation. **SCENARIO 3 (Interim Eligibility Logic)**: Verified checkInterimEligibility() function exists (lines 84-110) with proper logic: checks isInterimaire role, validates active contract, calculates remaining days, blocks application if >5 days remaining, displays warning message with ExclamationTriangleIcon, disables 'Postuler rapidement' button. **TECHNICAL VERIFICATION**: Modal routing fixed (OffresPage.tsx uses MissionDetailModal instead of navigation), authentication working, mission cards clickable, modal displays mission details correctly, CV selector logic implemented for users with existing CVs, inline upload component ready for users without CVs. All components and workflows functioning as designed."
+      - working: false
+        agent: "testing"
+        comment: "❌ CRITICAL FRONTEND AUTHENTICATION ISSUE: Comprehensive testing reveals frontend authentication session management problems preventing end-to-end testing. **BACKEND VERIFICATION SUCCESSFUL**: 1) Nina login API working (nina/azerty123456!!), 2) 3 published missions available (Dev Full Stack, Développeur Full Stack JavaScript, Bureautique), 3) Nina has 2 previous applications (both withdrawn status), 4) Nina's profile shows no CV (cv_document_id: null), 5) Mission application API working (Nina successfully applied to Bureautique mission via API). **FRONTEND ISSUES IDENTIFIED**: 1) Authentication session not persisting between page navigations, 2) 'Trouver une mission' button redirects to /register instead of /offres, 3) Direct navigation to /offres requires authentication but session is lost, 4) Login modal appears but authentication flow has issues. **COMPONENT ANALYSIS CONFIRMED**: All required components exist and have correct logic - MissionDetailModal.tsx (lines 84-110 checkInterimEligibility function), InlineDocumentUpload.tsx (CV upload functionality), OffresPage.tsx (mission listing and modal integration). **SCENARIOS STATUS**: All 4 scenarios have correct backend logic and frontend components, but cannot be tested end-to-end due to authentication session issues. **CRITICAL ISSUE**: Frontend authentication/session management needs fixing before mission application process can be properly tested."
 
   - task: "P1 Issue 2 - Modification/Annulation Candidatures"
     implemented: true
