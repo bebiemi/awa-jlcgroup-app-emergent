@@ -33,10 +33,16 @@ export default function LoginPage() {
     e.preventDefault()
 
     try {
+      console.log('🔐 Login attempt for:', username)
       const result = await login({ username, password }).unwrap()
+      console.log('✅ Login API response:', result)
+      console.log('  - access_token:', !!result.access_token)
+      console.log('  - user:', !!result.user)
+      console.log('  - mfa_required:', result.mfa_required)
 
       // Check if MFA is required
       if (result.mfa_required && result.mfa_session_token) {
+        console.log('🔒 MFA required, showing verification page')
         // Show MFA verification page
         setMfaSessionId(result.mfa_session_token)
         // Use first available method or default to totp
@@ -48,7 +54,9 @@ export default function LoginPage() {
       }
 
       // Normal login without MFA
+      console.log('🔓 Normal login flow (no MFA)')
       if (result.access_token && result.user) {
+        console.log('✅ Credentials found in result, proceeding with login flow')
         // CRITICAL: Set user status to "online" immediately after successful login
         try {
           await fetch('/api/users/presence/me', {
