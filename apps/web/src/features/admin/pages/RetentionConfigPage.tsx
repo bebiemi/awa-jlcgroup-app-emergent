@@ -113,17 +113,77 @@ export default function RetentionConfigPage() {
 
   return (
     <Layout>
-      <div className="max-w-4xl mx-auto space-y-6">
+      <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-            <ShieldCheckIcon className="h-8 w-8 text-jlc-purple-600" />
-            Configuration de la Rétention des Données
-          </h1>
-          <p className="mt-2 text-gray-600">
-            Configurez la période de rétention des utilisateurs archivés avant suppression définitive
-          </p>
+        <div className="flex items-start justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
+              <ShieldCheckIcon className="h-8 w-8 text-jlc-purple-600" />
+              Rétention des Données (RGPD)
+            </h1>
+            <p className="mt-2 text-gray-600">
+              Configurez les délais de conservation pour tous les types de données conformément au RGPD
+            </p>
+          </div>
+          
+          {policies.length === 0 && !isLoading && (
+            <button
+              onClick={handleInitDefaults}
+              disabled={isInitializing}
+              className="flex items-center gap-2 px-4 py-2 bg-jlc-purple-600 text-white rounded-lg hover:bg-jlc-purple-700 transition-colors disabled:opacity-50"
+            >
+              <PlusIcon className="h-5 w-5" />
+              {isInitializing ? 'Initialisation...' : 'Initialiser les politiques'}
+            </button>
+          )}
         </div>
+
+        {/* Stats Cards */}
+        {stats && (
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-xl border border-blue-200">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-blue-700 font-medium">Total Politiques</p>
+                  <p className="text-2xl font-bold text-blue-900">{stats.total_policies}</p>
+                </div>
+                <ChartBarIcon className="h-10 w-10 text-blue-600 opacity-50" />
+              </div>
+            </div>
+            
+            <div className="bg-gradient-to-br from-green-50 to-green-100 p-4 rounded-xl border border-green-200">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-green-700 font-medium">Actives</p>
+                  <p className="text-2xl font-bold text-green-900">{stats.active_policies}</p>
+                </div>
+                <CheckIcon className="h-10 w-10 text-green-600 opacity-50" />
+              </div>
+            </div>
+            
+            <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-4 rounded-xl border border-gray-200">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-700 font-medium">Inactives</p>
+                  <p className="text-2xl font-bold text-gray-900">{stats.inactive_policies}</p>
+                </div>
+                <XMarkIcon className="h-10 w-10 text-gray-600 opacity-50" />
+              </div>
+            </div>
+            
+            <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-4 rounded-xl border border-purple-200">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-purple-700 font-medium">Entités archivées</p>
+                  <p className="text-2xl font-bold text-purple-900">
+                    {Object.values(stats.total_entities_in_retention).reduce((a, b) => a + b, 0)}
+                  </p>
+                </div>
+                <ClockIcon className="h-10 w-10 text-purple-600 opacity-50" />
+              </div>
+            </div>
+          </div>
+        )}
 
         {isLoading ? (
           <div className="animate-pulse space-y-4">
