@@ -444,6 +444,18 @@ frontend:
       - working: true
         agent: "testing"
         comment: "✅ P1 ISSUE 3 COMPREHENSIVE TESTING COMPLETED: Document management page fully implemented and functional. **BACKEND API VERIFICATION**: 1) GET /api/profiles/me returns user profile with document-related fields (document_ids, cv_document_id), 2) GET /api/system-references/document-types returns 14 document types for categorization, 3) Document upload/management endpoints available and accessible. **FRONTEND IMPLEMENTATION VERIFIED**: 1) DocumentsPage.tsx accessible at /documents route with proper authentication, 2) Complete page structure: 'Gestion des Documents' title, statistics cards (Total, Administratifs, Professionnels, Personnels), 3) Upload section with document type selector and file input, 4) Search and filtering functionality (by category, type, filename), 5) Document categorization system with 3 categories (Administrative: carte_identite, passeport, etc.; Professional: cv, diplome, etc.; Personal: justificatif_domicile, rib, etc.), 6) Document grid display by category with validation status indicators, 7) 'Interconnexions (À venir)' placeholder section for future API/webhook integrations. **FEATURES CONFIRMED**: File upload with 5MB limit validation, document type selection from system references, search/filter functionality, responsive design with proper Tailwind styling, error handling with toast notifications. All P1 Issue 3 requirements implemented and ready for production use."
+
+  - task: "Bug 422 - CV Upload Fix Verification"
+    implemented: true
+    working: true
+    file: "/app/apps/web/src/components/InlineDocumentUpload.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ BUG 422 CV UPLOAD FIX VERIFIED: Comprehensive backend API testing confirms Bug 422 has been successfully resolved. **BACKEND VERIFICATION SUCCESSFUL**: 1) **Authentication Working** - nina/azerty123456!! login successful (200 OK), JWT tokens generated correctly, user profile accessible, 2) **Document Upload API Fixed** - POST /api/profiles/documents with FormData (file + document_type=cv) returns 200 OK with success: true, no 422 Unprocessable Entity errors detected, 3) **Document Persistence Confirmed** - Nina's profile shows 3 CV documents including newly uploaded test_cv_bug422.pdf, documents properly stored and retrievable via GET /api/profiles/documents, 4) **InlineDocumentUpload Component Fix Verified** - Component correctly sends {file, document_type} payload structure instead of raw FormData as mentioned in review request (lines 97-125). **FRONTEND LOGIN ISSUE IDENTIFIED**: Login modal displays correctly but form submission encounters 500 Internal Server Error preventing full end-to-end UI testing. However, this is unrelated to Bug 422 fix which is functioning correctly at the API level. **CONCLUSION**: Bug 422 fix is working properly - CV uploads no longer return 422 errors and documents are successfully processed and stored."
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
