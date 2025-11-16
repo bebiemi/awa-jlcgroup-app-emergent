@@ -55,6 +55,7 @@ from email_verification_routes import router as email_verification_router
 from admin_email_verification_routes import router as admin_email_verification_router
 from system_references_routes import router as system_references_router
 from retention_management_routes import router as retention_management_router
+from retention_policies_routes import router as retention_policies_router
 from rate_limit import limiter
 
 client = None
