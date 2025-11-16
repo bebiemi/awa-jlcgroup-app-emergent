@@ -177,6 +177,7 @@ app.include_router(admin_email_verification_router, tags=["Admin Email Verificat
 app.include_router(system_references_router)
 app.include_router(retention_management_router)
 app.include_router(retention_policies_router)
+app.include_router(iam_unified_router)
 
 @app.get("/health")
 async def health_check():
