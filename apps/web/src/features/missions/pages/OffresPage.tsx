@@ -67,6 +67,18 @@ export default function OffresPage() {
     return myApplications.some(app => app.mission_id === missionId)
   }
 
+  // Fonction pour ouvrir la modale
+  const handleMissionClick = (mission: Mission) => {
+    setSelectedMission(mission)
+    setIsMissionModalOpen(true)
+  }
+  
+  // Fonction pour fermer la modale
+  const handleCloseMissionModal = () => {
+    setIsMissionModalOpen(false)
+    setTimeout(() => setSelectedMission(null), 300)
+  }
+
   if (isLoading) {
     return (
       <Layout>
