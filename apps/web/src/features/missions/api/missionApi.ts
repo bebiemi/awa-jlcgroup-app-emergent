@@ -324,6 +324,31 @@ export const missionApi = createApi({
       providesTags: ['MyApplications'],
     }),
 
+    // Endpoints pour gérer ses propres candidatures
+    updateMyApplication: builder.mutation<Application, { 
+      application_id: string
+      additional_info?: string 
+    }>({
+      query: ({ application_id, additional_info }) => ({
+        url: `/missions/applications/me/${application_id}`,
+        method: 'PATCH',
+        body: { additional_info },
+      }),
+      invalidatesTags: ['MyApplications', 'Application'],
+    }),
+
+    cancelMyApplication: builder.mutation<Application, {
+      application_id: string
+      cancellation_reason?: string
+    }>({
+      query: ({ application_id, cancellation_reason }) => ({
+        url: `/missions/applications/me/${application_id}/cancel`,
+        method: 'POST',
+        body: { cancellation_reason },
+      }),
+      invalidatesTags: ['MyApplications', 'Application', 'Mission'],
+    }),
+
     updateApplication: builder.mutation<Application, { id: string; data: ApplicationUpdate }>({
       query: ({ id, data }) => ({
         url: `/missions/applications/${id}`,
