@@ -24,7 +24,8 @@ class UserStatus(str, Enum):
     INACTIVE = "inactive"
     SUSPENDED = "suspended"
     PENDING = "pending"
-    ARCHIVED = "archived"  # Soft delete - scheduled for deletion
+    ARCHIVED = "archived"  # Soft delete - will be marked for deletion after 7 days
+    MARKED_FOR_DELETION = "marked_for_deletion"  # Will be permanently deleted after 3 days
 
 
 class PresenceStatus(str, Enum):
