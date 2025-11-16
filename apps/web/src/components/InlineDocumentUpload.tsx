@@ -98,16 +98,15 @@ export default function InlineDocumentUpload({
     if (!selectedFile) return
 
     try {
-      const formData = new FormData()
-      formData.append('file', selectedFile)
-      formData.append('document_type', documentType)
-
-      const result = await uploadDocument(formData).unwrap()
+      const result = await uploadDocument({
+        file: selectedFile,
+        document_type: documentType
+      }).unwrap()
 
       toast.success('✅ Document uploadé avec succès')
       
       if (onUploadSuccess) {
-        onUploadSuccess(result.id, result.filename || selectedFile.name)
+        onUploadSuccess(result.document_id, result.filename || selectedFile.name)
       }
 
       // Reset
