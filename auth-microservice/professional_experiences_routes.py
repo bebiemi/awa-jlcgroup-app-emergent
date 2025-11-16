@@ -90,8 +90,11 @@ async def get_my_experiences(
         List[ProfessionalExperience]: Liste des expériences
     """
     try:
+        # Déterminer la collection selon le rôle
+        collection_name = _get_profile_collection_name(current_user.roles)
+        
         # Récupérer le profil de l'utilisateur
-        profile = await db.profiles.find_one(
+        profile = await db[collection_name].find_one(
             {"user_id": current_user.id},
             {"_id": 0, "professional_experiences": 1}
         )
