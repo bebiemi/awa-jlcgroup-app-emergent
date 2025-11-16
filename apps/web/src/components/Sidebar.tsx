@@ -311,9 +311,10 @@ export default function Sidebar() {
             {!isCollapsed && (
               <div>
                 <p className="text-xs text-white/70 mt-1">
-                  {userPermissions['admin.dashboard'] ? 'Administration' : 
-                   userPermissions['missions.browse'] ? 'Intérimaire' : 
-                   userPermissions['missions.create'] ? 'Entreprise' : 
+                  {user?.roles.includes(roles.admin) ? 'Administration' : 
+                   user?.roles.includes(roles.interim) || user?.roles.includes('intérimaire') ? 'Intérimaire' : 
+                   user?.roles.includes(roles.company) || user?.roles.includes('entreprise') ? 'Entreprise' :
+                   user?.roles.includes('candidat') || user?.roles.includes('postulant') ? 'Candidat' :
                    'Utilisateur'}
                 </p>
               </div>
