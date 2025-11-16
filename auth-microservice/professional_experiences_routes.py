@@ -21,6 +21,37 @@ from awana_auth.core.models import User
 router = APIRouter(prefix="/profiles/me/experiences", tags=["Professional Experiences"])
 
 
+# ==================== Helper Functions ====================
+
+def _get_profile_collection_name(user_roles: List[str]) -> str:
+    """
+    Déterminer le nom de la collection de profil selon les rôles utilisateur
+    
+    Architecture:
+    - interim_profiles : pour les intérimaires
+    - candidat_profiles : pour les candidats/postulants
+    - company_manager_profiles : pour les entreprises
+    - collaborator_profiles : pour les collaborateurs
+    
+    Args:
+        user_roles: Liste des rôles de l'utilisateur
+        
+    Returns:
+        str: Nom de la collection
+    """
+    if "intérimaire" in user_roles or "interim" in user_roles:
+        return "interim_profiles"
+    elif "candidat" in user_roles or "postulant" in user_roles:
+        return "candidat_profiles"
+    elif "entreprise" in user_roles or "company" in user_roles:
+        return "company_manager_profiles"
+    elif "collaborator" in user_roles:
+        return "collaborator_profiles"
+    else:
+        # Par défaut, candidat
+        return "candidat_profiles"
+
+
 # ==================== Request Models ====================
 
 class ExperienceCreate(BaseModel):
