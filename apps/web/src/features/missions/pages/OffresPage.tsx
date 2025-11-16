@@ -264,30 +264,17 @@ export default function OffresPage() {
               )}
 
               <div className="flex gap-3">
-                <Link
-                  to={`/offres/${mission.id}`}
+                <button
+                  onClick={() => handleMissionClick(mission)}
                   className="flex-1 text-center px-4 py-2 border border-jlc-purple-600 text-jlc-purple-600 rounded-lg hover:bg-jlc-purple-50 transition"
                 >
                   Voir les détails
-                </Link>
+                </button>
                 
-                {!hasApplied(mission.id) && (
-                  canApply ? (
-                    <Link
-                      to={`/offres/${mission.id}/postuler`}
-                      className="flex-1 text-center px-4 py-2 bg-jlc-purple-600 text-white rounded-lg hover:bg-jlc-purple-700 transition"
-                    >
-                      Postuler
-                    </Link>
-                  ) : (
-                    <button
-                      disabled
-                      title="Vous avez une mission en cours"
-                      className="flex-1 text-center px-4 py-2 bg-gray-300 text-gray-500 rounded-lg cursor-not-allowed"
-                    >
-                      Postuler
-                    </button>
-                  )
+                {hasApplied(mission.id) && (
+                  <span className="flex-1 flex items-center justify-center px-4 py-2 bg-blue-100 text-blue-700 rounded-lg text-sm font-medium">
+                    ✓ Candidature envoyée
+                  </span>
                 )}
               </div>
             </div>
