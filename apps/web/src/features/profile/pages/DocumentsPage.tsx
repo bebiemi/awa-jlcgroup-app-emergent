@@ -110,11 +110,10 @@ export default function DocumentsPage() {
     if (!uploadingFile) return
 
     try {
-      const formData = new FormData()
-      formData.append('file', uploadingFile)
-      formData.append('document_type', selectedDocType)
-
-      await uploadDocument(formData).unwrap()
+      await uploadDocument({
+        file: uploadingFile,
+        document_type: selectedDocType
+      }).unwrap()
       
       toast.success('✅ Document uploadé avec succès')
       setUploadingFile(null)
