@@ -156,13 +156,13 @@ async def proxy_system_references_requests(path: str = "", request: Request = No
     return await _proxy_request(target_url, request)
 
 
-@router.api_route("/retention-policy", methods=["GET", "POST", "PUT"])
-@router.api_route("/retention-policy/{path:path}", methods=["GET", "POST", "PUT"])
-async def proxy_retention_policy_requests(path: str = "", request: Request = None):
+@router.api_route("/retention", methods=["GET", "POST", "PUT"])
+@router.api_route("/retention/{path:path}", methods=["GET", "POST", "PUT"])
+async def proxy_retention_requests(path: str = "", request: Request = None):
     """
-    Proxy all /api/retention-policy/* requests to auth-microservice /api/retention-policy/*
+    Proxy all /api/retention/* requests to auth-microservice /api/retention/*
     """
-    target_url = f"{AUTH_SERVICE_URL}/api/retention-policy/{path}" if path else f"{AUTH_SERVICE_URL}/api/retention-policy"
+    target_url = f"{AUTH_SERVICE_URL}/api/retention/{path}" if path else f"{AUTH_SERVICE_URL}/api/retention"
     return await _proxy_request(target_url, request)
 
 
