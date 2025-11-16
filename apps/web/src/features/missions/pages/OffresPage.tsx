@@ -18,17 +18,24 @@ import {
   ExclamationCircleIcon,
 } from '@heroicons/react/24/outline'
 import toast from 'react-hot-toast'
+import { useAppSelector } from '@/store/hooks'
 
 export default function OffresPage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedJobType, setSelectedJobType] = useState<string>('all')
+
+  const currentUser = useAppSelector((state) => state.auth.user)
+  const isInterimaire = currentUser?.roles?.includes('intérimaire') ?? false
 
   const { data: missions = [], isLoading } = useGetMissionsQuery({
     published_only: true,
   })
 
   const { data: myApplications = [] } = useGetMyApplicationsQuery()
-  const { data: contractData } = useGetActiveContractQuery()
+  // Only fetch active contract for intérimaires
+  const { data: contractData } = useGetActiveContractQuery(undefined, {
+    skip: !isInterimaire,
+  })
   
   const [applyToMission] = useApplyToMissionMutation()
 
