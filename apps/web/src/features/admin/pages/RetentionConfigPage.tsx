@@ -334,40 +334,93 @@ export default function RetentionConfigPage() {
             </div>
 
             {/* Information Panel */}
-            <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                Informations importantes
-              </h3>
-              <div className="space-y-3 text-sm text-gray-600">
-                <div className="flex gap-3">
-                  <span className="text-jlc-purple-600 font-bold">•</span>
-                  <p>
-                    <strong>Archivage :</strong> Les utilisateurs archivés restent dans la base de données mais sont marqués comme inactifs et ne peuvent plus se connecter.
-                  </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                  <InformationCircleIcon className="h-6 w-6 text-jlc-purple-600" />
+                  Conformité RGPD
+                </h3>
+                <div className="space-y-3 text-sm text-gray-600">
+                  <div className="flex gap-3">
+                    <span className="text-jlc-purple-600 font-bold">•</span>
+                    <p>
+                      <strong>Droit à l'effacement (Art. 17) :</strong> Les utilisateurs peuvent demander la suppression de leurs données à tout moment.
+                    </p>
+                  </div>
+                  <div className="flex gap-3">
+                    <span className="text-jlc-purple-600 font-bold">•</span>
+                    <p>
+                      <strong>Minimisation des données :</strong> Ne conservez les données que pendant la durée strictement nécessaire.
+                    </p>
+                  </div>
+                  <div className="flex gap-3">
+                    <span className="text-jlc-purple-600 font-bold">•</span>
+                    <p>
+                      <strong>Registre des traitements :</strong> Toutes les suppressions sont tracées dans l'audit trail.
+                    </p>
+                  </div>
+                  <div className="flex gap-3">
+                    <span className="text-jlc-purple-600 font-bold">•</span>
+                    <p>
+                      <strong>Base légale :</strong> Assurez-vous que chaque politique de rétention a une base légale valide.
+                    </p>
+                  </div>
                 </div>
-                <div className="flex gap-3">
-                  <span className="text-jlc-purple-600 font-bold">•</span>
-                  <p>
-                    <strong>Période de rétention :</strong> Après archivage, les données sont conservées pendant la période configurée avant suppression définitive.
-                  </p>
+              </div>
+
+              <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                  <ShieldCheckIcon className="h-6 w-6 text-jlc-purple-600" />
+                  Workflow de Suppression (Utilisateurs)
+                </h3>
+                <div className="space-y-3 text-sm text-gray-600">
+                  <div className="flex gap-3">
+                    <span className="font-bold text-blue-600">J-7</span>
+                    <p>
+                      <strong>Notification gestionnaires</strong> - Passage à "PENDING_DELETION"
+                    </p>
+                  </div>
+                  <div className="flex gap-3">
+                    <span className="font-bold text-orange-600">J-3</span>
+                    <p>
+                      <strong>Rappel</strong> - Dernière chance de restauration
+                    </p>
+                  </div>
+                  <div className="flex gap-3">
+                    <span className="font-bold text-red-600">J</span>
+                    <p>
+                      <strong>Masquage</strong> - Visible uniquement par superadmins
+                    </p>
+                  </div>
+                  <div className="flex gap-3">
+                    <span className="font-bold text-gray-900">J+3</span>
+                    <p>
+                      <strong>Suppression définitive</strong> - Après notification 1h avant
+                    </p>
+                  </div>
                 </div>
-                <div className="flex gap-3">
-                  <span className="text-jlc-purple-600 font-bold">•</span>
-                  <p>
-                    <strong>Restauration :</strong> Les utilisateurs archivés peuvent être restaurés à tout moment pendant la période de rétention.
-                  </p>
+              </div>
+            </div>
+
+            {/* Recommendations */}
+            <div className="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-2xl border border-purple-200 p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">📋 Recommandations</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                <div>
+                  <p className="font-medium text-gray-900 mb-1">👤 Utilisateurs</p>
+                  <p className="text-gray-600">90 jours (3 mois) - Balance entre conformité et restauration</p>
                 </div>
-                <div className="flex gap-3">
-                  <span className="text-jlc-purple-600 font-bold">•</span>
-                  <p>
-                    <strong>Suppression définitive :</strong> Une fois la période de rétention écoulée, les données sont supprimées de manière irréversible.
-                  </p>
+                <div>
+                  <p className="font-medium text-gray-900 mb-1">📄 Documents</p>
+                  <p className="text-gray-600">365 jours (1 an) - Code du travail</p>
                 </div>
-                <div className="flex gap-3">
-                  <span className="text-jlc-purple-600 font-bold">•</span>
-                  <p>
-                    <strong>Recommandation :</strong> Une période de 90 jours (3 mois) est généralement recommandée pour un bon équilibre entre sécurité et gestion de l'espace disque.
-                  </p>
+                <div>
+                  <p className="font-medium text-gray-900 mb-1">💼 Missions</p>
+                  <p className="text-gray-600">1825 jours (5 ans) - Archives comptables</p>
+                </div>
+                <div>
+                  <p className="font-medium text-gray-900 mb-1">🏢 Entreprises</p>
+                  <p className="text-gray-600">3650 jours (10 ans) - Obligations fiscales</p>
                 </div>
               </div>
             </div>
