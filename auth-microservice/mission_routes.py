@@ -820,3 +820,116 @@ async def get_mission_stats(
         "hired": hired,
         "conversion_rate": (hired / total_applications * 100) if total_applications > 0 else 0
     }
+
+
+
+# ==================== CANDIDAT/POSTULANT ENDPOINTS ====================
+
+@router.patch("/applications/me/{application_id}", response_model=Application)
+async def update_my_application(
+    application_id: str,
+    additional_info: Optional[str] = None,
+    current_user: dict = Depends(get_user_dep),
+    db = Depends(get_db)
+):
+    """
+    Modifier sa propre candidature (Candidat/Postulant)
+    Permet de mettre à jour les informations additionnelles avant validation
+    """
+    user_id = current_user.get("sub")
+    
+    # Vérifier que la candidature appartient à l'utilisateur
+    application = await db.applications.find_one({
+        "id": application_id,
+        "user_id": user_id
+    })
+    
+    if not application:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Candidature non trouvée ou vous n'avez pas accès à cette candidature"
+        )
+    
+    # Vérifier que la candidature peut encore être modifiée
+    current_status = application.get("status")
+    if current_status not in [ApplicationStatus.SUBMITTED, ApplicationStatus.UNDER_REVIEW]:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Vous ne pouvez plus modifier cette candidature (statut: {current_status})"
+        )
+    
+    # Mettre à jour
+    update_data = {
+        "updated_at": datetime.now(timezone.utc)
+    }
+    
+    if additional_info is not None:
+        update_data["additional_info"] = additional_info
+    
+    await db.applications.update_one(
+        {"id": application_id},
+        {"$set": update_data}
+    )
+    
+    updated_app = await db.applications.find_one({"id": application_id})
+    return Application(**updated_app)
+
+
+@router.post("/applications/me/{application_id}/cancel", response_model=Application)
+async def cancel_my_application(
+    application_id: str,
+    cancellation_reason: Optional[str] = None,
+    current_user: dict = Depends(get_user_dep),
+    db = Depends(get_db)
+):
+    """
+    Annuler sa propre candidature (Candidat/Postulant)
+    Change le statut à WITHDRAWN (Retirée)
+    """
+    user_id = current_user.get("sub")
+    
+    # Vérifier que la candidature appartient à l'utilisateur
+    application = await db.applications.find_one({
+        "id": application_id,
+        "user_id": user_id
+    })
+    
+    if not application:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Candidature non trouvée ou vous n'avez pas accès à cette candidature"
+        )
+    
+    # Vérifier que la candidature peut encore être annulée
+    current_status = application.get("status")
+    if current_status in [ApplicationStatus.HIRED, ApplicationStatus.WITHDRAWN, ApplicationStatus.CONTRACT_SIGNED]:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Vous ne pouvez plus annuler cette candidature (statut: {current_status})"
+        )
+    
+    # Annuler la candidature
+    update_data = {
+        "status": ApplicationStatus.WITHDRAWN,
+        "updated_at": datetime.now(timezone.utc),
+        "withdrawn_at": datetime.now(timezone.utc)
+    }
+    
+    if cancellation_reason:
+        update_data["cancellation_reason"] = cancellation_reason
+        update_data["additional_info"] = f"{application.get('additional_info', '')}\n\nRaison d'annulation: {cancellation_reason}".strip()
+    
+    await db.applications.update_one(
+        {"id": application_id},
+        {"$set": update_data}
+    )
+    
+    # Décrémenter le compteur de candidatures de la mission
+    await db.missions.update_one(
+        {"id": application.get("mission_id")},
+        {"$inc": {"applications_count": -1}}
+    )
+    
+    updated_app = await db.applications.find_one({"id": application_id})
+    return Application(**updated_app)
+
