@@ -434,9 +434,10 @@ export default function MissionDetailModal({
                   </Button>
                 </div>
               </div>
-            )}
-          </div>
-        )}
+              )}
+            </div>
+          )
+        })()}
 
         {/* Message si déjà postulé */}
         {hasAlreadyApplied && (
