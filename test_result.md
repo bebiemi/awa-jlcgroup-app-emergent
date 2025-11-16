@@ -400,24 +400,17 @@ frontend:
         agent: "main"
         comment: "Complete user management page created with table, pagination, search/filters, and modal components (Edit, Delete, Block/Unblock). Integrated with usersApi RTK Query. Accessible at /admin/users for admin and super_admin roles. Needs testing."
 
-  current_focus:
-    - task: "P0 - Test complet du processus de candidature"
-      description: "Tester le flux de candidature avec les 3 scénarios: candidat sans CV (upload inline), candidat avec CV (candidature directe), intérimaire en mission (bouton désactivé)"
-      user_credentials:
-        candidat: "nina / azerty123456!!"
-        admin: "admin / Awana2025!"
-      test_scenarios:
-        - "Candidat sans CV doit voir l'upload inline et pouvoir uploader un CV qui sera sauvegardé dans son profil avant de finaliser la candidature"
-        - "Candidat avec CV doit pouvoir postuler directement"
-        - "Intérimaire avec contrat actif ne peut pas postuler (bouton désactivé avec message explicatif)"
-      components_to_test:
-        - "/app/apps/web/src/features/missions/components/MissionDetailModal.tsx"
-        - "/app/apps/web/src/components/InlineDocumentUpload.tsx"
-        - "/app/apps/web/src/features/postulant/pages/PostulantMainDashboard.tsx"
-      backend_endpoints:
-        - "POST /api/missions/{mission_id}/apply"
-        - "GET /api/contracts/active"
-        - "POST /api/profiles/me/documents"
+  - task: "P0 - Test complet du processus de candidature"
+    implemented: true
+    working: false
+    file: "/app/apps/web/src/features/missions/components/MissionDetailModal.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: false
+        agent: "testing"
+        comment: "❌ FRONTEND ROUTING ISSUE IDENTIFIED: Backend APIs working correctly (login ✅, missions API ✅, application API ✅ - Nina successfully applied via curl), but frontend has routing/display issues. Mission detail modal not opening properly from /offres page. Components exist: MissionDetailModal.tsx ✅, InlineDocumentUpload.tsx ✅, PostulantMainDashboard.tsx ✅. BACKEND VERIFICATION: POST /api/missions/{mission_id}/apply working (201 Created), 4 missions available (2 published), Nina user authenticated successfully. ISSUE: Frontend missions page redirects to landing page, mission cards not clickable, modal not opening. Need to fix frontend routing and mission display logic."
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
