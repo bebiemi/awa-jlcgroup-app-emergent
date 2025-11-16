@@ -149,7 +149,7 @@ export default function PostulantMainDashboard() {
       color: documentsCount >= requiredDocuments ? 'green' : documentsCount > 0 ? 'yellow' : 'red',
       trend: documentsCount >= requiredDocuments ? 'up' : 'neutral',
       description: `${requiredDocuments - documentsCount} document(s) manquant(s)`,
-      link: '/profile?tab=documents',
+      link: '/documents',
     },
     {
       title: 'Compétences',
