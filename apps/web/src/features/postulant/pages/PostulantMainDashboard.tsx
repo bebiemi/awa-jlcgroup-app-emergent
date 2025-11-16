@@ -308,19 +308,19 @@ export default function PostulantMainDashboard() {
             >
               <UserCircleIcon className="h-8 w-8 text-gray-400 group-hover:text-jlc-purple-600" />
               <div>
-                <p className="font-semibold text-gray-900">Compléter mon profil</p>
-                <p className="text-xs text-gray-600">Étapes détaillées</p>
+                <p className="font-semibold text-gray-900">Overview</p>
+                <p className="text-xs text-gray-600">Complétion du profil</p>
               </div>
             </Link>
 
             <Link
-              to="/profile?tab=documents"
+              to="/documents"
               className="flex items-center gap-3 p-4 border-2 border-gray-200 rounded-lg hover:border-jlc-purple-500 hover:bg-purple-50 transition-all group"
             >
               <DocumentTextIcon className="h-8 w-8 text-gray-400 group-hover:text-jlc-purple-600" />
               <div>
-                <p className="font-semibold text-gray-900">Gérer mes documents</p>
-                <p className="text-xs text-gray-600">Upload et validation</p>
+                <p className="font-semibold text-gray-900">Mes documents</p>
+                <p className="text-xs text-gray-600">Gérer et uploader</p>
               </div>
             </Link>
 
