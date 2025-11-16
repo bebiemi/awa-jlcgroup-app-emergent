@@ -67,6 +67,7 @@ export const store = configureStore({
     [referencesApi.reducerPath]: referencesApi.reducer,
     [missionsApi.reducerPath]: missionsApi.reducer,
     [retentionPoliciesApi.reducerPath]: retentionPoliciesApi.reducer,
+    [experiencesApi.reducerPath]: experiencesApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
