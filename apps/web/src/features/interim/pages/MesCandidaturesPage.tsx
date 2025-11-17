@@ -45,68 +45,36 @@ interface Application {
   updated_at: string;
 }
 
-function ApplicationTimeline({ currentStatus }: { currentStatus: string }) {
-  const getCurrentStepIndex = () => {
-    const index = WORKFLOW_STEPS.findIndex((step) => step.key === currentStatus);
-    return index >= 0 ? index : 0;
-  };
+// Composant wrapper pour afficher la timeline avec historique
+function ApplicationTimelineWrapper({ applicationId, currentStatus }: { applicationId: string, currentStatus: string }) {
+  const { data: history, isLoading } = useGetApplicationHistoryQuery({
+    application_id: applicationId,
+    sort_order: 'asc'
+  })
 
-  const currentStepIndex = getCurrentStepIndex();
+  if (isLoading) {
+    return (
+      <div className="flex justify-center py-4">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-jlc-purple-600"></div>
+      </div>
+    )
+  }
+
+  if (!history || history.length === 0) {
+    return (
+      <div className="text-center py-4 text-gray-500 text-sm">
+        Aucun historique disponible
+      </div>
+    )
+  }
 
   return (
-    <div className="relative">
-      <div className="flex items-center justify-between">
-        {WORKFLOW_STEPS.map((step, index) => {
-          const isCompleted = index <= currentStepIndex;
-          const isCurrent = index === currentStepIndex;
-
-          return (
-            <div key={step.key} className="flex flex-col items-center flex-1">
-              {/* Ligne de connexion */}
-              {index > 0 && (
-                <div
-                  className={clsx(
-                    'absolute h-1 top-4',
-                    isCompleted ? 'bg-green-500' : 'bg-gray-300'
-                  )}
-                  style={{
-                    left: `${((index - 1) / (WORKFLOW_STEPS.length - 1)) * 100}%`,
-                    width: `${100 / (WORKFLOW_STEPS.length - 1)}%`,
-                  }}
-                />
-              )}
-
-              {/* Cercle d'étape */}
-              <div
-                className={clsx(
-                  'relative z-10 w-10 h-10 rounded-full flex items-center justify-center text-lg',
-                  isCompleted
-                    ? isCurrent
-                      ? 'bg-green-500 ring-4 ring-green-200'
-                      : 'bg-green-500'
-                    : 'bg-gray-300'
-                )}
-              >
-                {step.icon}
-              </div>
-
-              {/* Label */}
-              <div className="mt-2 text-center">
-                <p
-                  className={clsx(
-                    'text-xs font-medium',
-                    isCompleted ? 'text-gray-900' : 'text-gray-500'
-                  )}
-                >
-                  {step.label}
-                </p>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
+    <ApplicationTimeline 
+      history={history} 
+      currentStatus={currentStatus}
+      showStats
+    />
+  )
 }
 
 function ApplicationCard({ application, showMissionName }: { application: Application; showMissionName: boolean }) {
