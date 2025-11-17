@@ -379,6 +379,53 @@ export const missionApi = createApi({
       }),
       invalidatesTags: ['Application', 'MyApplications'],
     }),
+
+    // ==================== MATCHING ENDPOINTS ====================
+    getRecommendedMissions: builder.query<Mission[], {
+      limit?: number
+      min_score?: number
+    }>({
+      query: (params = {}) => ({
+        url: '/missions/recommended',
+        params: {
+          limit: params.limit || 10,
+          min_score: params.min_score || 50,
+        },
+      }),
+      providesTags: ['Mission'],
+    }),
+
+    getMissionMatching: builder.query<MatchingResult, string>({
+      query: (mission_id) => `/missions/${mission_id}/matching`,
+    }),
+
+    batchCalculateMatching: builder.mutation<MatchingResult[], string[]>({
+      query: (mission_ids) => ({
+        url: '/missions/batch-matching',
+        method: 'POST',
+        body: mission_ids,
+      }),
+    }),
+
+    // ==================== APPLICATION HISTORY & TIMELINE ====================
+    getApplicationHistory: builder.query<ApplicationHistoryEntry[], {
+      application_id: string
+      sort_order?: 'asc' | 'desc'
+    }>({
+      query: ({ application_id, sort_order = 'asc' }) => ({
+        url: `/missions/applications/${application_id}/history`,
+        params: { sort_order },
+      }),
+    }),
+
+    getApplicationTimelineStats: builder.query<TimelineStats, string>({
+      query: (application_id) => `/missions/applications/${application_id}/timeline-stats`,
+    }),
+
+    getMyApplicationsWithHistory: builder.query<ApplicationWithHistory[], void>({
+      query: () => '/missions/applications/my-applications/with-history',
+      providesTags: ['MyApplications'],
+    }),
   }),
 })
 
