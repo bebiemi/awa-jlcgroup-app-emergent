@@ -92,7 +92,7 @@ export const ApplicationTimeline: React.FC<ApplicationTimelineProps> = ({
 
   if (!history || history.length === 0) {
     return (
-      <div className="text-center py-8 text-muted-foreground">
+      <div className="text-center py-8 text-gray-500">
         <p>Aucun historique disponible</p>
       </div>
     )
@@ -102,14 +102,12 @@ export const ApplicationTimeline: React.FC<ApplicationTimelineProps> = ({
     <div className="space-y-4">
       {/* Stats */}
       {showStats && totalDurationDays > 0 && (
-        <Card className="bg-muted/50">
-          <CardContent className="pt-4">
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-muted-foreground">Durée totale</span>
-              <span className="font-medium">{totalDurationDays} jour{totalDurationDays > 1 ? 's' : ''}</span>
-            </div>
-          </CardContent>
-        </Card>
+        <div className="bg-gray-50 rounded-lg p-4">
+          <div className="flex items-center justify-between text-sm">
+            <span className="text-gray-600">Durée totale</span>
+            <span className="font-medium">{totalDurationDays} jour{totalDurationDays > 1 ? 's' : ''}</span>
+          </div>
+        </div>
       )}
 
       {/* Timeline */}
