@@ -40,12 +40,22 @@ export const usersApi = createApi({
   }),
   tagTypes: ['Users'],
   endpoints: (builder) => ({
-    getUsers: builder.query<UsersResponse, { page?: number; page_size?: number; search?: string; status?: string; role?: string }>({
-      query: ({ page = 1, page_size = 15, search, status, role }) => {
+    getUsers: builder.query<UsersResponse, { 
+      page?: number
+      page_size?: number
+      search?: string
+      status?: string
+      role?: string
+      sort_by?: string
+      sort_order?: 'asc' | 'desc'
+    }>({
+      query: ({ page = 1, page_size = 15, search, status, role, sort_by, sort_order }) => {
         const params = new URLSearchParams({ page: page.toString(), page_size: page_size.toString() })
         if (search) params.append('search', search)
         if (status) params.append('status', status)
         if (role) params.append('role', role)
+        if (sort_by) params.append('sort_by', sort_by)
+        if (sort_order) params.append('sort_order', sort_order)
         return `/users?${params.toString()}`
       },
       providesTags: ['Users'],
