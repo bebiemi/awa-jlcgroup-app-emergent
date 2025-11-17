@@ -28,7 +28,7 @@ class IAMUnifiedService:
         self.db = db
         self.profiles_collection = db.profiles  # Profiles métier existants
         self.iam_roles_collection = db.iam_roles  # Rôles IAM granulaires
-        self.iam_permissions_collection = db.iam_permissions  # Permissions centralisées
+        self.iam_permissions_collection = db.permissions  # FIX: Use 'permissions' not 'iam_permissions'
         self.users_collection = db.users
         self.groups_collection = db.iam_groups
     
