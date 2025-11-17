@@ -935,3 +935,180 @@ async def cancel_my_application(
     updated_app = await db.applications.find_one({"id": application_id})
     return Application(**updated_app)
 
+
+
+# ==================== MISSION MATCHING ENDPOINTS ====================
+
+@router.get("/recommended", response_model=List[Dict[str, Any]])
+async def get_recommended_missions(
+    limit: int = 10,
+    min_score: float = 50.0,
+    current_user: User = Depends(get_user_dep),
+    db: AsyncIOMotorDatabase = Depends(get_database)
+):
+    """
+    Récupère les missions recommandées pour l'utilisateur connecté
+    basées sur le score de matching avec son profil
+    
+    Args:
+        limit: Nombre maximum de missions à retourner
+        min_score: Score minimum requis (0-100)
+    
+    Returns:
+        Liste des missions avec leur score de matching, triées par score décroissant
+    """
+    from awana_auth.services.mission_matching_service import MissionMatchingService
+    
+    # Récupérer le profil de l'utilisateur
+    # Essayer d'abord interim_profiles, puis candidat_profiles
+    user_profile = await db.interim_profiles.find_one({"user_id": current_user.id}, {"_id": 0})
+    
+    if not user_profile:
+        user_profile = await db.candidat_profiles.find_one({"user_id": current_user.id}, {"_id": 0})
+    
+    if not user_profile:
+        # Profil non trouvé, retourner liste vide
+        return []
+    
+    # Récupérer les missions publiées et actives
+    missions = await db.missions.find({
+        "status": {"$in": [
+            MissionStatus.PUBLISHED,
+            MissionStatus.ACCEPTING_APPLICATIONS
+        ]}
+    }, {"_id": 0}).to_list(length=None)
+    
+    if not missions:
+        return []
+    
+    # Récupérer les candidatures existantes de l'utilisateur
+    existing_applications = await db.applications.find(
+        {"user_id": current_user.id},
+        {"_id": 0, "mission_id": 1}
+    ).to_list(length=None)
+    
+    applied_mission_ids = {app["mission_id"] for app in existing_applications}
+    
+    # Calculer le score de matching pour chaque mission
+    missions_with_score = []
+    for mission in missions:
+        # Ne pas inclure les missions où l'utilisateur a déjà candidaté
+        if mission["id"] in applied_mission_ids:
+            continue
+        
+        # Calculer le matching
+        matching_result = MissionMatchingService.calculate_matching_score(
+            mission=mission,
+            user_profile=user_profile
+        )
+        
+        # Filtrer par score minimum
+        if matching_result['score'] >= min_score:
+            mission_with_matching = {
+                **mission,
+                "matching": matching_result
+            }
+            missions_with_score.append(mission_with_matching)
+    
+    # Trier par score décroissant
+    missions_with_score.sort(key=lambda x: x["matching"]["score"], reverse=True)
+    
+    # Limiter le nombre de résultats
+    return missions_with_score[:limit]
+
+
+@router.get("/{mission_id}/matching", response_model=Dict[str, Any])
+async def get_mission_matching_score(
+    mission_id: str,
+    current_user: User = Depends(get_user_dep),
+    db: AsyncIOMotorDatabase = Depends(get_database)
+):
+    """
+    Calcule le score de matching entre une mission spécifique et le profil de l'utilisateur
+    
+    Args:
+        mission_id: ID de la mission
+    
+    Returns:
+        Score de matching détaillé avec breakdown et recommandations
+    """
+    from awana_auth.services.mission_matching_service import MissionMatchingService
+    
+    # Récupérer la mission
+    mission = await db.missions.find_one({"id": mission_id}, {"_id": 0})
+    
+    if not mission:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Mission non trouvée"
+        )
+    
+    # Récupérer le profil de l'utilisateur
+    user_profile = await db.interim_profiles.find_one({"user_id": current_user.id}, {"_id": 0})
+    
+    if not user_profile:
+        user_profile = await db.candidat_profiles.find_one({"user_id": current_user.id}, {"_id": 0})
+    
+    if not user_profile:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Profil utilisateur non trouvé"
+        )
+    
+    # Calculer le matching
+    matching_result = MissionMatchingService.calculate_matching_score(
+        mission=mission,
+        user_profile=user_profile
+    )
+    
+    return matching_result
+
+
+@router.post("/batch-matching", response_model=List[Dict[str, Any]])
+async def batch_calculate_matching(
+    mission_ids: List[str],
+    current_user: User = Depends(get_user_dep),
+    db: AsyncIOMotorDatabase = Depends(get_database)
+):
+    """
+    Calcule le score de matching pour plusieurs missions en une seule requête
+    Utile pour enrichir une liste de missions avec leur score
+    
+    Args:
+        mission_ids: Liste des IDs de missions
+    
+    Returns:
+        Liste des résultats de matching pour chaque mission
+    """
+    from awana_auth.services.mission_matching_service import MissionMatchingService
+    
+    # Récupérer le profil de l'utilisateur
+    user_profile = await db.interim_profiles.find_one({"user_id": current_user.id}, {"_id": 0})
+    
+    if not user_profile:
+        user_profile = await db.candidat_profiles.find_one({"user_id": current_user.id}, {"_id": 0})
+    
+    if not user_profile:
+        return []
+    
+    # Récupérer les missions
+    missions = await db.missions.find(
+        {"id": {"$in": mission_ids}},
+        {"_id": 0}
+    ).to_list(length=None)
+    
+    # Calculer le matching pour chaque mission
+    results = []
+    for mission in missions:
+        matching_result = MissionMatchingService.calculate_matching_score(
+            mission=mission,
+            user_profile=user_profile
+        )
+        
+        results.append({
+            "mission_id": mission["id"],
+            "matching": matching_result
+        })
+    
+    return results
+
