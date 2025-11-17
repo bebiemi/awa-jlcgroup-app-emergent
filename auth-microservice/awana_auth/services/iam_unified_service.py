@@ -105,10 +105,19 @@ class IAMUnifiedService:
                 return []
             
             # Récupérer les détails des permissions depuis permissions collection
-            # FIX: all_permission_codes contient des UUIDs (permission_ids), pas des codes
+            # IMPORTANT: permission_ids peut contenir soit des UUIDs soit des codes string
+            # On cherche par les deux champs: 'id' OU 'code'
             permissions_details = []
+            permission_codes_list = list(all_permission_codes)
+            
+            # Chercher par id OU par code pour supporter les deux formats
             permissions_cursor = self.iam_permissions_collection.find(
-                {"id": {"$in": list(all_permission_codes)}},  # FIX: Chercher par 'id' pas 'code'
+                {
+                    "$or": [
+                        {"id": {"$in": permission_codes_list}},
+                        {"code": {"$in": permission_codes_list}}
+                    ]
+                },
                 {"_id": 0, "id": 1, "code": 1, "label": 1, "description": 1, "category": 1}
             )
             
