@@ -69,6 +69,18 @@ export default function OffresPage() {
     return myApplications.some(app => app.mission_id === missionId)
   }
 
+  // Composant pour afficher le badge de matching
+  const MissionMatchingBadgeWrapper = ({ missionId }: { missionId: string }) => {
+    const { data: matching, isLoading } = useGetMissionMatchingQuery(missionId, {
+      skip: !currentUser // Ne charger que si l'utilisateur est connecté
+    })
+
+    if (isLoading) return <div className="h-6 w-12 animate-pulse bg-gray-200 rounded"></div>
+    if (!matching) return null
+
+    return <MatchingBadge matching={matching} variant="compact" />
+  }
+
   // Fonction pour ouvrir la modale
   const handleMissionClick = (mission: Mission) => {
     setSelectedMission(mission)
