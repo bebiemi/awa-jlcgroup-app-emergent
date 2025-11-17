@@ -645,7 +645,7 @@ export default function UserManagementPage() {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {sortedUsers.map((user) => (
+                  {data.users.map((user) => (
                     <tr 
                       key={user.id} 
                       onClick={() => handleViewDetails(user)}
