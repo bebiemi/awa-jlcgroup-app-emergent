@@ -251,6 +251,7 @@ export default function Sidebar() {
         items: [
           { label: 'Mes Besoins', path: '/entreprise/besoins', icon: DocumentTextIcon },
           { label: 'Mes Missions', path: '/missions', icon: BriefcaseIcon },
+          { label: 'Suivi Candidatures', path: '/entreprise/candidatures', icon: UserGroupIcon },
         ],
       },
       {
