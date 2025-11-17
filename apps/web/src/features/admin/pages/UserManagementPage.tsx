@@ -92,6 +92,46 @@ export default function UserManagementPage() {
 
   // Mark user as viewed mutation
   const [markUserAsViewed] = useMarkUserAsViewedMutation()
+  
+  // Sorting function
+  const handleSort = (field: typeof sortBy) => {
+    if (sortBy === field) {
+      // Toggle order if same field
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')
+    } else {
+      // New field, default to ascending
+      setSortBy(field)
+      setSortOrder('asc')
+    }
+  }
+  
+  // Sort users client-side
+  const sortedUsers = data?.users ? [...data.users].sort((a, b) => {
+    let aValue: any = a[sortBy]
+    let bValue: any = b[sortBy]
+    
+    // Handle roles (array)
+    if (sortBy === 'roles') {
+      aValue = a.roles?.join(', ') || ''
+      bValue = b.roles?.join(', ') || ''
+    }
+    
+    // Handle dates
+    if (sortBy === 'created_at') {
+      aValue = new Date(a.created_at || 0).getTime()
+      bValue = new Date(b.created_at || 0).getTime()
+    }
+    
+    // String comparison (case insensitive)
+    if (typeof aValue === 'string' && typeof bValue === 'string') {
+      aValue = aValue.toLowerCase()
+      bValue = bValue.toLowerCase()
+    }
+    
+    if (aValue < bValue) return sortOrder === 'asc' ? -1 : 1
+    if (aValue > bValue) return sortOrder === 'asc' ? 1 : -1
+    return 0
+  }) : []
 
   // Bulk operation mutations
   const [bulkBlockUsers] = useBulkBlockUsersMutation()
