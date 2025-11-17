@@ -2267,6 +2267,12 @@ async def update_user(
                     )
             update_data["email"] = new_email
         
+        if "phone" in user_update:
+            update_data["phone"] = user_update["phone"]
+        
+        if "phone_number" in user_update:
+            update_data["phone_number"] = user_update["phone_number"]
+        
         if "roles" in user_update:
             # Validate roles
             valid_roles = cfg.get_all_roles()
