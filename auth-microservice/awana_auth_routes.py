@@ -160,8 +160,14 @@ async def create_validation_record(
     """
     import uuid
     
-    # Determine validation type based on email domain and user status
-    if user.is_collaborator:
+    # Determine validation type based on registration data
+    # Priority: 1) company_name provided → "company"
+    #           2) is_collaborator email → "collaborateur"
+    #           3) assigned role → use role
+    if register_data.company_name:
+        # Company registration takes priority even if email is @jlcgroup.com
+        validation_type = "company"
+    elif user.is_collaborator:
         validation_type = "collaborateur"
     else:
         # For non-collaborators, use the assigned role
