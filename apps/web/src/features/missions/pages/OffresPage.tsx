@@ -213,9 +213,12 @@ export default function OffresPage() {
                 <h3 className="text-lg font-semibold text-gray-900">
                   {mission.title}
                 </h3>
-                <span className="px-2 py-1 text-xs bg-green-100 text-green-700 rounded-full">
-                  {mission.status}
-                </span>
+                <div className="flex flex-col items-end gap-2">
+                  <span className="px-2 py-1 text-xs bg-green-100 text-green-700 rounded-full">
+                    {mission.status}
+                  </span>
+                  <MissionMatchingBadgeWrapper missionId={mission.id} />
+                </div>
               </div>
 
               <p className="text-sm text-gray-600 mb-4 line-clamp-2">
