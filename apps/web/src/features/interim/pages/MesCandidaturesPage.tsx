@@ -5,7 +5,12 @@ import Button from '@/components/Button';
 import Modal from '@/components/Modal';
 import { useGetMyApplicationsQuery } from '../api/applicationApi';
 import { useGetActiveContractQuery } from '@/features/contracts/api/contractApi';
-import { useUpdateMyApplicationMutation, useCancelMyApplicationMutation } from '@/features/missions/api/missionApi';
+import { 
+  useUpdateMyApplicationMutation, 
+  useCancelMyApplicationMutation,
+  useGetApplicationHistoryQuery 
+} from '@/features/missions/api/missionApi';
+import { ApplicationTimeline } from '@/features/missions/components/ApplicationTimeline';
 import { useApplicationStatuses } from '@/hooks/useAppConfig';
 import {
   ClockIcon,
