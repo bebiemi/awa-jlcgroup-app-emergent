@@ -201,17 +201,17 @@ export const ApplicationTimelineModal: React.FC<{
   onClose: () => void
 }> = ({ applicationId, history, currentStatus, onClose }) => {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Suivi de la candidature</CardTitle>
-      </CardHeader>
-      <CardContent>
+    <div className="bg-white rounded-lg shadow-lg">
+      <div className="border-b px-6 py-4">
+        <h3 className="text-lg font-semibold text-gray-900">Suivi de la candidature</h3>
+      </div>
+      <div className="p-6">
         <ApplicationTimeline 
           history={history} 
           currentStatus={currentStatus}
           showStats
         />
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   )
 }
