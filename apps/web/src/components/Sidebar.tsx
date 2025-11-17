@@ -106,6 +106,8 @@ export default function Sidebar() {
     'missions.manage',
     'missions.browse',
     'missions.create',
+    'besoins.create',
+    'besoins.read',
     'applications.read_own',
     'iam.profiles.manage',
     'iam.groups.manage',
