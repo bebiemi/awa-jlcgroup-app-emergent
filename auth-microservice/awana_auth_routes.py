@@ -1190,8 +1190,14 @@ async def local_register(
             bcrypt.gensalt()
         ).decode('utf-8')
         
-        # Determine user status and role based on email domain
-        if is_collaborator:
+        # Determine user status and role based on registration type
+        if register_data.company_name:
+            # Company registration -> needs validation
+            user_status = UserStatus.PENDING
+            assigned_role = UserRoles.COMPANY
+            iam_group_code = IAMGroups.COMPANY
+            logger.info(f"Company registration detected for {register_data.email} ({register_data.company_name}) - validation required")
+        elif is_collaborator:
             # Collaborator email -> needs validation
             user_status = UserStatus.PENDING
             assigned_role = UserRoles.COLLABORATEUR
