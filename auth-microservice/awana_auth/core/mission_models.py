@@ -163,9 +163,41 @@ class MissionUpdate(BaseModel):
     commercial_id: Optional[str] = None
 
 
-class Mission(MissionBase):
-    """Modèle complet d'une mission"""
+class Mission(BaseModel):
+    """Modèle complet d'une mission - pour lecture depuis DB"""
     id: str
+    title: str
+    description: str
+    company_id: Optional[str] = None  # Rendu optionnel pour compatibilité avec anciennes données
+    
+    # Détails du poste
+    job_type: str
+    required_skills: List[str] = []
+    experience_required: str
+    education_level: Optional[str] = None
+    
+    # Informations mission
+    start_date: Optional[datetime] = None
+    end_date: Optional[datetime] = None
+    duration: Optional[str] = None
+    location: str
+    location_details: Optional[Dict[str, Any]] = None
+    
+    # Conditions
+    salary_range: Optional[str] = None
+    contract_type: Optional[str] = None  # Rendu optionnel pour compatibilité avec anciennes données
+    working_hours: Optional[str] = None
+    benefits: Optional[List[str]] = None
+    
+    # Configuration
+    max_applications: Optional[int] = None
+    application_deadline: Optional[datetime] = None
+    requires_medical_check: bool = True
+    
+    # Metadata
+    custom_fields: Optional[Dict[str, Any]] = None
+    
+    # État et workflow
     status: MissionStatus = MissionStatus.DRAFT
     created_by: str
     commercial_id: Optional[str] = None
