@@ -2299,6 +2299,10 @@ async def update_user(
             {"$set": update_data}
         )
         
+        # Auto-sync company profile if user is a company
+        from awana_auth.services.company_profile_sync_service import CompanyProfileSyncService
+        await CompanyProfileSyncService.sync_profile_from_user(db, user_id, update_data)
+        
         # Audit log
         audit_logger = AuditLogger(db, auth_config)
         await audit_logger.log(
