@@ -2110,8 +2110,16 @@ async def list_users(
         skip = (page - 1) * page_size
         total_pages = (total + page_size - 1) // page_size
         
-        # Fetch users
-        cursor = users_collection.find(query, {"_id": 0, "password_hash": 0}).sort("created_at", -1).skip(skip).limit(page_size)
+        # Determine sort direction
+        sort_direction = 1 if sort_order == "asc" else -1
+        
+        # Validate sort_by field (prevent injection)
+        valid_sort_fields = ["username", "email", "status", "created_at", "roles"]
+        if sort_by not in valid_sort_fields:
+            sort_by = "username"
+        
+        # Fetch users with sorting
+        cursor = users_collection.find(query, {"_id": 0, "password_hash": 0}).sort(sort_by, sort_direction).skip(skip).limit(page_size)
         users = await cursor.to_list(length=page_size)
         
         return {
