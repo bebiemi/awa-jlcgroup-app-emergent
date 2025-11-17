@@ -128,12 +128,12 @@ export const MatchingBadge: React.FC<MatchingBadgeProps> = ({
                 <p className="text-xs font-medium mb-1">Compétences correspondantes :</p>
                 <div className="flex flex-wrap gap-1">
                   {matched_skills.slice(0, 5).map((skill, idx) => (
-                    <Badge key={idx} variant="secondary" className="text-xs">
+                    <span key={idx} className="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs">
                       {skill}
-                    </Badge>
+                    </span>
                   ))}
                   {matched_skills.length > 5 && (
-                    <span className="text-xs text-muted-foreground">+{matched_skills.length - 5} autres</span>
+                    <span className="text-xs text-gray-600">+{matched_skills.length - 5} autres</span>
                   )}
                 </div>
               </div>
