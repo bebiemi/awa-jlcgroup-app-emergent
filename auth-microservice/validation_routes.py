@@ -153,16 +153,26 @@ async def approve_validation(
             detail="Validation already processed"
         )
     
+    # Get profile ID if company validation
+    profile_id = None
+    if validation["validation_type"] == "company":
+        company_profile = await db.profiles.find_one({"code": "company_admin"})
+        if company_profile:
+            profile_id = company_profile["id"]
+    
     # Update user status to active and assign profile
+    update_data = {
+        "status": UserStatus.ACTIVE.value,
+        "updated_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    if profile_id:
+        update_data["profile_ids"] = [profile_id]
+        update_data["profile_code"] = "company_admin"  # Keep for backward compat
+    
     await db.users.update_one(
         {"id": validation["user_id"]},
-        {
-            "$set": {
-                "status": UserStatus.ACTIVE.value,
-                "profile_code": "company_admin" if validation["validation_type"] == "company" else None,
-                "updated_at": datetime.now(timezone.utc).isoformat()
-            }
-        }
+        {"$set": update_data}
     )
     
     # If company validation, create company profile automatically
