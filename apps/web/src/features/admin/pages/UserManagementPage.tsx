@@ -27,6 +27,8 @@ import {
   ShieldExclamationIcon,
   EyeIcon,
   CloudArrowUpIcon,
+  ChevronUpIcon,
+  ChevronDownIcon,
 } from '@heroicons/react/24/outline'
 import { Link } from 'react-router-dom'
 import EditUserModal from '../components/EditUserModal'
