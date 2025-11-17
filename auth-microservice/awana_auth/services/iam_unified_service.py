@@ -104,10 +104,11 @@ class IAMUnifiedService:
             if not all_permission_codes:
                 return []
             
-            # Récupérer les détails des permissions depuis iam_permissions
+            # Récupérer les détails des permissions depuis permissions collection
+            # FIX: all_permission_codes contient des UUIDs (permission_ids), pas des codes
             permissions_details = []
             permissions_cursor = self.iam_permissions_collection.find(
-                {"code": {"$in": list(all_permission_codes)}},
+                {"id": {"$in": list(all_permission_codes)}},  # FIX: Chercher par 'id' pas 'code'
                 {"_id": 0, "id": 1, "code": 1, "label": 1, "description": 1, "category": 1}
             )
             
