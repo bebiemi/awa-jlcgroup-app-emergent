@@ -75,7 +75,7 @@ export const MatchingBadge: React.FC<MatchingBadgeProps> = ({
             {/* Score global */}
             <div className="border-b pb-2">
               <p className="font-semibold text-sm">{getScoreLabel()}</p>
-              <p className="text-xs text-muted-foreground">Score de correspondance : {Math.round(score)}%</p>
+              <p className="text-xs text-gray-600">Score de correspondance : {Math.round(score)}%</p>
             </div>
 
             {/* Détails par catégorie */}
@@ -84,11 +84,11 @@ export const MatchingBadge: React.FC<MatchingBadgeProps> = ({
               
               {/* Compétences */}
               <div className="flex justify-between items-center text-xs">
-                <span className="text-muted-foreground">Compétences</span>
+                <span className="text-gray-600">Compétences</span>
                 <span className="font-medium">
                   {Math.round(breakdown.skills.score)}% 
                   {breakdown.skills.matched !== undefined && breakdown.skills.total_required !== undefined && (
-                    <span className="text-muted-foreground ml-1">
+                    <span className="text-gray-600 ml-1">
                       ({breakdown.skills.matched}/{breakdown.skills.total_required})
                     </span>
                   )}
@@ -97,7 +97,7 @@ export const MatchingBadge: React.FC<MatchingBadgeProps> = ({
 
               {/* Expérience */}
               <div className="flex justify-between items-center text-xs">
-                <span className="text-muted-foreground">Expérience</span>
+                <span className="text-gray-600">Expérience</span>
                 <span className="font-medium">
                   {Math.round(breakdown.experience.score)}%
                   {breakdown.experience.status === 'overqualified' && (
@@ -111,13 +111,13 @@ export const MatchingBadge: React.FC<MatchingBadgeProps> = ({
 
               {/* Secteur */}
               <div className="flex justify-between items-center text-xs">
-                <span className="text-muted-foreground">Secteur</span>
+                <span className="text-gray-600">Secteur</span>
                 <span className="font-medium">{Math.round(breakdown.sectors.score)}%</span>
               </div>
 
               {/* Niveau d'études */}
               <div className="flex justify-between items-center text-xs">
-                <span className="text-muted-foreground">Formation</span>
+                <span className="text-gray-600">Formation</span>
                 <span className="font-medium">{Math.round(breakdown.education.score)}%</span>
               </div>
             </div>
