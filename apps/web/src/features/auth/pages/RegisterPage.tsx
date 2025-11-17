@@ -143,8 +143,16 @@ export default function RegisterPage() {
       const result = await register(payload).unwrap()
       
       // Success - redirect to login with message
-      if (emailVerification?.is_collaborator) {
-        toast.success('Compte créé ! Votre compte nécessite une validation manuelle.')
+      if (accountType === 'company') {
+        toast.success('Inscription réussie !\nVotre espace entreprise a été créé. Votre compte sera activé après validation par l\'équipe JLC.', { duration: 5000 })
+        navigate('/login', { 
+          state: { 
+            email: formData.email,
+            message: 'Votre espace entreprise a été créé. Votre compte sera activé après validation par l\'équipe JLC.'
+          }
+        })
+      } else if (emailVerification?.is_collaborator) {
+        toast.success('Inscription réussie !\nVotre compte collaborateur a été créé. Il sera activé après validation par un administrateur.', { duration: 5000 })
         navigate('/login', { 
           state: { 
             email: formData.email,
@@ -152,7 +160,7 @@ export default function RegisterPage() {
           }
         })
       } else {
-        toast.success('Compte créé avec succès ! Connectez-vous maintenant.')
+        toast.success('Inscription réussie !\nVotre compte candidat a été créé avec succès. Vous pouvez maintenant vous connecter.', { duration: 5000 })
         navigate('/login', { 
           state: { 
             email: formData.email,
