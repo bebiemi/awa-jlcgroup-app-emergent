@@ -90,6 +90,8 @@ export default function UserManagementPage() {
     search: debouncedSearchQuery || undefined,
     status: viewMode === 'archived' ? 'archived' : (statusFilter || undefined),
     role: roleFilter || undefined,
+    sort_by: sortBy,
+    sort_order: sortOrder,
   })
 
   // Mark user as viewed mutation
