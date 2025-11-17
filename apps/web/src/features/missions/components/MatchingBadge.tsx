@@ -143,7 +143,7 @@ export const MatchingBadge: React.FC<MatchingBadgeProps> = ({
             {recommendations.length > 0 && (
               <div className="border-t pt-2">
                 <p className="text-xs font-medium mb-1">Suggestions :</p>
-                <ul className="text-xs text-muted-foreground space-y-1">
+                <ul className="text-xs text-gray-600 space-y-1">
                   {recommendations.slice(0, 2).map((rec, idx) => (
                     <li key={idx} className="flex items-start gap-1">
                       <span className="text-orange-500 mt-0.5">•</span>
@@ -154,8 +154,8 @@ export const MatchingBadge: React.FC<MatchingBadgeProps> = ({
               </div>
             )}
           </div>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+        </div>
+      )}
+    </div>
   )
 }
