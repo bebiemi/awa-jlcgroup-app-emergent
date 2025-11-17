@@ -6,7 +6,7 @@
 
 ### Analyse
 ```
-Browser → https://jobflow-18.preview.emergentagent.com/api/besoins
+Browser → https://jlc-portal.preview.emergentagent.com/api/besoins
           ↓
           TOUTES les requêtes tombaient sur le frontend (port 3000)
           ↓
@@ -17,7 +17,7 @@ Browser → https://jobflow-18.preview.emergentagent.com/api/besoins
 
 ### Preuve
 ```bash
-curl https://jobflow-18.preview.emergentagent.com/health
+curl https://jlc-portal.preview.emergentagent.com/health
 # Retournait: <!doctype html>... (page React)
 # Au lieu de: {"status":"healthy",...}
 ```
@@ -70,7 +70,7 @@ Ajouté `/api/health` dans `server.py` pour compatibilité avec le routing `/api
 ```
 ┌─────────────────────────────────────────────────────┐
 │  Production (Kubernetes/Ingress)                     │
-│  https://jobflow-18.preview.emergentagent.com │
+│  https://jlc-portal.preview.emergentagent.com │
 └───────────────────────┬─────────────────────────────┘
                         │
                         ▼
