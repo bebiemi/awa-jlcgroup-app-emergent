@@ -1,11 +1,4 @@
-import React from 'react'
-import { Badge } from '@/components/ui/badge'
-import { 
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip'
+import React, { useState } from 'react'
 import { CheckCircle2, TrendingUp, AlertCircle } from 'lucide-react'
 import type { MatchingResult } from '../api/missionApi'
 
