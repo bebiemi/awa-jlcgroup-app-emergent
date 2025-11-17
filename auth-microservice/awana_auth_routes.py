@@ -1781,6 +1781,10 @@ async def update_user(
     # Update user
     await db.users.update_one({"id": user_id}, {"$set": update_fields})
     
+    # Auto-sync company profile if user is a company
+    from awana_auth.services.company_profile_sync_service import CompanyProfileSyncService
+    await CompanyProfileSyncService.sync_profile_from_user(db, user_id, update_fields)
+    
     # Get updated user
     updated_user_doc = await db.users.find_one({"id": user_id}, {"_id": 0})
     
