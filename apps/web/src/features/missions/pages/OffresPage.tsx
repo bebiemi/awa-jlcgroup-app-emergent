@@ -5,8 +5,10 @@ import {
   useGetMissionsQuery,
   useApplyToMissionMutation,
   useGetMyApplicationsQuery,
+  useGetMissionMatchingQuery,
   type Mission,
 } from '../api/missionApi'
+import { MatchingBadge } from '../components/MatchingBadge'
 import { useGetActiveContractQuery } from '@/features/contracts/api/contractApi'
 import MissionDetailModal from '../components/MissionDetailModal'
 import {
