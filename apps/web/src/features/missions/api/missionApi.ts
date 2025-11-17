@@ -49,6 +49,83 @@ export type MedicalStatus = 'not_required' | 'pending' | 'scheduled' | 'complete
 
 export type ContractStatus = 'not_generated' | 'draft' | 'sent' | 'signed_by_interim' | 'signed_by_company' | 'fully_signed'
 
+// ==================== MATCHING TYPES ====================
+export interface MatchingResult {
+  score: number
+  breakdown: {
+    skills: {
+      score: number
+      weight: number
+      matched?: number
+      total_required?: number
+    }
+    experience: {
+      score: number
+      weight: number
+      required_range?: string
+      user_has?: number
+      status?: string
+    }
+    sectors: {
+      score: number
+      weight: number
+      matched?: number
+    }
+    education: {
+      score: number
+      weight: number
+      required?: string
+      user_has?: string
+      status?: string
+    }
+  }
+  matched_skills: string[]
+  matched_sectors: string[]
+  recommendations: string[]
+  is_good_match: boolean
+  is_excellent_match: boolean
+  calculated_at: string
+}
+
+// ==================== HISTORY TYPES ====================
+export interface ApplicationHistoryEntry {
+  id: string
+  application_id: string
+  old_status: string | null
+  new_status: string
+  changed_by: string
+  changed_by_name?: string
+  changed_at: string
+  changed_at_iso?: string
+  reason?: string
+  metadata?: Record<string, any>
+}
+
+export interface TimelineStats {
+  total_duration_days: number
+  stages: Array<{
+    status: string
+    duration_days: number
+    duration_hours: number
+    started_at: string
+    ended_at?: string
+  }>
+  current_stage_duration_days: number
+  total_stages: number
+  application?: {
+    id: string
+    mission_id: string
+    current_status: string
+    created_at: string
+  }
+}
+
+export interface ApplicationWithHistory extends Application {
+  history: ApplicationHistoryEntry[]
+  history_count: number
+  has_recent_update: boolean
+}
+
 export interface Mission {
   id: string
   title: string
