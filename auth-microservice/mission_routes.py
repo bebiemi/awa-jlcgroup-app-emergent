@@ -1118,7 +1118,22 @@ async def batch_calculate_matching(
     missions = await db.missions.find(
         {"id": {"$in": mission_ids}},
         {"_id": 0}
-
+    ).to_list(length=None)
+    
+    # Calculer le matching pour chaque mission
+    results = []
+    for mission in missions:
+        matching_result = MissionMatchingService.calculate_matching_score(
+            mission=mission,
+            user_profile=user_profile
+        )
+        
+        results.append({
+            "mission_id": mission["id"],
+            "matching": matching_result
+        })
+    
+    return results
 
 
 # ==================== APPLICATION HISTORY & TIMELINE ENDPOINTS ====================
