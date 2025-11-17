@@ -179,7 +179,7 @@ function ApplicationCard({ application, showMissionName }: { application: Applic
           {showDetails && (
             <div className="mt-6 pt-4 border-t border-gray-200">
               <h4 className="text-sm font-semibold text-gray-700 mb-4">Progression de votre candidature</h4>
-              <ApplicationTimeline currentStatus={application.status} />
+              <ApplicationTimelineWrapper applicationId={application.id} currentStatus={application.status} />
             </div>
           )}
 
