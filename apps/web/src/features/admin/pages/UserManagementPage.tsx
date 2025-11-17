@@ -59,6 +59,10 @@ export default function UserManagementPage() {
   const [roleFilter, setRoleFilter] = useState<string>('')
   const [showFilters, setShowFilters] = useState(false)
   const [viewMode, setViewMode] = useState<'active' | 'archived'>('active')
+  
+  // Sorting states
+  const [sortBy, setSortBy] = useState<'username' | 'email' | 'roles' | 'status' | 'created_at'>('username')
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
 
   // Bulk selection states
   const [selectedUserIds, setSelectedUserIds] = useState<string[]>([])
