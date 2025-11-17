@@ -2057,6 +2057,8 @@ async def list_users(
     search: Optional[str] = None,
     status: Optional[str] = None,
     role: Optional[str] = None,
+    sort_by: Optional[str] = Query("username", description="Field to sort by (username, email, roles, status, created_at)"),
+    sort_order: Optional[str] = Query("asc", description="Sort order (asc or desc)"),
     include_super_admin: bool = Query(False, description="Include super-admin users (super-admin only)"),
     current_user: User = Depends(require_permission("users.read")),
     db: AsyncIOMotorDatabase = Depends(get_database)
