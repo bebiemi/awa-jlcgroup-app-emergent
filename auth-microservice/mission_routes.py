@@ -1095,6 +1095,198 @@ async def batch_calculate_matching(
     missions = await db.missions.find(
         {"id": {"$in": mission_ids}},
         {"_id": 0}
+
+
+
+# ==================== APPLICATION HISTORY & TIMELINE ENDPOINTS ====================
+
+@router.get("/applications/{application_id}/history", response_model=List[Dict[str, Any]])
+async def get_application_history(
+    application_id: str,
+    sort_order: str = "asc",
+    current_user: User = Depends(get_user_dep),
+    db: AsyncIOMotorDatabase = Depends(get_database)
+):
+    """
+    Récupère l'historique complet d'une candidature (timeline)
+    
+    Args:
+        application_id: ID de la candidature
+        sort_order: Ordre de tri ("asc" pour chronologique, "desc" pour inverse)
+    
+    Returns:
+        Liste des entrées d'historique avec les changements de statut
+    """
+    from awana_auth.services.application_history_service import ApplicationHistoryService
+    
+    # Vérifier que l'application existe et que l'utilisateur y a accès
+    application = await db.applications.find_one({"id": application_id}, {"_id": 0})
+    
+    if not application:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Candidature non trouvée"
+        )
+    
+    # Vérifier les permissions
+    permission_checker = PermissionChecker(db)
+    user_permissions = await permission_checker.get_user_permissions(current_user.id)
+    
+    can_manage_all = "applications.manage" in user_permissions
+    is_owner = application["user_id"] == current_user.id
+    
+    if not (can_manage_all or is_owner):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Vous n'avez pas accès à l'historique de cette candidature"
+        )
+    
+    # Récupérer l'historique
+    history = await ApplicationHistoryService.get_application_history(
+        db=db,
+        application_id=application_id,
+        sort_order=sort_order
+    )
+    
+    return history
+
+
+@router.get("/applications/{application_id}/timeline-stats", response_model=Dict[str, Any])
+async def get_application_timeline_stats(
+    application_id: str,
+    current_user: User = Depends(get_user_dep),
+    db: AsyncIOMotorDatabase = Depends(get_database)
+):
+    """
+    Récupère les statistiques de la timeline d'une candidature
+    (durées, temps passé dans chaque statut, etc.)
+    
+    Args:
+        application_id: ID de la candidature
+    
+    Returns:
+        Statistiques de la timeline
+    """
+    from awana_auth.services.application_history_service import ApplicationHistoryService
+    
+    # Vérifier que l'application existe et que l'utilisateur y a accès
+    application = await db.applications.find_one({"id": application_id}, {"_id": 0})
+    
+    if not application:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Candidature non trouvée"
+        )
+    
+    # Vérifier les permissions
+    permission_checker = PermissionChecker(db)
+    user_permissions = await permission_checker.get_user_permissions(current_user.id)
+    
+    can_manage_all = "applications.manage" in user_permissions
+    is_owner = application["user_id"] == current_user.id
+    
+    if not (can_manage_all or is_owner):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Vous n'avez pas accès aux statistiques de cette candidature"
+        )
+    
+    # Calculer les stats
+    stats = await ApplicationHistoryService.get_timeline_stats(
+        db=db,
+        application_id=application_id
+    )
+    
+    # Ajouter des infos sur la candidature
+    stats["application"] = {
+        "id": application["id"],
+        "mission_id": application["mission_id"],
+        "current_status": application["status"],
+        "created_at": application["created_at"].isoformat() if isinstance(application["created_at"], datetime) else application["created_at"]
+    }
+    
+    return stats
+
+
+@router.get("/applications/my-applications/with-history", response_model=List[Dict[str, Any]])
+async def get_my_applications_with_history(
+    current_user: User = Depends(get_user_dep),
+    db: AsyncIOMotorDatabase = Depends(get_database)
+):
+    """
+    Récupère toutes les candidatures de l'utilisateur avec leur historique
+    Optimisé avec une seule requête bulk pour l'historique
+    
+    Returns:
+        Liste des candidatures enrichies avec leur historique
+    """
+    from awana_auth.services.application_history_service import ApplicationHistoryService
+    
+    # Récupérer les candidatures de l'utilisateur
+    applications = await db.applications.find(
+        {"user_id": current_user.id},
+        {"_id": 0}
+    ).sort("created_at", -1).to_list(length=None)
+    
+    if not applications:
+        return []
+    
+    # Récupérer les IDs
+    application_ids = [app["id"] for app in applications]
+    
+    # Récupérer l'historique en bulk (optimisé)
+    histories = await ApplicationHistoryService.get_applications_history_bulk(
+        db=db,
+        application_ids=application_ids
+    )
+    
+    # Enrichir chaque candidature avec son historique
+    for application in applications:
+        app_id = application["id"]
+        application["history"] = histories.get(app_id, [])
+        application["history_count"] = len(application["history"])
+        
+        # Ajouter un flag pour les nouvelles mises à jour
+        if application["history"]:
+            last_change = application["history"][-1]
+            last_change_date = last_change.get("changed_at")
+            
+            if isinstance(last_change_date, str):
+                last_change_date = datetime.fromisoformat(last_change_date.replace("Z", "+00:00"))
+            
+            # Considérer comme "nouveau" si changement dans les dernières 48h
+            if last_change_date and (datetime.now(timezone.utc) - last_change_date).days < 2:
+                application["has_recent_update"] = True
+            else:
+                application["has_recent_update"] = False
+        else:
+            application["has_recent_update"] = False
+    
+    return applications
+
+
+@router.post("/admin/backfill-application-history")
+async def backfill_application_history(
+    current_user: User = Depends(require_permission("applications.manage")),
+    db: AsyncIOMotorDatabase = Depends(get_database)
+):
+    """
+    [ADMIN ONLY] Crée l'historique rétroactif pour toutes les candidatures existantes
+    Cette route doit être appelée une seule fois pour initialiser l'historique
+    
+    Returns:
+        Statistiques du backfill
+    """
+    from awana_auth.services.application_history_service import ApplicationHistoryService
+    
+    result = await ApplicationHistoryService.backfill_existing_applications(db)
+    
+    return {
+        "success": True,
+        "message": "Backfill de l'historique terminé",
+        "stats": result
+    }
+
     ).to_list(length=None)
     
     # Calculer le matching pour chaque mission
