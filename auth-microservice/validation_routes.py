@@ -153,16 +153,49 @@ async def approve_validation(
             detail="Validation already processed"
         )
     
-    # Update user status to active
+    # Update user status to active and assign profile
     await db.users.update_one(
         {"id": validation["user_id"]},
         {
             "$set": {
                 "status": UserStatus.ACTIVE.value,
+                "profile_code": "company_admin" if validation["validation_type"] == "company" else None,
                 "updated_at": datetime.now(timezone.utc).isoformat()
             }
         }
     )
+    
+    # If company validation, create company profile automatically
+    if validation["validation_type"] == "company":
+        user = await db.users.find_one({"id": validation["user_id"]}, {"_id": 0})
+        
+        # Check if profile already exists
+        existing_profile = await db.company_profiles.find_one({"user_id": user["id"]})
+        
+        if not existing_profile:
+            # Extract company info from validation or user
+            company_name = validation.get("company_name") or user.get("full_name")
+            
+            company_profile = {
+                "user_id": user["id"],
+                "company_name": company_name,  # OBLIGATOIRE
+                "dirigeant": user.get("full_name"),  # OBLIGATOIRE (nom du contact)
+                "nif": validation.get("nif") or user.get("nif"),  # OBLIGATOIRE
+                "siret": validation.get("siret"),  # FACULTATIF
+                "phone": user.get("phone"),  # FACULTATIF
+                "email": user.get("email"),  # FACULTATIF
+                "address": validation.get("address"),  # FACULTATIF
+                "sector": validation.get("sector"),  # FACULTATIF
+                "company_size": validation.get("company_size"),  # FACULTATIF
+                "description": validation.get("description"),  # FACULTATIF
+                "website": validation.get("website"),  # FACULTATIF
+                "created_at": datetime.now(timezone.utc).isoformat(),
+                "updated_at": datetime.now(timezone.utc).isoformat()
+            }
+            
+            await db.company_profiles.insert_one(company_profile)
+            
+            logger.info(f"Company profile created for user {user['id']}: {company_name}")
     
     # Update validation
     await db.validations.update_one(
