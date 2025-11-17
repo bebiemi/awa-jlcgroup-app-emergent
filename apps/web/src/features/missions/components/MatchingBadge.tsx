@@ -36,22 +36,24 @@ export const MatchingBadge: React.FC<MatchingBadgeProps> = ({
     return <AlertCircle className="h-3 w-3" />
   }
 
+  const [showTooltipState, setShowTooltipState] = useState(false)
+
   // Badge compact (juste le score)
   if (variant === 'compact') {
     return (
-      <Badge className={`${getScoreColor()} text-white text-xs`}>
+      <span className={`${getScoreColor()} text-white text-xs px-2 py-1 rounded-full inline-block`}>
         {Math.round(score)}%
-      </Badge>
+      </span>
     )
   }
 
   // Badge avec tooltip
   const badge = (
-    <Badge className={`${getScoreColor()} text-white flex items-center gap-1`}>
+    <span className={`${getScoreColor()} text-white flex items-center gap-1 px-2 py-1 rounded-full text-sm cursor-pointer`}>
       {getIcon()}
       <span>{Math.round(score)}%</span>
       {variant === 'detailed' && <span className="ml-1 text-xs opacity-90">{getScoreLabel()}</span>}
-    </Badge>
+    </span>
   )
 
   if (!showTooltip) {
@@ -59,12 +61,16 @@ export const MatchingBadge: React.FC<MatchingBadgeProps> = ({
   }
 
   return (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          {badge}
-        </TooltipTrigger>
-        <TooltipContent className="max-w-sm p-4" side="bottom">
+    <div 
+      className="relative inline-block"
+      onMouseEnter={() => setShowTooltipState(true)}
+      onMouseLeave={() => setShowTooltipState(false)}
+    >
+      {badge}
+      
+      {showTooltipState && (
+        <div className="absolute z-50 w-80 max-w-sm p-4 mt-2 bg-white rounded-lg shadow-xl border border-gray-200 right-0"
+             style={{ top: '100%' }}>
           <div className="space-y-3">
             {/* Score global */}
             <div className="border-b pb-2">
