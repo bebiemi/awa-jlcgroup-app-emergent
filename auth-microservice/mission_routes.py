@@ -1325,20 +1325,3 @@ async def backfill_application_history(
         "stats": result
     }
 
-    ).to_list(length=None)
-    
-    # Calculer le matching pour chaque mission
-    results = []
-    for mission in missions:
-        matching_result = MissionMatchingService.calculate_matching_score(
-            mission=mission,
-            user_profile=user_profile
-        )
-        
-        results.append({
-            "mission_id": mission["id"],
-            "matching": matching_result
-        })
-    
-    return results
-
