@@ -239,8 +239,8 @@ export default function Sidebar() {
         ],
       }
     )
-  } else if (userPermissions['missions.create']) {
-    // Company role (can create missions)
+  } else if (userPermissions['besoins.create'] || userPermissions['missions.create']) {
+    // Company role (can create missions/besoins)
     navigationSections.push(
       {
         title: 'Tableau de bord',
