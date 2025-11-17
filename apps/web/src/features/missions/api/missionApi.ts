@@ -522,4 +522,12 @@ export const {
   useUpdateApplicationMutation,
   useShortlistApplicationMutation,
   useUploadMedicalDocumentMutation,
+  // Matching hooks
+  useGetRecommendedMissionsQuery,
+  useGetMissionMatchingQuery,
+  useBatchCalculateMatchingMutation,
+  // History hooks
+  useGetApplicationHistoryQuery,
+  useGetApplicationTimelineStatsQuery,
+  useGetMyApplicationsWithHistoryQuery,
 } = missionApi
