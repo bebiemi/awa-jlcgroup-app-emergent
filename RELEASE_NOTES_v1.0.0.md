@@ -343,8 +343,8 @@ Cette release marque la **première version stable et production-ready** de la p
 - Hot Reload : Activé
 
 ### Emergent Preview (Staging)
-- URL : `https://jlc-portal.preview.emergentagent.com`
-- API : `https://jlc-portal.preview.emergentagent.com/api`
+- URL : `https://recruitmatch-2.preview.emergentagent.com`
+- API : `https://recruitmatch-2.preview.emergentagent.com/api`
 - HTTPS : Forcé
 - Mixed Content : Résolu ✅
 
