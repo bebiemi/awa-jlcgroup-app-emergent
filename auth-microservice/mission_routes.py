@@ -690,6 +690,29 @@ async def update_application(
         elif update_data["status"] in [ApplicationStatus.SELECTED_BY_CLIENT, ApplicationStatus.REJECTED_BY_CLIENT]:
             update_data["client_response_at"] = datetime.now(timezone.utc)
     
+    # Enregistrer l'historique si le statut a changé
+    if "status" in update_data:
+        from awana_auth.services.application_history_service import ApplicationHistoryService
+        
+        old_status = application.get("status")
+        new_status = update_data["status"]
+        
+        if old_status != new_status:
+            await ApplicationHistoryService.create_history_entry(
+                db=db,
+                application_id=application_id,
+                old_status=old_status,
+                new_status=new_status,
+                changed_by=current_user.get("id"),
+                changed_by_name=current_user.get("full_name"),
+                reason=update_data.get("internal_notes"),
+                metadata={
+                    "score": update_data.get("score"),
+                    "interview_rating": update_data.get("interview_rating"),
+                    "client_selected": update_data.get("client_selected")
+                }
+            )
+    
     await db.applications.update_one(
         {"id": application_id},
         {"$set": update_data}
