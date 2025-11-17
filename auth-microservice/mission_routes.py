@@ -978,6 +978,54 @@ async def get_mission_stats(
 
 
 
+@router.get("/{mission_id}/matching", response_model=Dict[str, Any])
+async def get_mission_matching_score(
+    mission_id: str,
+    current_user: User = Depends(get_user_dep),
+    db: AsyncIOMotorDatabase = Depends(get_database)
+):
+    """
+    Calcule le score de matching entre une mission spécifique et le profil de l'utilisateur
+    
+    Args:
+        mission_id: ID de la mission
+    
+    Returns:
+        Score de matching détaillé avec breakdown et recommandations
+    """
+    from awana_auth.services.mission_matching_service import MissionMatchingService
+    
+    # Récupérer la mission
+    mission = await db.missions.find_one({"id": mission_id}, {"_id": 0})
+    
+    if not mission:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Mission non trouvée"
+        )
+    
+    # Récupérer le profil de l'utilisateur
+    user_profile = await db.interim_profiles.find_one({"user_id": current_user.id}, {"_id": 0})
+    
+    if not user_profile:
+        user_profile = await db.candidat_profiles.find_one({"user_id": current_user.id}, {"_id": 0})
+    
+    if not user_profile:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Profil utilisateur non trouvé"
+        )
+    
+    # Calculer le matching
+    matching_result = MissionMatchingService.calculate_matching_score(
+        mission=mission,
+        user_profile=user_profile
+    )
+    
+    return matching_result
+
+
+
 # ==================== CANDIDAT/POSTULANT ENDPOINTS ====================
 
 @router.patch("/applications/me/{application_id}", response_model=Application)
