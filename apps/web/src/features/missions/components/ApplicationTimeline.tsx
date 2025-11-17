@@ -150,9 +150,13 @@ export const ApplicationTimeline: React.FC<ApplicationTimelineProps> = ({
 
                     {/* Badge état */}
                     {isLast && (
-                      <Badge variant={state === 'rejected' ? 'destructive' : 'default'} className="text-xs">
+                      <span className={`px-2 py-1 text-xs rounded-full ${
+                        state === 'rejected' 
+                          ? 'bg-red-100 text-red-700' 
+                          : 'bg-blue-100 text-blue-700'
+                      }`}>
                         En cours
-                      </Badge>
+                      </span>
                     )}
                   </div>
 
