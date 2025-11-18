@@ -216,8 +216,8 @@ VITE_API_BASE_URL=
 # Backend (.env)
 MONGO_URL=<mongo-url-emergent>
 AUTH_SERVICE_URL=http://auth-microservice:8000
-CORS_ORIGINS=https://role-based-security.preview.emergentagent.com
-BASE_URL=https://role-based-security.preview.emergentagent.com
+CORS_ORIGINS=https://identity-manager-5.preview.emergentagent.com
+BASE_URL=https://identity-manager-5.preview.emergentagent.com
 ENVIRONMENT=production
 ```
 

@@ -343,8 +343,8 @@ Cette release marque la **première version stable et production-ready** de la p
 - Hot Reload : Activé
 
 ### Emergent Preview (Staging)
-- URL : `https://role-based-security.preview.emergentagent.com`
-- API : `https://role-based-security.preview.emergentagent.com/api`
+- URL : `https://identity-manager-5.preview.emergentagent.com`
+- API : `https://identity-manager-5.preview.emergentagent.com/api`
 - HTTPS : Forcé
 - Mixed Content : Résolu ✅
 
