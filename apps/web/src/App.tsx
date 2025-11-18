@@ -553,6 +553,16 @@ function App() {
           </ProtectedRoute>
         }
       />
+
+      {/* Documents Route */}
+      <Route
+        path="/documents"
+        element={
+          <ProtectedRoute>
+            <DocumentsPage />
+          </ProtectedRoute>
+        }
+      />
       
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
