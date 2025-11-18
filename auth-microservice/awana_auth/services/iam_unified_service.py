@@ -119,6 +119,23 @@ class IAMUnifiedService:
                 logger.debug(f"User {user_id} - IAM roles from groups: {len(group_iam_role_ids)}")
                 logger.debug(f"User {user_id} - Total permissions (all sources): {len(all_permission_codes)}")
             
+            # ===== SOURCE 4: Résolution des Rôles IAM (modèle hybride) =====
+            # Combiner tous les rôles IAM collectés depuis les profils et groupes
+            all_iam_role_ids = list(set(profile_iam_role_ids + group_iam_role_ids))
+            
+            if all_iam_role_ids:
+                iam_roles_cursor = self.iam_roles_collection.find(
+                    {"id": {"$in": all_iam_role_ids}, "is_active": True},
+                    {"permissions": 1, "code": 1}
+                )
+                
+                async for iam_role in iam_roles_cursor:
+                    role_permissions = iam_role.get("permissions", [])
+                    all_permission_codes.update(role_permissions)
+                    logger.debug(f"User {user_id} - Added permissions from IAM role {iam_role.get('code')}: {len(role_permissions)}")
+                
+                logger.debug(f"User {user_id} - Total permissions after IAM roles resolution: {len(all_permission_codes)}")
+            
             # ===== Résolution des permissions =====
             if not all_permission_codes:
                 return []
