@@ -297,14 +297,14 @@ async def get_document(
 async def update_document(
     document_id: str,
     update_data: DocumentUpdate,
-    current_user: dict = Depends(get_current_user),
+    current_user: User = Depends(require_permission("documents.update")),
     db = Depends(get_database)
 ):
     """Mettre à jour un document"""
     
     # Vérifier que le document existe et appartient à l'utilisateur
     document = await db.documents.find_one(
-        {"id": document_id, "user_id": current_user["id"]},
+        {"id": document_id, "user_id": current_user.id},
         {"_id": 0}
     )
     
