@@ -17,26 +17,42 @@ interface EditUserModalProps {
 }
 
 export default function EditUserModal({ user, isOpen, onClose }: EditUserModalProps) {
-  const [updateUser, { isLoading }] = useUpdateUserMutation()
+  const [updateUser, { isLoading: isUpdating }] = useUpdateUserMutation()
+  const [assignProfiles, { isLoading: isAssigningProfiles }] = useAssignProfilesToUserMutation()
+  const [assignGroups, { isLoading: isAssigningGroups }] = useAssignGroupsToUserMutation()
+  
+  // Fetch available profiles and groups
+  const { data: profiles = [] } = useListProfilesQuery()
+  const { data: groups = [] } = useListGroupsQuery()
+  
+  // Fetch user's current permissions (for display only)
+  const { data: userPermissions } = useGetUserPermissionsQuery(user.id, { skip: !isOpen })
+  
   const [formData, setFormData] = useState({
     full_name: user.full_name || '',
     email: user.email,
-    roles: user.roles,
+    profile_ids: user.profile_ids || [],
+    group_ids: user.group_ids || [],
   })
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
+  const [showInheritedRoles, setShowInheritedRoles] = useState(false)
 
   useEffect(() => {
     if (isOpen) {
       setFormData({
         full_name: user.full_name || '',
         email: user.email,
-        roles: user.roles,
+        profile_ids: user.profile_ids || [],
+        group_ids: user.group_ids || [],
       })
       setError('')
       setSuccess(false)
+      setShowInheritedRoles(false)
     }
   }, [isOpen, user])
+  
+  const isLoading = isUpdating || isAssigningProfiles || isAssigningGroups
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
