@@ -183,7 +183,7 @@ async def upload_document(
     if tags:
         try:
             parsed_tags = json.loads(tags)
-        except:
+        except (json.JSONDecodeError, ValueError):
             parsed_tags = [t.strip() for t in tags.split(',') if t.strip()]
     
     # Calculer la date d'expiration
