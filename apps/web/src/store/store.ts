@@ -104,7 +104,8 @@ export const store = configureStore({
       .concat(referencesApi.middleware)
       .concat(missionsApi.middleware)
       .concat(retentionPoliciesApi.middleware)
-      .concat(experiencesApi.middleware),
+      .concat(experiencesApi.middleware)
+      .concat(supportApi.middleware),
 })
 
 export type RootState = ReturnType<typeof store.getState>
