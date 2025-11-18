@@ -32,6 +32,7 @@ import { missionsApi } from '@/features/missions/api/missionsApi'
 import { retentionPoliciesApi } from '@/features/admin/api/retentionPoliciesApi'
 import { experiencesApi } from '@/features/profile/api/experiencesApi'
 import { supportApi } from '@/features/support/api/supportApi'
+import { documentsApi } from '@/features/documents/api/documentsApi'
 import authReducer from '@/features/auth/slices/authSlice'
 
 export const store = configureStore({
