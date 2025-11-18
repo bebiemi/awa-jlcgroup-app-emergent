@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { XMarkIcon, ShieldCheckIcon } from '@heroicons/react/24/outline'
-import { useUpdateUserMutation, type User } from '../api/usersApi'
+import { useUpdateUserMutation, usersApi, type User } from '../api/usersApi'
 import { 
   useListProfilesQuery, 
   useListGroupsQuery,
@@ -8,6 +8,7 @@ import {
   useAssignGroupsToUserMutation,
   useGetUserPermissionsQuery
 } from '@/features/iam/api/iamApi'
+import { useAppDispatch } from '@/store/hooks'
 import { toast } from 'react-hot-toast'
 
 interface EditUserModalProps {
