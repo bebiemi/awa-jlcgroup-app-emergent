@@ -111,6 +111,8 @@ app.include_router(besoins_proxy_routes.router, prefix="/api/besoins", tags=["Be
 app.include_router(entreprises_proxy_routes.router, prefix="/api/entreprises", tags=["Entreprises Proxy"])
 # Proxy /api/email-verification to auth-microservice
 app.include_router(email_verification_proxy_routes.router, prefix="/api/email-verification", tags=["Email Verification Proxy"])
+# Proxy /api/documents and /api/support to auth-microservice
+app.include_router(documents_proxy_routes.router, prefix="/api", tags=["Documents & Support Proxy"])
 
 
 @app.get("/health")
