@@ -446,17 +446,10 @@ async def admin_list_documents(
     user_id: Optional[str] = None,
     category: Optional[str] = None,
     status_filter: Optional[str] = None,
-    current_user: dict = Depends(get_current_user),
+    current_user: User = Depends(require_permission("documents.read.all")),
     db = Depends(get_database)
 ):
     """[Admin] Lister tous les documents"""
-    
-    # Vérifier les permissions admin
-    if "admin" not in current_user.get("roles", []):
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Admin access required"
-        )
     
     query = {}
     
