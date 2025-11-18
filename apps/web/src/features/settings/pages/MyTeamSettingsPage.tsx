@@ -16,6 +16,17 @@ import { toast } from 'react-hot-toast'
 export default function MyTeamSettingsPage() {
   const { hasPermission: canAssignProfiles } = usePermission('rbac.assign_profiles')
   const { hasPermission: canAssignGroups } = usePermission('rbac.assign_groups')
+  
+  // Fetch data
+  const { data: usersData, isLoading: usersLoading } = useGetUsersQuery({ page: 1, page_size: 1000 })
+  const { data: profiles = [], isLoading: profilesLoading } = useListProfilesQuery()
+  const { data: groups = [], isLoading: groupsLoading } = useListGroupsQuery()
+  
+  // Local state
+  const [searchTerm, setSearchTerm] = useState('')
+  const [selectedRole, setSelectedRole] = useState<string>('all')
+  const [showAssignModal, setShowAssignModal] = useState(false)
+  const [selectedUser, setSelectedUser] = useState<any>(null)
 
   if (!canAssignProfiles && !canAssignGroups) {
     return (
