@@ -10,8 +10,11 @@ import os
 import mimetypes
 
 from awana_auth.core.dependencies import get_current_user, get_database
+from awana_auth.dependencies.permission_dependencies import require_permission
+from awana_auth.services.iam_service import IAMService
+from awana_auth.core.models import User
 
-router = APIRouter(prefix="/documents", tags=["Documents"])
+router = APIRouter(prefix="/api/documents", tags=["Documents"])
 
 
 # ==================== Models ====================
