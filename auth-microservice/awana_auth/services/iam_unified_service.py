@@ -90,22 +90,33 @@ class IAMUnifiedService:
             
             # ===== SOURCE 3: Groupes IAM =====
             group_ids = user.get("group_ids", [])
+            group_iam_role_ids = []  # Pour stocker les rôles IAM des groupes
+            
             if group_ids:
                 groups_cursor = self.groups_collection.find(
                     {"id": {"$in": group_ids}},
-                    {"profile_ids": 1}
+                    {"profile_ids": 1, "iam_role_ids": 1}
                 )
                 
                 async for group in groups_cursor:
+                    # Rôles IAM du groupe (modèle hybride)
+                    group_roles = group.get("iam_role_ids", [])
+                    group_iam_role_ids.extend(group_roles)
+                    
+                    # Profils du groupe
                     group_profile_ids = group.get("profile_ids", [])
                     if group_profile_ids:
                         group_profiles_cursor = self.profiles_collection.find(
                             {"id": {"$in": group_profile_ids}},
-                            {"permission_ids": 1}
+                            {"permission_ids": 1, "iam_role_ids": 1}
                         )
                         async for profile in group_profiles_cursor:
                             all_permission_codes.update(profile.get("permission_ids", []))
+                            # Rôles IAM des profils du groupe
+                            profile_roles = profile.get("iam_role_ids", [])
+                            group_iam_role_ids.extend(profile_roles)
                 
+                logger.debug(f"User {user_id} - IAM roles from groups: {len(group_iam_role_ids)}")
                 logger.debug(f"User {user_id} - Total permissions (all sources): {len(all_permission_codes)}")
             
             # ===== Résolution des permissions =====
