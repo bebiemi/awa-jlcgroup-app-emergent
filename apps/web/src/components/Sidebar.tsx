@@ -298,6 +298,29 @@ export default function Sidebar() {
         ],
       }
     )
+  } else if (userPermissions['rbac.assign_profiles'] || userPermissions['rbac.assign_groups']) {
+    // Users avec permissions de gestion d'équipe
+    navigationSections.push(
+      {
+        title: 'Mon Équipe',
+        items: [
+          { label: 'Gérer mon équipe', path: '/settings/my-team', icon: UserGroupIcon },
+        ],
+      },
+      {
+        title: 'Mon profil',
+        items: [
+          { label: 'Mon Profil', path: '/profile', icon: UserCircleIcon },
+          { label: 'Mes documents', path: '/documents', icon: DocumentTextIcon },
+        ],
+      },
+      {
+        title: 'Compte',
+        items: [
+          { label: 'Sécurité', path: '/security', icon: ShieldCheckIcon },
+        ],
+      }
+    )
   }
 
   const isActive = (path: string) => {
