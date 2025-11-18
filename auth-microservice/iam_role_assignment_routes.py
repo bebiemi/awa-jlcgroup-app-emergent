@@ -39,6 +39,64 @@ class RoleAssignmentResponse(BaseModel):
     assigned_roles: List[str]
 
 
+class IAMRoleResponse(BaseModel):
+    """Response model pour un rôle IAM"""
+    id: str
+    name: str
+    description: str
+    permissions: List[str]
+    created_at: datetime
+    updated_at: datetime
+
+
+# ============================================================================
+# IAM Roles Management
+# ============================================================================
+
+@router.get("/roles", response_model=List[IAMRoleResponse])
+async def list_iam_roles(
+    current_user: User = Depends(require_permission("rbac.read_roles")),
+    db: AsyncIOMotorDatabase = Depends(get_database)
+):
+    """
+    Lister tous les rôles IAM disponibles
+    
+    Permissions requises: rbac.read_roles
+    """
+    roles_collection = db.iam_roles
+    
+    # Récupérer tous les rôles IAM
+    cursor = roles_collection.find({}, {"_id": 0})
+    roles = await cursor.to_list(length=None)
+    
+    logger.info(f"Liste des rôles IAM récupérée par {current_user.username}")
+    
+    return roles
+
+
+@router.get("/roles/{role_id}")
+async def get_iam_role(
+    role_id: str,
+    current_user: User = Depends(require_permission("rbac.read_roles")),
+    db: AsyncIOMotorDatabase = Depends(get_database)
+):
+    """
+    Récupérer un rôle IAM spécifique
+    
+    Permissions requises: rbac.read_roles
+    """
+    roles_collection = db.iam_roles
+    
+    role = await roles_collection.find_one({"id": role_id}, {"_id": 0})
+    if not role:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Rôle IAM {role_id} non trouvé"
+        )
+    
+    return role
+
+
 # ============================================================================
 # Profile Role Assignment
 # ============================================================================
