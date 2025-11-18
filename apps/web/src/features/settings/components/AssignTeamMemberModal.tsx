@@ -255,14 +255,30 @@ export default function AssignTeamMemberModal({
 
             {/* Summary */}
             {(canAssignProfiles || canAssignGroups) && (
-              <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                <h4 className="text-sm font-medium text-blue-900 mb-2">Résumé des modifications</h4>
-                <div className="text-sm text-blue-800 space-y-1">
+              <div className={`p-4 border rounded-lg ${hasChanges() ? 'bg-amber-50 border-amber-200' : 'bg-blue-50 border-blue-200'}`}>
+                <h4 className={`text-sm font-medium mb-2 ${hasChanges() ? 'text-amber-900' : 'text-blue-900'}`}>
+                  {hasChanges() ? '⚠️ Modifications en attente' : 'ℹ️ Résumé des affectations'}
+                </h4>
+                <div className={`text-sm space-y-1 ${hasChanges() ? 'text-amber-800' : 'text-blue-800'}`}>
                   {canAssignProfiles && (
-                    <p>• Profils : {selectedProfiles.length} sélectionné(s)</p>
+                    <p>
+                      • Profils : {selectedProfiles.length} sélectionné(s)
+                      {user.profile_ids?.length !== selectedProfiles.length && (
+                        <span className="ml-2 text-xs">
+                          (avant : {user.profile_ids?.length || 0})
+                        </span>
+                      )}
+                    </p>
                   )}
                   {canAssignGroups && (
-                    <p>• Groupes : {selectedGroups.length} sélectionné(s)</p>
+                    <p>
+                      • Groupes : {selectedGroups.length} sélectionné(s)
+                      {user.group_ids?.length !== selectedGroups.length && (
+                        <span className="ml-2 text-xs">
+                          (avant : {user.group_ids?.length || 0})
+                        </span>
+                      )}
+                    </p>
                   )}
                 </div>
               </div>
