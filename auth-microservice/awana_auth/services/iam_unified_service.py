@@ -54,17 +54,25 @@ class IAMUnifiedService:
             
             # ===== SOURCE 1: Profiles Métier =====
             profile_ids = user.get("profile_ids", [])
+            profile_iam_role_ids = []  # Pour stocker les rôles IAM des profils
+            
             if profile_ids:
                 profiles_cursor = self.profiles_collection.find(
                     {"id": {"$in": profile_ids}},
-                    {"permission_ids": 1}
+                    {"permission_ids": 1, "iam_role_ids": 1}
                 )
                 
                 async for profile in profiles_cursor:
+                    # Permissions directes du profil
                     permission_ids = profile.get("permission_ids", [])
                     all_permission_codes.update(permission_ids)
+                    
+                    # Rôles IAM du profil (modèle hybride)
+                    profile_roles = profile.get("iam_role_ids", [])
+                    profile_iam_role_ids.extend(profile_roles)
                 
                 logger.debug(f"User {user_id} - Permissions from profiles: {len(all_permission_codes)}")
+                logger.debug(f"User {user_id} - IAM roles from profiles: {len(profile_iam_role_ids)}")
             
             # ===== SOURCE 2: Rôles IAM =====
             user_roles = user.get("roles", [])
