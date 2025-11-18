@@ -71,7 +71,7 @@ export default function IAMRolesManagementPage() {
             </div>
           ) : (
             <div className="space-y-4">
-              {profiles.map((profile: any) => (
+              {profiles.filter((profile: any) => profile.id).map((profile: any) => (
                 <div key={profile.id} className="bg-white rounded-lg shadow-sm border border-gray-200">
                   {/* Profile Header */}
                   <button
