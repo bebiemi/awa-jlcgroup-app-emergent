@@ -10,6 +10,7 @@ import { usePermissions } from '@/hooks/usePermission'
 import {
   HomeIcon,
   UserGroupIcon,
+  UsersIcon,
   ClipboardDocumentCheckIcon,
   UserCircleIcon,
   Cog6ToothIcon,
