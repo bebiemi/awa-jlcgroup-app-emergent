@@ -86,6 +86,9 @@ export default function EditUserModal({ user, isOpen, onClose }: EditUserModalPr
         }).unwrap()
       }
 
+      // Invalider le cache des utilisateurs pour rafraîchir la liste
+      dispatch(usersApi.util.invalidateTags(['Users']))
+      
       toast.success('Utilisateur mis à jour avec succès')
       setSuccess(true)
       setTimeout(() => {
