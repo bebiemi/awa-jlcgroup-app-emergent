@@ -698,13 +698,13 @@ export default function UserManagementPage() {
                       <td className="px-6 py-4">
                         <div className="flex flex-wrap gap-1">
                           {user.profile_ids && user.profile_ids.length > 0 ? (
-                            user.profile_ids.slice(0, 2).map((profileId: string, idx: number) => (
+                            user.profile_ids.slice(0, 2).map((profileId: string) => (
                               <span
                                 key={profileId}
                                 className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-800"
-                                title={`Profil ID: ${profileId}`}
+                                title={profilesMap[profileId] || profileId}
                               >
-                                Profil {idx + 1}
+                                {profilesMap[profileId] || 'Profil inconnu'}
                               </span>
                             ))
                           ) : (
@@ -720,13 +720,13 @@ export default function UserManagementPage() {
                       <td className="px-6 py-4">
                         <div className="flex flex-wrap gap-1">
                           {user.group_ids && user.group_ids.length > 0 ? (
-                            user.group_ids.slice(0, 2).map((groupId: string, idx: number) => (
+                            user.group_ids.slice(0, 2).map((groupId: string) => (
                               <span
                                 key={groupId}
                                 className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800"
-                                title={`Groupe ID: ${groupId}`}
+                                title={groupsMap[groupId] || groupId}
                               >
-                                Groupe {idx + 1}
+                                {groupsMap[groupId] || 'Groupe inconnu'}
                               </span>
                             ))
                           ) : (
