@@ -5,7 +5,7 @@
     "export_date": "2025-11-18",
     "description": "Système RBAC complet - Permissions, Profils, Rôles IAM",
     "statistics": {
-      "total_permissions": 147,
+      "total_permissions": 155,
       "total_profiles": 19,
       "total_iam_roles": 4,
       "total_iam_groups": 0
