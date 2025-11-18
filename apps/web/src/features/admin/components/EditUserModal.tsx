@@ -164,22 +164,152 @@ export default function EditUserModal({ user, isOpen, onClose }: EditUserModalPr
               />
             </div>
 
-            {/* Roles */}
+            {/* Info IAM Model */}
+            <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
+              <p className="text-sm text-blue-800">
+                ℹ️ <strong>Modèle IAM Hybride</strong> : Les permissions sont héritées via Profils → Groupes → Rôles IAM
+              </p>
+            </div>
+
+            {/* Profils Métiers */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Rôles</label>
-              <div className="space-y-2">
-                {['admin', 'super_admin', 'interim', 'company', 'agency'].map((role) => (
-                  <label key={role} className="flex items-center">
-                    <input
-                      type="checkbox"
-                      checked={formData.roles.includes(role)}
-                      onChange={() => toggleRole(role)}
-                      className="h-4 w-4 text-jlc-purple-600 focus:ring-jlc-purple-500 border-gray-300 rounded"
-                    />
-                    <span className="ml-2 text-sm text-gray-700 capitalize">{role}</span>
-                  </label>
-                ))}
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Profils Métiers ({formData.profile_ids.length} sélectionné(s))
+              </label>
+              <div className="border border-gray-300 rounded-lg max-h-48 overflow-y-auto">
+                {profiles.length === 0 ? (
+                  <p className="px-4 py-3 text-sm text-gray-500">Aucun profil disponible</p>
+                ) : (
+                  <div className="divide-y divide-gray-200">
+                    {profiles
+                      .filter((p) => !p.is_protected && !p.is_system_role)
+                      .map((profile) => (
+                        <label
+                          key={profile.id}
+                          className="flex items-start px-4 py-3 hover:bg-gray-50 cursor-pointer transition-colors"
+                        >
+                          <input
+                            type="checkbox"
+                            checked={formData.profile_ids.includes(profile.id)}
+                            onChange={() => toggleProfile(profile.id)}
+                            className="h-4 w-4 text-jlc-purple-600 focus:ring-jlc-purple-500 border-gray-300 rounded mt-0.5"
+                          />
+                          <div className="ml-3 flex-1">
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm font-medium text-gray-700">
+                                {profile.name}
+                              </span>
+                              {profile.category && (
+                                <span className="text-xs px-2 py-0.5 bg-gray-100 text-gray-600 rounded">
+                                  {profile.category}
+                                </span>
+                              )}
+                            </div>
+                            {profile.description && (
+                              <p className="text-xs text-gray-500 mt-1">{profile.description}</p>
+                            )}
+                            <p className="text-xs text-gray-400 mt-1">
+                              {profile.permission_ids?.length || 0} permission(s)
+                            </p>
+                          </div>
+                        </label>
+                      ))}
+                  </div>
+                )}
               </div>
+            </div>
+
+            {/* Groupes */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Groupes Organisationnels ({formData.group_ids.length} sélectionné(s))
+              </label>
+              <div className="border border-gray-300 rounded-lg max-h-48 overflow-y-auto">
+                {groups.length === 0 ? (
+                  <p className="px-4 py-3 text-sm text-gray-500">Aucun groupe disponible</p>
+                ) : (
+                  <div className="divide-y divide-gray-200">
+                    {groups
+                      .filter((g) => !g.is_protected && !g.is_system_group)
+                      .map((group) => (
+                        <label
+                          key={group.id}
+                          className="flex items-start px-4 py-3 hover:bg-gray-50 cursor-pointer transition-colors"
+                        >
+                          <input
+                            type="checkbox"
+                            checked={formData.group_ids.includes(group.id)}
+                            onChange={() => toggleGroup(group.id)}
+                            className="h-4 w-4 text-jlc-purple-600 focus:ring-jlc-purple-500 border-gray-300 rounded mt-0.5"
+                          />
+                          <div className="ml-3 flex-1">
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm font-medium text-gray-700">
+                                {group.name}
+                              </span>
+                            </div>
+                            {group.description && (
+                              <p className="text-xs text-gray-500 mt-1">{group.description}</p>
+                            )}
+                            <div className="flex gap-3 text-xs text-gray-400 mt-1">
+                              <span>{group.profile_ids?.length || 0} profil(s)</span>
+                              <span>•</span>
+                              <span>{group.user_ids?.length || 0} membre(s)</span>
+                            </div>
+                          </div>
+                        </label>
+                      ))}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Rôles IAM Hérités (Lecture seule) */}
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <label className="block text-sm font-medium text-gray-700">
+                  Rôles IAM Hérités (lecture seule)
+                </label>
+                <button
+                  type="button"
+                  onClick={() => setShowInheritedRoles(!showInheritedRoles)}
+                  className="text-sm text-jlc-purple-600 hover:text-jlc-purple-700"
+                >
+                  {showInheritedRoles ? 'Masquer' : 'Afficher'}
+                </button>
+              </div>
+              
+              {showInheritedRoles && (
+                <div className="p-3 bg-gray-50 border border-gray-200 rounded-lg">
+                  {userPermissions ? (
+                    <div className="space-y-2">
+                      <p className="text-xs text-gray-600 mb-2">
+                        <ShieldCheckIcon className="h-4 w-4 inline mr-1" />
+                        Ces rôles sont calculés automatiquement via vos profils et groupes
+                      </p>
+                      {userPermissions.computed_roles && userPermissions.computed_roles.length > 0 ? (
+                        <div className="flex flex-wrap gap-2">
+                          {userPermissions.computed_roles.map((role: string) => (
+                            <span
+                              key={role}
+                              className="inline-flex items-center px-2 py-1 bg-purple-100 text-purple-800 text-xs font-medium rounded"
+                            >
+                              {role}
+                            </span>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="text-xs text-gray-500">Aucun rôle IAM hérité</p>
+                      )}
+                      <p className="text-xs text-gray-500 mt-2">
+                        Total permissions : {userPermissions.permissions?.length || 0}
+                      </p>
+                    </div>
+                  ) : (
+                    <p className="text-xs text-gray-500">Chargement des droits hérités...</p>
+                  )}
+                </div>
+              )}
             </div>
 
             {/* Error Message */}
