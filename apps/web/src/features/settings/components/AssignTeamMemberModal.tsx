@@ -27,6 +27,7 @@ export default function AssignTeamMemberModal({
   canAssignProfiles,
   canAssignGroups,
 }: AssignTeamMemberModalProps) {
+  const dispatch = useAppDispatch()
   const { data: profiles = [] } = useListProfilesQuery()
   const { data: groups = [] } = useListGroupsQuery()
   const [assignProfiles] = useAssignProfilesToUserMutation()
