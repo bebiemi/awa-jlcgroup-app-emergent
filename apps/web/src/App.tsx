@@ -471,6 +471,14 @@ function App() {
         }
       />
       <Route
+        path="/settings/my-team"
+        element={
+          <ProtectedRoute requiredPermissions={['rbac.assign_profiles', 'rbac.assign_groups']} requireAll={false}>
+            <MyTeamSettingsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/documents"
         element={
           <ProtectedRoute>
