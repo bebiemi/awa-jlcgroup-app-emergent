@@ -120,6 +120,8 @@ export default function Sidebar() {
     'emails.read_history',
     'emails.manage_templates',
     'profile.manage_own',
+    'rbac.assign_profiles',
+    'rbac.assign_groups',
   ])
 
   // Navigation sections based on user permissions (IAM)
