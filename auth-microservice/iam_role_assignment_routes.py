@@ -51,6 +51,7 @@ class IAMRoleResponse(BaseModel):
     is_active: bool
     created_at: datetime
     updated_at: datetime
+    profile_count: int = 0  # Nombre de profils utilisant ce rôle
 
 
 # ============================================================================
