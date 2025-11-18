@@ -1,9 +1,9 @@
 import { useState } from 'react'
-import { useListProfilesQuery, useListGroupsQuery } from '../api/iamApi'
+import { useListProfilesQuery, useListGroupsQuery, useListIAMRolesQuery } from '../api/iamApi'
 import Layout from '@/components/Layout'
 import ProfileIAMRolesSection from '@/features/admin/components/ProfileIAMRolesSection'
 import GroupIAMRolesSection from '@/features/admin/components/GroupIAMRolesSection'
-import { ChevronDownIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
+import { ChevronDownIcon, ChevronRightIcon, ShieldCheckIcon } from '@heroicons/react/24/outline'
 
 export default function IAMRolesManagementPage() {
   const { data: profiles = [], isLoading: profilesLoading } = useListProfilesQuery()
