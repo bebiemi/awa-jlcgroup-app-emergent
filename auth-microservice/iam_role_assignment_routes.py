@@ -42,9 +42,13 @@ class RoleAssignmentResponse(BaseModel):
 class IAMRoleResponse(BaseModel):
     """Response model pour un rôle IAM"""
     id: str
-    name: str
+    code: str
+    label: str
     description: str
     permissions: List[str]
+    level: int
+    is_system: bool
+    is_active: bool
     created_at: datetime
     updated_at: datetime
 
