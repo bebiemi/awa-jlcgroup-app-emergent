@@ -288,65 +288,18 @@ export default function MyTeamSettingsPage() {
           )}
         </div>
         
-        {/* Assignment Modal Placeholder */}
-        {showAssignModal && selectedUser && (
-          <div className="fixed inset-0 z-50 overflow-y-auto">
-            <div className="flex min-h-screen items-center justify-center p-4">
-              <div className="fixed inset-0 bg-black bg-opacity-50 transition-opacity" onClick={() => setShowAssignModal(false)} />
-              
-              <div className="relative bg-white rounded-lg shadow-xl max-w-2xl w-full p-6 z-10">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                  Gérer {selectedUser.full_name || selectedUser.username}
-                </h3>
-                
-                <div className="space-y-4">
-                  {canAssignProfiles && (
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Profils assignés
-                      </label>
-                      <div className="p-4 bg-gray-50 rounded-lg">
-                        <p className="text-sm text-gray-600">
-                          Fonctionnalité à implémenter : Sélection des profils IAM
-                        </p>
-                      </div>
-                    </div>
-                  )}
-                  
-                  {canAssignGroups && (
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Groupes assignés
-                      </label>
-                      <div className="p-4 bg-gray-50 rounded-lg">
-                        <p className="text-sm text-gray-600">
-                          Fonctionnalité à implémenter : Sélection des groupes
-                        </p>
-                      </div>
-                    </div>
-                  )}
-                </div>
-                
-                <div className="mt-6 flex gap-3">
-                  <button
-                    onClick={() => setShowAssignModal(false)}
-                    className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
-                  >
-                    Fermer
-                  </button>
-                  <button
-                    onClick={() => {
-                      toast.success('Fonctionnalité à venir : Sauvegarde des modifications')
-                      setShowAssignModal(false)
-                    }}
-                    className="flex-1 px-4 py-2 bg-jlc-purple-600 text-white rounded-lg hover:bg-jlc-purple-700 transition-colors"
-                  >
-                    Enregistrer
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
+        {/* Assignment Modal */}
+        {selectedUser && (
+          <AssignTeamMemberModal
+            user={selectedUser}
+            isOpen={showAssignModal}
+            onClose={() => {
+              setShowAssignModal(false)
+              setSelectedUser(null)
+            }}
+            canAssignProfiles={canAssignProfiles}
+            canAssignGroups={canAssignGroups}
+          />
         )}
 
         {/* Help Section */}
