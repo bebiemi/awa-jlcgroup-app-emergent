@@ -350,14 +350,14 @@ async def update_document(
 @router.delete("/{document_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_document(
     document_id: str,
-    current_user: dict = Depends(get_current_user),
+    current_user: User = Depends(require_permission("documents.delete")),
     db = Depends(get_database)
 ):
     """Supprimer un document"""
     
     # Vérifier que le document existe et appartient à l'utilisateur
     document = await db.documents.find_one(
-        {"id": document_id, "user_id": current_user["id"]},
+        {"id": document_id, "user_id": current_user.id},
         {"_id": 0}
     )
     
