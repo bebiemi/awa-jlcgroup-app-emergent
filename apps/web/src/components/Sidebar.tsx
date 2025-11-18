@@ -174,6 +174,12 @@ export default function Sidebar() {
         ],
       },
       {
+        title: 'Support',
+        items: [
+          { label: 'Mes Tickets', path: '/support/tickets', icon: InboxIcon },
+        ],
+      },
+      {
         title: 'Notifications',
         items: [
           { label: 'Historique Emails', path: '/admin/email-history', icon: InboxIcon },
