@@ -64,15 +64,25 @@ async def list_iam_roles(
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """
-    Lister tous les rôles IAM disponibles
+    Lister tous les rôles IAM disponibles avec le nombre de profils utilisant chaque rôle
     
     Permissions requises: rbac.read_roles
     """
     roles_collection = db.iam_roles
+    profiles_collection = db.profiles
     
     # Récupérer tous les rôles IAM
     cursor = roles_collection.find({}, {"_id": 0})
     roles = await cursor.to_list(length=None)
+    
+    # Pour chaque rôle, compter le nombre de profils qui l'utilisent
+    for role in roles:
+        role_id = role.get("id")
+        # Compter les profils ayant ce rôle dans leur iam_role_ids
+        profile_count = await profiles_collection.count_documents(
+            {"iam_role_ids": role_id}
+        )
+        role["profile_count"] = profile_count
     
     logger.info(f"Liste des rôles IAM récupérée par {current_user.username}")
     
