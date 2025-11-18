@@ -95,6 +95,21 @@ export default function UserManagementPage() {
     sort_order: sortOrder,
   })
 
+  // Fetch profiles and groups for mapping
+  const { data: profiles = [] } = useListProfilesQuery()
+  const { data: groups = [] } = useListGroupsQuery()
+
+  // Create maps for quick lookup
+  const profilesMap = profiles.reduce((acc, profile) => {
+    acc[profile.id] = profile.name
+    return acc
+  }, {} as Record<string, string>)
+
+  const groupsMap = groups.reduce((acc, group) => {
+    acc[group.id] = group.name
+    return acc
+  }, {} as Record<string, string>)
+
   // Mark user as viewed mutation
   const [markUserAsViewed] = useMarkUserAsViewedMutation()
   
