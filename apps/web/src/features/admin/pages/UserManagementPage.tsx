@@ -679,7 +679,50 @@ export default function UserManagementPage() {
                         <div className="text-sm text-gray-900">{user.email}</div>
                         <div className="text-xs text-gray-500">{user.provider}</div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">{getRoleBadge(user.roles)}</td>
+                      <td className="px-6 py-4">
+                        <div className="flex flex-wrap gap-1">
+                          {user.profile_ids && user.profile_ids.length > 0 ? (
+                            user.profile_ids.slice(0, 2).map((profileId: string, idx: number) => (
+                              <span
+                                key={profileId}
+                                className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-800"
+                                title={`Profil ID: ${profileId}`}
+                              >
+                                Profil {idx + 1}
+                              </span>
+                            ))
+                          ) : (
+                            <span className="text-xs text-gray-400">Aucun</span>
+                          )}
+                          {user.profile_ids && user.profile_ids.length > 2 && (
+                            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800">
+                              +{user.profile_ids.length - 2}
+                            </span>
+                          )}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex flex-wrap gap-1">
+                          {user.group_ids && user.group_ids.length > 0 ? (
+                            user.group_ids.slice(0, 2).map((groupId: string, idx: number) => (
+                              <span
+                                key={groupId}
+                                className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800"
+                                title={`Groupe ID: ${groupId}`}
+                              >
+                                Groupe {idx + 1}
+                              </span>
+                            ))
+                          ) : (
+                            <span className="text-xs text-gray-400">Aucun</span>
+                          )}
+                          {user.group_ids && user.group_ids.length > 2 && (
+                            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800">
+                              +{user.group_ids.length - 2}
+                            </span>
+                          )}
+                        </div>
+                      </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         {getStatusBadge(user.status)}
                       </td>
