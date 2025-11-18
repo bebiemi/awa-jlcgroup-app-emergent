@@ -18,6 +18,7 @@ interface EditUserModalProps {
 }
 
 export default function EditUserModal({ user, isOpen, onClose }: EditUserModalProps) {
+  const dispatch = useAppDispatch()
   const [updateUser, { isLoading: isUpdating }] = useUpdateUserMutation()
   const [assignProfiles, { isLoading: isAssigningProfiles }] = useAssignProfilesToUserMutation()
   const [assignGroups, { isLoading: isAssigningGroups }] = useAssignGroupsToUserMutation()
