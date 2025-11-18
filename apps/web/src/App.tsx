@@ -248,6 +248,14 @@ function App() {
           </ProtectedRoute>
         }
       />
+      <Route
+        path="/admin/iam/roles"
+        element={
+          <ProtectedRoute requiredPermissions={['rbac.manage_profile_roles', 'rbac.manage_group_roles']} requireAll={false}>
+            <IAMRolesManagementPage />
+          </ProtectedRoute>
+        }
+      />
       
       {/* Routes Missions - Admin & Commercial - IAM */}
       <Route
