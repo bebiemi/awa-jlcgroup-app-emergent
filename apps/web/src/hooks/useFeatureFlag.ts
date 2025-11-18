@@ -135,12 +135,16 @@ export function FeatureGate({
   flag: string
   children: React.ReactNode
   fallback?: React.ReactNode
-}): React.ReactElement | null {
+}) {
   const { isEnabled, isLoading } = useFeatureFlag(flag)
 
   if (isLoading) {
     return null
   }
 
-  return isEnabled ? <>{children}</> : <>{fallback}</>
+  if (isEnabled) {
+    return <>{children}</>
+  }
+  
+  return <>{fallback}</>
 }
