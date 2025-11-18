@@ -471,17 +471,10 @@ async def admin_list_documents(
 async def admin_verify_document(
     document_id: str,
     approved: bool,
-    current_user: dict = Depends(get_current_user),
+    current_user: User = Depends(require_permission("documents.verify")),
     db = Depends(get_database)
 ):
     """[Admin] Vérifier/approuver un document"""
-    
-    # Vérifier les permissions admin
-    if "admin" not in current_user.get("roles", []):
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Admin access required"
-        )
     
     # Vérifier que le document existe
     document = await db.documents.find_one({"id": document_id}, {"_id": 0})
