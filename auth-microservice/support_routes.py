@@ -94,7 +94,7 @@ class Message(BaseModel):
 async def create_ticket(
     ticket_data: TicketCreate,
     current_user: dict = Depends(get_current_user),
-    db = Depends(db_dependency)
+    db = Depends(get_database)
 ):
     """Créer un nouveau ticket de support"""
     
@@ -162,7 +162,7 @@ async def list_tickets(
     status_filter: Optional[str] = None,
     category: Optional[str] = None,
     current_user: dict = Depends(get_current_user),
-    db = Depends(db_dependency)
+    db = Depends(get_database)
 ):
     """Lister les tickets de support de l'utilisateur connecté"""
     
@@ -183,7 +183,7 @@ async def list_tickets(
 async def get_ticket(
     ticket_id: str,
     current_user: dict = Depends(get_current_user),
-    db = Depends(db_dependency)
+    db = Depends(get_database)
 ):
     """Récupérer un ticket spécifique"""
     
@@ -206,7 +206,7 @@ async def add_message(
     ticket_id: str,
     message_data: MessageCreate,
     current_user: dict = Depends(get_current_user),
-    db = Depends(db_dependency)
+    db = Depends(get_database)
 ):
     """Ajouter un message à un ticket"""
     
@@ -270,7 +270,7 @@ async def add_message(
 async def list_messages(
     ticket_id: str,
     current_user: dict = Depends(get_current_user),
-    db = Depends(db_dependency)
+    db = Depends(get_database)
 ):
     """Lister les messages d'un ticket"""
     
@@ -299,7 +299,7 @@ async def list_messages(
 async def close_ticket(
     ticket_id: str,
     current_user: dict = Depends(get_current_user),
-    db = Depends(db_dependency)
+    db = Depends(get_database)
 ):
     """Fermer un ticket (utilisateur uniquement)"""
     
@@ -353,7 +353,7 @@ async def admin_list_tickets(
     priority: Optional[str] = None,
     assigned_to: Optional[str] = None,
     current_user: dict = Depends(get_current_user),
-    db = Depends(db_dependency)
+    db = Depends(get_database)
 ):
     """[Admin] Lister tous les tickets de support"""
     
@@ -388,7 +388,7 @@ async def admin_update_ticket(
     ticket_id: str,
     update_data: TicketUpdate,
     current_user: dict = Depends(get_current_user),
-    db = Depends(db_dependency)
+    db = Depends(get_database)
 ):
     """[Admin] Mettre à jour un ticket"""
     
@@ -463,7 +463,7 @@ async def admin_add_message(
     ticket_id: str,
     message_data: MessageCreate,
     current_user: dict = Depends(get_current_user),
-    db = Depends(db_dependency)
+    db = Depends(get_database)
 ):
     """[Admin] Ajouter un message (ou note interne) à un ticket"""
     
