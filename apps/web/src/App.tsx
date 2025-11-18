@@ -19,6 +19,7 @@ import CreateUserPage from './features/admin/pages/CreateUserPage'
 // OLD: import ProfilesPage from './features/admin/pages/ProfilesPage' // DEPRECATED - Use ProfilesManagementPage
 import ProfilesManagementPage from './features/iam/pages/ProfilesManagementPage'
 import IAMControlPage from './features/iam/pages/IAMControlPage'
+import IAMRolesManagementPage from './features/iam/pages/IAMRolesManagementPage'
 import LocationManagementPage from './features/admin/pages/LocationManagementPage'
 import ReferencesManagementPage from './features/admin/pages/ReferencesManagementPage'
 import CountryConfigPage from './features/admin/pages/CountryConfigPage'
