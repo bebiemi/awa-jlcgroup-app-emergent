@@ -136,6 +136,8 @@ export default function ProfilePage() {
           {activeTab === 'experiences' && <ExperiencesSection />}
 
           {activeTab === 'documents' && <DocumentsSection />}
+
+          {activeTab === 'permissions' && <MyPermissionsSection />}
         </div>
       </div>
     </Layout>
