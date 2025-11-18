@@ -46,7 +46,7 @@ const VISIBILITY_LABELS: Record<string, string> = {
   public: 'Public',
 }
 
-export default function DocumentsPage() {
+export default function MyDocumentsPage() {
   const [categoryFilter, setCategoryFilter] = useState<string>('all')
   const [statusFilter, setStatusFilter] = useState<string>('all')
   const [showUploadModal, setShowUploadModal] = useState(false)
