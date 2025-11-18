@@ -7,7 +7,7 @@ from typing import Optional, List
 from datetime import datetime, timezone
 from uuid import uuid4
 
-from awana_auth.core.dependencies import get_current_user, db_dependency
+from awana_auth.core.dependencies import get_current_user, get_database
 
 router = APIRouter(prefix="/support", tags=["Support"])
 
