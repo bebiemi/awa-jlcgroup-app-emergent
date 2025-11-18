@@ -72,7 +72,7 @@ const ProfilesManagementPage: React.FC = () => {
     { value: 'custom', label: 'Personnalisé', icon: '⭐', count: stats.custom },
   ]
 
-  if (profilesLoading || permissionsLoading) {
+  if (profilesLoading) {
     return (
       <Layout>
         <div className="flex items-center justify-center h-64">
