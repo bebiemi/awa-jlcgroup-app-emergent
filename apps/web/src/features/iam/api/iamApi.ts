@@ -264,4 +264,13 @@ export const {
   useAssignGroupsToUserMutation,
   useGetUserPermissionsQuery,
   useCheckPermissionMutation,
+  
+  // IAM Roles Management (Modèle Hybride)
+  useListIAMRolesQuery,
+  useAssignRolesToProfileMutation,
+  useRemoveRoleFromProfileMutation,
+  useGetProfileRolesQuery,
+  useAssignRolesToGroupMutation,
+  useRemoveRoleFromGroupMutation,
+  useGetGroupRolesQuery,
 } = iamApi
