@@ -145,9 +145,16 @@ export default function IAMRolesManagementPage() {
                     )}
                   </button>
                   
-                  {/* IAM Roles Section (collapsible) */}
+                  {/* Profile Content (collapsible) */}
                   {expandedProfiles.has(profile.id) && (
-                    <div className="px-6 pb-6">
+                    <div className="px-6 pb-6 space-y-6">
+                      {/* Permissions Display */}
+                      <ProfilePermissionsDisplay 
+                        permissionIds={profile.permission_ids || []}
+                        profileName={profile.name}
+                      />
+                      
+                      {/* IAM Roles Section */}
                       <ProfileIAMRolesSection 
                         profileId={profile.id}
                         profileName={profile.name}
