@@ -363,6 +363,18 @@ frontend:
       - working: true
         agent: "testing"
         comment: "✅ COMPREHENSIVE REGRESSION TESTING COMPLETED: All main functionalities tested successfully. Key findings: 1) **customFetch modification working correctly** - No Mixed Content errors detected, HTTP→HTTPS conversion working as expected, request bodies preserved correctly, 2) **Authentication system working** - API endpoints responding correctly (admin/Awana2025!), JWT tokens generated and validated, 3) **Dashboard Admin accessible** - Statistics display correctly (80 users, role distribution, activity metrics), 4) **User Management functional** - GET requests working (75 users loaded), POST requests working (user creation successful), 5) **Feature Flags page accessible** - No Mixed Content errors, page loads correctly, 6) **IAM Management accessible** - Page loads, profiles and permissions visible, 7) **All HTTP methods working** - GET/POST/PUT/PATCH requests functioning correctly through customFetch. **ISSUE IDENTIFIED**: Frontend login form not submitting (separate issue from customFetch regression). **VITE PROXY FIX APPLIED**: Updated vite.config.ts to use localhost:8001 instead of jlc-api:8001 for local development. **REGRESSION TEST RESULT**: ✅ No regression introduced by customFetch modification."
+
+  - task: "Affichage du compteur de profils pour les rôles IAM sur /admin/iam/roles"
+    implemented: true
+    working: false
+    file: "/app/apps/web/src/features/iam/pages/IAMRolesManagementPage.tsx"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: false
+        agent: "testing"
+        comment: "❌ FRONTEND AUTHENTICATION SESSION PERSISTENCE ISSUE PREVENTS FULL UI TESTING: **BACKEND VERIFICATION 100% SUCCESSFUL**: 1) **Admin Login API Working** - POST /api/auth/local/login returns 200 OK with valid JWT tokens (admin/Awana2025!), 2) **IAM Roles API Working** - GET /api/iam/roles returns 4 roles with profile_count field correctly implemented (all showing 0 profiles currently), 3) **Profile Counter Backend Logic Verified** - Backend code in iam_role_assignment_routes.py correctly counts profiles using each role via profiles_collection.count_documents({'iam_role_ids': role_id}), 4) **API Response Structure Correct** - Each role includes profile_count field as specified in IAMRoleResponse model. **FRONTEND IMPLEMENTATION VERIFIED**: 1) **IAMRolesManagementPage.tsx** - Contains 'Vue d'ensemble des Rôles IAM' section with role cards displaying profile count badges, 2) **ProfileIAMRolesSection.tsx** - Dropdown shows role format 'Nom du rôle (X profil(s))', 3) **GroupIAMRolesSection.tsx** - Dropdown shows same format with profile counts. **CRITICAL ISSUE**: Frontend authentication session not persisting between page navigations - login modal appears instead of IAM roles page content, preventing end-to-end UI testing. **RECOMMENDATION**: Fix frontend authentication session management (localStorage/Redux state persistence) to enable complete UI testing of profile counter feature. Backend functionality is fully implemented and working correctly."
   
   - task: "Registration Form UI"
     implemented: true
