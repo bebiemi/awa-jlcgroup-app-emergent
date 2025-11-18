@@ -139,24 +139,31 @@ print("=" * 80)
 print()
 
 # Profils qui doivent avoir les permissions par défaut
+# Ces profils correspondent aux utilisateurs de base du système
 base_profiles = [
     {
-        'code': 'candidat',
-        'name': 'Candidat',
-        'category': 'business',
-        'description': 'Profil de base pour un candidat/intérimaire'
+        'code': 'applicant',
+        'name': 'Postulant',
+        'category': 'user',
+        'description': 'Profil de base pour un candidat/postulant'
     },
     {
-        'code': 'interimaire',
+        'code': 'interim_user',
         'name': 'Intérimaire',
-        'category': 'business',
+        'category': 'user',
         'description': 'Profil de base pour un intérimaire actif'
     },
     {
-        'code': 'company_user',
-        'name': 'Utilisateur Entreprise',
-        'category': 'business',
-        'description': 'Profil de base pour un utilisateur d\'entreprise'
+        'code': 'company_admin',
+        'name': 'Admin Société',
+        'category': 'user',
+        'description': 'Profil de base pour un administrateur d\'entreprise'
+    },
+    {
+        'code': 'read_only',
+        'name': 'Lecture Seule',
+        'category': 'user',
+        'description': 'Profil de base lecture seule'
     }
 ]
 
