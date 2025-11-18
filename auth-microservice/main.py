@@ -59,6 +59,7 @@ from retention_management_routes import router as retention_management_router
 from retention_policies_routes import router as retention_policies_router
 from iam_unified_routes import router as iam_unified_router
 from professional_experiences_routes import router as professional_experiences_router
+from support_routes import router as support_router
 from rate_limit import limiter
 
 client = None
