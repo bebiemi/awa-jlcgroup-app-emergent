@@ -3,6 +3,7 @@ import { useListProfilesQuery, useListGroupsQuery, useListIAMRolesQuery } from '
 import Layout from '@/components/Layout'
 import ProfileIAMRolesSection from '@/features/admin/components/ProfileIAMRolesSection'
 import GroupIAMRolesSection from '@/features/admin/components/GroupIAMRolesSection'
+import ProfilePermissionsDisplay from '../components/ProfilePermissionsDisplay'
 import { ChevronDownIcon, ChevronRightIcon, ShieldCheckIcon } from '@heroicons/react/24/outline'
 
 export default function IAMRolesManagementPage() {
