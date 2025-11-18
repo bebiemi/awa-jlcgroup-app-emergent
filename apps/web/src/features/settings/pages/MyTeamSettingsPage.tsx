@@ -12,6 +12,7 @@ import {
   PencilIcon
 } from '@heroicons/react/24/outline'
 import { toast } from 'react-hot-toast'
+import AssignTeamMemberModal from '../components/AssignTeamMemberModal'
 
 export default function MyTeamSettingsPage() {
   const { hasPermission: canAssignProfiles } = usePermission('rbac.assign_profiles')
