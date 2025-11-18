@@ -15,9 +15,6 @@ import EditProfileModal from '../components/EditProfileModal'
 
 const ProfilesManagementPage: React.FC = () => {
   const { data: profiles, isLoading: profilesLoading } = useListProfilesQuery()
-  const { data: permissions, isLoading: permissionsLoading } = useListPermissionsQuery()
-  const [createProfile] = useCreateProfileMutation()
-  const [updateProfile] = useUpdateProfileMutation()
   const [deleteProfile] = useDeleteProfileMutation()
 
   const [showCreateModal, setShowCreateModal] = useState(false)
@@ -26,84 +23,18 @@ const ProfilesManagementPage: React.FC = () => {
   const [selectedProfile, setSelectedProfile] = useState<Profile | null>(null)
   const [filterCategory, setFilterCategory] = useState<string>('all')
 
-  const [formData, setFormData] = useState({
-    code: '',
-    name: '',
-    description: '',
-    permission_ids: [] as string[],
-    category: 'custom',
-    color: '#6366F1',
-    icon: 'shield'
-  })
-
-  const resetForm = () => {
-    setFormData({
-      code: '',
-      name: '',
-      description: '',
-      permission_ids: [],
-      category: 'custom',
-      color: '#6366F1',
-      icon: 'shield'
-    })
-  }
-
   const handleCreateClick = () => {
-    resetForm()
     setShowCreateModal(true)
   }
 
   const handleEditClick = (profile: Profile) => {
     setSelectedProfile(profile)
-    setFormData({
-      code: profile.code,
-      name: profile.name,
-      description: profile.description || '',
-      permission_ids: profile.permission_ids,
-      category: profile.category,
-      color: profile.color || '#6366F1',
-      icon: profile.icon || 'shield'
-    })
     setShowEditModal(true)
   }
 
   const handleDeleteClick = (profile: Profile) => {
     setSelectedProfile(profile)
     setShowDeleteModal(true)
-  }
-
-  const handleCreateSubmit = async () => {
-    try {
-      await createProfile(formData).unwrap()
-      toast.success('Profil créé avec succès')
-      setShowCreateModal(false)
-      resetForm()
-    } catch (error: any) {
-      toast.error(error?.data?.detail || 'Erreur lors de la création du profil')
-    }
-  }
-
-  const handleEditSubmit = async () => {
-    if (!selectedProfile) return
-    
-    try {
-      await updateProfile({
-        id: selectedProfile.id,
-        data: {
-          name: formData.name,
-          description: formData.description,
-          permission_ids: formData.permission_ids,
-          color: formData.color,
-          icon: formData.icon
-        }
-      }).unwrap()
-      toast.success('Profil mis à jour avec succès')
-      setShowEditModal(false)
-      setSelectedProfile(null)
-      resetForm()
-    } catch (error: any) {
-      toast.error(error?.data?.detail || 'Erreur lors de la mise à jour du profil')
-    }
   }
 
   const handleDeleteConfirm = async () => {
@@ -118,29 +49,6 @@ const ProfilesManagementPage: React.FC = () => {
       toast.error(error?.data?.detail || 'Erreur lors de la suppression du profil')
     }
   }
-
-  const togglePermission = (permissionId: string) => {
-    setFormData(prev => ({
-      ...prev,
-      permission_ids: prev.permission_ids.includes(permissionId)
-        ? prev.permission_ids.filter(id => id !== permissionId)
-        : [...prev.permission_ids, permissionId]
-    }))
-  }
-
-  // Group permissions by category
-  const groupedPermissions = React.useMemo(() => {
-    if (!permissions) return {}
-    
-    return permissions.reduce((acc, permission) => {
-      const category = permission.category || 'other'
-      if (!acc[category]) {
-        acc[category] = []
-      }
-      acc[category].push(permission)
-      return acc
-    }, {} as Record<string, Permission[]>)
-  }, [permissions])
 
   // Filter profiles by category
   const filteredProfiles = React.useMemo(() => {
