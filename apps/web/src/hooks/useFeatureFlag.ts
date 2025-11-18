@@ -9,7 +9,7 @@
  *   // Show feature
  * }
  */
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useAppSelector } from '@/store/hooks'
 
 interface FeatureFlagResult {
