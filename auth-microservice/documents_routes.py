@@ -250,7 +250,7 @@ async def list_documents(
 @router.get("/{document_id}", response_model=Document)
 async def get_document(
     document_id: str,
-    current_user: dict = Depends(get_current_user),
+    current_user: User = Depends(require_permission("documents.read")),
     db = Depends(get_database)
 ):
     """Récupérer un document"""
@@ -266,15 +266,30 @@ async def get_document(
             detail="Document not found"
         )
     
-    # Vérifier les permissions
-    if document["user_id"] != current_user["id"]:
-        # Si pas le propriétaire, vérifier la visibilité
-        if document["visibility"] == "private":
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="Access denied"
-            )
+    # Vérifier les permissions avec IAMService
+    iam_service = IAMService(db)
     
+    # Si propriétaire, accès autorisé
+    if document["user_id"] == current_user.id:
+        return Document(**document)
+    
+    # Sinon, vérifier si l'utilisateur a la permission documents.read.all (admin)
+    has_admin_permission = await iam_service.user_has_permission(
+        current_user.id,
+        "documents.read.all"
+    )
+    
+    if has_admin_permission.has_permission:
+        return Document(**document)
+    
+    # Sinon, vérifier la visibilité du document
+    if document["visibility"] == "private":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Access denied - document is private"
+        )
+    
+    # Pour les documents team/public, accès autorisé si l'utilisateur a documents.read
     return Document(**document)
 
 
