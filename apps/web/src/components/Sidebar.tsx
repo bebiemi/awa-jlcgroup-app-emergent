@@ -180,6 +180,12 @@ export default function Sidebar() {
         ],
       },
       {
+        title: 'Documents',
+        items: [
+          { label: 'Mes Documents', path: '/documents', icon: DocumentTextIcon },
+        ],
+      },
+      {
         title: 'Notifications',
         items: [
           { label: 'Historique Emails', path: '/admin/email-history', icon: InboxIcon },
