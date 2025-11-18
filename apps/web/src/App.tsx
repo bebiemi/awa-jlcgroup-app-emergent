@@ -59,6 +59,9 @@ import CommercialDashboard from './features/commercial/pages/CommercialDashboard
 import PostulantMainDashboard from './features/postulant/pages/PostulantMainDashboard'
 import ProfileOverviewPage from './features/postulant/pages/ProfileOverviewPage'
 import ProtectedRoute from './features/auth/components/ProtectedRoute'
+import SupportTicketsPage from './features/support/pages/SupportTicketsPage'
+import CreateTicketPage from './features/support/pages/CreateTicketPage'
+import TicketDetailPage from './features/support/pages/TicketDetailPage'
 
 function App() {
   const { isAuthenticated, user } = useAppSelector((state) => state.auth)
