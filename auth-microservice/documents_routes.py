@@ -14,7 +14,7 @@ from awana_auth.dependencies.permission_dependencies import require_permission
 from awana_auth.services.iam_service import IAMService
 from awana_auth.core.models import User
 
-router = APIRouter(prefix="/api/documents", tags=["Documents"])
+router = APIRouter(prefix="/documents", tags=["Documents"])
 
 
 # ==================== Models ====================
