@@ -44,6 +44,13 @@ export default function AssignTeamMemberModal({
     }
   }, [isOpen, user])
 
+  // Calculer les changements
+  const hasChanges = () => {
+    const profilesChanged = JSON.stringify([...selectedProfiles].sort()) !== JSON.stringify([...(user.profile_ids || [])].sort())
+    const groupsChanged = JSON.stringify([...selectedGroups].sort()) !== JSON.stringify([...(user.group_ids || [])].sort())
+    return profilesChanged || groupsChanged
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
