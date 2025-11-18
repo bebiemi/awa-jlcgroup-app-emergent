@@ -219,18 +219,8 @@ export const iamApi = createApi({
     }),
     
     getUserPermissions: builder.query<UserPermissionsResponse, string>({
-      query: (userId) => `/iam/unified/users/${userId}/permissions`,
+      query: (userId) => `/iam/users/${userId}/permissions`,
       providesTags: (_result, _error, userId) => [{ type: 'UserPermissions', id: userId }],
-      transformResponse: (response: any) => {
-        // Transformer la réponse unifiée au format attendu
-        return {
-          user_id: response.user_id,
-          direct_profiles: [],
-          group_profiles: [],
-          all_permissions: response.permissions || [],
-          groups: []
-        }
-      },
     }),
     
     checkPermission: builder.mutation<PermissionCheckResponse, { user_id: string; permission_code: string; resource_id?: string }>({
