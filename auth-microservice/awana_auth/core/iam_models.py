@@ -68,8 +68,8 @@ class Permission(BaseModel):
     name: str  # Display name
     description: Optional[str] = None
     resource: str  # Resource type (missions, users, contracts, etc.)
-    action: PermissionAction
-    scope: PermissionScope = PermissionScope.ORGANIZATION
+    action: str  # Action (accepte n'importe quelle string pour flexibilité)
+    scope: str = "organization"  # Scope (accepte n'importe quelle string)
     
     # Metadata
     is_system: bool = False  # Protected system permission
