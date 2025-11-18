@@ -489,7 +489,7 @@ async def admin_verify_document(
     now = datetime.now(timezone.utc).isoformat()
     updates = {
         "status": "verified" if approved else "rejected",
-        "verified_by": current_user["id"],
+        "verified_by": current_user.id,
         "verified_at": now,
         "updated_at": now
     }
