@@ -243,6 +243,14 @@ function App() {
         }
       />
       <Route
+        path="/admin/iam/groups"
+        element={
+          <ProtectedRoute requiredPermissions={['iam.groups.manage']}>
+            <GroupsManagementPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/admin/iam/control"
         element={
           <ProtectedRoute requiredPermissions={['iam.groups.manage']}>
