@@ -46,12 +46,35 @@ export default function AssignTeamMemberModal({
     setIsSubmitting(true)
 
     try {
-      // TODO: Appeler l'API pour mettre à jour les profils et groupes de l'utilisateur
-      // await updateUserProfilesAndGroups({ user_id: user.id, profile_ids: selectedProfiles, group_ids: selectedGroups })
+      const promises = []
+
+      // Assigner les profils si la permission est disponible
+      if (canAssignProfiles) {
+        promises.push(
+          assignProfiles({
+            user_id: user.id,
+            profile_ids: selectedProfiles,
+          }).unwrap()
+        )
+      }
+
+      // Assigner les groupes si la permission est disponible
+      if (canAssignGroups) {
+        promises.push(
+          assignGroups({
+            user_id: user.id,
+            group_ids: selectedGroups,
+          }).unwrap()
+        )
+      }
+
+      // Attendre que toutes les opérations soient terminées
+      await Promise.all(promises)
       
       toast.success('Affectations mises à jour avec succès')
       onClose()
     } catch (error: any) {
+      console.error('Error updating assignments:', error)
       toast.error(error?.data?.detail || 'Erreur lors de la mise à jour')
     } finally {
       setIsSubmitting(false)
