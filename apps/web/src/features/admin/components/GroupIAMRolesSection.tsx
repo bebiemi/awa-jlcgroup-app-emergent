@@ -96,7 +96,7 @@ export default function GroupIAMRolesSection({ groupId, groupName }: GroupIAMRol
             <option value="">Sélectionner un rôle IAM</option>
             {availableRoles.map((role: any) => (
               <option key={role.id} value={role.id}>
-                {role.label || role.code}
+                {role.label || role.code} ({role.profile_count || 0} profil{role.profile_count > 1 ? 's' : ''})
               </option>
             ))}
           </select>
