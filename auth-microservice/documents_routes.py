@@ -229,12 +229,12 @@ async def upload_document(
 async def list_documents(
     category: Optional[str] = None,
     status_filter: Optional[str] = None,
-    current_user: dict = Depends(get_current_user),
+    current_user: User = Depends(require_permission("documents.read")),
     db = Depends(get_database)
 ):
     """Lister les documents de l'utilisateur"""
     
-    query = {"user_id": current_user["id"]}
+    query = {"user_id": current_user.id}
     
     if category:
         query["category"] = category
