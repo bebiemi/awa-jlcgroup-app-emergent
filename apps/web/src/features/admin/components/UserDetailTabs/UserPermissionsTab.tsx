@@ -184,7 +184,6 @@ export default function UserPermissionsTab({ userId, userDetail }: UserPermissio
             {userProfiles.map((profile) => (
               <div key={profile.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-md">
                 <div className="flex items-center gap-3">
-                  {profile.icon && <span className="text-2xl">{profile.icon}</span>}
                   <div>
                     <p className="font-medium text-gray-900">{profile.name}</p>
                     <p className="text-xs text-gray-500">{profile.code}</p>
