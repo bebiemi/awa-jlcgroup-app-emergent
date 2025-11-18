@@ -128,7 +128,7 @@ export default function IAMRolesManagementPage() {
             </div>
           ) : (
             <div className="space-y-4">
-              {groups.map((group: any) => (
+              {groups.filter((group: any) => group.id).map((group: any) => (
                 <div key={group.id} className="bg-white rounded-lg shadow-sm border border-gray-200">
                   {/* Group Header */}
                   <button
