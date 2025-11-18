@@ -43,6 +43,7 @@ import RestoreUserModal from '../components/RestoreUserModal'
 import { UserRoles, RoleLabels, RoleColors } from '@/constants/iamConstants'
 import { ArrowPathIcon, ArchiveBoxIcon } from '@heroicons/react/24/outline'
 import NewBadge from '@/components/NewBadge'
+import { useListProfilesQuery, useListGroupsQuery } from '@/features/iam/api/iamApi'
 
 export default function UserManagementPage() {
   const [page, setPage] = useState(1)
