@@ -111,46 +111,242 @@ export default function MyTeamSettingsPage() {
           </div>
         </div>
 
-        {/* Main Content */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
-          <div className="text-center py-12">
-            <UserGroupIcon className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
-              Interface de gestion d'équipe
-            </h3>
-            <p className="text-gray-600 max-w-md mx-auto mb-6">
-              Cette fonctionnalité sera disponible prochainement. Elle vous permettra de :
-            </p>
-            
-            <ul className="text-left max-w-md mx-auto space-y-2 text-gray-700">
-              <li className="flex items-start gap-2">
-                <span className="text-jlc-purple-600 mt-1">•</span>
-                <span>Inviter de nouveaux collaborateurs</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-jlc-purple-600 mt-1">•</span>
-                <span>Attribuer des profils métier à vos collaborateurs</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-jlc-purple-600 mt-1">•</span>
-                <span>Organiser votre équipe en groupes</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-jlc-purple-600 mt-1">•</span>
-                <span>Suivre les permissions de chaque membre</span>
-              </li>
-            </ul>
-            
-            <div className="mt-8">
-              <a
-                href="/admin/users"
-                className="inline-flex items-center px-4 py-2 bg-jlc-purple-600 text-white rounded-md hover:bg-jlc-purple-700 transition-colors"
-              >
-                Accéder à la gestion des utilisateurs
-              </a>
+        {/* Filters and Search */}
+        <div className="mb-6 bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+          <div className="flex flex-col md:flex-row gap-4">
+            {/* Search */}
+            <div className="flex-1 relative">
+              <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Rechercher un collaborateur..."
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-jlc-purple-500 focus:border-transparent"
+              />
             </div>
+            
+            {/* Role Filter */}
+            <div className="md:w-64">
+              <select
+                value={selectedRole}
+                onChange={(e) => setSelectedRole(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-jlc-purple-500 focus:border-transparent"
+              >
+                <option value="all">Tous les rôles</option>
+                <option value="interim">Intérimaire</option>
+                <option value="company">Entreprise</option>
+                <option value="admin">Administrateur</option>
+                <option value="commercial">Commercial</option>
+              </select>
+            </div>
+            
+            {/* Add Button */}
+            <button
+              onClick={() => toast.info('Fonctionnalité à venir : Inviter un nouveau collaborateur')}
+              className="flex items-center gap-2 px-4 py-2 bg-jlc-purple-600 text-white rounded-lg hover:bg-jlc-purple-700 transition-colors whitespace-nowrap"
+            >
+              <UserPlusIcon className="h-5 w-5" />
+              <span>Inviter</span>
+            </button>
           </div>
         </div>
+
+        {/* Team Members List */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+          {usersLoading || profilesLoading || groupsLoading ? (
+            <div className="flex items-center justify-center py-12">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-jlc-purple-600"></div>
+            </div>
+          ) : !usersData?.users || usersData.users.length === 0 ? (
+            <div className="text-center py-12">
+              <UserGroupIcon className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 mb-2">
+                Aucun collaborateur
+              </h3>
+              <p className="text-gray-600">
+                Commencez par inviter des membres à votre équipe.
+              </p>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Collaborateur
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Rôles
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Profils
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Groupes
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Statut
+                    </th>
+                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {usersData.users
+                    .filter((user: any) => {
+                      const matchesSearch = 
+                        searchTerm === '' ||
+                        user.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                        user.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                        user.username?.toLowerCase().includes(searchTerm.toLowerCase())
+                      
+                      const matchesRole = 
+                        selectedRole === 'all' ||
+                        user.roles?.includes(selectedRole)
+                      
+                      return matchesSearch && matchesRole
+                    })
+                    .map((user: any) => (
+                      <tr key={user.id} className="hover:bg-gray-50">
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="flex items-center">
+                            <div className="flex-shrink-0 h-10 w-10">
+                              <div className="h-10 w-10 rounded-full bg-jlc-purple-100 flex items-center justify-center">
+                                <span className="text-jlc-purple-600 font-medium text-sm">
+                                  {user.full_name?.charAt(0)?.toUpperCase() || user.username?.charAt(0)?.toUpperCase() || 'U'}
+                                </span>
+                              </div>
+                            </div>
+                            <div className="ml-4">
+                              <div className="text-sm font-medium text-gray-900">
+                                {user.full_name || user.username}
+                              </div>
+                              <div className="text-sm text-gray-500">{user.email}</div>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="flex flex-wrap gap-1">
+                            {user.roles?.slice(0, 2).map((role: string) => (
+                              <span
+                                key={role}
+                                className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800"
+                              >
+                                {role}
+                              </span>
+                            ))}
+                            {user.roles?.length > 2 && (
+                              <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800">
+                                +{user.roles.length - 2}
+                              </span>
+                            )}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="text-sm text-gray-900">
+                            {user.profile_ids?.length || 0} profil(s)
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="text-sm text-gray-900">
+                            {user.group_ids?.length || 0} groupe(s)
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span
+                            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                              user.status === 'active'
+                                ? 'bg-green-100 text-green-800'
+                                : user.status === 'pending'
+                                ? 'bg-yellow-100 text-yellow-800'
+                                : 'bg-red-100 text-red-800'
+                            }`}
+                          >
+                            {user.status === 'active' ? 'Actif' : user.status === 'pending' ? 'En attente' : 'Suspendu'}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                          <button
+                            onClick={() => {
+                              setSelectedUser(user)
+                              setShowAssignModal(true)
+                            }}
+                            className="inline-flex items-center gap-1 text-jlc-purple-600 hover:text-jlc-purple-900"
+                          >
+                            <PencilIcon className="h-4 w-4" />
+                            Gérer
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+        
+        {/* Assignment Modal Placeholder */}
+        {showAssignModal && selectedUser && (
+          <div className="fixed inset-0 z-50 overflow-y-auto">
+            <div className="flex min-h-screen items-center justify-center p-4">
+              <div className="fixed inset-0 bg-black bg-opacity-50 transition-opacity" onClick={() => setShowAssignModal(false)} />
+              
+              <div className="relative bg-white rounded-lg shadow-xl max-w-2xl w-full p-6 z-10">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                  Gérer {selectedUser.full_name || selectedUser.username}
+                </h3>
+                
+                <div className="space-y-4">
+                  {canAssignProfiles && (
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Profils assignés
+                      </label>
+                      <div className="p-4 bg-gray-50 rounded-lg">
+                        <p className="text-sm text-gray-600">
+                          Fonctionnalité à implémenter : Sélection des profils IAM
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {canAssignGroups && (
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Groupes assignés
+                      </label>
+                      <div className="p-4 bg-gray-50 rounded-lg">
+                        <p className="text-sm text-gray-600">
+                          Fonctionnalité à implémenter : Sélection des groupes
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+                
+                <div className="mt-6 flex gap-3">
+                  <button
+                    onClick={() => setShowAssignModal(false)}
+                    className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+                  >
+                    Fermer
+                  </button>
+                  <button
+                    onClick={() => {
+                      toast.success('Fonctionnalité à venir : Sauvegarde des modifications')
+                      setShowAssignModal(false)
+                    }}
+                    className="flex-1 px-4 py-2 bg-jlc-purple-600 text-white rounded-lg hover:bg-jlc-purple-700 transition-colors"
+                  >
+                    Enregistrer
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Help Section */}
         <div className="mt-8 p-4 bg-gray-50 border border-gray-200 rounded-lg">
