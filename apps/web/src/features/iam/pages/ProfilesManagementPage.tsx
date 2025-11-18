@@ -1,19 +1,17 @@
 import React, { useState } from 'react'
 import { 
   useListProfilesQuery, 
-  useListPermissionsQuery,
-  useCreateProfileMutation,
-  useUpdateProfileMutation,
   useDeleteProfileMutation,
   Profile,
-  Permission
 } from '../api/iamApi'
 import Layout from '@/components/Layout'
 import Card from '@/components/Card'
 import Modal from '@/components/Modal'
 import Tooltip from '@/components/Tooltip'
 import { toast } from 'react-hot-toast'
-import { PlusIcon, ShieldCheckIcon, UserCircleIcon } from '@heroicons/react/24/outline'
+import { PlusIcon, ShieldCheckIcon } from '@heroicons/react/24/outline'
+import CreateProfileModal from '../components/CreateProfileModal'
+import EditProfileModal from '../components/EditProfileModal'
 
 const ProfilesManagementPage: React.FC = () => {
   const { data: profiles, isLoading: profilesLoading } = useListProfilesQuery()
