@@ -130,7 +130,7 @@ async def upload_document(
     tags: Optional[str] = Form(None),  # JSON string
     is_confidential: bool = Form(default=False),
     retention_period_days: Optional[int] = Form(None),
-    current_user: dict = Depends(get_current_user),
+    current_user: User = Depends(require_permission("documents.create")),
     db = Depends(get_database)
 ):
     """Upload un document"""
