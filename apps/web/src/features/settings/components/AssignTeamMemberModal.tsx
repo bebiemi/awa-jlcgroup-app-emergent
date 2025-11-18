@@ -1,6 +1,13 @@
 import { useState, useEffect } from 'react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
-import { useListProfilesQuery, useListGroupsQuery, type Profile, type Group } from '@/features/iam/api/iamApi'
+import { 
+  useListProfilesQuery, 
+  useListGroupsQuery,
+  useAssignProfilesToUserMutation,
+  useAssignGroupsToUserMutation,
+  type Profile, 
+  type Group 
+} from '@/features/iam/api/iamApi'
 import { toast } from 'react-hot-toast'
 
 interface AssignTeamMemberModalProps {
