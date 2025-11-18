@@ -381,7 +381,7 @@ async def delete_document(
 @router.get("/{document_id}/download")
 async def download_document(
     document_id: str,
-    current_user: dict = Depends(get_current_user),
+    current_user: User = Depends(require_permission("documents.download")),
     db = Depends(get_database)
 ):
     """Télécharger un document"""
@@ -396,12 +396,25 @@ async def download_document(
             detail="Document not found"
         )
     
-    # Vérifier les permissions
-    if document["user_id"] != current_user["id"]:
-        if document["visibility"] == "private":
+    # Vérifier les permissions avec IAMService
+    iam_service = IAMService(db)
+    
+    # Si propriétaire, accès autorisé
+    if document["user_id"] == current_user.id:
+        pass  # Accès autorisé
+    else:
+        # Vérifier si l'utilisateur a la permission documents.read.all (admin)
+        has_admin_permission = await iam_service.user_has_permission(
+            current_user.id,
+            "documents.read.all"
+        )
+        
+        if has_admin_permission.has_permission:
+            pass  # Accès autorisé
+        elif document["visibility"] == "private":
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail="Access denied"
+                detail="Access denied - document is private"
             )
     
     # Chemin du fichier
