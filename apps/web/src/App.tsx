@@ -18,6 +18,7 @@ import CreateUserPage from './features/admin/pages/CreateUserPage'
 // OLD: import GroupsPage from './features/admin/pages/GroupsPage' // DEPRECATED - Use IAMControlPage
 // OLD: import ProfilesPage from './features/admin/pages/ProfilesPage' // DEPRECATED - Use ProfilesManagementPage
 import ProfilesManagementPage from './features/iam/pages/ProfilesManagementPage'
+import GroupsManagementPage from './features/iam/pages/GroupsManagementPage'
 import IAMControlPage from './features/iam/pages/IAMControlPage'
 import IAMRolesManagementPage from './features/iam/pages/IAMRolesManagementPage'
 import MyTeamSettingsPage from './features/settings/pages/MyTeamSettingsPage'
