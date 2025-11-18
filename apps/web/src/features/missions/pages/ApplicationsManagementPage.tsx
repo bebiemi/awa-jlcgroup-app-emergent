@@ -243,6 +243,63 @@ export default function ApplicationsManagementPage() {
           </div>
         </div>
 
+        {/* Statistics Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="bg-white p-4 rounded-lg shadow">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Total</p>
+                <p className="text-2xl font-bold text-gray-900">{applications.length}</p>
+              </div>
+              <div className="p-3 bg-blue-100 rounded-full">
+                <UserIcon className="h-6 w-6 text-blue-600" />
+              </div>
+            </div>
+          </div>
+          
+          <div className="bg-white p-4 rounded-lg shadow">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Présélectionnées</p>
+                <p className="text-2xl font-bold text-purple-600">
+                  {applications.filter(a => a.status === 'shortlisted').length}
+                </p>
+              </div>
+              <div className="p-3 bg-purple-100 rounded-full">
+                <StarIcon className="h-6 w-6 text-purple-600" />
+              </div>
+            </div>
+          </div>
+          
+          <div className="bg-white p-4 rounded-lg shadow">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Retenues</p>
+                <p className="text-2xl font-bold text-green-600">
+                  {applications.filter(a => a.status === 'selected_by_client' || a.status === 'hired').length}
+                </p>
+              </div>
+              <div className="p-3 bg-green-100 rounded-full">
+                <CheckCircleIcon className="h-6 w-6 text-green-600" />
+              </div>
+            </div>
+          </div>
+          
+          <div className="bg-white p-4 rounded-lg shadow">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Rejetées</p>
+                <p className="text-2xl font-bold text-red-600">
+                  {applications.filter(a => a.status.includes('rejected') || a.status === 'rejected').length}
+                </p>
+              </div>
+              <div className="p-3 bg-red-100 rounded-full">
+                <XCircleIcon className="h-6 w-6 text-red-600" />
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Status Filter Tabs */}
         <div className="bg-white rounded-lg shadow overflow-x-auto">
           <div className="flex border-b">
