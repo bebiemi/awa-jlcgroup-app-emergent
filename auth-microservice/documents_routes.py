@@ -198,9 +198,9 @@ async def upload_document(
     
     document = {
         "id": doc_id,
-        "user_id": current_user["id"],
-        "user_email": current_user.get("email", ""),
-        "user_name": current_user.get("full_name"),
+        "user_id": current_user.id,
+        "user_email": current_user.email or "",
+        "user_name": current_user.full_name,
         "filename": unique_filename,
         "original_filename": file.filename,
         "file_size": file_size,
