@@ -59,26 +59,58 @@ export default function EditUserModal({ user, isOpen, onClose }: EditUserModalPr
     setError('')
 
     try {
+      // 1. Update basic user info (name, email)
       await updateUser({
         user_id: user.id,
-        data: formData,
+        data: {
+          full_name: formData.full_name,
+          email: formData.email,
+        },
       }).unwrap()
 
+      // 2. Assign profiles (respects IAM model)
+      if (JSON.stringify(formData.profile_ids) !== JSON.stringify(user.profile_ids || [])) {
+        await assignProfiles({
+          user_id: user.id,
+          profile_ids: formData.profile_ids,
+        }).unwrap()
+      }
+
+      // 3. Assign groups (respects IAM model)
+      if (JSON.stringify(formData.group_ids) !== JSON.stringify(user.group_ids || [])) {
+        await assignGroups({
+          user_id: user.id,
+          group_ids: formData.group_ids,
+        }).unwrap()
+      }
+
+      toast.success('Utilisateur mis à jour avec succès')
       setSuccess(true)
       setTimeout(() => {
         onClose()
       }, 1500)
     } catch (err: any) {
-      setError(err?.data?.detail || 'Erreur lors de la mise à jour')
+      const errorMsg = err?.data?.detail || 'Erreur lors de la mise à jour'
+      setError(errorMsg)
+      toast.error(errorMsg)
     }
   }
 
-  const toggleRole = (role: string) => {
+  const toggleProfile = (profileId: string) => {
     setFormData((prev) => ({
       ...prev,
-      roles: prev.roles.includes(role)
-        ? prev.roles.filter((r) => r !== role)
-        : [...prev.roles, role],
+      profile_ids: prev.profile_ids.includes(profileId)
+        ? prev.profile_ids.filter((id) => id !== profileId)
+        : [...prev.profile_ids, profileId],
+    }))
+  }
+
+  const toggleGroup = (groupId: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      group_ids: prev.group_ids.includes(groupId)
+        ? prev.group_ids.filter((id) => id !== groupId)
+        : [...prev.group_ids, groupId],
     }))
   }
 
