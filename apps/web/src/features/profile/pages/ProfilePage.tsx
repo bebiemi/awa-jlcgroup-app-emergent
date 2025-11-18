@@ -15,7 +15,7 @@ export default function ProfilePage() {
   const { data, isLoading } = useGetMyProfileQuery()
   const [updateProfile] = useUpdateMyProfileMutation()
   const currentUser = useAppSelector((state) => state.auth.user)
-  const [activeTab, setActiveTab] = useState<'info' | 'documents' | 'experiences'>('info')
+  const [activeTab, setActiveTab] = useState<'info' | 'documents' | 'experiences' | 'permissions'>('info')
   
   // Vérifier si l'utilisateur est candidat ou intérimaire (profils avec expériences)
   const canHaveExperiences = currentUser?.roles?.includes('candidat') || 
