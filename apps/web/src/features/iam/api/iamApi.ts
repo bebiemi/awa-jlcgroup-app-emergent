@@ -240,6 +240,62 @@ export const iamApi = createApi({
         body: data,
       }),
     }),
+    
+    // ============================================================================
+    // IAM Roles Management (Modèle Hybride)
+    // ============================================================================
+    
+    // Liste des rôles IAM disponibles
+    listIAMRoles: builder.query<any[], void>({
+      query: () => '/iam/roles',
+      providesTags: ['Profiles'],  // On réutilise le tag pour invalider
+    }),
+    
+    // Profile → IAM Roles
+    assignRolesToProfile: builder.mutation<any, { profileId: string; role_ids: string[] }>({
+      query: ({ profileId, role_ids }) => ({
+        url: `/iam/profiles/${profileId}/roles`,
+        method: 'POST',
+        body: { role_ids },
+      }),
+      invalidatesTags: ['Profiles'],
+    }),
+    
+    removeRoleFromProfile: builder.mutation<any, { profileId: string; roleId: string }>({
+      query: ({ profileId, roleId }) => ({
+        url: `/iam/profiles/${profileId}/roles/${roleId}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['Profiles'],
+    }),
+    
+    getProfileRoles: builder.query<any, string>({
+      query: (profileId) => `/iam/profiles/${profileId}/roles`,
+      providesTags: (_result, _error, profileId) => [{ type: 'Profiles', id: profileId }],
+    }),
+    
+    // Group → IAM Roles
+    assignRolesToGroup: builder.mutation<any, { groupId: string; role_ids: string[] }>({
+      query: ({ groupId, role_ids }) => ({
+        url: `/iam/groups/${groupId}/roles`,
+        method: 'POST',
+        body: { role_ids },
+      }),
+      invalidatesTags: ['Groups'],
+    }),
+    
+    removeRoleFromGroup: builder.mutation<any, { groupId: string; roleId: string }>({
+      query: ({ groupId, roleId }) => ({
+        url: `/iam/groups/${groupId}/roles/${roleId}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['Groups'],
+    }),
+    
+    getGroupRoles: builder.query<any, string>({
+      query: (groupId) => `/iam/groups/${groupId}/roles`,
+      providesTags: (_result, _error, groupId) => [{ type: 'Groups', id: groupId }],
+    }),
   }),
 })
 
