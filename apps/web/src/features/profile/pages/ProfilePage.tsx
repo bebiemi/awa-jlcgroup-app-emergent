@@ -102,6 +102,17 @@ export default function ProfilePage() {
               <DocumentTextIcon className="h-5 w-5 inline mr-2" />
               Documents
             </button>
+            <button
+              onClick={() => setActiveTab('permissions')}
+              className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                activeTab === 'permissions'
+                  ? 'border-jlc-purple-600 text-jlc-purple-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              <ShieldCheckIcon className="h-5 w-5 inline mr-2" />
+              Permissions
+            </button>
           </nav>
         </div>
 
