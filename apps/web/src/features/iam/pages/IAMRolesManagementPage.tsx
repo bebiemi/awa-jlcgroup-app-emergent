@@ -8,6 +8,7 @@ import { ChevronDownIcon, ChevronRightIcon, ShieldCheckIcon } from '@heroicons/r
 export default function IAMRolesManagementPage() {
   const { data: profiles = [], isLoading: profilesLoading } = useListProfilesQuery()
   const { data: groups = [], isLoading: groupsLoading } = useListGroupsQuery()
+  const { data: iamRoles = [], isLoading: iamRolesLoading } = useListIAMRolesQuery()
   
   const [expandedProfiles, setExpandedProfiles] = useState<Set<string>>(new Set())
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set())
