@@ -74,6 +74,9 @@ export default function AssignTeamMemberModal({
       // Attendre que toutes les opérations soient terminées
       await Promise.all(promises)
       
+      // Invalider le cache des utilisateurs pour rafraîchir la liste
+      dispatch(usersApi.util.invalidateTags(['Users']))
+      
       toast.success('Affectations mises à jour avec succès')
       onClose()
     } catch (error: any) {
