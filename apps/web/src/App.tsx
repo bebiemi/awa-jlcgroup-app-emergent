@@ -526,6 +526,32 @@ function App() {
           )
         }
       />
+
+      {/* Support Routes */}
+      <Route
+        path="/support/tickets"
+        element={
+          <ProtectedRoute>
+            <SupportTicketsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/support/tickets/new"
+        element={
+          <ProtectedRoute>
+            <CreateTicketPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/support/tickets/:id"
+        element={
+          <ProtectedRoute>
+            <TicketDetailPage />
+          </ProtectedRoute>
+        }
+      />
       
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
