@@ -3,6 +3,7 @@ Tests unitaires pour IAMService
 Tests du chargement des permissions, bundles, profils et groupes
 """
 import pytest
+import pytest_asyncio
 import asyncio
 from motor.motor_asyncio import AsyncIOMotorClient
 from datetime import datetime, timezone
@@ -15,8 +16,11 @@ sys.path.insert(0, '/app/auth-microservice')
 from awana_auth.services.iam_service import IAMService
 from awana_auth.core.iam_models import Profile, Permission
 
+# Configuration pytest-asyncio
+pytest_plugins = ('pytest_asyncio',)
 
-@pytest.fixture
+
+@pytest_asyncio.fixture
 async def db():
     """Fixture pour la connexion DB de test"""
     mongo_url = os.environ.get('MONGO_URL', 'mongodb://localhost:27017/')
