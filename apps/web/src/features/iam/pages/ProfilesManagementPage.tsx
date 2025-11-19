@@ -29,6 +29,11 @@ const ProfilesManagementPage: React.FC = () => {
     setShowCreateModal(true)
   }
 
+  const handleViewDetailsClick = (profile: Profile) => {
+    setSelectedProfile(profile)
+    setShowDetailsModal(true)
+  }
+
   const handleEditClick = (profile: Profile) => {
     setSelectedProfile(profile)
     setShowEditModal(true)
