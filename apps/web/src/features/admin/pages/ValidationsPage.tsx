@@ -322,7 +322,7 @@ export default function ValidationsPage() {
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                   } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
               >
-                Candidats ({stats?.pending_candidat || stats?.pending_interim || 0})
+                Candidats ({(stats?.pending_candidat || 0) + (stats?.pending_interim || 0)})
               </button>
               <button
                 onClick={() => setActiveTab('company')}
