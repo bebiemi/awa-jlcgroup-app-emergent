@@ -33,6 +33,7 @@ class IAMService:
         self.users_collection = db.users
         self.bundles_collection = db.capability_bundles  # Support des bundles de capacités
         self.cache = cache_service  # Service de cache Redis (optionnel)
+        logger.info(f"IAMService initialized with cache: {cache_service is not None}")
     
     async def user_has_permission(
         self, 
