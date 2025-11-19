@@ -17,6 +17,11 @@ export default defineConfig({
     strictPort: true,
     // Allow dynamic preview domains (forked apps get different subdomains)
     allowedHosts: ['.preview.emergentagent.com', '.emergent.host', 'localhost', '127.0.0.1'],
+    // Fix for ENOSPC error in Kubernetes containers (file watcher limit)
+    watch: {
+      usePolling: true,
+      interval: 1000,
+    },
     hmr: {
       // Use environment variable to determine HMR config
       // For local dev, HMR will use default settings (http://localhost:3000)
