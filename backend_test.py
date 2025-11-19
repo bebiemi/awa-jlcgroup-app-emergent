@@ -5204,11 +5204,11 @@ def test_iam_permission_validation_system():
     print(f"\n{Colors.BOLD}=== STEP 5: TEST RESOURCE/ACTION INVALIDES ==={Colors.ENDC}")
     
     invalid_resource_data = {
-        "code": "test_resource_invalid.action",
+        "code": "test_resource_invalid.create",
         "name": "Test Invalid Resource",
         "description": "Permission avec resource invalide",
         "resource": "test-invalid",  # Tiret invalide
-        "action": "action",
+        "action": "create",
         "scope": "organization",
         "category": "test"
     }
