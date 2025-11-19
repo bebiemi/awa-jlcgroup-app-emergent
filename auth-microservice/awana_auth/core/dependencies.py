@@ -241,3 +241,27 @@ async def require_super_admin(
             )
     
     return current_user
+
+
+async def get_iam_service(
+    db: AsyncIOMotorDatabase = Depends(get_database)
+) -> 'IAMService':
+    """
+    Get IAMService instance with Redis cache support
+    Singleton pattern pour éviter les multiples connexions
+    """
+    global _iam_service, _cache_service
+    
+    if _iam_service is None:
+        # Importer ici pour éviter les imports circulaires
+        from ..services.iam_service import IAMService
+        from ..services.iam_cache_service import get_cache_service
+        
+        # Récupérer le cache service (singleton)
+        if _cache_service is None:
+            _cache_service = await get_cache_service()
+        
+        _iam_service = IAMService(db, cache_service=_cache_service)
+        logger.info("✅ IAMService initialized with Redis cache")
+    
+    return _iam_service
