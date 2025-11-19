@@ -153,12 +153,6 @@ export default function Sidebar() {
   if (userPermissions['admin.dashboard']) {
     navigationSections.push(
       {
-        title: 'Tableau de bord',
-        items: [
-          { label: 'Vue d\'ensemble', path: '/admin', icon: HomeIcon },
-        ],
-      },
-      {
         title: 'Gestion',
         items: [
           { label: 'Utilisateurs', path: '/admin/users', icon: UserGroupIcon },
