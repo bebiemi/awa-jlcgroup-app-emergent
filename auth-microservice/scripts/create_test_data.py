@@ -361,12 +361,17 @@ async def main():
             "titre": "Développeurs Python",
             "description": "Recrutement de 3 développeurs Python pour projet 6 mois",
             "nombre_postes": 3,
-            "duree": "6 mois",
+            "duree": "periode_precise",
+            "duree_mois": 6,
             "type_poste": "CDD",
-            "competences_requises": ["Python", "FastAPI", "MongoDB"],
-            "status": "pending",
+            "competences_attendues": ["Python", "FastAPI", "MongoDB"],
+            "status": "soumis",
             "created_by": [u["id"] for u in utilisateurs if u["username"] == "techcorp_admin"][0],
-            "created_at": datetime.now(timezone.utc).isoformat()
+            "responsable_besoin_id": [u["id"] for u in utilisateurs if u["username"] == "techcorp_admin"][0],
+            "pieces_jointes": [],
+            "custom_fields": {},
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(timezone.utc).isoformat()
         },
         {
             "id": str(uuid4()),
@@ -375,12 +380,17 @@ async def main():
             "titre": "Maçons Qualifiés",
             "description": "Recherche de 5 maçons pour chantier 12 mois",
             "nombre_postes": 5,
-            "duree": "12 mois",
+            "duree": "periode_precise",
+            "duree_mois": 12,
             "type_poste": "CDD",
-            "competences_requises": ["Maçonnerie", "Lecture de plans"],
-            "status": "pending",
+            "competences_attendues": ["Maçonnerie", "Lecture de plans"],
+            "status": "soumis",
             "created_by": [u["id"] for u in utilisateurs if u["username"] == "construction_admin"][0],
-            "created_at": datetime.now(timezone.utc).isoformat()
+            "responsable_besoin_id": [u["id"] for u in utilisateurs if u["username"] == "construction_admin"][0],
+            "pieces_jointes": [],
+            "custom_fields": {},
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(timezone.utc).isoformat()
         },
         {
             "id": str(uuid4()),
@@ -389,12 +399,16 @@ async def main():
             "titre": "Aide-Soignant(e)s",
             "description": "Recrutement de 2 aide-soignants en CDI",
             "nombre_postes": 2,
-            "duree": "CDI",
+            "duree": "indeterminee",
             "type_poste": "CDI",
-            "competences_requises": ["Soins de base", "Hygiène"],
-            "status": "pending",
+            "competences_attendues": ["Soins de base", "Hygiène"],
+            "status": "soumis",
             "created_by": [u["id"] for u in utilisateurs if u["username"] == "sante_admin"][0],
-            "created_at": datetime.now(timezone.utc).isoformat()
+            "responsable_besoin_id": [u["id"] for u in utilisateurs if u["username"] == "sante_admin"][0],
+            "pieces_jointes": [],
+            "custom_fields": {},
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(timezone.utc).isoformat()
         },
         {
             "id": str(uuid4()),
@@ -403,12 +417,16 @@ async def main():
             "titre": "Consultant Junior",
             "description": "Recrutement d'un consultant junior en management",
             "nombre_postes": 1,
-            "duree": "CDI",
+            "duree": "indeterminee",
             "type_poste": "CDI",
-            "competences_requises": ["Conseil", "Analyse"],
-            "status": "approved",
+            "competences_attendues": ["Conseil", "Analyse"],
+            "status": "analyse",
             "created_by": (await db.users.find_one({"username": "mbj"}))["id"],
-            "created_at": datetime.now(timezone.utc).isoformat()
+            "responsable_besoin_id": (await db.users.find_one({"username": "mbj"}))["id"],
+            "pieces_jointes": [],
+            "custom_fields": {},
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(timezone.utc).isoformat()
         },
     ]
     
