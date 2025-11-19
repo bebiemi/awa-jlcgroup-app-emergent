@@ -267,17 +267,17 @@ export default function AttachToExistingModal({
         <div className="flex justify-end space-x-3">
           <Button
             type="button"
-            onClick={handleClose}
+            onClick={handleReject}
             variant="secondary"
-            disabled={isSubmitting}
+            disabled={isAttaching || isRejecting}
           >
-            Annuler
+            Rejeter le rattachement
           </Button>
           <Button
             type="button"
-            onClick={handleSubmit}
+            onClick={handleAttach}
             variant="primary"
-            disabled={!contactConfirmation || isSubmitting || (entreprises.length > 1 && !selectedEntrepriseId)}
+            disabled={!contactConfirmation || isAttaching || isRejecting || (representantEntreprises.length > 1 && !selectedEntrepriseId)}
             className="bg-orange-600 hover:bg-orange-700"
           >
             {isSubmitting ? (
