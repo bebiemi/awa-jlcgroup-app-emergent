@@ -123,6 +123,8 @@ export default function Sidebar() {
     'profile.manage_own',
     'rbac.assign_profiles',
     'rbac.assign_groups',
+    'forms.enterprise.manage',
+    'entreprises.manage',
   ])
 
   // Navigation sections based on user permissions (IAM)
