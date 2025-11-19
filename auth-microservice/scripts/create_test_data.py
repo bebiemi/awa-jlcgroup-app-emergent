@@ -263,7 +263,7 @@ async def main():
             "published_at": datetime.now(timezone.utc)
         },
         
-        # Mission IDAE (pour mbj)
+        # Mission IDAE (créée par admin)
         {
             "id": str(uuid4()),
             "title": "Consultant en Stratégie",
@@ -275,7 +275,7 @@ async def main():
             "salary_min": 1500000,
             "salary_max": 2000000,
             "status": "published",
-            "created_by": (await db.users.find_one({"username": "mbj"}))["id"],
+            "created_by": (await db.users.find_one({"username": "admin"}))["id"],
             "applications_count": 0,
             "created_at": datetime.now(timezone.utc),
             "updated_at": datetime.now(timezone.utc),
