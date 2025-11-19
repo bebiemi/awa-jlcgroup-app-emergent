@@ -64,6 +64,8 @@ from iam_unified_routes import router as iam_unified_router
 from professional_experiences_routes import router as professional_experiences_router
 from support_routes import router as support_router
 from documents_routes import router as documents_router
+from iam_bundles_routes import router as iam_bundles_router
+from iam_expiration_routes import router as iam_expiration_router
 from rate_limit import limiter
 
 client = None
