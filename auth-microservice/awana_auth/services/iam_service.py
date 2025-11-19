@@ -140,6 +140,20 @@ class IAMService:
             Complete permission structure with profiles, groups, and permissions
         """
         try:
+            # Tenter de récupérer depuis le cache
+            if self.cache:
+                cached_data = await self.cache.get_user_permissions(user_id)
+                if cached_data:
+                    logger.debug(f"🎯 Cache HIT pour permissions user {user_id}")
+                    # Reconstruire les objets Pydantic depuis le cache JSON
+                    return UserPermissionsResponse(
+                        user_id=cached_data.get("user_id"),
+                        direct_profiles=[Profile(**p) for p in cached_data.get("direct_profiles", [])],
+                        group_profiles=[Profile(**p) for p in cached_data.get("group_profiles", [])],
+                        all_permissions=[Permission(**p) for p in cached_data.get("all_permissions", [])],
+                        groups=[Group(**g) for g in cached_data.get("groups", [])]
+                    )
+            
             user = await self.users_collection.find_one({"id": user_id})
             if not user:
                 return UserPermissionsResponse(user_id=user_id)
