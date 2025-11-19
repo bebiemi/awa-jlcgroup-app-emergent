@@ -5,7 +5,7 @@
 Sur l'environnement de prévisualisation Emergent (HTTPS), les pages affichaient l'erreur :
 
 ```
-Mixed Content: The page at 'https://auth-secure-1.preview.emergentagent.com/admin/feature-flags' 
+Mixed Content: The page at 'https://iam-access-fix.preview.emergentagent.com/admin/feature-flags' 
 was loaded over HTTPS, but requested an insecure resource 
 'http://docker-iam-fixer.preview.emergentagent.com/api/feature-flags/?include_inactive=true'. 
 This request has been blocked; the content must be served over HTTPS.

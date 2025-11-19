@@ -2,7 +2,7 @@
 
 ## Symptôme
 ```
-GET https://auth-secure-1.preview.emergentagent.com/api/besoins?page=1&page_size=12 
+GET https://iam-access-fix.preview.emergentagent.com/api/besoins?page=1&page_size=12 
 503 (Service Unavailable)
 ```
 
@@ -60,7 +60,7 @@ Une réponse 503 au lieu de 404 ou 403 pourrait indiquer:
 ### Test 1: Vérifier si le Backend est Accessible
 ```bash
 # Depuis le navigateur (DevTools Console)
-fetch('https://auth-secure-1.preview.emergentagent.com/health')
+fetch('https://iam-access-fix.preview.emergentagent.com/health')
   .then(r => r.json())
   .then(console.log)
   .catch(console.error)
@@ -71,7 +71,7 @@ fetch('https://auth-secure-1.preview.emergentagent.com/health')
 ### Test 2: Tester l'Authentification
 ```bash
 # Login
-fetch('https://auth-secure-1.preview.emergentagent.com/api/auth/local/login', {
+fetch('https://iam-access-fix.preview.emergentagent.com/api/auth/local/login', {
   method: 'POST',
   headers: {'Content-Type': 'application/json'},
   body: JSON.stringify({username: 'entreprise_test', password: 'Entreprise2025!'})
@@ -87,7 +87,7 @@ fetch('https://auth-secure-1.preview.emergentagent.com/api/auth/local/login', {
 ```bash
 # Utiliser le token du test précédent
 const token = localStorage.getItem('access_token');
-fetch('https://auth-secure-1.preview.emergentagent.com/api/besoins?page=1&page_size=12', {
+fetch('https://iam-access-fix.preview.emergentagent.com/api/besoins?page=1&page_size=12', {
   headers: {'Authorization': `Bearer ${token}`}
 })
 .then(r => {
