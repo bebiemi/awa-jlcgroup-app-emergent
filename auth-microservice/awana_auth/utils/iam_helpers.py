@@ -130,6 +130,8 @@ async def check_resource_permission(
     """
     Vérifier si un utilisateur a la permission d'effectuer une action sur une ressource spécifique
     
+    Supporte NOUVEAU format (.own/.all) ET ANCIEN format pour backward compatibility.
+    
     Args:
         iam_service: Instance du service IAM
         user_id: ID de l'utilisateur
@@ -141,23 +143,47 @@ async def check_resource_permission(
     Returns:
         True si l'utilisateur a la permission, False sinon
     """
-    # Vérifier .all
+    # Mapping action nouveau → ancien format
+    legacy_action_map = {
+        "read": "view",
+        "update": "edit",
+        "delete": "delete",
+        "create": "create"
+    }
+    
+    # 1. Vérifier NOUVEAU format .all
     permission_all = f"{resource}.{action}.all"
     result_all = await iam_service.user_has_permission(user_id, permission_all)
     
     if result_all.has_permission:
         return True
     
-    # Vérifier .own
+    # 2. Vérifier NOUVEAU format .own
     permission_own = f"{resource}.{action}.own"
     result_own = await iam_service.user_has_permission(user_id, permission_own)
     
     if result_own.has_permission:
-        # Si pas de resource_company_id fourni, on autorise (pour les créations par exemple)
         if resource_company_id is None:
             return user_company_id is not None
-        
-        # Vérifier que l'utilisateur possède la ressource
+        return user_company_id == resource_company_id
+    
+    # 3. FALLBACK : Vérifier ANCIEN format
+    legacy_action = legacy_action_map.get(action, action)
+    
+    # Ancien format all
+    legacy_all = f"{resource}.{legacy_action}_all"
+    result_legacy_all = await iam_service.user_has_permission(user_id, legacy_all)
+    
+    if result_legacy_all.has_permission:
+        return True
+    
+    # Ancien format own
+    legacy_own = f"{resource}.{legacy_action}_own"
+    result_legacy_own = await iam_service.user_has_permission(user_id, legacy_own)
+    
+    if result_legacy_own.has_permission:
+        if resource_company_id is None:
+            return user_company_id is not None
         return user_company_id == resource_company_id
     
     return False
