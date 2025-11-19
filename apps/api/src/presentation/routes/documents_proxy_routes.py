@@ -59,6 +59,52 @@ async def proxy_documents_requests(path: str, request: Request):
         )
 
 
+@router.api_route("/invitations/{path:path}", methods=["GET", "POST", "PUT", "PATCH", "DELETE"])
+async def proxy_invitations_requests(path: str, request: Request):
+    """
+    Proxy all /api/invitations/* requests to auth-microservice
+    Preserves headers, body, query params, and method
+    """
+    # Build target URL
+    target_url = f"{AUTH_SERVICE_URL}/api/invitations/{path}"
+    
+    # Get query params
+    query_params = dict(request.query_params)
+    
+    # Get headers (exclude host and connection headers)
+    headers = {
+        key: value for key, value in request.headers.items()
+        if key.lower() not in ["host", "connection", "content-length", "x-forwarded-proto", "x-forwarded-for", "x-forwarded-host"]
+    }
+    
+    # Get request body
+    body = await request.body()
+    
+    try:
+        async with httpx.AsyncClient(timeout=30.0, follow_redirects=True) as client:
+            response = await client.request(
+                method=request.method,
+                url=target_url,
+                params=query_params,
+                headers=headers,
+                content=body,
+            )
+            
+            # Return response with same status code and content
+            return Response(
+                content=response.content,
+                status_code=response.status_code,
+                headers=dict(response.headers),
+                media_type=response.headers.get('content-type', 'application/json'),
+            )
+    except httpx.RequestError as e:
+        return Response(
+            content=f'{{"detail": "Auth service unavailable: {str(e)}"}}',
+            status_code=503,
+            media_type="application/json",
+        )
+
+
 @router.api_route("/support/{path:path}", methods=["GET", "POST", "PUT", "PATCH", "DELETE"])
 async def proxy_support_requests(path: str, request: Request):
     """
