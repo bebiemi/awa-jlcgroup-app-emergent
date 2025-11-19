@@ -280,7 +280,7 @@ export default function AttachToExistingModal({
             disabled={!contactConfirmation || isAttaching || isRejecting || (representantEntreprises.length > 1 && !selectedEntrepriseId)}
             className="bg-orange-600 hover:bg-orange-700"
           >
-            {isSubmitting ? (
+            {isAttaching ? (
               <>
                 <div className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent mr-2"></div>
                 Rattachement...
@@ -288,7 +288,7 @@ export default function AttachToExistingModal({
             ) : (
               <>
                 <CheckCircleIcon className="h-5 w-5 mr-2" />
-                Valider le rattachement
+                Rattacher à l'entreprise
               </>
             )}
           </Button>
