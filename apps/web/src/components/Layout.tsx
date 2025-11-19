@@ -51,7 +51,7 @@ export default function Layout({ children }: LayoutProps) {
       >
         {/* Top Header Bar - Only for authenticated users */}
         {isAuthenticated && (
-          <header className="bg-white border-b border-gray-200 sticky top-0 z-20 shadow-sm">
+          <header className="bg-white sticky top-0 z-20 shadow-sm">
             <div className="px-4 sm:px-6 lg:px-8">
               <div className="flex justify-between items-center h-16">
                 {/* Left side - could add page title or search */}
