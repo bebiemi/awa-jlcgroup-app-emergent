@@ -44,7 +44,11 @@ export default function Layout({ children }: LayoutProps) {
       {isAuthenticated && <Sidebar />}
 
       {/* Main content with proper spacing for sidebar */}
-      <div className={`${isAuthenticated ? 'lg:pl-64' : ''} min-h-screen flex flex-col`}>
+      <div 
+        className={`min-h-screen flex flex-col transition-all duration-300 ${
+          isAuthenticated ? (isCollapsed ? 'lg:pl-20' : 'lg:pl-64') : ''
+        }`}
+      >
         {/* Top Header Bar - Only for authenticated users */}
         {isAuthenticated && (
           <header className="bg-white border-b border-gray-200 sticky top-0 z-20 shadow-sm">
