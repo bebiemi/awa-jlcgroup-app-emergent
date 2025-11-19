@@ -359,7 +359,7 @@ export default function Sidebar() {
   }
 
   const SidebarContent = () => (
-    <div className="flex flex-col h-full bg-gradient-to-b from-jlc-indigo-dark to-jlc-neon-pink-gray text-white">
+    <div className="flex flex-col h-full bg-gradient-to-b from-jlc-neon-pink-gray to-jlc-indigo-dark text-white">
       {/* Header */}
       <div className="p-4 border-b border-jlc-neon-pink/30">
         <div className="flex items-center justify-between gap-2">
