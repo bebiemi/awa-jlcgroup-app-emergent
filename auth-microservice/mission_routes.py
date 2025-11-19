@@ -9,7 +9,7 @@ from datetime import datetime, timezone, timedelta
 from motor.motor_asyncio import AsyncIOMotorDatabase
 import uuid
 
-from awana_auth.core.dependencies import get_database, get_configuration
+from awana_auth.core.dependencies import get_database, get_configuration, get_iam_service
 from awana_auth.core.config_manager import ConfigManager
 from awana_auth.core.models import User
 from awana_auth.core.mission_models import (
@@ -21,7 +21,12 @@ from awana_auth.core.mission_models import (
 from awana_auth.core.dependencies import get_current_user as get_user_dep
 from awana_auth.dependencies.permission_dependencies import require_permission, require_any_permission
 from awana_auth.services.permission_checker import PermissionChecker
+from awana_auth.services.iam_service import IAMService
 from awana_auth.utils.config_helpers import cfg
+from awana_auth.utils.iam_helpers import get_resource_filter, check_resource_permission
+import logging
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api/missions", tags=["missions"])
 
