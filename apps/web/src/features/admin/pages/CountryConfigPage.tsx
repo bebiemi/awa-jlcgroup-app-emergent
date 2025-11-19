@@ -33,7 +33,7 @@ export default function CountryConfigPage() {
       refetch()
     } catch (error: any) {
       if (error?.data?.detail?.includes('already initialized')) {
-        toast.info('Les données sont déjà initialisées')
+        toast('Les données sont déjà initialisées')
       } else {
         toast.error(error?.data?.detail || 'Erreur lors de l\'initialisation')
       }
