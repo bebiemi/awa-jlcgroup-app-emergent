@@ -30,8 +30,8 @@ type TabType = 'candidat' | 'company' | 'collaborator'
 
 export default function ValidationsPage() {
   // Charger les référentiels de configuration
-  const { data: validationTypes = [] } = useReferences('validation_types')
-  const { data: validationStatuses = [] } = useReferences('validation_statuses')
+  const { options: validationTypes = [] } = useReferences('validation_types')
+  const { options: validationStatuses = [] } = useReferences('validation_statuses')
   
   const validationTypesConfig = {
     candidat: validationTypes.find(vt => vt.code === ValidationTypes.CANDIDAT)?.code || ValidationTypes.CANDIDAT,
