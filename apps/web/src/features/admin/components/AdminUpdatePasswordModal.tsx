@@ -66,7 +66,7 @@ export default function AdminUpdatePasswordModal({
 
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/users/${userId}/password/admin-update`,
+        `/api/users/${userId}/password/admin-update`,
         {
           method: 'POST',
           headers: {
