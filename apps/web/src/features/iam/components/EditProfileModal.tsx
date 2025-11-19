@@ -171,14 +171,24 @@ export default function EditProfileModal({ profile, isOpen, onClose }: EditProfi
               />
             </div>
 
-            {/* Sélecteur de permissions avec recherche/filtrage */}
+            {/* Sélecteur de permissions à deux colonnes */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-3">Permissions</label>
-              <PermissionSelector
-                permissions={permissions}
+              <DualColumnPermissionSelector
+                allPermissions={permissions}
                 selectedPermissionIds={formData.permission_ids}
-                onToggle={togglePermission}
-                onToggleCategory={toggleCategory}
+                onAdd={(permId) => {
+                  setFormData((prev) => ({
+                    ...prev,
+                    permission_ids: [...prev.permission_ids, permId],
+                  }))
+                }}
+                onRemove={(permId) => {
+                  setFormData((prev) => ({
+                    ...prev,
+                    permission_ids: prev.permission_ids.filter((id) => id !== permId),
+                  }))
+                }}
                 disabled={isReadOnly}
               />
             </div>
