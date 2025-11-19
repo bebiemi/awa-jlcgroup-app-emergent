@@ -25,6 +25,15 @@ export interface Validation {
   employee_number?: string
   department?: string
   job_title?: string
+  // Phase 1 & 2: Représentant légal fields
+  representant_legal_nom?: string
+  representant_legal_email?: string
+  has_existing_representant?: boolean
+  existing_representant_user_id?: string
+  existing_representant_entreprises?: string[]
+  contact_confirmation?: boolean
+  rattachement_status?: string
+  rattachement_to_entreprise_id?: string
   created_at: string
   updated_at: string
 }
