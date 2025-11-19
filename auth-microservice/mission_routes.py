@@ -443,10 +443,18 @@ async def batch_calculate_matching(
 @router.get("/{mission_id}", response_model=Mission)
 async def get_mission(
     mission_id: str,
-    current_user: dict = Depends(get_current_user),
-    db = Depends(get_db)
+    current_user: User = Depends(get_user_dep),
+    db: AsyncIOMotorDatabase = Depends(get_database),
+    iam_service: IAMService = Depends(get_iam_service)
 ):
-    """Récupérer une mission spécifique"""
+    """
+    Récupérer une mission spécifique
+    
+    Permissions:
+    - missions.read.all : Voir toutes les missions
+    - missions.read.own : Voir ses propres missions uniquement
+    - missions.browse : Voir les missions publiées uniquement
+    """
     mission = await db.missions.find_one({"id": mission_id})
     
     if not mission:
@@ -455,41 +463,45 @@ async def get_mission(
             detail="Mission non trouvée"
         )
     
-    # IAM: Check permissions
-    checker = PermissionChecker(db)
-    user_id = current_user.get("sub")
+    user_id = current_user.id
+    user_company_id = getattr(current_user, 'company_id', None)
+    mission_company_id = mission.get("company_id")
     
-    can_manage_all = await checker.user_has_any_permission(
-        current_user.get("id"),
-        ["missions.manage", "missions.read"]
-    )
-    can_browse = await checker.user_has_permission(
-        current_user.get("id"),
-        "missions.browse"
-    )
-    can_create = await checker.user_has_permission(
-        current_user.get("id"),
-        "missions.create"
-    )
+    # Vérifier les permissions
+    has_read_all = await iam_service.user_has_permission(user_id, "missions.read.all")
+    has_read_own = await iam_service.user_has_permission(user_id, "missions.read.own")
+    has_browse = await iam_service.user_has_permission(user_id, "missions.browse")
     
-    # Interim users (missions.browse) can only see published missions
-    if can_browse and not can_manage_all and not can_create:
+    # Permission .all : accès complet
+    if has_read_all.has_permission:
+        mission.pop('_id', None)
+        return Mission(**mission)
+    
+    # Permission .own : vérifier que c'est sa mission
+    if has_read_own.has_permission:
+        if user_company_id != mission_company_id:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Vous ne pouvez voir que vos propres missions"
+            )
+        mission.pop('_id', None)
+        return Mission(**mission)
+    
+    # Permission browse : seulement les missions publiées
+    if has_browse.has_permission:
         if mission["status"] != MissionStatus.PUBLISHED:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail="Mission non accessible"
+                detail="Mission non accessible (non publiée)"
             )
+        mission.pop('_id', None)
+        return Mission(**mission)
     
-    # Company users (missions.create) can only see their missions
-    if can_create and not can_manage_all and mission["company_id"] != user_id:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Vous ne pouvez voir que vos missions"
-        )
-    
-    # Remove MongoDB _id before creating Pydantic model
-    mission.pop('_id', None)
-    return Mission(**mission)
+    # Aucune permission
+    raise HTTPException(
+        status_code=status.HTTP_403_FORBIDDEN,
+        detail="Vous n'avez pas la permission d'accéder à cette mission"
+    )
 
 
 @router.put("/{mission_id}", response_model=Mission)
