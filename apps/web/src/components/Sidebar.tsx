@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAppSelector, useAppDispatch } from '@/store/hooks'
+import { useSidebar } from '@/contexts/SidebarContext'
 import { logoutAction } from '@/features/auth/slices/authSlice'
 import { useRoles } from '@/hooks/useAppConfig'
 import { useTranslation } from 'react-i18next'
