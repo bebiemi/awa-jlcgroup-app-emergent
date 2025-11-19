@@ -154,7 +154,10 @@ export const iamApi = createApi({
         method: 'PUT',
         body: data,
       }),
-      invalidatesTags: ['Profiles'],
+      invalidatesTags: (_result, _error, { id }) => [
+        'Profiles',
+        { type: 'Profiles', id },
+      ],
     }),
     
     deleteProfile: builder.mutation<void, string>({
