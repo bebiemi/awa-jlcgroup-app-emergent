@@ -154,31 +154,31 @@ const DualColumnPermissionSelector: React.FC<DualColumnPermissionSelectorProps> 
     <div className="space-y-4">
       {/* Controls */}
       <div className="flex gap-2 items-center">
-        <Select value={sortBy} onValueChange={(v) => setSortBy(v as SortBy)}>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Trier par" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="category">Catégorie</SelectItem>
-            <SelectItem value="name">Nom</SelectItem>
-            <SelectItem value="resource">Ressource</SelectItem>
-            <SelectItem value="action">Action</SelectItem>
-          </SelectContent>
-        </Select>
+        <select 
+          value={sortBy} 
+          onChange={(e) => setSortBy(e.target.value as SortBy)}
+          className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          disabled={disabled}
+        >
+          <option value="category">Trier par: Catégorie</option>
+          <option value="name">Trier par: Nom</option>
+          <option value="resource">Trier par: Ressource</option>
+          <option value="action">Trier par: Action</option>
+        </select>
 
-        <Select value={filterCategory} onValueChange={setFilterCategory}>
-          <SelectTrigger className="w-[200px]">
-            <SelectValue placeholder="Filtrer" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">Toutes catégories</SelectItem>
-            {categories.filter(c => c !== 'all').map(cat => (
-              <SelectItem key={cat} value={cat}>
-                {cat}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <select 
+          value={filterCategory} 
+          onChange={(e) => setFilterCategory(e.target.value)}
+          className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          disabled={disabled}
+        >
+          <option value="all">Toutes catégories</option>
+          {categories.filter(c => c !== 'all').map(cat => (
+            <option key={cat} value={cat}>
+              {cat}
+            </option>
+          ))}
+        </select>
       </div>
 
       {/* Two Columns */}
