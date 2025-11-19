@@ -166,6 +166,14 @@ function App() {
         }
       />
       <Route
+        path="/admin/config/entreprises"
+        element={
+          <ProtectedRoute requiredPermissions={['entreprises.read']}>
+            <EntrepriseFormConfigPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/admin/references"
         element={
           <ProtectedRoute requiredPermissions={['references.manage']}>
