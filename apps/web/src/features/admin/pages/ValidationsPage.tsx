@@ -303,7 +303,7 @@ export default function ValidationsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">Avertissements</p>
-                <p className="text-2xl font-bold text-gray-900">{stats?.location_warnings || 0}</p>
+                <p className="text-2xl font-bold text-gray-900">{stats?.with_location_warnings || 0}</p>
               </div>
               <ExclamationTriangleIcon className="w-10 h-10 text-yellow-500" />
             </div>
