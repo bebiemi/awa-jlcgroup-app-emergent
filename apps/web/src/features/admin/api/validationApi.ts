@@ -132,6 +132,38 @@ export const validationApi = createApi({
       }),
       invalidatesTags: ['Validation'],
     }),
+
+    attachToExistingRepresentant: builder.mutation<
+      { success: boolean; message: string },
+      {
+        validation_id: string
+        target_entreprise_id: string
+        contact_confirmed: boolean
+        notes?: string
+      }
+    >({
+      query: (body) => ({
+        url: '/validations/attach-to-existing',
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: ['Validation', 'ValidationStats'],
+    }),
+
+    rejectAttachment: builder.mutation<
+      { success: boolean; message: string },
+      {
+        validation_id: string
+        notes?: string
+      }
+    >({
+      query: (body) => ({
+        url: '/validations/reject-attachment',
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: ['Validation'],
+    }),
   }),
 })
 
@@ -144,4 +176,6 @@ export const {
   useRejectValidationMutation,
   useAssignValidationMutation,
   useAddCountryFromValidationMutation,
+  useAttachToExistingRepresentantMutation,
+  useRejectAttachmentMutation,
 } = validationApi
