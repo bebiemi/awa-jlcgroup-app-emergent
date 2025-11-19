@@ -37,6 +37,13 @@ class ValidationAssignment(BaseModel):
     assigned_to: str  # User ID of validator
 
 
+class AttachToExistingRequest(BaseModel):
+    """Model for attaching validation to existing representant"""
+    contact_confirmation: bool
+    target_entreprise_id: Optional[str] = None  # Si plusieurs entreprises, choisir laquelle
+    notes: Optional[str] = None
+
+
 class RepresentantEntreprise(BaseModel):
     """Entreprise info for representant"""
     id: str
