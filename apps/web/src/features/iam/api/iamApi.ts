@@ -22,6 +22,9 @@ export interface Profile {
   name: string
   description?: string
   permission_ids: string[]
+  capability_bundle_ids?: string[]
+  effective_permission_count?: number
+  bundle_permission_count?: number
   is_system_role: boolean
   is_protected: boolean
   priority: number
