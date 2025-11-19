@@ -144,7 +144,7 @@ export default function MyTeamSettingsPage() {
             
             {/* Add Button */}
             <button
-              onClick={() => toast.info('Fonctionnalité à venir : Inviter un nouveau collaborateur')}
+              onClick={() => toast('Fonctionnalité à venir : Inviter un nouveau collaborateur')}
               className="flex items-center gap-2 px-4 py-2 bg-jlc-purple-600 text-white rounded-lg hover:bg-jlc-purple-700 transition-colors whitespace-nowrap"
             >
               <UserPlusIcon className="h-5 w-5" />
