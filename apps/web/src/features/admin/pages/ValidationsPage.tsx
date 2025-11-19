@@ -220,7 +220,7 @@ export default function ValidationsPage() {
       // Rejeter toutes les validations sélectionnées
       await Promise.all(
         selectedValidations.map(id => 
-          rejectValidation({ id, reason: rejectionReason }).unwrap()
+          rejectValidation({ id, rejection_reason: rejectionReason }).unwrap()
         )
       )
       toast.success(`${selectedValidations.length} validation(s) rejetée(s)`)
