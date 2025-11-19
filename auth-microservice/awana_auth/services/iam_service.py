@@ -25,13 +25,14 @@ class IAMService:
     3. Most permissive wins in case of conflict
     """
     
-    def __init__(self, db: AsyncIOMotorDatabase):
+    def __init__(self, db: AsyncIOMotorDatabase, cache_service=None):
         self.db = db
         self.permissions_collection = db.permissions
         self.profiles_collection = db.profiles
         self.groups_collection = db.groups
         self.users_collection = db.users
         self.bundles_collection = db.capability_bundles  # Support des bundles de capacités
+        self.cache = cache_service  # Service de cache Redis (optionnel)
     
     async def user_has_permission(
         self, 
