@@ -213,6 +213,8 @@ app.include_router(iam_unified_router)
 app.include_router(iam_bundles_router, prefix="/api")
 app.include_router(iam_expiration_router, prefix="/api")
 app.include_router(iam_cache_router)
+app.include_router(temporary_permissions_router)
+app.include_router(iam_audit_router)
 
 @app.get("/health")
 async def health_check():
