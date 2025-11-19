@@ -320,10 +320,17 @@ async def update_profile(
 @router.delete("/profiles/{profile_id}")
 async def delete_profile(
     profile_id: str,
+    force: bool = False,
     current_user: User = Depends(require_permission("iam.profiles.delete")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
-    """Delete profile (admin only, not if protected or in use)"""
+    """
+    Delete profile (admin only, not if protected or in use)
+    
+    Args:
+        profile_id: ID of profile to delete
+        force: If True, removes profile from all users/groups before deletion
+    """
     profiles_collection = db.profiles
     
     # Check if profile exists
@@ -346,15 +353,34 @@ async def delete_profile(
     group_count = await groups_collection.count_documents({"profile_ids": profile_id})
     
     if user_count > 0 or group_count > 0:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Cannot delete profile: assigned to {user_count} users and {group_count} groups"
+        if not force:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Cannot delete profile: assigned to {user_count} users and {group_count} groups. Use force=true to remove assignments."
+            )
+        
+        # Force mode: Remove profile from all users and groups
+        await users_collection.update_many(
+            {"profile_ids": profile_id},
+            {"$pull": {"profile_ids": profile_id}}
         )
+        
+        await groups_collection.update_many(
+            {"profile_ids": profile_id},
+            {"$pull": {"profile_ids": profile_id}}
+        )
+        
+        logger.info(f"Profile {profile_id} removed from {user_count} users and {group_count} groups")
     
     await profiles_collection.delete_one({"id": profile_id})
     logger.info(f"Profile deleted: {profile_id} by {current_user.username}")
     
-    return {"success": True, "message": "Profile deleted"}
+    return {
+        "success": True, 
+        "message": "Profile deleted",
+        "unassigned_users": user_count if force else 0,
+        "unassigned_groups": group_count if force else 0
+    }
 
 
 # ============================================================================
