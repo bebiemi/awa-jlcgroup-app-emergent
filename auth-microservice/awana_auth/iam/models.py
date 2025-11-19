@@ -191,7 +191,12 @@ class TemporaryProfile(BaseModel):
     @property
     def is_expired(self) -> bool:
         """Vérifie si le profil est expiré"""
-        return datetime.now(timezone.utc) > self.expires_at
+        now = datetime.now(timezone.utc)
+        # Gérer les datetime avec et sans timezone
+        expires = self.expires_at
+        if expires.tzinfo is None:
+            expires = expires.replace(tzinfo=timezone.utc)
+        return now > expires
     
     @property
     def days_until_expiration(self) -> int:
