@@ -294,64 +294,64 @@ export default function RegisterPage() {
             </button>
 
             <div className="rounded-md shadow-sm space-y-4">
-              {/* Company-specific fields */}
+              {/* Company-specific fields - Chargés dynamiquement */}
               {accountType === 'company' && (
                 <>
-                  <div>
-                    <label htmlFor="companyName" className="block text-sm font-medium text-gray-700 mb-1">
-                      Nom de l'entreprise *
-                    </label>
-                    <input
-                      id="companyName"
-                      name="companyName"
-                      type="text"
-                      required
-                      value={formData.companyName}
-                      onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
-                      className={`appearance-none relative block w-full px-3 py-2 border ${
-                        errors.companyName ? 'border-red-300' : 'border-gray-300'
-                      } placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-jlc-purple-500 focus:border-jlc-purple-500 sm:text-sm`}
-                      placeholder="Nom de votre entreprise"
-                    />
-                    {errors.companyName && (
-                      <p className="mt-1 text-sm text-red-600">{errors.companyName}</p>
-                    )}
-                  </div>
-
-                  <div>
-                    <label htmlFor="legalRepresentative" className="block text-sm font-medium text-gray-700 mb-1">
-                      Représentant légal *
-                    </label>
-                    <input
-                      id="legalRepresentative"
-                      name="legalRepresentative"
-                      type="text"
-                      required
-                      value={formData.legalRepresentative}
-                      onChange={(e) => setFormData({ ...formData, legalRepresentative: e.target.value })}
-                      className={`appearance-none relative block w-full px-3 py-2 border ${
-                        errors.legalRepresentative ? 'border-red-300' : 'border-gray-300'
-                      } placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-jlc-purple-500 focus:border-jlc-purple-500 sm:text-sm`}
-                      placeholder="Nom du représentant"
-                    />
-                    {errors.legalRepresentative && (
-                      <p className="mt-1 text-sm text-red-600">{errors.legalRepresentative}</p>
-                    )}
-                  </div>
-
-                  <div>
-                    <label htmlFor="nif" className="block text-sm font-medium text-gray-700 mb-1">
-                      NIF (optionnel)
-                    </label>
-                    <input
-                      id="nif"
-                      name="nif"
-                      type="text"
-                      value={formData.nif}
-                      onChange={(e) => setFormData({ ...formData, nif: e.target.value })}
-                      className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-jlc-purple-500 focus:border-jlc-purple-500 sm:text-sm"
-                      placeholder="Numéro d'identification fiscale"
-                    />
+                  {isLoadingFields ? (
+                    <div className="text-center py-4">
+                      <ArrowPathIcon className="h-6 w-6 animate-spin mx-auto text-jlc-purple-600" />
+                      <p className="text-sm text-gray-600 mt-2">Chargement du formulaire...</p>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+                        <h3 className="text-sm font-semibold text-blue-900 mb-2">
+                          Informations de l'entreprise
+                        </h3>
+                        <p className="text-xs text-blue-700">
+                          Les champs marqués d'un astérisque (*) sont obligatoires pour créer votre espace entreprise.
+                        </p>
+                      </div>
+                      
+                      {/* Afficher uniquement les champs obligatoires visibles pour 'public' */}
+                      {formConfig?.fields
+                        .filter(field => field.visible_for_roles.includes('public') && field.validation.required)
+                        .sort((a, b) => a.order - b.order)
+                        .map((field) => (
+                          <DynamicFormField
+                            key={field.id}
+                            field={field}
+                            value={dynamicCompanyData[field.field_key]}
+                            onChange={(key, value) => setDynamicCompanyData(prev => ({ ...prev, [key]: value }))}
+                            error={errors[field.field_key]}
+                          />
+                        ))}
+                      
+                      {/* Afficher les champs optionnels visibles pour 'public' */}
+                      {formConfig?.fields
+                        .filter(field => field.visible_for_roles.includes('public') && !field.validation.required)
+                        .sort((a, b) => a.order - b.order)
+                        .map((field) => (
+                          <DynamicFormField
+                            key={field.id}
+                            field={field}
+                            value={dynamicCompanyData[field.field_key]}
+                            onChange={(key, value) => setDynamicCompanyData(prev => ({ ...prev, [key]: value }))}
+                            error={errors[field.field_key]}
+                          />
+                        ))}
+                    </>
+                  )}
+                  
+                  <div className="border-t border-gray-200 my-6"></div>
+                  
+                  <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
+                    <h3 className="text-sm font-semibold text-green-900 mb-2">
+                      Informations du compte utilisateur
+                    </h3>
+                    <p className="text-xs text-green-700">
+                      Ces informations serviront à créer votre compte d'accès à la plateforme.
+                    </p>
                   </div>
                 </>
               )}
