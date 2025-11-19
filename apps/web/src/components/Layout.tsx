@@ -16,6 +16,7 @@ interface LayoutProps {
 
 export default function Layout({ children }: LayoutProps) {
   const { user, isAuthenticated } = useAppSelector((state) => state.auth)
+  const { isCollapsed } = useSidebar()
   const [showNotifications, setShowNotifications] = useState(false)
   
   // Fetch presence status ONLY if authenticated and user exists
