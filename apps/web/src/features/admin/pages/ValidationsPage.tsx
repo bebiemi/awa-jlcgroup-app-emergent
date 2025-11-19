@@ -392,6 +392,11 @@ export default function ValidationsPage() {
                       </div>
                       <ActionButtonGroup>
                         <ActionButton
+                          type="view"
+                          onClick={() => handleViewDetail(validation)}
+                          label="Voir détails"
+                        />
+                        <ActionButton
                           type="approve"
                           onClick={() => handleApprove(validation)}
                           label="Approuver"
