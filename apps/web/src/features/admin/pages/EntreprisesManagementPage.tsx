@@ -111,7 +111,24 @@ export default function EntreprisesManagementPage() {
               Gérez toutes les entreprises inscrites sur la plateforme
             </p>
           </div>
+          <Button
+            onClick={() => setIsCreateModalOpen(true)}
+            variant="primary"
+          >
+            <BuildingOfficeIcon className="h-5 w-5 mr-2" />
+            Créer une entreprise
+          </Button>
         </div>
+
+        {/* Create Modal */}
+        <CreateEntrepriseModal
+          isOpen={isCreateModalOpen}
+          onClose={() => setIsCreateModalOpen(false)}
+          onSuccess={() => {
+            refetch()
+            setIsCreateModalOpen(false)
+          }}
+        />
 
         {/* Search Bar */}
         <Card>
