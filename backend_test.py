@@ -5230,7 +5230,7 @@ def test_iam_permission_validation_system():
         "name": "Test Invalid Action",
         "description": "Permission avec action invalide",
         "resource": "test_action",
-        "action": "read!",  # Caractère spécial invalide
+        "action": "invalid_action",  # Action non dans l'enum
         "scope": "organization",
         "category": "test"
     }
