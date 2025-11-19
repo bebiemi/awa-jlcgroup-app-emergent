@@ -4,7 +4,6 @@
  */
 import React, { useEffect, useState } from 'react';
 import { ShieldCheckIcon, CubeIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
-import axios from 'axios';
 
 interface PermissionBreakdownProps {
   profileId: string;
