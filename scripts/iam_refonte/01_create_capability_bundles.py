@@ -293,7 +293,7 @@ CAPABILITY_BUNDLES = [
         "code": SystemBundles.USERS_MANAGE,
         "name": "Gestion Utilisateurs",
         "description": "Gérer les utilisateurs du système",
-        "category": PermissionCategory.USERS,
+        "category": PermissionCategory.ADMIN,
         "permission_codes": [
             "users.manage",
             "users.create",
