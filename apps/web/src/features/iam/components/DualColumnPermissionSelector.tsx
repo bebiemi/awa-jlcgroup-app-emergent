@@ -216,7 +216,7 @@ const DualColumnPermissionSelector: React.FC<DualColumnPermissionSelectorProps> 
                   key={perm.id}
                   permission={perm}
                   onAction={() => onAdd(perm.id)}
-                  actionIcon={<ArrowRight className="h-4 w-4" />}
+                  actionIcon={<ArrowRightIcon className="h-4 w-4" />}
                   actionLabel="Ajouter"
                 />
               ))
