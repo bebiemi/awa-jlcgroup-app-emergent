@@ -76,10 +76,11 @@ export default function ValidationsPage() {
     
     // Don't open modal if no validations
     if (filtered.length === 0) {
-      toast('Aucune validation disponible pour cette catégorie')
+      toast.error('Aucune validation disponible pour cette catégorie')
       return
     }
     
+    // Select all validations of this type
     setBulkActionType(type)
     setSelectedValidations(filtered.map((v: Validation) => v.id))
     setShowBulkActionsModal(true)
