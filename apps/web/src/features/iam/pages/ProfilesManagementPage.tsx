@@ -236,8 +236,13 @@ const ProfilesManagementPage: React.FC = () => {
                     <div className="flex items-center gap-2">
                       <ShieldCheckIcon className="h-4 w-4 text-gray-500" />
                       <span className="text-sm text-gray-500">
-                        {profile.permission_ids.length} permission(s)
+                        {profile.effective_permission_count ?? profile.permission_ids.length} permission(s)
                       </span>
+                      {profile.bundle_permission_count && profile.bundle_permission_count > 0 && (
+                        <span className="text-xs text-gray-400">
+                          ({profile.bundle_permission_count} via bundles)
+                        </span>
+                      )}
                     </div>
                     <span className={`px-2 py-1 text-xs rounded-full ${
                       profile.category === 'system' ? 'bg-purple-100 text-purple-800' :
