@@ -95,9 +95,12 @@ export const securityApi = createApi({
       }),
       invalidatesTags: ['Profiles'],
     }),
-    deleteProfile: builder.mutation<{ message: string }, string>({
-      query: (id) => ({
-        url: `/profiles/${id}`,
+    deleteProfile: builder.mutation<
+      { success: boolean; message: string; unassigned_users?: number; unassigned_groups?: number },
+      { id: string; force?: boolean }
+    >({
+      query: ({ id, force = false }) => ({
+        url: `/profiles/${id}?force=${force}`,
         method: 'DELETE',
       }),
       invalidatesTags: ['Profiles'],
