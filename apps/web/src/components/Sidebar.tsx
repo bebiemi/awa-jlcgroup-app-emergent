@@ -165,8 +165,9 @@ export default function Sidebar() {
         ],
       },
       {
-        title: 'Paramètres',
+        title: 'Configuration',
         items: [
+          { label: 'Formulaire Entreprise', path: '/admin/config/entreprises', icon: BuildingOfficeIcon },
           { label: 'Pays et Devises', path: '/admin/countries', icon: GlobeAltIcon },
           { label: 'Référentiels', path: '/admin/references', icon: Cog6ToothIcon },
           { label: 'Règles Métier', path: '/admin/rules', icon: Cog6ToothIcon },
