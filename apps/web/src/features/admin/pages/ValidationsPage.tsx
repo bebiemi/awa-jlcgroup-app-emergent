@@ -53,10 +53,12 @@ export default function ValidationsPage() {
   const [showRejectModal, setShowRejectModal] = useState(false)
   const [showAssignModal, setShowAssignModal] = useState(false)
   const [showBulkActionsModal, setShowBulkActionsModal] = useState(false)
+  const [showAttachModal, setShowAttachModal] = useState(false)
   const [bulkActionType, setBulkActionType] = useState<'all' | 'candidat' | 'interim' | 'company' | 'collaborator' | 'warnings'>('all')
   const [rejectionReason, setRejectionReason] = useState('')
   const [selectedValidator, setSelectedValidator] = useState('')
   const [selectedValidations, setSelectedValidations] = useState<string[]>([])
+  const [contactConfirmation, setContactConfirmation] = useState(false)
 
   const handleTileClick = (type: 'all' | 'candidat' | 'interim' | 'company' | 'collaborator' | 'warnings') => {
     // Filter validations based on tile clicked
