@@ -173,7 +173,7 @@ export default function ValidationsPage() {
     try {
       await assignValidation({
         id: selectedValidation.id,
-        validator_id: selectedValidator,
+        assigned_to: selectedValidator,
       }).unwrap()
       toast.success('Validateur assigné')
       setShowAssignModal(false)
