@@ -447,7 +447,7 @@ function App() {
       <Route
         path="/entreprise/candidatures"
         element={
-          <ProtectedRoute requiredPermissions={['applications.read']}>
+          <ProtectedRoute requiredPermissions={['applications.read.all', 'applications.read.own']}>
             <CompanyCandidaturesPage />
           </ProtectedRoute>
         }
