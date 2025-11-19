@@ -104,6 +104,7 @@ export const store = configureStore({
       .concat(besoinApi.middleware)
       .concat(configApi.middleware)
       .concat(entrepriseApi.middleware)
+      .concat(invitationApi.middleware)
       .concat(appConfigApi.middleware)
       .concat(referencesApi.middleware)
       .concat(missionsApi.middleware)
