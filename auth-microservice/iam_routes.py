@@ -148,6 +148,62 @@ async def get_profile(
     return Profile(**profile)
 
 
+@router.get("/profiles/{profile_id}/effective-permissions")
+async def get_profile_effective_permissions(
+    profile_id: str,
+    current_user: User = Depends(get_current_user),
+    db: AsyncIOMotorDatabase = Depends(get_database)
+):
+    """
+    Récupère toutes les permissions effectives d'un profil
+    Inclut les permissions directes + permissions des bundles
+    """
+    profiles_collection = db.profiles
+    
+    profile = await profiles_collection.find_one({"id": profile_id}, {"_id": 0})
+    if not profile:
+        raise HTTPException(status_code=404, detail="Profile not found")
+    
+    # Permissions directes
+    direct_permission_ids = set(profile.get("permission_ids", []))
+    
+    # Permissions des bundles
+    bundle_permission_ids = set()
+    capability_bundle_ids = profile.get("capability_bundle_ids", [])
+    
+    if capability_bundle_ids:
+        bundles_collection = db.capability_bundles
+        async for bundle in bundles_collection.find(
+            {"id": {"$in": capability_bundle_ids}},
+            {"_id": 0, "permission_ids": 1}
+        ):
+            bundle_permission_ids.update(bundle.get("permission_ids", []))
+    
+    # Toutes les permissions effectives (union)
+    all_permission_ids = direct_permission_ids | bundle_permission_ids
+    
+    # Récupérer les détails des permissions
+    permissions_collection = db.permissions
+    permissions = []
+    if all_permission_ids:
+        async for perm in permissions_collection.find(
+            {"id": {"$in": list(all_permission_ids)}},
+            {"_id": 0}
+        ):
+            permissions.append(perm)
+    
+    return {
+        "profile_id": profile_id,
+        "profile_code": profile.get("code"),
+        "profile_name": profile.get("name"),
+        "direct_permission_count": len(direct_permission_ids),
+        "bundle_permission_count": len(bundle_permission_ids),
+        "total_effective_permissions": len(all_permission_ids),
+        "permissions": permissions,
+        "capability_bundle_ids": capability_bundle_ids
+    }
+
+
 @router.post("/profiles", response_model=Profile, status_code=status.HTTP_201_CREATED)
 async def create_profile(
     profile_data: ProfileCreate,
