@@ -804,6 +804,27 @@ export default function ValidationsPage() {
             </div>
           )}
         </Modal>
+
+        {/* Attach to Existing Modal */}
+        {attachValidation && (
+          <AttachToExistingModal
+            isOpen={showAttachModal}
+            onClose={() => {
+              setShowAttachModal(false)
+              setAttachValidation(null)
+              setRepresentantEntreprises([])
+            }}
+            validation={attachValidation}
+            representantEntreprises={representantEntreprises}
+            onAttach={async () => {
+              // Rafraîchir la liste après rattachement
+              await refetch()
+              setShowAttachModal(false)
+              setAttachValidation(null)
+              setRepresentantEntreprises([])
+            }}
+          />
+        )}
       </div>
     </Layout>
   )
