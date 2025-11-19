@@ -367,9 +367,13 @@ async def main():
             "competences_attendues": ["Python", "FastAPI", "MongoDB"],
             "status": "soumis",
             "created_by": [u["id"] for u in utilisateurs if u["username"] == "techcorp_admin"][0],
+            "created_by_name": "Admin TechCorp",
             "responsable_besoin_id": [u["id"] for u in utilisateurs if u["username"] == "techcorp_admin"][0],
+            "status_history": [],
+            "mission_ids": [],
             "pieces_jointes": [],
             "custom_fields": {},
+            "comments_count": 0,
             "created_at": datetime.now(timezone.utc).isoformat(),
             "updated_at": datetime.now(timezone.utc).isoformat()
         },
