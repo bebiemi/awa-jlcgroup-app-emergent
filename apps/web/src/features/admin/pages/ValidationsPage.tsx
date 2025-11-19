@@ -177,6 +177,54 @@ export default function ValidationsPage() {
     }
   }
 
+  const handleBulkApprove = async () => {
+    if (selectedValidations.length === 0) {
+      toast.error('Aucune validation sélectionnée')
+      return
+    }
+
+    try {
+      // Approuver toutes les validations sélectionnées
+      await Promise.all(
+        selectedValidations.map(id => approveValidation(id).unwrap())
+      )
+      toast.success(`${selectedValidations.length} validation(s) approuvée(s)`)
+      setShowBulkActionsModal(false)
+      setSelectedValidations([])
+      refetch()
+    } catch (error: any) {
+      toast.error(error?.data?.detail || 'Erreur lors de l\'approbation en masse')
+    }
+  }
+
+  const handleBulkReject = async () => {
+    if (selectedValidations.length === 0) {
+      toast.error('Aucune validation sélectionnée')
+      return
+    }
+
+    if (!rejectionReason.trim()) {
+      toast.error('Veuillez fournir une raison du rejet')
+      return
+    }
+
+    try {
+      // Rejeter toutes les validations sélectionnées
+      await Promise.all(
+        selectedValidations.map(id => 
+          rejectValidation({ id, reason: rejectionReason }).unwrap()
+        )
+      )
+      toast.success(`${selectedValidations.length} validation(s) rejetée(s)`)
+      setShowBulkActionsModal(false)
+      setSelectedValidations([])
+      setRejectionReason('')
+      refetch()
+    } catch (error: any) {
+      toast.error(error?.data?.detail || 'Erreur lors du rejet en masse')
+    }
+  }
+
   const getValidationTypeLabel = (type: string) => {
     const labels: Record<string, string> = {
       [ValidationTypes.CANDIDAT]: getRoleLabel(UserRoles.CANDIDAT),
