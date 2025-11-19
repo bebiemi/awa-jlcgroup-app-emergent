@@ -287,7 +287,7 @@ function App() {
       <Route
         path="/missions"
         element={
-          <ProtectedRoute requiredPermissions={['missions.read', 'missions.manage']}>
+          <ProtectedRoute requiredPermissions={['missions.read', 'missions.manage.all']}>
             <MissionsPage />
           </ProtectedRoute>
         }
