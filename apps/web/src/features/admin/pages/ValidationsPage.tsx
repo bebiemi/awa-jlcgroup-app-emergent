@@ -60,10 +60,43 @@ export default function ValidationsPage() {
   const [selectedValidations, setSelectedValidations] = useState<string[]>([])
   const [showDetailPanel, setShowDetailPanel] = useState(false)
   const [detailValidation, setDetailValidation] = useState<Validation | null>(null)
+  const [showAttachModal, setShowAttachModal] = useState(false)
+  const [attachValidation, setAttachValidation] = useState<Validation | null>(null)
+  const [representantEntreprises, setRepresentantEntreprises] = useState<any[]>([])
 
   const handleViewDetail = (validation: Validation) => {
     setDetailValidation(validation)
     setShowDetailPanel(true)
+  }
+
+  const handleOpenAttachModal = async (validation: Validation) => {
+    setAttachValidation(validation)
+    // Charger les entreprises du représentant
+    if (validation.existing_representant_user_id) {
+      await loadRepresentantEntreprises(validation.existing_representant_user_id)
+    }
+    setShowAttachModal(true)
+  }
+
+  const loadRepresentantEntreprises = async (userId: string) => {
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/validations/representant/${userId}/details`,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+          }
+        }
+      )
+
+      if (response.ok) {
+        const data = await response.json()
+        setRepresentantEntreprises(data.entreprises || [])
+      }
+    } catch (error) {
+      console.error('Error loading representant entreprises:', error)
+      setRepresentantEntreprises([])
+    }
   }
 
   const handleTileClick = (type: 'all' | 'candidat' | 'interim' | 'company' | 'collaborator' | 'warnings') => {
