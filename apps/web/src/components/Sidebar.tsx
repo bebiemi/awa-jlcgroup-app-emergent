@@ -47,7 +47,7 @@ export default function Sidebar() {
   const { t } = useTranslation()
   const roles = useRoles()
 
-  const [isCollapsed, setIsCollapsed] = useState(false)
+  const { isCollapsed, setIsCollapsed } = useSidebar()
   const [isMobileOpen, setIsMobileOpen] = useState(false)
   const location = useLocation()
   const navigate = useNavigate()
