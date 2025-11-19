@@ -381,15 +381,18 @@ frontend:
   
   - task: "Registration Form UI"
     implemented: true
-    working: "NA"
-    file: "/app/frontend/src/RegisterPage.tsx"
+    working: true
+    file: "/app/apps/web/src/features/auth/pages/RegisterPage.tsx"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "UI components created but not tested yet."
+      - working: true
+        agent: "testing"
+        comment: "✅ PHASE 5 - ENTERPRISE REGISTRATION E2E TESTING COMPLETED SUCCESSFULLY: Complete enterprise registration flow tested and working correctly. **SCENARIO 1 - NAVIGATION**: ✅ /register page loads correctly with 'Créer un compte' title, ✅ Both account type options (Candidat/Entreprise) visible with proper descriptions. **SCENARIO 2 - ENTERPRISE SELECTION**: ✅ Entreprise button clickable, ✅ Form loads correctly with back button, ✅ Dynamic fields loading system working. **SCENARIO 3 - DYNAMIC FIELDS VERIFICATION**: ✅ 'Informations de l'entreprise' section visible, ✅ All 5 required fields marked with asterisk (*): Nom commercial, Raison sociale, Email de l'entreprise, Téléphone, Représentant légal, ✅ Optional fields (NIF, SIRET) visible without asterisk, ✅ Dynamic form configuration loaded from /api/entreprises/form-config/fields/public endpoint. **SCENARIO 4 & 5 - FORM FILLING**: ✅ All dynamic company fields filled successfully (nom_commercial: 'Test Entreprise E2E Phase5', raison_sociale: 'Test Entreprise E2E Phase5 SARL', email: 'test.phase5@entreprise.com', telephone: '+33612345678', representant_legal: 'Jean Dupont', nif: '123456789A'), ✅ All user account fields filled successfully (username: 'entreprise_phase5_test', email: 'admin@testphase5.com', fullName: 'Admin Phase5', password: 'TestPhase5!2025'). **SCENARIO 6 - SUBMISSION & VERIFICATION**: ✅ Form submission successful (API returned 200 OK with access_token), ✅ User created successfully with 'company' role and 'pending' status, ✅ Automatic redirect to /login page working, ✅ Success message displayed ('Inscription réussie ! Votre espace entreprise a été créé. Votre compte sera activé après validation par l'équipe JLC.'). **TECHNICAL VERIFICATION**: ✅ Dynamic form fields loaded from backend configuration (7 fields total), ✅ Field validation working (required fields marked with *), ✅ Help text displayed under fields, ✅ Email domain verification working (shows 'Email candidat (domaine public)' message), ✅ Password confirmation validation working with visual indicators, ✅ Registration API call successful (POST /api/auth/local/register returned 200 OK), ✅ User record created in database with correct role and status. **BACKEND VERIFICATION**: User 'entreprise_phase5_test' created successfully with ID 'de73eca2-4f19-4f63-9a3d-6d270fc371eb', email 'admin@testphase5.com', role 'company', status 'pending' as expected for enterprise accounts requiring validation. All Phase 5 requirements met successfully."
 
   - task: "Role Selection UI"
     implemented: true
