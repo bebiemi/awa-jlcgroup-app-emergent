@@ -490,7 +490,7 @@ function App() {
       <Route
         path="/commercial"
         element={
-          <ProtectedRoute requiredPermissions={['missions.manage']}>
+          <ProtectedRoute requiredPermissions={['missions.manage.all']}>
             <CommercialDashboard />
           </ProtectedRoute>
         }
