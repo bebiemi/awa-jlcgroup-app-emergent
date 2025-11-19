@@ -129,26 +129,26 @@ DEFAULT_ROLES = [
 # Default system permissions
 DEFAULT_PERMISSIONS = [
     # User management
-    Permission(name="users:read", resource="users", action="read", description="View users"),
-    Permission(name="users:write", resource="users", action="write", description="Create/edit users"),
-    Permission(name="users:delete", resource="users", action="delete", description="Delete users"),
+    Permission(name="users:read", code="users.read", resource="users", action="read", description="View users"),
+    Permission(name="users:write", code="users.write", resource="users", action="write", description="Create/edit users"),
+    Permission(name="users:delete", code="users.delete", resource="users", action="delete", description="Delete users"),
     
     # Role management
-    Permission(name="roles:read", resource="roles", action="read", description="View roles"),
-    Permission(name="roles:write", resource="roles", action="write", description="Create/edit roles"),
-    Permission(name="roles:delete", resource="roles", action="delete", description="Delete roles"),
+    Permission(name="roles:read", code="roles.read", resource="roles", action="read", description="View roles"),
+    Permission(name="roles:write", code="roles.write", resource="roles", action="write", description="Create/edit roles"),
+    Permission(name="roles:delete", code="roles.delete", resource="roles", action="delete", description="Delete roles"),
     
     # Content management
-    Permission(name="content:read", resource="content", action="read", description="View content"),
-    Permission(name="content:write", resource="content", action="write", description="Create/edit content"),
-    Permission(name="content:delete", resource="content", action="delete", description="Delete content"),
+    Permission(name="content:read", code="content.read", resource="content", action="read", description="View content"),
+    Permission(name="content:write", code="content.write", resource="content", action="write", description="Create/edit content"),
+    Permission(name="content:delete", code="content.delete", resource="content", action="delete", description="Delete content"),
     
     # Analytics
-    Permission(name="analytics:read", resource="analytics", action="read", description="View analytics"),
+    Permission(name="analytics:read", code="analytics.read", resource="analytics", action="read", description="View analytics"),
     
     # Audit logs
-    Permission(name="audit:read", resource="audit", action="read", description="View audit logs"),
+    Permission(name="audit:read", code="audit.read", resource="audit", action="read", description="View audit logs"),
     
     # Wildcard (for super admin)
-    Permission(name="*:*", resource="*", action="*", description="All permissions"),
+    Permission(name="*:*", code="*.*", resource="*", action="*", description="All permissions"),
 ]
