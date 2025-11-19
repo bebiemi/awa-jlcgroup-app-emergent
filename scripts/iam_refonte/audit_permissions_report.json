@@ -1,0 +1,3274 @@
+{
+  "audit_date": "2025-01-19",
+  "total_permissions": 238,
+  "used_in_profiles": 192,
+  "used_in_bundles": 76,
+  "used_in_db_total": 251,
+  "unused_in_db": 9,
+  "unused_by_category": {
+    "builtin": [
+      "voir_entreprises",
+      "modifier_entreprises",
+      "supprimer_entreprises"
+    ],
+    "missions": [
+      "missions.reject",
+      "missions.validate"
+    ],
+    "applications": [
+      "applications.edit_all",
+      "applications.reject",
+      "applications.validate"
+    ],
+    "documents": [
+      "documents.read_own"
+    ]
+  },
+  "usage_details": {
+    "users.read": {
+      "code": "users.read",
+      "name": "Consulter les utilisateurs",
+      "category": "users",
+      "used_in_profiles": [
+        "Super Administrateur",
+        "Responsable RH",
+        "Commercial",
+        "Responsable d'Équipe",
+        "Lecture Seule"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "users",
+      "action": "read",
+      "scope": "organization"
+    },
+    "users.write": {
+      "code": "users.write",
+      "name": "users:write",
+      "category": "builtin",
+      "used_in_profiles": [
+        "Super Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "users",
+      "action": "update",
+      "scope": "organization"
+    },
+    "users.delete": {
+      "code": "users.delete",
+      "name": "Supprimer les utilisateurs",
+      "category": "users",
+      "used_in_profiles": [
+        "Super Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "users",
+      "action": "delete",
+      "scope": "organization"
+    },
+    "roles.read": {
+      "code": "roles.read",
+      "name": "roles:read",
+      "category": "builtin",
+      "used_in_profiles": [
+        "Super Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "roles",
+      "action": "read",
+      "scope": "organization"
+    },
+    "roles.write": {
+      "code": "roles.write",
+      "name": "roles:write",
+      "category": "builtin",
+      "used_in_profiles": [
+        "Super Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "roles",
+      "action": "update",
+      "scope": "organization"
+    },
+    "roles.delete": {
+      "code": "roles.delete",
+      "name": "roles:delete",
+      "category": "builtin",
+      "used_in_profiles": [
+        "Super Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "roles",
+      "action": "delete",
+      "scope": "organization"
+    },
+    "content.read": {
+      "code": "content.read",
+      "name": "content:read",
+      "category": "builtin",
+      "used_in_profiles": [
+        "Super Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "content",
+      "action": "read",
+      "scope": "organization"
+    },
+    "content.write": {
+      "code": "content.write",
+      "name": "content:write",
+      "category": "builtin",
+      "used_in_profiles": [
+        "Super Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "content",
+      "action": "update",
+      "scope": "organization"
+    },
+    "content.delete": {
+      "code": "content.delete",
+      "name": "content:delete",
+      "category": "builtin",
+      "used_in_profiles": [
+        "Super Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "content",
+      "action": "delete",
+      "scope": "organization"
+    },
+    "analytics.read": {
+      "code": "analytics.read",
+      "name": "analytics:read",
+      "category": "builtin",
+      "used_in_profiles": [
+        "Super Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "analytics",
+      "action": "read",
+      "scope": "organization"
+    },
+    "audit.read": {
+      "code": "audit.read",
+      "name": "audit:read",
+      "category": "builtin",
+      "used_in_profiles": [
+        "Super Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "audit",
+      "action": "read",
+      "scope": "organization"
+    },
+    "*.*": {
+      "code": "*.*",
+      "name": "*:*",
+      "category": "builtin",
+      "used_in_profiles": [
+        "Super Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "*",
+      "action": "execute",
+      "scope": "organization"
+    },
+    "gestion_utilisateurs": {
+      "code": "gestion_utilisateurs",
+      "name": "gestion_utilisateurs",
+      "category": "builtin",
+      "used_in_profiles": [
+        "Super Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "system",
+      "action": "read",
+      "scope": "organization"
+    },
+    "gestion_groupes": {
+      "code": "gestion_groupes",
+      "name": "gestion_groupes",
+      "category": "builtin",
+      "used_in_profiles": [
+        "Super Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "system",
+      "action": "read",
+      "scope": "organization"
+    },
+    "gestion_profils": {
+      "code": "gestion_profils",
+      "name": "gestion_profils",
+      "category": "builtin",
+      "used_in_profiles": [
+        "Super Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "system",
+      "action": "read",
+      "scope": "organization"
+    },
+    "voir_utilisateurs": {
+      "code": "voir_utilisateurs",
+      "name": "voir_utilisateurs",
+      "category": "builtin",
+      "used_in_profiles": [
+        "Super Administrateur",
+        "Test Profil"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "system",
+      "action": "read",
+      "scope": "organization"
+    },
+    "voir_validations": {
+      "code": "voir_validations",
+      "name": "voir_validations",
+      "category": "builtin",
+      "used_in_profiles": [
+        "Super Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "system",
+      "action": "read",
+      "scope": "organization"
+    },
+    "approuver_validations": {
+      "code": "approuver_validations",
+      "name": "approuver_validations",
+      "category": "builtin",
+      "used_in_profiles": [
+        "Super Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "system",
+      "action": "read",
+      "scope": "organization"
+    },
+    "rejeter_validations": {
+      "code": "rejeter_validations",
+      "name": "rejeter_validations",
+      "category": "builtin",
+      "used_in_profiles": [
+        "Super Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "system",
+      "action": "read",
+      "scope": "organization"
+    },
+    "voir_interimaires": {
+      "code": "voir_interimaires",
+      "name": "voir_interimaires",
+      "category": "builtin",
+      "used_in_profiles": [
+        "Super Administrateur",
+        "Test Profil"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "system",
+      "action": "read",
+      "scope": "organization"
+    },
+    "modifier_interimaires": {
+      "code": "modifier_interimaires",
+      "name": "modifier_interimaires",
+      "category": "builtin",
+      "used_in_profiles": [
+        "Super Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "system",
+      "action": "read",
+      "scope": "organization"
+    },
+    "supprimer_interimaires": {
+      "code": "supprimer_interimaires",
+      "name": "supprimer_interimaires",
+      "category": "builtin",
+      "used_in_profiles": [
+        "Super Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "system",
+      "action": "read",
+      "scope": "organization"
+    },
+    "voir_entreprises": {
+      "code": "voir_entreprises",
+      "name": "voir_entreprises",
+      "category": "builtin",
+      "used_in_profiles": [],
+      "used_in_bundles": [],
+      "is_used": false,
+      "resource": "system",
+      "action": "read",
+      "scope": "organization"
+    },
+    "modifier_entreprises": {
+      "code": "modifier_entreprises",
+      "name": "modifier_entreprises",
+      "category": "builtin",
+      "used_in_profiles": [],
+      "used_in_bundles": [],
+      "is_used": false,
+      "resource": "system",
+      "action": "read",
+      "scope": "organization"
+    },
+    "supprimer_entreprises": {
+      "code": "supprimer_entreprises",
+      "name": "supprimer_entreprises",
+      "category": "builtin",
+      "used_in_profiles": [],
+      "used_in_bundles": [],
+      "is_used": false,
+      "resource": "system",
+      "action": "read",
+      "scope": "organization"
+    },
+    "voir_rapports": {
+      "code": "voir_rapports",
+      "name": "voir_rapports",
+      "category": "builtin",
+      "used_in_profiles": [
+        "Super Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "system",
+      "action": "read",
+      "scope": "organization"
+    },
+    "exporter_rapports": {
+      "code": "exporter_rapports",
+      "name": "exporter_rapports",
+      "category": "builtin",
+      "used_in_profiles": [
+        "Super Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "system",
+      "action": "read",
+      "scope": "organization"
+    },
+    "voir_dashboard": {
+      "code": "voir_dashboard",
+      "name": "voir_dashboard",
+      "category": "builtin",
+      "used_in_profiles": [
+        "Super Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "system",
+      "action": "read",
+      "scope": "organization"
+    },
+    "voir_statistiques": {
+      "code": "voir_statistiques",
+      "name": "voir_statistiques",
+      "category": "builtin",
+      "used_in_profiles": [
+        "Super Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "system",
+      "action": "read",
+      "scope": "organization"
+    },
+    "voir_missions": {
+      "code": "voir_missions",
+      "name": "voir_missions",
+      "category": "builtin",
+      "used_in_profiles": [
+        "Super Administrateur",
+        "Test Profil"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "system",
+      "action": "read",
+      "scope": "organization"
+    },
+    "creer_missions": {
+      "code": "creer_missions",
+      "name": "creer_missions",
+      "category": "builtin",
+      "used_in_profiles": [
+        "Super Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "system",
+      "action": "read",
+      "scope": "organization"
+    },
+    "modifier_missions": {
+      "code": "modifier_missions",
+      "name": "modifier_missions",
+      "category": "builtin",
+      "used_in_profiles": [
+        "Super Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "system",
+      "action": "read",
+      "scope": "organization"
+    },
+    "supprimer_missions": {
+      "code": "supprimer_missions",
+      "name": "supprimer_missions",
+      "category": "builtin",
+      "used_in_profiles": [
+        "Super Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "system",
+      "action": "read",
+      "scope": "organization"
+    },
+    "users.create": {
+      "code": "users.create",
+      "name": "Créer des utilisateurs",
+      "category": "users",
+      "used_in_profiles": [
+        "Super Administrateur",
+        "Administrateur",
+        "Responsable RH"
+      ],
+      "used_in_bundles": [
+        "Gestion Utilisateurs"
+      ],
+      "is_used": true,
+      "resource": "users",
+      "action": "create",
+      "scope": "organization"
+    },
+    "users.update": {
+      "code": "users.update",
+      "name": "Modifier les utilisateurs",
+      "category": "users",
+      "used_in_profiles": [
+        "Super Administrateur",
+        "Administrateur",
+        "Responsable RH"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "users",
+      "action": "update",
+      "scope": "organization"
+    },
+    "missions.create": {
+      "code": "missions.create",
+      "name": "Créer des missions",
+      "category": "missions",
+      "used_in_profiles": [
+        "Super Administrateur",
+        "Administrateur",
+        "Commercial",
+        "Entreprise",
+        "Commerciales Custom"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "missions",
+      "action": "create",
+      "scope": "organization"
+    },
+    "missions.read": {
+      "code": "missions.read",
+      "name": "Consulter les missions",
+      "category": "missions",
+      "used_in_profiles": [
+        "Super Administrateur",
+        "Administrateur",
+        "Commercial",
+        "Responsable d'Équipe",
+        "Postulant",
+        "Lecture Seule",
+        "Entreprise",
+        "Commerciales Custom",
+        "Auditeur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "missions",
+      "action": "read",
+      "scope": "organization"
+    },
+    "missions.update": {
+      "code": "missions.update",
+      "name": "Modifier les missions",
+      "category": "missions",
+      "used_in_profiles": [
+        "Super Administrateur",
+        "Administrateur",
+        "Commercial",
+        "Commerciales Custom"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "missions",
+      "action": "update",
+      "scope": "organization"
+    },
+    "missions.delete": {
+      "code": "missions.delete",
+      "name": "Supprimer les missions",
+      "category": "missions",
+      "used_in_profiles": [
+        "Super Administrateur",
+        "Commerciales Custom"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "missions",
+      "action": "delete",
+      "scope": "organization"
+    },
+    "missions.approve": {
+      "code": "missions.approve",
+      "name": "Approuver les missions",
+      "category": "missions",
+      "used_in_profiles": [
+        "Super Administrateur",
+        "Administrateur",
+        "Commerciales Custom"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "missions",
+      "action": "approve",
+      "scope": "organization"
+    },
+    "contracts.create": {
+      "code": "contracts.create",
+      "name": "Créer des contrats",
+      "category": "contracts",
+      "used_in_profiles": [
+        "Super Administrateur",
+        "Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "contracts",
+      "action": "create",
+      "scope": "organization"
+    },
+    "contracts.read": {
+      "code": "contracts.read",
+      "name": "Consulter les contrats",
+      "category": "contracts",
+      "used_in_profiles": [
+        "Super Administrateur",
+        "Administrateur",
+        "Responsable RH",
+        "Commercial",
+        "Responsable d'Équipe",
+        "Lecture Seule"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "contracts",
+      "action": "read",
+      "scope": "organization"
+    },
+    "contracts.update": {
+      "code": "contracts.update",
+      "name": "Modifier les contrats",
+      "category": "contracts",
+      "used_in_profiles": [
+        "Super Administrateur",
+        "Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "contracts",
+      "action": "update",
+      "scope": "organization"
+    },
+    "contracts.approve": {
+      "code": "contracts.approve",
+      "name": "Approuver les contrats",
+      "category": "contracts",
+      "used_in_profiles": [
+        "Super Administrateur",
+        "Administrateur",
+        "Responsable RH"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "contracts",
+      "action": "approve",
+      "scope": "organization"
+    },
+    "iam.profiles.manage": {
+      "code": "iam.profiles.manage",
+      "name": "Gérer les profils",
+      "category": "iam",
+      "used_in_profiles": [
+        "Super Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "iam",
+      "action": "update",
+      "scope": "system"
+    },
+    "iam.groups.manage": {
+      "code": "iam.groups.manage",
+      "name": "Gérer les groupes",
+      "category": "iam",
+      "used_in_profiles": [
+        "Super Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "iam",
+      "action": "update",
+      "scope": "system"
+    },
+    "iam.permissions.manage": {
+      "code": "iam.permissions.manage",
+      "name": "Gérer les permissions",
+      "category": "iam",
+      "used_in_profiles": [
+        "Super Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "iam",
+      "action": "update",
+      "scope": "system"
+    },
+    "system.config.read": {
+      "code": "system.config.read",
+      "name": "Consulter la configuration",
+      "category": "system",
+      "used_in_profiles": [
+        "Super Administrateur",
+        "Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "system",
+      "action": "read",
+      "scope": "system"
+    },
+    "system.config.update": {
+      "code": "system.config.update",
+      "name": "Modifier la configuration",
+      "category": "system",
+      "used_in_profiles": [
+        "Super Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "system",
+      "action": "update",
+      "scope": "system"
+    },
+    "system.featureflags.manage": {
+      "code": "system.featureflags.manage",
+      "name": "Gérer les feature flags",
+      "category": "system",
+      "used_in_profiles": [
+        "Super Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "system",
+      "action": "update",
+      "scope": "system"
+    },
+    "reports.view": {
+      "code": "reports.view",
+      "name": "Consulter les rapports",
+      "category": "reports",
+      "used_in_profiles": [
+        "Super Administrateur",
+        "Administrateur",
+        "Responsable RH",
+        "Commercial",
+        "Lecture Seule"
+      ],
+      "used_in_bundles": [
+        "Outils Commerciaux",
+        "Reporting RH"
+      ],
+      "is_used": true,
+      "resource": "reports",
+      "action": "read",
+      "scope": "organization"
+    },
+    "reports.export": {
+      "code": "reports.export",
+      "name": "Exporter les rapports",
+      "category": "reports",
+      "used_in_profiles": [
+        "Super Administrateur",
+        "Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "reports",
+      "action": "export",
+      "scope": "organization"
+    },
+    "admin.dashboard": {
+      "code": "admin.dashboard",
+      "name": "Accès Tableau de Bord Admin",
+      "category": "admin",
+      "used_in_profiles": [
+        "Super Administrateur",
+        "Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "admin",
+      "action": "dashboard",
+      "scope": "global"
+    },
+    "users.manage_status": {
+      "code": "users.manage_status",
+      "name": "Gérer Statut Utilisateur",
+      "category": "users",
+      "used_in_profiles": [
+        "Super Administrateur",
+        "Administrateur"
+      ],
+      "used_in_bundles": [
+        "Gestion Utilisateurs"
+      ],
+      "is_used": true,
+      "resource": "users",
+      "action": "manage_status",
+      "scope": "global"
+    },
+    "users.reset_mfa": {
+      "code": "users.reset_mfa",
+      "name": "Réinitialiser MFA",
+      "category": "users",
+      "used_in_profiles": [
+        "Super Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "users",
+      "action": "reset_mfa",
+      "scope": "global"
+    },
+    "groups.manage": {
+      "code": "groups.manage",
+      "name": "Gérer Groupes",
+      "category": "groups",
+      "used_in_profiles": [
+        "Super Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "groups",
+      "action": "manage",
+      "scope": "global"
+    },
+    "profiles.manage": {
+      "code": "profiles.manage",
+      "name": "Gérer Profils (Ancien)",
+      "category": "builtin",
+      "used_in_profiles": [
+        "Super Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "profiles",
+      "action": "manage",
+      "scope": "global"
+    },
+    "locations.manage": {
+      "code": "locations.manage",
+      "name": "Gérer Localisations",
+      "category": "configuration",
+      "used_in_profiles": [
+        "Super Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "locations",
+      "action": "manage",
+      "scope": "global"
+    },
+    "references.manage": {
+      "code": "references.manage",
+      "name": "Gérer Référentiels",
+      "category": "configuration",
+      "used_in_profiles": [
+        "Super Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "references",
+      "action": "manage",
+      "scope": "global"
+    },
+    "rules.manage": {
+      "code": "rules.manage",
+      "name": "Gérer Règles Métier",
+      "category": "configuration",
+      "used_in_profiles": [
+        "Super Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "rules",
+      "action": "manage",
+      "scope": "global"
+    },
+    "config.manage": {
+      "code": "config.manage",
+      "name": "Gérer Configuration",
+      "category": "configuration",
+      "used_in_profiles": [
+        "Super Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "config",
+      "action": "manage",
+      "scope": "global"
+    },
+    "flags.manage": {
+      "code": "flags.manage",
+      "name": "Gérer Feature Flags",
+      "category": "configuration",
+      "used_in_profiles": [
+        "Super Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "flags",
+      "action": "manage",
+      "scope": "global"
+    },
+    "emails.read_config": {
+      "code": "emails.read_config",
+      "name": "Lire Configuration Email",
+      "category": "emails",
+      "used_in_profiles": [
+        "Super Administrateur",
+        "Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "emails",
+      "action": "read_config",
+      "scope": "global"
+    },
+    "emails.configure": {
+      "code": "emails.configure",
+      "name": "Configurer Emails",
+      "category": "emails",
+      "used_in_profiles": [
+        "Super Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "emails",
+      "action": "configure",
+      "scope": "global"
+    },
+    "emails.test": {
+      "code": "emails.test",
+      "name": "Tester Emails",
+      "category": "emails",
+      "used_in_profiles": [
+        "Super Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "emails",
+      "action": "test",
+      "scope": "global"
+    },
+    "emails.read_history": {
+      "code": "emails.read_history",
+      "name": "Consulter Historique Emails",
+      "category": "emails",
+      "used_in_profiles": [
+        "Super Administrateur",
+        "Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "emails",
+      "action": "read_history",
+      "scope": "global"
+    },
+    "emails.manage_templates": {
+      "code": "emails.manage_templates",
+      "name": "Gérer Templates Email",
+      "category": "emails",
+      "used_in_profiles": [
+        "Super Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "emails",
+      "action": "manage_templates",
+      "scope": "global"
+    },
+    "missions.browse": {
+      "code": "missions.browse",
+      "name": "Parcourir Missions",
+      "category": "missions",
+      "used_in_profiles": [
+        "Super Administrateur",
+        "Administrateur",
+        "Admin Société",
+        "Intérimaire",
+        "Commerciales Custom",
+        "Auditeur"
+      ],
+      "used_in_bundles": [
+        "Consultation Missions Publiques"
+      ],
+      "is_used": true,
+      "resource": "missions",
+      "action": "browse",
+      "scope": "global"
+    },
+    "missions.publish": {
+      "code": "missions.publish",
+      "name": "Publier Missions",
+      "category": "missions",
+      "used_in_profiles": [
+        "Super Administrateur",
+        "Administrateur",
+        "Commerciales Custom"
+      ],
+      "used_in_bundles": [
+        "Gestion Missions (All)"
+      ],
+      "is_used": true,
+      "resource": "missions",
+      "action": "publish",
+      "scope": "global"
+    },
+    "applications.read_own": {
+      "code": "applications.read_own",
+      "name": "Consulter Mes Candidatures",
+      "category": "applications",
+      "used_in_profiles": [
+        "Super Administrateur",
+        "Administrateur",
+        "Intérimaire",
+        "Postulant",
+        "Postulant"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "applications",
+      "action": "read_own",
+      "scope": "own"
+    },
+    "applications.create": {
+      "code": "applications.create",
+      "name": "Postuler",
+      "category": "applications",
+      "used_in_profiles": [
+        "Super Administrateur",
+        "Intérimaire",
+        "Postulant",
+        "Postulant"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "applications",
+      "action": "create",
+      "scope": "own"
+    },
+    "applications.review": {
+      "code": "applications.review",
+      "name": "Examiner Candidatures",
+      "category": "applications",
+      "used_in_profiles": [
+        "Super Administrateur",
+        "Administrateur",
+        "Commerciales Custom"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "applications",
+      "action": "review",
+      "scope": "global"
+    },
+    "validations.perform": {
+      "code": "validations.perform",
+      "name": "Effectuer Validations",
+      "category": "validations",
+      "used_in_profiles": [
+        "Super Administrateur",
+        "Administrateur",
+        "Commerciales Custom"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "validations",
+      "action": "perform",
+      "scope": "global"
+    },
+    "validations.approve": {
+      "code": "validations.approve",
+      "name": "Approuver",
+      "category": "validations",
+      "used_in_profiles": [
+        "Super Administrateur",
+        "Administrateur",
+        "Commerciales Custom"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "validations",
+      "action": "approve",
+      "scope": "global"
+    },
+    "validations.reject": {
+      "code": "validations.reject",
+      "name": "Rejeter",
+      "category": "validations",
+      "used_in_profiles": [
+        "Super Administrateur",
+        "Administrateur",
+        "Commerciales Custom"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "validations",
+      "action": "reject",
+      "scope": "global"
+    },
+    "profile.manage_own": {
+      "code": "profile.manage_own",
+      "name": "Gérer Mon Profil",
+      "category": "profile",
+      "used_in_profiles": [
+        "Super Administrateur",
+        "Admin Société",
+        "Intérimaire",
+        "Entreprise",
+        "Commerciales Custom",
+        "Entreprise"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "profile",
+      "action": "manage_own",
+      "scope": "own"
+    },
+    "iam.permissions.read": {
+      "code": "iam.permissions.read",
+      "name": "Lire Permissions IAM",
+      "category": "iam",
+      "used_in_profiles": [
+        "Super Administrateur",
+        "Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "iam.permissions",
+      "action": "read",
+      "scope": "global"
+    },
+    "iam.permissions.create": {
+      "code": "iam.permissions.create",
+      "name": "Créer Permissions IAM",
+      "category": "iam",
+      "used_in_profiles": [
+        "Super Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "iam.permissions",
+      "action": "create",
+      "scope": "global"
+    },
+    "iam.permissions.delete": {
+      "code": "iam.permissions.delete",
+      "name": "Supprimer Permissions IAM",
+      "category": "iam",
+      "used_in_profiles": [
+        "Super Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "iam.permissions",
+      "action": "delete",
+      "scope": "global"
+    },
+    "iam.profiles.read": {
+      "code": "iam.profiles.read",
+      "name": "Lire Profils IAM",
+      "category": "iam",
+      "used_in_profiles": [
+        "Super Administrateur",
+        "Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "iam.profiles",
+      "action": "read",
+      "scope": "global"
+    },
+    "iam.profiles.create": {
+      "code": "iam.profiles.create",
+      "name": "Créer Profils IAM",
+      "category": "iam",
+      "used_in_profiles": [
+        "Super Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "iam.profiles",
+      "action": "create",
+      "scope": "global"
+    },
+    "iam.profiles.update": {
+      "code": "iam.profiles.update",
+      "name": "Modifier Profils IAM",
+      "category": "iam",
+      "used_in_profiles": [
+        "Super Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "iam.profiles",
+      "action": "update",
+      "scope": "global"
+    },
+    "iam.profiles.delete": {
+      "code": "iam.profiles.delete",
+      "name": "Supprimer Profils IAM",
+      "category": "iam",
+      "used_in_profiles": [
+        "Super Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "iam.profiles",
+      "action": "delete",
+      "scope": "global"
+    },
+    "iam.groups.read": {
+      "code": "iam.groups.read",
+      "name": "Lire Groupes IAM",
+      "category": "iam",
+      "used_in_profiles": [
+        "Super Administrateur",
+        "Administrateur",
+        "Commerciales Custom"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "iam.groups",
+      "action": "read",
+      "scope": "global"
+    },
+    "iam.groups.create": {
+      "code": "iam.groups.create",
+      "name": "Créer Groupes IAM",
+      "category": "iam",
+      "used_in_profiles": [
+        "Super Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "iam.groups",
+      "action": "create",
+      "scope": "global"
+    },
+    "iam.groups.update": {
+      "code": "iam.groups.update",
+      "name": "Modifier Groupes IAM",
+      "category": "iam",
+      "used_in_profiles": [
+        "Super Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "iam.groups",
+      "action": "update",
+      "scope": "global"
+    },
+    "iam.groups.delete": {
+      "code": "iam.groups.delete",
+      "name": "Supprimer Groupes IAM",
+      "category": "iam",
+      "used_in_profiles": [
+        "Super Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "iam.groups",
+      "action": "delete",
+      "scope": "global"
+    },
+    "iam.users.assign": {
+      "code": "iam.users.assign",
+      "name": "Assigner Profils/Groupes",
+      "category": "iam",
+      "used_in_profiles": [
+        "Super Administrateur",
+        "Commerciales Custom"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "iam.users",
+      "action": "assign",
+      "scope": "global"
+    },
+    "besoins.create": {
+      "code": "besoins.create",
+      "name": "Créer des besoins",
+      "category": "besoins",
+      "used_in_profiles": [
+        "Super Administrateur",
+        "Admin Société",
+        "Entreprise",
+        "Entreprise"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "besoins",
+      "action": "create",
+      "scope": "organization"
+    },
+    "besoins.read": {
+      "code": "besoins.read",
+      "name": "Consulter les besoins",
+      "category": "besoins",
+      "used_in_profiles": [
+        "Super Administrateur",
+        "Administrateur",
+        "Admin Société",
+        "Entreprise",
+        "Commerciales Custom",
+        "Entreprise"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "besoins",
+      "action": "read",
+      "scope": "organization"
+    },
+    "besoins.edit": {
+      "code": "besoins.edit",
+      "name": "Modifier les besoins",
+      "category": "besoins",
+      "used_in_profiles": [
+        "Super Administrateur",
+        "Administrateur",
+        "Admin Société",
+        "Entreprise",
+        "Entreprise"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "besoins",
+      "action": "edit",
+      "scope": "organization"
+    },
+    "besoins.submit": {
+      "code": "besoins.submit",
+      "name": "Soumettre les besoins",
+      "category": "besoins",
+      "used_in_profiles": [
+        "Super Administrateur",
+        "Admin Société",
+        "Entreprise",
+        "Entreprise"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "besoins",
+      "action": "submit",
+      "scope": "organization"
+    },
+    "besoins.comment": {
+      "code": "besoins.comment",
+      "name": "Commenter les besoins",
+      "category": "besoins",
+      "used_in_profiles": [
+        "Super Administrateur",
+        "Admin Société",
+        "Entreprise",
+        "Commerciales Custom",
+        "Entreprise"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "besoins",
+      "action": "comment",
+      "scope": "organization"
+    },
+    "besoins.validate": {
+      "code": "besoins.validate",
+      "name": "Valider les besoins (JLC)",
+      "category": "besoins",
+      "used_in_profiles": [
+        "Super Administrateur",
+        "Administrateur",
+        "Commerciales Custom",
+        "Entreprise"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "besoins",
+      "action": "validate",
+      "scope": "organization"
+    },
+    "besoins.convert_to_mission": {
+      "code": "besoins.convert_to_mission",
+      "name": "Convertir en mission (JLC)",
+      "category": "besoins",
+      "used_in_profiles": [
+        "Super Administrateur",
+        "Administrateur",
+        "Commerciales Custom",
+        "Entreprise"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "besoins",
+      "action": "convert_to_mission",
+      "scope": "organization"
+    },
+    "config.read": {
+      "code": "config.read",
+      "name": "Lire les configurations",
+      "category": "config",
+      "used_in_profiles": [
+        "Super Administrateur",
+        "Administrateur",
+        "Entreprise"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "config",
+      "action": "read",
+      "scope": "organization"
+    },
+    "entreprises.create": {
+      "code": "entreprises.create",
+      "name": "Créer des entreprises",
+      "category": "entreprises",
+      "used_in_profiles": [
+        "Super Administrateur",
+        "Commerciales Custom",
+        "Entreprise"
+      ],
+      "used_in_bundles": [
+        "Gestion Entreprises (All)"
+      ],
+      "is_used": true,
+      "resource": "entreprises",
+      "action": "create",
+      "scope": "global"
+    },
+    "entreprises.read": {
+      "code": "entreprises.read",
+      "name": "Consulter les entreprises",
+      "category": "entreprises",
+      "used_in_profiles": [
+        "Super Administrateur",
+        "Administrateur",
+        "Admin Société",
+        "Entreprise",
+        "Commerciales Custom",
+        "Entreprise"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "entreprises",
+      "action": "read",
+      "scope": "own"
+    },
+    "entreprises.edit": {
+      "code": "entreprises.edit",
+      "name": "Modifier les entreprises",
+      "category": "entreprises",
+      "used_in_profiles": [
+        "Super Administrateur",
+        "Administrateur",
+        "Admin Société",
+        "Entreprise",
+        "Commerciales Custom",
+        "Entreprise"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "entreprises",
+      "action": "edit",
+      "scope": "own"
+    },
+    "entreprises.delete": {
+      "code": "entreprises.delete",
+      "name": "Supprimer des entreprises",
+      "category": "entreprises",
+      "used_in_profiles": [
+        "Super Administrateur",
+        "Commerciales Custom",
+        "Entreprise"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "entreprises",
+      "action": "delete",
+      "scope": "global"
+    },
+    "applications.create_own": {
+      "code": "applications.create_own",
+      "name": "Applications Create Own",
+      "category": "applications",
+      "used_in_profiles": [
+        "Postulant",
+        "Postulant"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "applications",
+      "action": "manage",
+      "scope": "organization"
+    },
+    "applications.update_own": {
+      "code": "applications.update_own",
+      "name": "Applications Update Own",
+      "category": "applications",
+      "used_in_profiles": [
+        "Postulant",
+        "Postulant"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "applications",
+      "action": "manage",
+      "scope": "organization"
+    },
+    "documents.read_own": {
+      "code": "documents.read_own",
+      "name": "Documents Read Own",
+      "category": "documents",
+      "used_in_profiles": [],
+      "used_in_bundles": [],
+      "is_used": false,
+      "resource": "documents",
+      "action": "read",
+      "scope": "organization"
+    },
+    "documents.upload_own": {
+      "code": "documents.upload_own",
+      "name": "Documents Upload Own",
+      "category": "documents",
+      "used_in_profiles": [
+        "Entreprise"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "documents",
+      "action": "manage",
+      "scope": "organization"
+    },
+    "documents.delete_own": {
+      "code": "documents.delete_own",
+      "name": "Documents Delete Own",
+      "category": "documents",
+      "used_in_profiles": [
+        "Intérimaire",
+        "Entreprise"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "documents",
+      "action": "manage",
+      "scope": "organization"
+    },
+    "notifications.read_own": {
+      "code": "notifications.read_own",
+      "name": "Notifications Read Own",
+      "category": "notifications",
+      "used_in_profiles": [
+        "Entreprise"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "notifications",
+      "action": "read",
+      "scope": "organization"
+    },
+    "notifications.manage_own": {
+      "code": "notifications.manage_own",
+      "name": "Notifications Manage Own",
+      "category": "notifications",
+      "used_in_profiles": [
+        "Entreprise"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "notifications",
+      "action": "manage",
+      "scope": "organization"
+    },
+    "dashboard.view_own": {
+      "code": "dashboard.view_own",
+      "name": "Dashboard View Own",
+      "category": "dashboard",
+      "used_in_profiles": [
+        "Entreprise"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "dashboard",
+      "action": "manage",
+      "scope": "organization"
+    },
+    "dashboard.customize": {
+      "code": "dashboard.customize",
+      "name": "Dashboard Customize",
+      "category": "dashboard",
+      "used_in_profiles": [
+        "Entreprise"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "dashboard",
+      "action": "manage",
+      "scope": "organization"
+    },
+    "messages.read_own": {
+      "code": "messages.read_own",
+      "name": "Messages Read Own",
+      "category": "messages",
+      "used_in_profiles": [
+        "Entreprise"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "messages",
+      "action": "read",
+      "scope": "organization"
+    },
+    "messages.send_own": {
+      "code": "messages.send_own",
+      "name": "Messages Send Own",
+      "category": "messages",
+      "used_in_profiles": [
+        "Entreprise"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "messages",
+      "action": "manage",
+      "scope": "organization"
+    },
+    "matching.view_recommendations": {
+      "code": "matching.view_recommendations",
+      "name": "Matching View Recommendations",
+      "category": "matching",
+      "used_in_profiles": [
+        "Entreprise"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "matching",
+      "action": "manage",
+      "scope": "organization"
+    },
+    "entreprises.view_all": {
+      "code": "entreprises.view_all",
+      "name": "Voir toutes les entreprises",
+      "category": "entreprises",
+      "used_in_profiles": [
+        "Super Administrateur",
+        "Test Profil",
+        "Auditeur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "entreprises",
+      "action": "view_all",
+      "scope": "global"
+    },
+    "entreprises.edit_all": {
+      "code": "entreprises.edit_all",
+      "name": "Modifier toutes les entreprises",
+      "category": "entreprises",
+      "used_in_profiles": [
+        "Super Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "entreprises",
+      "action": "edit_all",
+      "scope": "global"
+    },
+    "entreprises.delete_all": {
+      "code": "entreprises.delete_all",
+      "name": "Supprimer des entreprises",
+      "category": "entreprises",
+      "used_in_profiles": [
+        "Super Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "entreprises",
+      "action": "delete_all",
+      "scope": "global"
+    },
+    "missions.view_own": {
+      "code": "missions.view_own",
+      "name": "Voir ses propres missions",
+      "category": "missions",
+      "used_in_profiles": [
+        "Admin Société",
+        "Entreprise"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "missions",
+      "action": "view_own",
+      "scope": "own"
+    },
+    "missions.edit_own": {
+      "code": "missions.edit_own",
+      "name": "Modifier ses propres missions",
+      "category": "missions",
+      "used_in_profiles": [
+        "Admin Société",
+        "Entreprise"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "missions",
+      "action": "edit_own",
+      "scope": "own"
+    },
+    "missions.delete_own": {
+      "code": "missions.delete_own",
+      "name": "Supprimer ses propres missions",
+      "category": "missions",
+      "used_in_profiles": [
+        "Admin Société",
+        "Entreprise"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "missions",
+      "action": "delete_own",
+      "scope": "own"
+    },
+    "missions.validate": {
+      "code": "missions.validate",
+      "name": "Valider une mission",
+      "category": "missions",
+      "used_in_profiles": [],
+      "used_in_bundles": [],
+      "is_used": false,
+      "resource": "missions",
+      "action": "validate",
+      "scope": "global"
+    },
+    "missions.reject": {
+      "code": "missions.reject",
+      "name": "Rejeter une mission",
+      "category": "missions",
+      "used_in_profiles": [],
+      "used_in_bundles": [],
+      "is_used": false,
+      "resource": "missions",
+      "action": "reject",
+      "scope": "global"
+    },
+    "applications.view_all": {
+      "code": "applications.view_all",
+      "name": "Voir toutes les candidatures",
+      "category": "applications",
+      "used_in_profiles": [
+        "Auditeur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "applications",
+      "action": "view_all",
+      "scope": "global"
+    },
+    "applications.edit_all": {
+      "code": "applications.edit_all",
+      "name": "Modifier toutes les candidatures",
+      "category": "applications",
+      "used_in_profiles": [],
+      "used_in_bundles": [],
+      "is_used": false,
+      "resource": "applications",
+      "action": "edit_all",
+      "scope": "global"
+    },
+    "applications.validate": {
+      "code": "applications.validate",
+      "name": "Valider une candidature",
+      "category": "applications",
+      "used_in_profiles": [],
+      "used_in_bundles": [],
+      "is_used": false,
+      "resource": "applications",
+      "action": "validate",
+      "scope": "global"
+    },
+    "applications.reject": {
+      "code": "applications.reject",
+      "name": "Rejeter une candidature",
+      "category": "applications",
+      "used_in_profiles": [],
+      "used_in_bundles": [],
+      "is_used": false,
+      "resource": "applications",
+      "action": "reject",
+      "scope": "global"
+    },
+    "besoins.view_own": {
+      "code": "besoins.view_own",
+      "name": "Voir ses propres besoins",
+      "category": "besoins",
+      "used_in_profiles": [
+        "Admin Société",
+        "Entreprise"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "besoins",
+      "action": "view_own",
+      "scope": "own"
+    },
+    "besoins.view_all": {
+      "code": "besoins.view_all",
+      "name": "Voir tous les besoins",
+      "category": "besoins",
+      "used_in_profiles": [
+        "Auditeur",
+        "Entreprise"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "besoins",
+      "action": "view_all",
+      "scope": "global"
+    },
+    "besoins.edit_own": {
+      "code": "besoins.edit_own",
+      "name": "Modifier ses propres besoins",
+      "category": "besoins",
+      "used_in_profiles": [
+        "Admin Société",
+        "Entreprise"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "besoins",
+      "action": "edit_own",
+      "scope": "own"
+    },
+    "besoins.edit_all": {
+      "code": "besoins.edit_all",
+      "name": "Modifier tous les besoins",
+      "category": "besoins",
+      "used_in_profiles": [
+        "Entreprise"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "besoins",
+      "action": "edit_all",
+      "scope": "global"
+    },
+    "besoins.delete_own": {
+      "code": "besoins.delete_own",
+      "name": "Supprimer ses propres besoins",
+      "category": "besoins",
+      "used_in_profiles": [
+        "Admin Société",
+        "Entreprise"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "besoins",
+      "action": "delete_own",
+      "scope": "own"
+    },
+    "besoins.reject": {
+      "code": "besoins.reject",
+      "name": "Rejeter un besoin",
+      "category": "besoins",
+      "used_in_profiles": [
+        "Entreprise"
+      ],
+      "used_in_bundles": [
+        "Gestion Besoins (All)"
+      ],
+      "is_used": true,
+      "resource": "besoins",
+      "action": "reject",
+      "scope": "global"
+    },
+    "entreprises.view_own": {
+      "code": "entreprises.view_own",
+      "name": "Voir son propre profil entreprise",
+      "category": "entreprises",
+      "used_in_profiles": [
+        "Admin Société",
+        "Entreprise"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "entreprises",
+      "action": "view_own",
+      "scope": "own"
+    },
+    "entreprises.edit_own": {
+      "code": "entreprises.edit_own",
+      "name": "Modifier son propre profil entreprise",
+      "category": "entreprises",
+      "used_in_profiles": [
+        "Admin Société",
+        "Entreprise"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "entreprises",
+      "action": "edit_own",
+      "scope": "own"
+    },
+    "documents.view_all": {
+      "code": "documents.view_all",
+      "name": "Voir tous les documents",
+      "category": "documents",
+      "used_in_profiles": [
+        "Auditeur",
+        "Entreprise"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "documents",
+      "action": "view_all",
+      "scope": "global"
+    },
+    "documents.edit_own": {
+      "code": "documents.edit_own",
+      "name": "Modifier ses propres documents",
+      "category": "documents",
+      "used_in_profiles": [
+        "Intérimaire",
+        "Entreprise"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "documents",
+      "action": "edit_own",
+      "scope": "own"
+    },
+    "documents.validate": {
+      "code": "documents.validate",
+      "name": "Valider un document",
+      "category": "documents",
+      "used_in_profiles": [
+        "Entreprise"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "documents",
+      "action": "validate",
+      "scope": "global"
+    },
+    "users.view_own": {
+      "code": "users.view_own",
+      "name": "Voir son propre profil",
+      "category": "users",
+      "used_in_profiles": [
+        "Intérimaire"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "users",
+      "action": "view_own",
+      "scope": "own"
+    },
+    "users.view_all": {
+      "code": "users.view_all",
+      "name": "Voir tous les utilisateurs",
+      "category": "users",
+      "used_in_profiles": [
+        "Auditeur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "users",
+      "action": "view_all",
+      "scope": "global"
+    },
+    "users.edit_own": {
+      "code": "users.edit_own",
+      "name": "Modifier son propre profil",
+      "category": "users",
+      "used_in_profiles": [
+        "Intérimaire",
+        "Entreprise"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "users",
+      "action": "edit_own",
+      "scope": "own"
+    },
+    "system.rbac.manage": {
+      "code": "system.rbac.manage",
+      "name": "Gérer les rôles et permissions IAM",
+      "category": "system",
+      "used_in_profiles": [
+        "Super Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "system",
+      "action": "rbac_manage",
+      "scope": "system"
+    },
+    "system.audit.view": {
+      "code": "system.audit.view",
+      "name": "Consulter les logs d'audit complets",
+      "category": "system",
+      "used_in_profiles": [
+        "Super Administrateur",
+        "Auditeur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "system",
+      "action": "audit_view",
+      "scope": "system"
+    },
+    "system.impersonate": {
+      "code": "system.impersonate",
+      "name": "Impersonner un utilisateur",
+      "category": "system",
+      "used_in_profiles": [
+        "Super Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "system",
+      "action": "impersonate",
+      "scope": "system"
+    },
+    "system.maintenance": {
+      "code": "system.maintenance",
+      "name": "Mettre en maintenance",
+      "category": "system",
+      "used_in_profiles": [
+        "Super Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "system",
+      "action": "maintenance",
+      "scope": "system"
+    },
+    "system.logs.view": {
+      "code": "system.logs.view",
+      "name": "Consulter les logs système",
+      "category": "system",
+      "used_in_profiles": [
+        "Super Administrateur",
+        "Auditeur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "system",
+      "action": "logs_view",
+      "scope": "system"
+    },
+    "system.apikeys.manage": {
+      "code": "system.apikeys.manage",
+      "name": "Gérer les clés API",
+      "category": "system",
+      "used_in_profiles": [
+        "Super Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "system",
+      "action": "apikeys_manage",
+      "scope": "system"
+    },
+    "system.mfa.bypass": {
+      "code": "system.mfa.bypass",
+      "name": "Bypasser MFA",
+      "category": "system",
+      "used_in_profiles": [
+        "Super Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "system",
+      "action": "mfa_bypass",
+      "scope": "system"
+    },
+    "rbac.assign_roles": {
+      "code": "rbac.assign_roles",
+      "name": "Assigner des rôles IAM",
+      "category": "iam",
+      "used_in_profiles": [
+        "Super Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "rbac",
+      "action": "assign_roles",
+      "scope": "global"
+    },
+    "rbac.manage_profile_roles": {
+      "code": "rbac.manage_profile_roles",
+      "name": "Gérer les rôles IAM des profils",
+      "category": "iam",
+      "used_in_profiles": [
+        "Super Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "rbac",
+      "action": "manage_profile_roles",
+      "scope": "global"
+    },
+    "rbac.manage_group_roles": {
+      "code": "rbac.manage_group_roles",
+      "name": "Gérer les rôles IAM des groupes",
+      "category": "iam",
+      "used_in_profiles": [
+        "Super Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "rbac",
+      "action": "manage_group_roles",
+      "scope": "global"
+    },
+    "rbac.assign_profiles": {
+      "code": "rbac.assign_profiles",
+      "name": "Assigner des profils métier",
+      "category": "iam",
+      "used_in_profiles": [
+        "Super Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "rbac",
+      "action": "assign_profiles",
+      "scope": "global"
+    },
+    "rbac.assign_groups": {
+      "code": "rbac.assign_groups",
+      "name": "Assigner des groupes",
+      "category": "iam",
+      "used_in_profiles": [
+        "Super Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "rbac",
+      "action": "assign_groups",
+      "scope": "global"
+    },
+    "rbac.read_roles": {
+      "code": "rbac.read_roles",
+      "name": "Consulter les rôles IAM",
+      "category": "iam",
+      "used_in_profiles": [
+        "Super Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "rbac",
+      "action": "read_roles",
+      "scope": "global"
+    },
+    "rbac.read_profiles": {
+      "code": "rbac.read_profiles",
+      "name": "Consulter les profils métier",
+      "category": "iam",
+      "used_in_profiles": [
+        "Super Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "rbac",
+      "action": "read_profiles",
+      "scope": "global"
+    },
+    "rbac.read_groups": {
+      "code": "rbac.read_groups",
+      "name": "Consulter les groupes",
+      "category": "iam",
+      "used_in_profiles": [
+        "Super Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "rbac",
+      "action": "read_groups",
+      "scope": "global"
+    },
+    "profile.view_own": {
+      "code": "profile.view_own",
+      "name": "Voir son propre profil",
+      "category": "user",
+      "used_in_profiles": [
+        "Admin Société",
+        "Intérimaire",
+        "Postulant",
+        "Lecture Seule"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "profile",
+      "action": "view",
+      "scope": "_own"
+    },
+    "profile.edit_own": {
+      "code": "profile.edit_own",
+      "name": "Modifier son propre profil",
+      "category": "user",
+      "used_in_profiles": [
+        "Admin Société",
+        "Intérimaire",
+        "Postulant",
+        "Lecture Seule",
+        "Entreprise"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "profile",
+      "action": "edit",
+      "scope": "_own"
+    },
+    "dashboard.access": {
+      "code": "dashboard.access",
+      "name": "Accéder au tableau de bord",
+      "category": "system",
+      "used_in_profiles": [
+        "Admin Société",
+        "Intérimaire",
+        "Postulant",
+        "Lecture Seule"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "dashboard",
+      "action": "view",
+      "scope": "global"
+    },
+    "documents.create": {
+      "code": "documents.create",
+      "name": "Créer des documents",
+      "category": "documents",
+      "used_in_profiles": [
+        "Administrateur",
+        "Entreprise"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "documents",
+      "action": "create",
+      "scope": "own"
+    },
+    "documents.read": {
+      "code": "documents.read",
+      "name": "Consulter ses documents",
+      "category": "documents",
+      "used_in_profiles": [
+        "Administrateur",
+        "Entreprise"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "documents",
+      "action": "read",
+      "scope": "own"
+    },
+    "documents.read.all": {
+      "code": "documents.read.all",
+      "name": "Consulter tous les documents",
+      "category": "documents",
+      "used_in_profiles": [
+        "Administrateur",
+        "Entreprise"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "documents",
+      "action": "read",
+      "scope": "global"
+    },
+    "documents.update": {
+      "code": "documents.update",
+      "name": "Modifier ses documents",
+      "category": "documents",
+      "used_in_profiles": [
+        "Administrateur",
+        "Entreprise"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "documents",
+      "action": "update",
+      "scope": "own"
+    },
+    "documents.delete": {
+      "code": "documents.delete",
+      "name": "Supprimer ses documents",
+      "category": "documents",
+      "used_in_profiles": [
+        "Administrateur",
+        "Entreprise"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "documents",
+      "action": "delete",
+      "scope": "own"
+    },
+    "documents.verify": {
+      "code": "documents.verify",
+      "name": "Vérifier les documents",
+      "category": "documents",
+      "used_in_profiles": [
+        "Administrateur",
+        "Entreprise"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "documents",
+      "action": "verify",
+      "scope": "global"
+    },
+    "documents.download": {
+      "code": "documents.download",
+      "name": "Télécharger des documents",
+      "category": "documents",
+      "used_in_profiles": [
+        "Administrateur",
+        "Entreprise"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "documents",
+      "action": "download",
+      "scope": "own"
+    },
+    "entreprises.manage": {
+      "code": "entreprises.manage",
+      "name": "Gérer les entreprises",
+      "category": "entreprises",
+      "used_in_profiles": [
+        "Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "entreprises",
+      "action": "manage",
+      "scope": "global"
+    },
+    "entreprises.invite_user": {
+      "code": "entreprises.invite_user",
+      "name": "Inviter des utilisateurs entreprise",
+      "category": "entreprises",
+      "used_in_profiles": [
+        "Administrateur",
+        "Entreprise"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "entreprises",
+      "action": "invite_user",
+      "scope": "own"
+    },
+    "forms.enterprise.manage": {
+      "code": "forms.enterprise.manage",
+      "name": "Gérer la configuration des formulaires entreprise",
+      "category": "configuration",
+      "used_in_profiles": [
+        "Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "forms",
+      "action": "manage",
+      "scope": "global"
+    },
+    "forms.enterprise.update": {
+      "code": "forms.enterprise.update",
+      "name": "Modifier la configuration des formulaires entreprise",
+      "category": "configuration",
+      "used_in_profiles": [
+        "Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "forms",
+      "action": "update",
+      "scope": "global"
+    },
+    "dashboard.view.readonly": {
+      "code": "dashboard.view.readonly",
+      "name": "Dashboard View Readonly",
+      "category": "builtin",
+      "used_in_profiles": [],
+      "used_in_bundles": [
+        "Accès Lecture Seule"
+      ],
+      "is_used": true,
+      "resource": "dashboard",
+      "action": "view",
+      "scope": "readonly"
+    },
+    "profile.view.own": {
+      "code": "profile.view.own",
+      "name": "Profile View Own",
+      "category": "builtin",
+      "used_in_profiles": [],
+      "used_in_bundles": [
+        "Accès Lecture Seule"
+      ],
+      "is_used": true,
+      "resource": "profile",
+      "action": "view",
+      "scope": "own"
+    },
+    "missions.view.published": {
+      "code": "missions.view.published",
+      "name": "Missions View Published",
+      "category": "builtin",
+      "used_in_profiles": [],
+      "used_in_bundles": [
+        "Consultation Missions Publiques"
+      ],
+      "is_used": true,
+      "resource": "missions",
+      "action": "view",
+      "scope": "published"
+    },
+    "missions.search.public": {
+      "code": "missions.search.public",
+      "name": "Missions Search Public",
+      "category": "builtin",
+      "used_in_profiles": [],
+      "used_in_bundles": [
+        "Consultation Missions Publiques"
+      ],
+      "is_used": true,
+      "resource": "missions",
+      "action": "search",
+      "scope": "public"
+    },
+    "profile.edit.own": {
+      "code": "profile.edit.own",
+      "name": "Profile Edit Own",
+      "category": "builtin",
+      "used_in_profiles": [],
+      "used_in_bundles": [
+        "Gestion Profil Personnel"
+      ],
+      "is_used": true,
+      "resource": "profile",
+      "action": "edit",
+      "scope": "own"
+    },
+    "profile.manage.own": {
+      "code": "profile.manage.own",
+      "name": "Profile Manage Own",
+      "category": "builtin",
+      "used_in_profiles": [],
+      "used_in_bundles": [
+        "Gestion Profil Personnel"
+      ],
+      "is_used": true,
+      "resource": "profile",
+      "action": "manage",
+      "scope": "own"
+    },
+    "security.edit.own": {
+      "code": "security.edit.own",
+      "name": "Security Edit Own",
+      "category": "builtin",
+      "used_in_profiles": [],
+      "used_in_bundles": [
+        "Gestion Profil Personnel"
+      ],
+      "is_used": true,
+      "resource": "security",
+      "action": "edit",
+      "scope": "own"
+    },
+    "dashboard.customize.own": {
+      "code": "dashboard.customize.own",
+      "name": "Dashboard Customize Own",
+      "category": "builtin",
+      "used_in_profiles": [],
+      "used_in_bundles": [
+        "Gestion Profil Personnel"
+      ],
+      "is_used": true,
+      "resource": "dashboard",
+      "action": "customize",
+      "scope": "own"
+    },
+    "documents.upload.own": {
+      "code": "documents.upload.own",
+      "name": "Documents Upload Own",
+      "category": "builtin",
+      "used_in_profiles": [],
+      "used_in_bundles": [
+        "Gestion Documents Personnels"
+      ],
+      "is_used": true,
+      "resource": "documents",
+      "action": "upload",
+      "scope": "own"
+    },
+    "documents.view.own": {
+      "code": "documents.view.own",
+      "name": "Documents View Own",
+      "category": "builtin",
+      "used_in_profiles": [],
+      "used_in_bundles": [
+        "Gestion Documents Personnels"
+      ],
+      "is_used": true,
+      "resource": "documents",
+      "action": "view",
+      "scope": "own"
+    },
+    "documents.delete.own": {
+      "code": "documents.delete.own",
+      "name": "Documents Delete Own",
+      "category": "builtin",
+      "used_in_profiles": [],
+      "used_in_bundles": [
+        "Gestion Documents Personnels"
+      ],
+      "is_used": true,
+      "resource": "documents",
+      "action": "delete",
+      "scope": "own"
+    },
+    "documents.download.own": {
+      "code": "documents.download.own",
+      "name": "Documents Download Own",
+      "category": "builtin",
+      "used_in_profiles": [],
+      "used_in_bundles": [
+        "Gestion Documents Personnels"
+      ],
+      "is_used": true,
+      "resource": "documents",
+      "action": "download",
+      "scope": "own"
+    },
+    "documents.manage.own": {
+      "code": "documents.manage.own",
+      "name": "Documents Manage Own",
+      "category": "builtin",
+      "used_in_profiles": [],
+      "used_in_bundles": [
+        "Gestion Documents Personnels"
+      ],
+      "is_used": true,
+      "resource": "documents",
+      "action": "manage",
+      "scope": "own"
+    },
+    "missions.apply": {
+      "code": "missions.apply",
+      "name": "Missions Apply",
+      "category": "builtin",
+      "used_in_profiles": [],
+      "used_in_bundles": [
+        "Candidater aux Missions"
+      ],
+      "is_used": true,
+      "resource": "missions",
+      "action": "apply",
+      "scope": "own"
+    },
+    "applications.create.own": {
+      "code": "applications.create.own",
+      "name": "Applications Create Own",
+      "category": "builtin",
+      "used_in_profiles": [],
+      "used_in_bundles": [
+        "Candidater aux Missions"
+      ],
+      "is_used": true,
+      "resource": "applications",
+      "action": "create",
+      "scope": "own"
+    },
+    "applications.view.own": {
+      "code": "applications.view.own",
+      "name": "Applications View Own",
+      "category": "builtin",
+      "used_in_profiles": [],
+      "used_in_bundles": [
+        "Suivi Candidatures Personnelles"
+      ],
+      "is_used": true,
+      "resource": "applications",
+      "action": "view",
+      "scope": "own"
+    },
+    "applications.track.own": {
+      "code": "applications.track.own",
+      "name": "Applications Track Own",
+      "category": "builtin",
+      "used_in_profiles": [],
+      "used_in_bundles": [
+        "Suivi Candidatures Personnelles"
+      ],
+      "is_used": true,
+      "resource": "applications",
+      "action": "track",
+      "scope": "own"
+    },
+    "applications.read.own": {
+      "code": "applications.read.own",
+      "name": "Applications Read Own",
+      "category": "builtin",
+      "used_in_profiles": [],
+      "used_in_bundles": [
+        "Suivi Candidatures Personnelles"
+      ],
+      "is_used": true,
+      "resource": "applications",
+      "action": "read",
+      "scope": "own"
+    },
+    "entreprises.manage.own": {
+      "code": "entreprises.manage.own",
+      "name": "Entreprises Manage Own",
+      "category": "builtin",
+      "used_in_profiles": [],
+      "used_in_bundles": [
+        "Gestion Entreprise (Own)"
+      ],
+      "is_used": true,
+      "resource": "entreprises",
+      "action": "manage",
+      "scope": "own"
+    },
+    "entreprises.edit.own": {
+      "code": "entreprises.edit.own",
+      "name": "Entreprises Edit Own",
+      "category": "builtin",
+      "used_in_profiles": [],
+      "used_in_bundles": [
+        "Gestion Entreprise (Own)"
+      ],
+      "is_used": true,
+      "resource": "entreprises",
+      "action": "edit",
+      "scope": "own"
+    },
+    "entreprises.view.own": {
+      "code": "entreprises.view.own",
+      "name": "Entreprises View Own",
+      "category": "builtin",
+      "used_in_profiles": [],
+      "used_in_bundles": [
+        "Gestion Entreprise (Own)"
+      ],
+      "is_used": true,
+      "resource": "entreprises",
+      "action": "view",
+      "scope": "own"
+    },
+    "besoins.create.own": {
+      "code": "besoins.create.own",
+      "name": "Besoins Create Own",
+      "category": "builtin",
+      "used_in_profiles": [],
+      "used_in_bundles": [
+        "Gestion Besoins (Own)"
+      ],
+      "is_used": true,
+      "resource": "besoins",
+      "action": "create",
+      "scope": "own"
+    },
+    "besoins.edit.own": {
+      "code": "besoins.edit.own",
+      "name": "Besoins Edit Own",
+      "category": "builtin",
+      "used_in_profiles": [],
+      "used_in_bundles": [
+        "Gestion Besoins (Own)"
+      ],
+      "is_used": true,
+      "resource": "besoins",
+      "action": "edit",
+      "scope": "own"
+    },
+    "besoins.submit.own": {
+      "code": "besoins.submit.own",
+      "name": "Besoins Submit Own",
+      "category": "builtin",
+      "used_in_profiles": [],
+      "used_in_bundles": [
+        "Gestion Besoins (Own)"
+      ],
+      "is_used": true,
+      "resource": "besoins",
+      "action": "submit",
+      "scope": "own"
+    },
+    "besoins.comment.own": {
+      "code": "besoins.comment.own",
+      "name": "Besoins Comment Own",
+      "category": "builtin",
+      "used_in_profiles": [],
+      "used_in_bundles": [
+        "Gestion Besoins (Own)"
+      ],
+      "is_used": true,
+      "resource": "besoins",
+      "action": "comment",
+      "scope": "own"
+    },
+    "besoins.view.own": {
+      "code": "besoins.view.own",
+      "name": "Besoins View Own",
+      "category": "builtin",
+      "used_in_profiles": [],
+      "used_in_bundles": [
+        "Gestion Besoins (Own)"
+      ],
+      "is_used": true,
+      "resource": "besoins",
+      "action": "view",
+      "scope": "own"
+    },
+    "emargements.validate": {
+      "code": "emargements.validate",
+      "name": "Emargements Validate",
+      "category": "builtin",
+      "used_in_profiles": [],
+      "used_in_bundles": [
+        "Validation Émargements"
+      ],
+      "is_used": true,
+      "resource": "emargements",
+      "action": "validate",
+      "scope": "own"
+    },
+    "emargements.reject": {
+      "code": "emargements.reject",
+      "name": "Emargements Reject",
+      "category": "builtin",
+      "used_in_profiles": [],
+      "used_in_bundles": [
+        "Validation Émargements"
+      ],
+      "is_used": true,
+      "resource": "emargements",
+      "action": "reject",
+      "scope": "own"
+    },
+    "emargements.annotate": {
+      "code": "emargements.annotate",
+      "name": "Emargements Annotate",
+      "category": "builtin",
+      "used_in_profiles": [],
+      "used_in_bundles": [
+        "Validation Émargements"
+      ],
+      "is_used": true,
+      "resource": "emargements",
+      "action": "annotate",
+      "scope": "own"
+    },
+    "emargements.view.own": {
+      "code": "emargements.view.own",
+      "name": "Emargements View Own",
+      "category": "builtin",
+      "used_in_profiles": [],
+      "used_in_bundles": [
+        "Validation Émargements"
+      ],
+      "is_used": true,
+      "resource": "emargements",
+      "action": "view",
+      "scope": "own"
+    },
+    "missions.create.own": {
+      "code": "missions.create.own",
+      "name": "Missions Create Own",
+      "category": "builtin",
+      "used_in_profiles": [],
+      "used_in_bundles": [
+        "Gestion Missions (Own)"
+      ],
+      "is_used": true,
+      "resource": "missions",
+      "action": "create",
+      "scope": "own"
+    },
+    "missions.edit.own": {
+      "code": "missions.edit.own",
+      "name": "Missions Edit Own",
+      "category": "builtin",
+      "used_in_profiles": [],
+      "used_in_bundles": [
+        "Gestion Missions (Own)"
+      ],
+      "is_used": true,
+      "resource": "missions",
+      "action": "edit",
+      "scope": "own"
+    },
+    "missions.delete.own": {
+      "code": "missions.delete.own",
+      "name": "Missions Delete Own",
+      "category": "builtin",
+      "used_in_profiles": [],
+      "used_in_bundles": [
+        "Gestion Missions (Own)"
+      ],
+      "is_used": true,
+      "resource": "missions",
+      "action": "delete",
+      "scope": "own"
+    },
+    "missions.view.own": {
+      "code": "missions.view.own",
+      "name": "Missions View Own",
+      "category": "builtin",
+      "used_in_profiles": [],
+      "used_in_bundles": [
+        "Gestion Missions (Own)"
+      ],
+      "is_used": true,
+      "resource": "missions",
+      "action": "view",
+      "scope": "own"
+    },
+    "missions.manage.all": {
+      "code": "missions.manage.all",
+      "name": "Missions Manage All",
+      "category": "builtin",
+      "used_in_profiles": [],
+      "used_in_bundles": [
+        "Gestion Missions (All)"
+      ],
+      "is_used": true,
+      "resource": "missions",
+      "action": "manage",
+      "scope": "all"
+    },
+    "missions.pause": {
+      "code": "missions.pause",
+      "name": "Missions Pause",
+      "category": "builtin",
+      "used_in_profiles": [],
+      "used_in_bundles": [
+        "Gestion Missions (All)"
+      ],
+      "is_used": true,
+      "resource": "missions",
+      "action": "pause",
+      "scope": "own"
+    },
+    "missions.assign_users": {
+      "code": "missions.assign_users",
+      "name": "Missions Assign_Users",
+      "category": "builtin",
+      "used_in_profiles": [],
+      "used_in_bundles": [
+        "Gestion Missions (All)"
+      ],
+      "is_used": true,
+      "resource": "missions",
+      "action": "assign_users",
+      "scope": "own"
+    },
+    "missions.view.all": {
+      "code": "missions.view.all",
+      "name": "Missions View All",
+      "category": "builtin",
+      "used_in_profiles": [],
+      "used_in_bundles": [
+        "Gestion Missions (All)",
+        "Consultation Missions Actives"
+      ],
+      "is_used": true,
+      "resource": "missions",
+      "action": "view",
+      "scope": "all"
+    },
+    "missions.edit.all": {
+      "code": "missions.edit.all",
+      "name": "Missions Edit All",
+      "category": "builtin",
+      "used_in_profiles": [],
+      "used_in_bundles": [
+        "Gestion Missions (All)"
+      ],
+      "is_used": true,
+      "resource": "missions",
+      "action": "edit",
+      "scope": "all"
+    },
+    "applications.review.all": {
+      "code": "applications.review.all",
+      "name": "Applications Review All",
+      "category": "builtin",
+      "used_in_profiles": [],
+      "used_in_bundles": [
+        "Revue Candidatures"
+      ],
+      "is_used": true,
+      "resource": "applications",
+      "action": "review",
+      "scope": "all"
+    },
+    "applications.validate.all": {
+      "code": "applications.validate.all",
+      "name": "Applications Validate All",
+      "category": "builtin",
+      "used_in_profiles": [],
+      "used_in_bundles": [
+        "Revue Candidatures"
+      ],
+      "is_used": true,
+      "resource": "applications",
+      "action": "validate",
+      "scope": "all"
+    },
+    "applications.prescreen": {
+      "code": "applications.prescreen",
+      "name": "Applications Prescreen",
+      "category": "builtin",
+      "used_in_profiles": [
+        "Entreprise"
+      ],
+      "used_in_bundles": [
+        "Revue Candidatures"
+      ],
+      "is_used": true,
+      "resource": "applications",
+      "action": "prescreen",
+      "scope": "own"
+    },
+    "applications.view.all": {
+      "code": "applications.view.all",
+      "name": "Applications View All",
+      "category": "builtin",
+      "used_in_profiles": [
+        "Entreprise"
+      ],
+      "used_in_bundles": [
+        "Revue Candidatures",
+        "Processus de Recrutement"
+      ],
+      "is_used": true,
+      "resource": "applications",
+      "action": "view",
+      "scope": "all"
+    },
+    "besoins.view.all": {
+      "code": "besoins.view.all",
+      "name": "Besoins View All",
+      "category": "builtin",
+      "used_in_profiles": [
+        "Entreprise"
+      ],
+      "used_in_bundles": [
+        "Gestion Besoins (All)"
+      ],
+      "is_used": true,
+      "resource": "besoins",
+      "action": "view",
+      "scope": "all"
+    },
+    "besoins.edit.all": {
+      "code": "besoins.edit.all",
+      "name": "Besoins Edit All",
+      "category": "builtin",
+      "used_in_profiles": [
+        "Entreprise"
+      ],
+      "used_in_bundles": [
+        "Gestion Besoins (All)"
+      ],
+      "is_used": true,
+      "resource": "besoins",
+      "action": "edit",
+      "scope": "all"
+    },
+    "besoins.approve": {
+      "code": "besoins.approve",
+      "name": "Besoins Approve",
+      "category": "builtin",
+      "used_in_profiles": [
+        "Entreprise"
+      ],
+      "used_in_bundles": [
+        "Gestion Besoins (All)"
+      ],
+      "is_used": true,
+      "resource": "besoins",
+      "action": "approve",
+      "scope": "own"
+    },
+    "entreprises.edit.all": {
+      "code": "entreprises.edit.all",
+      "name": "Entreprises Edit All",
+      "category": "builtin",
+      "used_in_profiles": [
+        "Entreprise"
+      ],
+      "used_in_bundles": [
+        "Gestion Entreprises (All)"
+      ],
+      "is_used": true,
+      "resource": "entreprises",
+      "action": "edit",
+      "scope": "all"
+    },
+    "entreprises.archive": {
+      "code": "entreprises.archive",
+      "name": "Entreprises Archive",
+      "category": "builtin",
+      "used_in_profiles": [
+        "Entreprise"
+      ],
+      "used_in_bundles": [
+        "Gestion Entreprises (All)"
+      ],
+      "is_used": true,
+      "resource": "entreprises",
+      "action": "archive",
+      "scope": "own"
+    },
+    "entreprises.transfer.validate": {
+      "code": "entreprises.transfer.validate",
+      "name": "Entreprises Transfer Validate",
+      "category": "builtin",
+      "used_in_profiles": [
+        "Entreprise"
+      ],
+      "used_in_bundles": [
+        "Gestion Entreprises (All)"
+      ],
+      "is_used": true,
+      "resource": "entreprises",
+      "action": "transfer",
+      "scope": "validate"
+    },
+    "entreprises.view.all": {
+      "code": "entreprises.view.all",
+      "name": "Entreprises View All",
+      "category": "builtin",
+      "used_in_profiles": [
+        "Entreprise"
+      ],
+      "used_in_bundles": [
+        "Gestion Entreprises (All)"
+      ],
+      "is_used": true,
+      "resource": "entreprises",
+      "action": "view",
+      "scope": "all"
+    },
+    "cvtech.search": {
+      "code": "cvtech.search",
+      "name": "Cvtech Search",
+      "category": "builtin",
+      "used_in_profiles": [],
+      "used_in_bundles": [
+        "Outils Commerciaux"
+      ],
+      "is_used": true,
+      "resource": "cvtech",
+      "action": "search",
+      "scope": "own"
+    },
+    "dashboard.manage.own": {
+      "code": "dashboard.manage.own",
+      "name": "Dashboard Manage Own",
+      "category": "builtin",
+      "used_in_profiles": [],
+      "used_in_bundles": [
+        "Outils Commerciaux"
+      ],
+      "is_used": true,
+      "resource": "dashboard",
+      "action": "manage",
+      "scope": "own"
+    },
+    "emargements.view.all": {
+      "code": "emargements.view.all",
+      "name": "Emargements View All",
+      "category": "builtin",
+      "used_in_profiles": [
+        "Entreprise"
+      ],
+      "used_in_bundles": [
+        "Gestion Émargements"
+      ],
+      "is_used": true,
+      "resource": "emargements",
+      "action": "view",
+      "scope": "all"
+    },
+    "emargements.adjust": {
+      "code": "emargements.adjust",
+      "name": "Emargements Adjust",
+      "category": "builtin",
+      "used_in_profiles": [],
+      "used_in_bundles": [
+        "Gestion Émargements"
+      ],
+      "is_used": true,
+      "resource": "emargements",
+      "action": "adjust",
+      "scope": "own"
+    },
+    "payroll.calculate": {
+      "code": "payroll.calculate",
+      "name": "Payroll Calculate",
+      "category": "builtin",
+      "used_in_profiles": [],
+      "used_in_bundles": [
+        "Gestion Paie"
+      ],
+      "is_used": true,
+      "resource": "payroll",
+      "action": "calculate",
+      "scope": "own"
+    },
+    "payroll.manage": {
+      "code": "payroll.manage",
+      "name": "Payroll Manage",
+      "category": "builtin",
+      "used_in_profiles": [],
+      "used_in_bundles": [
+        "Gestion Paie"
+      ],
+      "is_used": true,
+      "resource": "payroll",
+      "action": "manage",
+      "scope": "own"
+    },
+    "invoicing.manage": {
+      "code": "invoicing.manage",
+      "name": "Invoicing Manage",
+      "category": "builtin",
+      "used_in_profiles": [],
+      "used_in_bundles": [
+        "Gestion Facturation"
+      ],
+      "is_used": true,
+      "resource": "invoicing",
+      "action": "manage",
+      "scope": "own"
+    },
+    "invoicing.create": {
+      "code": "invoicing.create",
+      "name": "Invoicing Create",
+      "category": "builtin",
+      "used_in_profiles": [],
+      "used_in_bundles": [
+        "Gestion Facturation"
+      ],
+      "is_used": true,
+      "resource": "invoicing",
+      "action": "create",
+      "scope": "own"
+    },
+    "invoicing.edit": {
+      "code": "invoicing.edit",
+      "name": "Invoicing Edit",
+      "category": "builtin",
+      "used_in_profiles": [],
+      "used_in_bundles": [
+        "Gestion Facturation"
+      ],
+      "is_used": true,
+      "resource": "invoicing",
+      "action": "edit",
+      "scope": "own"
+    },
+    "users.manage": {
+      "code": "users.manage",
+      "name": "Users Manage",
+      "category": "builtin",
+      "used_in_profiles": [],
+      "used_in_bundles": [
+        "Gestion Utilisateurs"
+      ],
+      "is_used": true,
+      "resource": "users",
+      "action": "manage",
+      "scope": "own"
+    },
+    "users.edit": {
+      "code": "users.edit",
+      "name": "Users Edit",
+      "category": "builtin",
+      "used_in_profiles": [],
+      "used_in_bundles": [
+        "Gestion Utilisateurs"
+      ],
+      "is_used": true,
+      "resource": "users",
+      "action": "edit",
+      "scope": "own"
+    },
+    "users.view.all": {
+      "code": "users.view.all",
+      "name": "Users View All",
+      "category": "builtin",
+      "used_in_profiles": [],
+      "used_in_bundles": [
+        "Gestion Utilisateurs"
+      ],
+      "is_used": true,
+      "resource": "users",
+      "action": "view",
+      "scope": "all"
+    },
+    "recruitment.validate": {
+      "code": "recruitment.validate",
+      "name": "Recruitment Validate",
+      "category": "builtin",
+      "used_in_profiles": [],
+      "used_in_bundles": [
+        "Processus de Recrutement"
+      ],
+      "is_used": true,
+      "resource": "recruitment",
+      "action": "validate",
+      "scope": "own"
+    },
+    "recruitment.participate": {
+      "code": "recruitment.participate",
+      "name": "Recruitment Participate",
+      "category": "builtin",
+      "used_in_profiles": [],
+      "used_in_bundles": [
+        "Processus de Recrutement"
+      ],
+      "is_used": true,
+      "resource": "recruitment",
+      "action": "participate",
+      "scope": "own"
+    },
+    "missions.view.open": {
+      "code": "missions.view.open",
+      "name": "Missions View Open",
+      "category": "builtin",
+      "used_in_profiles": [],
+      "used_in_bundles": [
+        "Processus de Recrutement"
+      ],
+      "is_used": true,
+      "resource": "missions",
+      "action": "view",
+      "scope": "open"
+    },
+    "medical_visits.trigger": {
+      "code": "medical_visits.trigger",
+      "name": "Medical_Visits Trigger",
+      "category": "builtin",
+      "used_in_profiles": [],
+      "used_in_bundles": [
+        "Conformité Médicale"
+      ],
+      "is_used": true,
+      "resource": "medical_visits",
+      "action": "trigger",
+      "scope": "own"
+    },
+    "medical_visits.validate": {
+      "code": "medical_visits.validate",
+      "name": "Medical_Visits Validate",
+      "category": "builtin",
+      "used_in_profiles": [],
+      "used_in_bundles": [
+        "Conformité Médicale"
+      ],
+      "is_used": true,
+      "resource": "medical_visits",
+      "action": "validate",
+      "scope": "own"
+    },
+    "candidat_to_interim.approve": {
+      "code": "candidat_to_interim.approve",
+      "name": "Candidat_To_Interim Approve",
+      "category": "builtin",
+      "used_in_profiles": [],
+      "used_in_bundles": [
+        "Progression Candidat"
+      ],
+      "is_used": true,
+      "resource": "candidat_to_interim",
+      "action": "approve",
+      "scope": "own"
+    },
+    "dashboard.hr": {
+      "code": "dashboard.hr",
+      "name": "Dashboard Hr",
+      "category": "builtin",
+      "used_in_profiles": [],
+      "used_in_bundles": [
+        "Reporting RH"
+      ],
+      "is_used": true,
+      "resource": "dashboard",
+      "action": "hr",
+      "scope": "own"
+    }
+  }
+}
