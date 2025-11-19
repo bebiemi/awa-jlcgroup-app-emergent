@@ -31,6 +31,7 @@ class IAMService:
         self.profiles_collection = db.profiles
         self.groups_collection = db.groups
         self.users_collection = db.users
+        self.bundles_collection = db.capability_bundles  # Support des bundles de capacités
     
     async def user_has_permission(
         self, 
