@@ -261,7 +261,7 @@ export default function ValidationsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">Candidats</p>
-                <p className="text-2xl font-bold text-gray-900">{stats?.pending_candidat || stats?.pending_interim || 0}</p>
+                <p className="text-2xl font-bold text-gray-900">{(stats?.pending_candidat || 0) + (stats?.pending_interim || 0)}</p>
               </div>
               <UserIcon className="w-10 h-10 text-blue-500" />
             </div>
