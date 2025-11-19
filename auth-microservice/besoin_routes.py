@@ -211,29 +211,44 @@ async def list_besoins(
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
     db: AsyncIOMotorDatabase = Depends(get_database),
-    current_user: dict = Depends(require_permission(IAMPermissions.BESOINS_READ))
+    current_user: dict = Depends(require_permission(IAMPermissions.BESOINS_READ)),
+    iam_service: IAMService = Depends(get_iam_service)
 ):
     """
     List besoins with filters
-    - Company users see only their besoins
-    - JLC users see all besoins
+    
+    Permissions IAM:
+    - besoins.read.all : Voir tous les besoins (JLC, Admin)
+    - besoins.read.own : Voir uniquement ses besoins (Entreprise)
     """
     user_id, user_name, user_role = await get_current_user_info(current_user)
+    user_company_id = await get_user_entreprise_id(current_user, db, user_id, user_role)
+    
+    # Appliquer le filtrage IAM basé sur les permissions
+    iam_filter = await get_resource_filter(
+        iam_service,
+        user_id,
+        user_company_id,
+        "besoins",
+        "read"
+    )
+    
+    if iam_filter is None:
+        # Aucune permission
+        return BesoinListResponse(items=[], total=0, page=page, page_size=page_size, total_pages=0)
     
     # Build query
     query = {}
     
-    # Check if user is JLC (admin/super_admin) or company user
-    is_jlc_user = "admin" in user_role.lower() or "jlc" in user_role.lower()
+    # Appliquer le filtre IAM
+    if iam_filter:
+        # Cas .own : filtrer par entreprise_id
+        query.update(iam_filter)
+    # Sinon (iam_filter == {}) : cas .all, pas de filtre
     
-    if not is_jlc_user:
-        # Company users can only see their own besoins
-        user_entreprise_id = await get_user_entreprise_id(current_user, db, user_id, user_role)
-        if not user_entreprise_id:
-            return BesoinListResponse(items=[], total=0, page=page, page_size=page_size, total_pages=0)
-        query["entreprise_id"] = user_entreprise_id
-    elif entreprise_id:
-        # JLC users can filter by entreprise
+    # Filtrer par entreprise_id seulement si l'utilisateur a la permission .all
+    has_read_all = await iam_service.user_has_permission(user_id, "besoins.read.all")
+    if entreprise_id and has_read_all.has_permission:
         query["entreprise_id"] = entreprise_id
     
     if status_filter:
@@ -244,6 +259,8 @@ async def list_besoins(
             {"titre": {"$regex": search, "$options": "i"}},
             {"description": {"$regex": search, "$options": "i"}}
         ]
+    
+    logger.info(f"User {user_id} querying besoins with filter: {query}")
     
     # Count total
     total = await db.besoins.count_documents(query)
