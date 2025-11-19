@@ -133,29 +133,8 @@ async def main():
     
     utilisateurs = [
         # 2.1 Entreprises (1 par entreprise)
-        {
-            "id": str(uuid4()),
-            "username": "techcorp_admin",
-            "email": "admin@techcorp.ga",
-            "full_name": "Admin TechCorp",
-            "password_hash": password_hash,
-            "company_id": entreprises[0]["id"],
-            "entreprise_id": entreprises[0]["id"],
-            "profile_ids": [profiles.get("profile.company", {}).get("id")] if profiles.get("profile.company") else [],
-            "group_ids": [],
-            "roles": ["company"],
-            "status": "active",
-            "is_verified": True,
-            "provider": "local",
-            "provider_user_id": None,
-            "mfa_enabled": False,
-            "mfa_required": False,
-            "mfa_methods": [],
-            "metadata": {},
-            "profile_history": [],
-            "created_at": datetime.now(timezone.utc).isoformat(),
-            "updated_at": datetime.now(timezone.utc).isoformat()
-        },
+        create_user_dict("techcorp_admin", "admin@techcorp.ga", "Admin TechCorp", 
+                        entreprises[0]["id"], ["profile.company"], ["company"]),
         {
             "id": str(uuid4()),
             "username": "construction_admin",
