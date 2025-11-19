@@ -182,7 +182,38 @@ async def get_application_documents(
     current_user: dict = Depends(get_current_user),
     db = Depends(get_db)
 ):
-    """Récupérer tous les documents d'une candidature"""
+    """
+    Récupérer tous les documents d'une candidature
+    
+    Accès :
+    - Candidat propriétaire de la candidature
+    - Entreprise propriétaire de la mission
+    - Admin
+    """
+    user_id = current_user.get("sub")
+    
+    # Récupérer la candidature
+    application = await db.applications.find_one({"id": application_id})
+    if not application:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Candidature non trouvée"
+        )
+    
+    # Récupérer la mission pour obtenir le company_id
+    mission = await db.missions.find_one({"id": application.get("mission_id")})
+    
+    # Vérifier les droits d'accès
+    is_candidate = application.get("candidate_id") == user_id
+    is_company_owner = mission and mission.get("company_id") == current_user.get("company_id", "NONE")
+    is_admin = "admin" in current_user.get("roles", []) or "super_admin" in current_user.get("roles", [])
+    
+    if not (is_candidate or is_company_owner or is_admin):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Vous n'avez pas accès à ces documents"
+        )
+    
     documents = await db.documents.find({"application_id": application_id}).to_list(length=None)
     
     return [
