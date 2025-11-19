@@ -1,6 +1,7 @@
 import React from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { useAppSelector } from './store/hooks'
+import { SidebarProvider } from './contexts/SidebarContext'
 import { useInactivityLogout } from './hooks/useInactivityLogout'
 import { useRoles } from './hooks/useAppConfig'
 import LandingPage from './pages/LandingPage'
