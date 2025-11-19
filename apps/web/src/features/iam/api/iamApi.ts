@@ -180,7 +180,13 @@ export const iamApi = createApi({
     // Groups
     listGroups: builder.query<Group[], void>({
       query: () => '/iam/groups',
-      providesTags: ['Groups'],
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.map(({ id }) => ({ type: 'Groups' as const, id })),
+              { type: 'Groups', id: 'LIST' },
+            ]
+          : [{ type: 'Groups', id: 'LIST' }],
     }),
     
     getGroup: builder.query<Group, string>({
