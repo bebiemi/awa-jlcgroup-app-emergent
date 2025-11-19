@@ -625,7 +625,7 @@ export default function ValidationsPage() {
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <p className="text-xs text-gray-500">Nom complet</p>
-                    <p className="text-sm font-medium text-gray-900">{detailValidation.full_name}</p>
+                    <p className="text-sm font-medium text-gray-900">{detailValidation.user_full_name}</p>
                   </div>
                   <div>
                     <p className="text-xs text-gray-500">Type</p>
@@ -633,20 +633,24 @@ export default function ValidationsPage() {
                   </div>
                   <div>
                     <p className="text-xs text-gray-500">Email</p>
-                    <p className="text-sm font-medium text-gray-900">{detailValidation.email}</p>
+                    <p className="text-sm font-medium text-gray-900">{detailValidation.user_email}</p>
                   </div>
-                  {detailValidation.phone && (
+                  {(detailValidation as any).phone && (
                     <div>
                       <p className="text-xs text-gray-500">Téléphone</p>
-                      <p className="text-sm font-medium text-gray-900">{detailValidation.phone}</p>
+                      <p className="text-sm font-medium text-gray-900">{(detailValidation as any).phone}</p>
                     </div>
                   )}
-                  {detailValidation.location_label && (
-                    <div>
+                  {detailValidation.country_name && (
+                    <div className="col-span-2">
                       <p className="text-xs text-gray-500">Localisation</p>
                       <p className="text-sm font-medium text-gray-900 flex items-center gap-1">
                         <MapPinIcon className="w-4 h-4 text-gray-400" />
-                        {detailValidation.location_label}
+                        {[
+                          detailValidation.country_name,
+                          detailValidation.city_name,
+                          detailValidation.district_name
+                        ].filter(Boolean).join(', ')}
                       </p>
                     </div>
                   )}
