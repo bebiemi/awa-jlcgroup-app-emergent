@@ -171,7 +171,10 @@ export const iamApi = createApi({
         url: `/iam/profiles/${profileId}`,
         method: 'DELETE',
       }),
-      invalidatesTags: ['Profiles'],
+      invalidatesTags: (_result, _error, profileId) => [
+        { type: 'Profiles', id: 'LIST' },
+        { type: 'Profiles', id: profileId },
+      ],
     }),
     
     // Groups
