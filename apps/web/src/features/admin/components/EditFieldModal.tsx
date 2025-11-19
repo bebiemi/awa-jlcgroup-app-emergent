@@ -246,7 +246,7 @@ export default function EditFieldModal({ field, isOpen, onClose, onSuccess }: Ed
                   className={`w-full px-3 py-2 border rounded-lg ${
                     errors.field_key ? 'border-red-500' : 'border-gray-300'
                   }`}
-                  disabled={isLoading}
+                  disabled={true}
                 />
                 {errors.field_key && <p className="text-sm text-red-500 mt-1">{errors.field_key}</p>}
                 <p className="text-xs text-gray-500 mt-1">Minuscules et underscores uniquement</p>
