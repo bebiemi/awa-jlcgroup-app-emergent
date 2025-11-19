@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useRegisterMutation } from '../api/authApi'
 import { useLazyVerifyEmailDomainQuery } from '@/features/admin/api/emailDomainsApi'
-import { useGetFormFieldsQuery } from '@/features/company/api/entrepriseFormConfigApi'
+import { useGetPublicFormFieldsQuery } from '@/features/company/api/entrepriseFormConfigApi'
 import DynamicFormField from '@/features/company/components/DynamicFormField'
 import LocationSelector from '@/components/LocationSelector'
 import PhoneInput from '@/components/PhoneInput'
@@ -15,8 +15,8 @@ export default function RegisterPage() {
   const [register, { isLoading }] = useRegisterMutation()
   const [verifyEmail, { data: emailVerification }] = useLazyVerifyEmailDomainQuery()
   
-  // Charger les champs dynamiques pour les entreprises
-  const { data: formConfig, isLoading: isLoadingFields } = useGetFormFieldsQuery({ is_active: true })
+  // Charger les champs dynamiques pour les entreprises (endpoint public)
+  const { data: formConfig, isLoading: isLoadingFields } = useGetPublicFormFieldsQuery()
   
   const [accountType, setAccountType] = useState<'candidat' | 'company' | ''>('')
   const [formData, setFormData] = useState({
