@@ -147,6 +147,11 @@ export const entrepriseFormConfigApi = createApi({
     getFieldsForRole: builder.query<{ fields: FormFieldConfig[]; total: number }, string>({
       query: (role) => `/fields/for-role/${role}`,
     }),
+    
+    // Champs publics pour l'inscription (sans authentification)
+    getPublicFormFields: builder.query<FormConfigResponse, void>({
+      query: () => '/fields/public',
+    }),
   }),
 })
 
