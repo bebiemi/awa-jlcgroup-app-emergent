@@ -61,33 +61,6 @@ export default function EditProfileModal({ profile, isOpen, onClose }: EditProfi
     }
   }
 
-  const togglePermission = (permissionId: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      permission_ids: prev.permission_ids.includes(permissionId)
-        ? prev.permission_ids.filter((id) => id !== permissionId)
-        : [...prev.permission_ids, permissionId],
-    }))
-  }
-
-  const toggleCategory = (category: string) => {
-    const categoryPermissions =
-      permissions?.filter((p) => p.category === category).map((p) => p.id) || []
-    const allSelected = categoryPermissions.every((id) => formData.permission_ids.includes(id))
-
-    if (allSelected) {
-      setFormData((prev) => ({
-        ...prev,
-        permission_ids: prev.permission_ids.filter((id) => !categoryPermissions.includes(id)),
-      }))
-    } else {
-      setFormData((prev) => ({
-        ...prev,
-        permission_ids: [...new Set([...prev.permission_ids, ...categoryPermissions])],
-      }))
-    }
-  }
-
   if (!isOpen) return null
 
   const isReadOnly = profile.is_protected || profile.is_system_role
