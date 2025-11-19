@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { XMarkIcon, ShieldCheckIcon } from '@heroicons/react/24/outline'
 import { useUpdateProfileMutation, useListPermissionsQuery, type Profile } from '../api/iamApi'
-import PermissionSelector from './PermissionSelector'
+import DualColumnPermissionSelector from './DualColumnPermissionSelector'
 
 interface EditProfileModalProps {
   profile: Profile
