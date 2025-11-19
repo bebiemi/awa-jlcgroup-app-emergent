@@ -96,6 +96,11 @@ class Profile(BaseModel):
     
     # Permissions
     permission_ids: List[str] = Field(default_factory=list)
+    capability_bundle_ids: List[str] = Field(default_factory=list)  # Bundles de capacités
+    
+    # Computed fields (filled by API, not stored)
+    effective_permission_count: Optional[int] = None
+    bundle_permission_count: Optional[int] = None
     
     # System roles (built-in, protected)
     is_system_role: bool = False
