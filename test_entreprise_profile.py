@@ -12,14 +12,14 @@ def login(username: str, password: str) -> Optional[str]:
     """Connexion et récupération du token"""
     try:
         response = requests.post(
-            f"{BASE_URL}/api/auth/login",
+            f"{BASE_URL}/api/local/login",
             json={"username": username, "password": password}
         )
         if response.status_code == 200:
             return response.json()["access_token"]
         else:
             print(f"❌ Échec de connexion: {response.status_code}")
-            print(response.text)
+            print(response.text[:300])
             return None
     except Exception as e:
         print(f"❌ Erreur de connexion: {e}")
