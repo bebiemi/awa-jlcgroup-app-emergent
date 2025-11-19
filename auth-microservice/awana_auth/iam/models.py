@@ -203,7 +203,11 @@ class TemporaryProfile(BaseModel):
         """Nombre de jours avant expiration"""
         if self.is_expired:
             return 0
-        delta = self.expires_at - datetime.now(timezone.utc)
+        now = datetime.now(timezone.utc)
+        expires = self.expires_at
+        if expires.tzinfo is None:
+            expires = expires.replace(tzinfo=timezone.utc)
+        delta = expires - now
         return delta.days
     
     class Config:
