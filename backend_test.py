@@ -5174,7 +5174,7 @@ def test_iam_permission_validation_system():
             "name": f"Test Invalid Permission - {description}",
             "description": f"Permission de test avec {description.lower()}",
             "resource": "test",
-            "action": "action",
+            "action": "create",
             "scope": "organization",
             "category": "test"
         }
