@@ -20,6 +20,8 @@ async def get_resource_filter(
     """
     Générer un filtre MongoDB basé sur les permissions IAM de l'utilisateur
     
+    Supporte NOUVEAU format (.own/.all) ET ANCIEN format pour backward compatibility.
+    
     Args:
         iam_service: Instance du service IAM
         user_id: ID de l'utilisateur
@@ -37,31 +39,61 @@ async def get_resource_filter(
         >>> filter = await get_resource_filter(iam, user_id, company_id, "missions", "read")
         >>> missions = await db.missions.find(filter).to_list(100)
     """
-    # Vérifier la permission .all
+    # Mapping action nouveau → ancien format
+    legacy_action_map = {
+        "read": "view",
+        "update": "edit",
+        "delete": "delete",
+        "create": "create"
+    }
+    
+    # 1. Vérifier permission NOUVEAU format .all
     permission_all = f"{resource}.{action}.all"
     result_all = await iam_service.user_has_permission(user_id, permission_all)
     
     if result_all.has_permission:
-        logger.debug(f"User {user_id} has {permission_all} - no filter")
+        logger.debug(f"User {user_id} has {permission_all} (NEW) - no filter")
         return {}  # Pas de filtre, accès total
     
-    # Vérifier la permission .own
+    # 2. Vérifier permission NOUVEAU format .own
     permission_own = f"{resource}.{action}.own"
     result_own = await iam_service.user_has_permission(user_id, permission_own)
     
     if result_own.has_permission:
         if not user_company_id:
             logger.warning(f"User {user_id} has {permission_own} but no company_id - denying access")
-            return None  # Pas d'accès si pas de company_id
+            return None
         
-        logger.debug(f"User {user_id} has {permission_own} - filtering by company_id={user_company_id}")
-        
-        # Déterminer le champ de filtrage selon la ressource
+        logger.debug(f"User {user_id} has {permission_own} (NEW) - filtering by company")
         filter_field = _get_filter_field(resource)
         return {filter_field: user_company_id}
     
-    # Aucune permission
-    logger.warning(f"User {user_id} has no permission for {resource}.{action}")
+    # 3. FALLBACK : Vérifier ANCIEN format (backward compatibility)
+    legacy_action = legacy_action_map.get(action, action)
+    
+    # Ancien format all : resource.action_all (ex: missions.view_all)
+    legacy_all = f"{resource}.{legacy_action}_all"
+    result_legacy_all = await iam_service.user_has_permission(user_id, legacy_all)
+    
+    if result_legacy_all.has_permission:
+        logger.debug(f"User {user_id} has {legacy_all} (LEGACY) - no filter")
+        return {}
+    
+    # Ancien format own : resource.action_own (ex: missions.view_own)
+    legacy_own = f"{resource}.{legacy_action}_own"
+    result_legacy_own = await iam_service.user_has_permission(user_id, legacy_own)
+    
+    if result_legacy_own.has_permission:
+        if not user_company_id:
+            logger.warning(f"User {user_id} has {legacy_own} but no company_id - denying access")
+            return None
+        
+        logger.debug(f"User {user_id} has {legacy_own} (LEGACY) - filtering by company")
+        filter_field = _get_filter_field(resource)
+        return {filter_field: user_company_id}
+    
+    # Aucune permission (nouveau ni ancien format)
+    logger.warning(f"User {user_id} has no permission for {resource}.{action} (tried NEW and LEGACY formats)")
     return None
 
 
