@@ -343,8 +343,8 @@ Cette release marque la **première version stable et production-ready** de la p
 - Hot Reload : Activé
 
 ### Emergent Preview (Staging)
-- URL : `https://bizman-portal.preview.emergentagent.com`
-- API : `https://bizman-portal.preview.emergentagent.com/api`
+- URL : `https://entsynchro.preview.emergentagent.com`
+- API : `https://entsynchro.preview.emergentagent.com/api`
 - HTTPS : Forcé
 - Mixed Content : Résolu ✅
 

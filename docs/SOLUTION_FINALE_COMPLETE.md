@@ -91,13 +91,13 @@ Ouvrir une fenêtre de navigation privée/incognito pour éliminer tout cache lo
 
 ```javascript
 // Test 1: Health check
-fetch('https://bizman-portal.preview.emergentagent.com/api/health')
+fetch('https://entsynchro.preview.emergentagent.com/api/health')
   .then(r => r.json())
   .then(console.log)
   .catch(console.error)
 
 // Test 2: Login puis besoins
-fetch('https://bizman-portal.preview.emergentagent.com/api/auth/local/login', {
+fetch('https://entsynchro.preview.emergentagent.com/api/auth/local/login', {
   method: 'POST',
   headers: {'Content-Type': 'application/json'},
   body: JSON.stringify({username: 'entreprise_test', password: 'Entreprise2025!'})
@@ -105,7 +105,7 @@ fetch('https://bizman-portal.preview.emergentagent.com/api/auth/local/login', {
 .then(r => r.json())
 .then(data => {
   const token = data.access_token;
-  return fetch('https://bizman-portal.preview.emergentagent.com/api/besoins?page=1&page_size=12', {
+  return fetch('https://entsynchro.preview.emergentagent.com/api/besoins?page=1&page_size=12', {
     headers: {'Authorization': `Bearer ${token}`}
   });
 })
