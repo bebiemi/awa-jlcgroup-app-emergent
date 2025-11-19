@@ -5,7 +5,7 @@
 Malgré les modifications précédentes, l'erreur Mixed Content persistait en production:
 
 ```
-Mixed Content: The page at 'https://iam-access-fix.preview.emergentagent.com/admin/countries' 
+Mixed Content: The page at 'https://security-mend.preview.emergentagent.com/admin/countries' 
 was loaded over HTTPS, but requested an insecure resource 
 'http://iam-migrate.preview.emergentagent.com/api/config/countries/?active_only=false'. 
 This request has been blocked; the content must be served over HTTPS.
@@ -110,9 +110,9 @@ Proxy Vite → http://localhost:8000/api/config/countries
 
 ### En Production (HTTPS)
 ```
-Page: https://iam-access-fix.preview.emergentagent.com/admin/countries
+Page: https://security-mend.preview.emergentagent.com/admin/countries
 Requête: /api/config/countries
-Résolu en: https://iam-access-fix.preview.emergentagent.com/api/config/countries
+Résolu en: https://security-mend.preview.emergentagent.com/api/config/countries
 Backend Proxy → http://localhost:8000/api/config/countries (interne)
 ✅ Aucune erreur Mixed Content
 ```
@@ -179,9 +179,9 @@ Pour vérifier que tout fonctionne:
    - ✅ Doit charger les pays
    - ✅ Network tab doit montrer: `http://localhost:3000/api/config/countries`
 
-2. En **production**: Aller sur `https://iam-access-fix.preview.emergentagent.com/admin/countries`
+2. En **production**: Aller sur `https://security-mend.preview.emergentagent.com/admin/countries`
    - ✅ Doit charger les pays
-   - ✅ Network tab doit montrer: `https://iam-access-fix.preview.emergentagent.com/api/config/countries`
+   - ✅ Network tab doit montrer: `https://security-mend.preview.emergentagent.com/api/config/countries`
    - ✅ Aucune erreur Mixed Content dans la console
 
 ## Conclusion

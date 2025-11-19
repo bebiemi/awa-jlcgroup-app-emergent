@@ -343,8 +343,8 @@ Cette release marque la **première version stable et production-ready** de la p
 - Hot Reload : Activé
 
 ### Emergent Preview (Staging)
-- URL : `https://iam-access-fix.preview.emergentagent.com`
-- API : `https://iam-access-fix.preview.emergentagent.com/api`
+- URL : `https://security-mend.preview.emergentagent.com`
+- API : `https://security-mend.preview.emergentagent.com/api`
 - HTTPS : Forcé
 - Mixed Content : Résolu ✅
 
