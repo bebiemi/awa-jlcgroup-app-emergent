@@ -585,15 +585,21 @@ async def admin_update_password(
         bcrypt.gensalt()
     ).decode('utf-8')
     
-    # Update password
+    # Update password and activate user if pending
+    # Admin changing password implies account validation
+    update_data = {
+        "password_hash": password_hash,
+        "updated_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    # If user is pending, activate them (admin validation implicit)
+    if target_user.get("status") == "pending":
+        from awana_auth.core.models import UserStatus
+        update_data["status"] = UserStatus.ACTIVE.value
+    
     await db.users.update_one(
         {"id": user_id},
-        {
-            "$set": {
-                "password_hash": password_hash,
-                "updated_at": datetime.now(timezone.utc).isoformat()
-            }
-        }
+        {"$set": update_data}
     )
     
     # Log activity for audit
