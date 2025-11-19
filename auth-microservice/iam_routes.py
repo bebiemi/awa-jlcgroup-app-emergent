@@ -535,6 +535,98 @@ async def delete_group(
     return {"success": True, "message": "Group deleted"}
 
 
+@router.post("/groups/{group_id}/profiles/{profile_id}")
+async def assign_profile_to_group(
+    group_id: str,
+    profile_id: str,
+    current_user: User = Depends(require_permission("iam.groups.update")),
+    db: AsyncIOMotorDatabase = Depends(get_database)
+):
+    """Assign a profile to a group"""
+    groups_collection = db.groups
+    profiles_collection = db.profiles
+    
+    # Verify group exists
+    group = await groups_collection.find_one({"id": group_id})
+    if not group:
+        raise HTTPException(status_code=404, detail="Group not found")
+    
+    # Verify profile exists
+    profile = await profiles_collection.find_one({"id": profile_id})
+    if not profile:
+        raise HTTPException(status_code=404, detail="Profile not found")
+    
+    # Check if protected
+    if group.get("is_protected"):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Cannot modify protected group"
+        )
+    
+    # Assign profile to group
+    result = await groups_collection.update_one(
+        {"id": group_id},
+        {"$addToSet": {"profile_ids": profile_id}}
+    )
+    
+    logger.info(f"Profile {profile_id} assigned to group {group_id} by {current_user.username}")
+    
+    # Invalidate cache for all users in the group
+    iam_service = IAMService(db)
+    user_ids = group.get("user_ids", [])
+    for user_id in user_ids:
+        await iam_service.cache.invalidate_user(user_id)
+    
+    return {
+        "success": True,
+        "message": f"Profile '{profile['name']}' assigned to group '{group['name']}'",
+        "users_affected": len(user_ids)
+    }
+
+
+@router.delete("/groups/{group_id}/profiles/{profile_id}")
+async def remove_profile_from_group(
+    group_id: str,
+    profile_id: str,
+    current_user: User = Depends(require_permission("iam.groups.update")),
+    db: AsyncIOMotorDatabase = Depends(get_database)
+):
+    """Remove a profile from a group"""
+    groups_collection = db.groups
+    
+    # Verify group exists
+    group = await groups_collection.find_one({"id": group_id})
+    if not group:
+        raise HTTPException(status_code=404, detail="Group not found")
+    
+    # Check if protected
+    if group.get("is_protected"):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Cannot modify protected group"
+        )
+    
+    # Remove profile from group
+    result = await groups_collection.update_one(
+        {"id": group_id},
+        {"$pull": {"profile_ids": profile_id}}
+    )
+    
+    logger.info(f"Profile {profile_id} removed from group {group_id} by {current_user.username}")
+    
+    # Invalidate cache for all users in the group
+    iam_service = IAMService(db)
+    user_ids = group.get("user_ids", [])
+    for user_id in user_ids:
+        await iam_service.cache.invalidate_user(user_id)
+    
+    return {
+        "success": True,
+        "message": "Profile removed from group",
+        "users_affected": len(user_ids)
+    }
+
+
 # ============================================================================
 # User Assignments
 # ============================================================================
