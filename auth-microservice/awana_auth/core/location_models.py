@@ -151,6 +151,20 @@ class Validation(BaseModel):
     location_warning_message: Optional[str] = None
     missing_country: Optional[str] = None  # If user entered a country not in DB
     
+    # Représentant légal (pour détection doublons)
+    representant_legal_nom: Optional[str] = None
+    representant_legal_email: Optional[str] = None
+    
+    # Détection représentant existant
+    has_existing_representant: bool = False
+    existing_representant_user_id: Optional[str] = None
+    existing_representant_entreprises: Optional[list] = Field(default_factory=list)
+    
+    # Workflow rattachement
+    contact_confirmation: bool = False
+    rattachement_status: Optional[str] = None  # "pending", "approved", "rejected"
+    rattachement_to_entreprise_id: Optional[str] = None
+    
     # Validation metadata
     assigned_to: Optional[str] = None  # User ID of validator
     validated_by: Optional[str] = None
