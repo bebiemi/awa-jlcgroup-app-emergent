@@ -30,21 +30,23 @@ interface Props {
   isOpen: boolean
   onClose: () => void
   validation: Validation | null
-  entreprises: RepresentantEntreprise[]
-  onSuccess: () => void
+  representantEntreprises: RepresentantEntreprise[]
+  onAttach: () => void
 }
 
 export default function AttachToExistingModal({
   isOpen,
   onClose,
   validation,
-  entreprises,
-  onSuccess,
+  representantEntreprises,
+  onAttach,
 }: Props) {
   const [contactConfirmation, setContactConfirmation] = useState(false)
   const [selectedEntrepriseId, setSelectedEntrepriseId] = useState<string>('')
   const [notes, setNotes] = useState('')
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  
+  const [attachToExisting, { isLoading: isAttaching }] = useAttachToExistingRepresentantMutation()
+  const [rejectAttachment, { isLoading: isRejecting }] = useRejectAttachmentMutation()
 
   const handleSubmit = async () => {
     if (!validation) return
