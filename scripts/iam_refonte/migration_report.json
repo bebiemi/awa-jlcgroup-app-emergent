@@ -1,0 +1,96 @@
+{
+  "migrated": [
+    {
+      "from": "gestion_utilisateurs",
+      "to": "users.manage",
+      "action": "merged"
+    },
+    {
+      "from": "voir_utilisateurs",
+      "to": "users.view",
+      "action": "created"
+    },
+    {
+      "from": "gestion_groupes",
+      "to": "groups.manage",
+      "action": "merged"
+    },
+    {
+      "from": "gestion_profils",
+      "to": "profiles.manage",
+      "action": "merged"
+    },
+    {
+      "from": "voir_validations",
+      "to": "validations.view",
+      "action": "created"
+    },
+    {
+      "from": "approuver_validations",
+      "to": "validations.approve",
+      "action": "merged"
+    },
+    {
+      "from": "rejeter_validations",
+      "to": "validations.reject",
+      "action": "merged"
+    },
+    {
+      "from": "voir_interimaires",
+      "to": "candidates.view",
+      "action": "created"
+    },
+    {
+      "from": "modifier_interimaires",
+      "to": "candidates.update",
+      "action": "created"
+    },
+    {
+      "from": "supprimer_interimaires",
+      "to": "candidates.delete",
+      "action": "created"
+    },
+    {
+      "from": "voir_rapports",
+      "to": "reports.view",
+      "action": "merged"
+    },
+    {
+      "from": "exporter_rapports",
+      "to": "reports.export",
+      "action": "merged"
+    },
+    {
+      "from": "voir_dashboard",
+      "to": "dashboard.view",
+      "action": "created"
+    },
+    {
+      "from": "voir_statistiques",
+      "to": "statistics.view",
+      "action": "created"
+    },
+    {
+      "from": "voir_missions",
+      "to": "missions.view",
+      "action": "created"
+    },
+    {
+      "from": "modifier_missions",
+      "to": "missions.update",
+      "action": "merged"
+    },
+    {
+      "from": "supprimer_missions",
+      "to": "missions.delete",
+      "action": "merged"
+    },
+    {
+      "from": "creer_missions",
+      "to": "missions.create",
+      "action": "merged"
+    }
+  ],
+  "skipped": [],
+  "errors": []
+}
