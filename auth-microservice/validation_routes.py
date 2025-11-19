@@ -284,6 +284,47 @@ async def reject_validation(
     }
 
 
+@validation_router.get("/{validation_id}/check-representant")
+async def check_representant_endpoint(
+    validation_id: str,
+    current_user: User = Depends(require_permission("validations.manage")),
+    db: AsyncIOMotorDatabase = Depends(get_database)
+):
+    """
+    Vérifier si le représentant légal d'une validation existe déjà
+    Badge automatique pour les validateurs
+    """
+    try:
+        result = await check_validation_representant(validation_id, db)
+        return result
+    except ValueError as e:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(e)
+        )
+
+
+@validation_router.get("/representant/{user_id}/details")
+async def get_representant_details_endpoint(
+    user_id: str,
+    current_user: User = Depends(require_permission("validations.manage")),
+    db: AsyncIOMotorDatabase = Depends(get_database)
+):
+    """
+    Récupérer les détails d'un représentant légal existant
+    Affiche les entreprises déjà liées à ce représentant
+    """
+    details = await get_representant_details(user_id, db)
+    
+    if not details["found"]:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Représentant not found"
+        )
+    
+    return details
+
+
 @validation_router.post("/{validation_id}/assign")
 async def assign_validation(
     validation_id: str,
