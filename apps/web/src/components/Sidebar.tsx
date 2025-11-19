@@ -90,6 +90,19 @@ export default function Sidebar() {
     }
   }
 
+  const toggleSection = (sectionTitle: string) => {
+    const newExpanded = expandedSections.includes(sectionTitle)
+      ? expandedSections.filter((s) => s !== sectionTitle)
+      : [...expandedSections, sectionTitle]
+    
+    setExpandedSections(newExpanded)
+    localStorage.setItem('expandedSections', JSON.stringify(newExpanded))
+  }
+
+  const isSectionExpanded = (sectionTitle: string) => {
+    return expandedSections.includes(sectionTitle)
+  }
+
   // Get dashboard path based on user role
   const getDashboardPath = () => {
     if (!user) return '/'
