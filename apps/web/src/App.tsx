@@ -53,6 +53,7 @@ import ApplicationsManagementPage from './features/missions/pages/ApplicationsMa
 import MyApplicationsPage from './features/missions/pages/MyApplicationsPage'
 import CompanyDashboard from './features/company/pages/CompanyDashboard'
 import CompanySettingsPage from './features/company/pages/CompanySettingsPageDynamic'
+import GroupingRequestsPage from './features/company/pages/GroupingRequestsPage'
 import CompanyCandidaturesPage from './features/company/pages/CompanyCandidaturesPage'
 import EntreprisesManagementPage from './features/admin/pages/EntreprisesManagementPage'
 import EntrepriseFormConfigPage from './features/admin/pages/EntrepriseFormConfigPage'
