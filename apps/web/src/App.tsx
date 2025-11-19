@@ -464,6 +464,14 @@ function App() {
         }
       />
       <Route
+        path="/entreprise/grouping"
+        element={
+          <ProtectedRoute requireAuth>
+            <GroupingRequestsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/offres"
         element={
           <ProtectedRoute requiredPermissions={['missions.create']}>
