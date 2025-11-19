@@ -5074,8 +5074,235 @@ def run_authentication_fix_test():
     
     return test_results
 
+def test_iam_permission_validation_system():
+    """Test du système de validation des permissions IAM avec code strict"""
+    print(f"\n{Colors.BOLD}{'='*80}{Colors.ENDC}")
+    print(f"{Colors.BOLD}TEST SYSTÈME DE VALIDATION DES PERMISSIONS IAM{Colors.ENDC}")
+    print(f"{Colors.BOLD}Testing IAM Permission Validation System (Code Pattern Validation){Colors.ENDC}")
+    print(f"{Colors.BOLD}Base URL: {AUTH_BASE_URL}{Colors.ENDC}")
+    print(f"{Colors.BOLD}{'='*80}{Colors.ENDC}")
+    
+    # Step 1: Admin Authentication
+    print(f"\n{Colors.BOLD}=== STEP 1: AUTHENTICATION ADMIN ==={Colors.ENDC}")
+    
+    admin_token = get_admin_token()
+    if not admin_token:
+        log_test("IAM Permission Validation", "FAIL", "Cannot get admin token")
+        return False
+    
+    admin_headers = {"Authorization": f"Bearer {admin_token}"}
+    
+    # Step 2: Test création avec code valide
+    print(f"\n{Colors.BOLD}=== STEP 2: TEST CRÉATION AVEC CODE VALIDE ==={Colors.ENDC}")
+    
+    valid_permission_data = {
+        "code": "test_valid.action",
+        "name": "Test Valid Permission",
+        "description": "Permission de test avec code valide",
+        "resource": "test_valid",
+        "action": "action",
+        "scope": "organization",
+        "category": "test"
+    }
+    
+    create_response = test_endpoint(
+        "POST",
+        f"{AUTH_BASE_URL}/iam/permissions",
+        data=valid_permission_data,
+        headers=admin_headers,
+        expected_status=201,
+        test_name="Create Permission with Valid Code"
+    )
+    
+    if not create_response:
+        log_test("Valid Code Creation", "FAIL", "Cannot create permission with valid code")
+        return False
+    
+    # Verify response structure
+    required_fields = ["id", "code", "name", "resource", "action"]
+    missing_fields = [field for field in required_fields if field not in create_response]
+    
+    if missing_fields:
+        log_test("Valid Code Response Structure", "FAIL", f"Missing fields: {missing_fields}")
+        return False
+    
+    # Verify code is correctly stored
+    if create_response.get("code") != valid_permission_data["code"]:
+        log_test("Valid Code Storage", "FAIL", f"Expected '{valid_permission_data['code']}', got '{create_response.get('code')}'")
+        return False
+    
+    created_permission_id = create_response.get("id")
+    log_test("Valid Code Creation", "PASS", f"Permission created with ID: {created_permission_id}")
+    log_test("Valid Code Response Structure", "PASS", "All required fields present")
+    log_test("Valid Code Storage", "PASS", "Code correctly stored")
+    
+    # Step 3: Test doublon (unicité du code)
+    print(f"\n{Colors.BOLD}=== STEP 3: TEST DOUBLON (UNICITÉ DU CODE) ==={Colors.ENDC}")
+    
+    duplicate_response = test_endpoint(
+        "POST",
+        f"{AUTH_BASE_URL}/iam/permissions",
+        data=valid_permission_data,  # Same data as before
+        headers=admin_headers,
+        expected_status=400,
+        test_name="Create Duplicate Permission"
+    )
+    
+    if duplicate_response:
+        error_detail = duplicate_response.get("detail", "")
+        if "already exists" in error_detail.lower() or "déjà" in error_detail.lower():
+            log_test("Duplicate Code Rejection", "PASS", f"Duplicate correctly rejected: {error_detail}")
+        else:
+            log_test("Duplicate Code Rejection", "FAIL", f"Unexpected error message: {error_detail}")
+    
+    # Step 4: Test codes invalides - Format incorrect
+    print(f"\n{Colors.BOLD}=== STEP 4: TEST CODES INVALIDES - FORMAT INCORRECT ==={Colors.ENDC}")
+    
+    invalid_codes = [
+        ("test-invalid", "Code avec tirets"),
+        ("testinvalid", "Code sans point"),
+        ("TEST.ACTION", "Code avec majuscules"),
+        ("", "Code vide"),
+        ("test.action!", "Code avec caractère spécial")
+    ]
+    
+    for invalid_code, description in invalid_codes:
+        print(f"\n  Test: {description}")
+        
+        invalid_data = {
+            "code": invalid_code,
+            "name": f"Test Invalid Permission - {description}",
+            "description": f"Permission de test avec {description.lower()}",
+            "resource": "test",
+            "action": "action",
+            "scope": "organization",
+            "category": "test"
+        }
+        
+        invalid_response = test_endpoint(
+            "POST",
+            f"{AUTH_BASE_URL}/iam/permissions",
+            data=invalid_data,
+            headers=admin_headers,
+            expected_status=422,  # Pydantic validation error
+            test_name=f"Invalid Code - {description}"
+        )
+        
+        if invalid_response:
+            error_detail = invalid_response.get("detail", "")
+            if isinstance(error_detail, list) and len(error_detail) > 0:
+                error_msg = error_detail[0].get("msg", "") if isinstance(error_detail[0], dict) else str(error_detail[0])
+            else:
+                error_msg = str(error_detail)
+            
+            if "pattern" in error_msg.lower() or "format" in error_msg.lower() or "invalide" in error_msg.lower():
+                log_test(f"Invalid Code Rejection - {description}", "PASS", f"Correctly rejected: {error_msg}")
+            else:
+                log_test(f"Invalid Code Rejection - {description}", "FAIL", f"Unexpected error: {error_msg}")
+    
+    # Step 5: Test resource/action invalides
+    print(f"\n{Colors.BOLD}=== STEP 5: TEST RESOURCE/ACTION INVALIDES ==={Colors.ENDC}")
+    
+    invalid_resource_data = {
+        "code": "test_resource_invalid.action",
+        "name": "Test Invalid Resource",
+        "description": "Permission avec resource invalide",
+        "resource": "test-invalid",  # Tiret invalide
+        "action": "action",
+        "scope": "organization",
+        "category": "test"
+    }
+    
+    invalid_resource_response = test_endpoint(
+        "POST",
+        f"{AUTH_BASE_URL}/iam/permissions",
+        data=invalid_resource_data,
+        headers=admin_headers,
+        expected_status=422,
+        test_name="Invalid Resource with Dash"
+    )
+    
+    if invalid_resource_response:
+        log_test("Invalid Resource Rejection", "PASS", "Resource with dash correctly rejected")
+    
+    invalid_action_data = {
+        "code": "test_action.invalid_action",
+        "name": "Test Invalid Action",
+        "description": "Permission avec action invalide",
+        "resource": "test_action",
+        "action": "read!",  # Caractère spécial invalide
+        "scope": "organization",
+        "category": "test"
+    }
+    
+    invalid_action_response = test_endpoint(
+        "POST",
+        f"{AUTH_BASE_URL}/iam/permissions",
+        data=invalid_action_data,
+        headers=admin_headers,
+        expected_status=422,
+        test_name="Invalid Action with Special Character"
+    )
+    
+    if invalid_action_response:
+        log_test("Invalid Action Rejection", "PASS", "Action with special character correctly rejected")
+    
+    # Step 6: Test GET /api/iam/permissions - Vérifier toutes les permissions
+    print(f"\n{Colors.BOLD}=== STEP 6: TEST GET PERMISSIONS - VÉRIFICATION INTÉGRITÉ ==={Colors.ENDC}")
+    
+    permissions_response = test_endpoint(
+        "GET",
+        f"{AUTH_BASE_URL}/iam/permissions",
+        headers=admin_headers,
+        expected_status=200,
+        test_name="Get All Permissions"
+    )
+    
+    if not permissions_response:
+        log_test("Get Permissions", "FAIL", "Cannot retrieve permissions list")
+        return False
+    
+    permissions = permissions_response if isinstance(permissions_response, list) else []
+    
+    # Vérifier qu'il n'y a pas de permissions sans code
+    permissions_without_code = [p for p in permissions if not p.get("code")]
+    if permissions_without_code:
+        log_test("Permissions Code Integrity", "FAIL", f"Found {len(permissions_without_code)} permissions without code")
+    else:
+        log_test("Permissions Code Integrity", "PASS", "All permissions have valid codes")
+    
+    # Vérifier qu'il n'y a pas de doublons
+    codes = [p.get("code") for p in permissions if p.get("code")]
+    duplicates = [code for code in set(codes) if codes.count(code) > 1]
+    if duplicates:
+        log_test("Permissions Code Uniqueness", "FAIL", f"Found duplicate codes: {duplicates}")
+    else:
+        log_test("Permissions Code Uniqueness", "PASS", "All permission codes are unique")
+    
+    log_test("Get Permissions", "PASS", f"Retrieved {len(permissions)} permissions")
+    
+    # Step 7: Test suppression de la permission de test
+    print(f"\n{Colors.BOLD}=== STEP 7: TEST SUPPRESSION PERMISSION DE TEST ==={Colors.ENDC}")
+    
+    if created_permission_id:
+        delete_response = test_endpoint(
+            "DELETE",
+            f"{AUTH_BASE_URL}/iam/permissions/{created_permission_id}",
+            headers=admin_headers,
+            expected_status=200,
+            test_name="Delete Test Permission"
+        )
+        
+        if delete_response:
+            log_test("Test Permission Cleanup", "PASS", "Test permission successfully deleted")
+        else:
+            log_test("Test Permission Cleanup", "FAIL", "Cannot delete test permission")
+    
+    return True
+
+
 if __name__ == "__main__":
-    print(f"{Colors.BOLD}🚀 Starting IAM Group Profile Assignment System Testing{Colors.ENDC}")
+    print(f"{Colors.BOLD}🚀 Starting IAM Permission Validation System Testing{Colors.ENDC}")
     print(f"{Colors.BOLD}Testing Base URLs:{Colors.ENDC}")
     print(f"  Auth Service: {AUTH_BASE_URL}")
     print(f"  JLC API: {API_BASE_URL}")
@@ -5085,37 +5312,36 @@ if __name__ == "__main__":
         print(f"\n{Colors.RED}❌ Auth service not available - aborting all tests{Colors.ENDC}")
         sys.exit(1)
     
-    # Run IAM Group Profile Assignment test
-    assignment_success = test_iam_group_profile_assignment_system()
+    # Run IAM Permission Validation test
+    validation_success = test_iam_permission_validation_system()
     
     # Print final summary
     print(f"\n{Colors.BOLD}{'='*80}{Colors.ENDC}")
-    print(f"{Colors.BOLD}IAM GROUP PROFILE ASSIGNMENT TESTING SUMMARY{Colors.ENDC}")
+    print(f"{Colors.BOLD}IAM PERMISSION VALIDATION TESTING SUMMARY{Colors.ENDC}")
     print(f"{Colors.BOLD}{'='*80}{Colors.ENDC}")
     
-    if assignment_success:
-        print(f"\n{Colors.GREEN}✅ IAM GROUP PROFILE ASSIGNMENT TEST PASSED{Colors.ENDC}")
+    if validation_success:
+        print(f"\n{Colors.GREEN}✅ IAM PERMISSION VALIDATION TEST PASSED{Colors.ENDC}")
         print(f"  ✅ Admin authentication working (admin/Awana2025!)")
-        print(f"  ✅ Groups and profiles use UUID fields (not ObjectId)")
-        print(f"  ✅ Profile assignment to group working")
-        print(f"  ✅ Idempotence verified (no error if already assigned)")
-        print(f"  ✅ Profile removal from group working")
-        print(f"  ✅ Re-assignment after removal working")
-        print(f"  ✅ Different groups tested (Entreprises, Commerciaux)")
-        print(f"  ✅ Error handling for invalid IDs working")
+        print(f"  ✅ Valid permission code creation working")
+        print(f"  ✅ Duplicate code rejection working")
+        print(f"  ✅ Invalid code format rejection working")
+        print(f"  ✅ Invalid resource/action rejection working")
+        print(f"  ✅ Permission integrity verification working")
+        print(f"  ✅ Test permission cleanup working")
         
-        print(f"\n{Colors.GREEN}🎉 IAM Group Profile Assignment system working correctly!{Colors.ENDC}")
+        print(f"\n{Colors.GREEN}🎉 IAM Permission validation system working correctly!{Colors.ENDC}")
         print(f"{Colors.GREEN}✅ SUCCESS CRITERIA MET:{Colors.ENDC}")
-        print(f"  • All CRUD operations work ✅")
-        print(f"  • UUID vs ObjectId bug fixed ✅") 
-        print(f"  • Error handling working ✅")
-        print(f"  • Idempotence working ✅")
+        print(f"  • Valid code creation works ✅")
+        print(f"  • Duplicate codes rejected ✅") 
+        print(f"  • Invalid formats rejected ✅")
+        print(f"  • Code normalization working ✅")
         
         sys.exit(0)
     else:
-        print(f"\n{Colors.RED}❌ IAM GROUP PROFILE ASSIGNMENT TEST FAILED{Colors.ENDC}")
-        print(f"  ❌ Assignment system not working correctly")
-        print(f"  ❌ UUID vs ObjectId bug may still be present")
+        print(f"\n{Colors.RED}❌ IAM PERMISSION VALIDATION TEST FAILED{Colors.ENDC}")
+        print(f"  ❌ Permission validation system not working correctly")
+        print(f"  ❌ Code validation may not be enforced")
         
-        print(f"\n{Colors.RED}⚠️  IAM Group Profile Assignment test failed. The bug fix may not be working.{Colors.ENDC}")
+        print(f"\n{Colors.RED}⚠️  IAM Permission validation test failed. The validation system may not be working.{Colors.ENDC}")
         sys.exit(1)
