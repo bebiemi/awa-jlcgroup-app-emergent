@@ -66,6 +66,7 @@ export const store = configureStore({
     [besoinApi.reducerPath]: besoinApi.reducer,
     [configApi.reducerPath]: configApi.reducer,
     [entrepriseApi.reducerPath]: entrepriseApi.reducer,
+    [invitationApi.reducerPath]: invitationApi.reducer,
     [appConfigApi.reducerPath]: appConfigApi.reducer,
     [referencesApi.reducerPath]: referencesApi.reducer,
     [missionsApi.reducerPath]: missionsApi.reducer,
