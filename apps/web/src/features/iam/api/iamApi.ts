@@ -200,7 +200,7 @@ export const iamApi = createApi({
         method: 'POST',
         body: group,
       }),
-      invalidatesTags: ['Groups'],
+      invalidatesTags: [{ type: 'Groups', id: 'LIST' }],
     }),
     
     updateGroup: builder.mutation<Group, { id: string; data: GroupUpdate }>({
@@ -209,7 +209,10 @@ export const iamApi = createApi({
         method: 'PUT',
         body: data,
       }),
-      invalidatesTags: ['Groups'],
+      invalidatesTags: (_result, _error, { id }) => [
+        { type: 'Groups', id: 'LIST' },
+        { type: 'Groups', id },
+      ],
     }),
     
     deleteGroup: builder.mutation<void, string>({
@@ -217,7 +220,10 @@ export const iamApi = createApi({
         url: `/iam/groups/${groupId}`,
         method: 'DELETE',
       }),
-      invalidatesTags: ['Groups'],
+      invalidatesTags: (_result, _error, groupId) => [
+        { type: 'Groups', id: 'LIST' },
+        { type: 'Groups', id: groupId },
+      ],
     }),
     
     // User Assignments
