@@ -402,14 +402,26 @@ export default function Sidebar() {
 
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto p-4 space-y-6">
-        {navigationSections.map((section, idx) => (
-          <div key={idx}>
-            {!isCollapsed && (
-              <h3 className="text-xs font-semibold text-white/60 uppercase tracking-wider mb-3">
-                {section.title}
-              </h3>
-            )}
-            <ul className="space-y-1">
+        {navigationSections.map((section, idx) => {
+          const sectionExpanded = isSectionExpanded(section.title)
+          
+          return (
+            <div key={idx}>
+              {!isCollapsed && (
+                <button
+                  onClick={() => toggleSection(section.title)}
+                  className="w-full flex items-center justify-between text-xs font-semibold text-white/60 uppercase tracking-wider mb-3 hover:text-white/80 transition-colors"
+                >
+                  <span>{section.title}</span>
+                  {sectionExpanded ? (
+                    <ChevronDownIcon className="h-4 w-4" />
+                  ) : (
+                    <ChevronRightIcon className="h-4 w-4" />
+                  )}
+                </button>
+              )}
+              {(isCollapsed || sectionExpanded) && (
+                <ul className="space-y-1">
               {section.items.map((item) => {
                 const Icon = item.icon
                 const active = isActive(item.path)
