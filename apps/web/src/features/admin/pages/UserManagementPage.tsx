@@ -1057,6 +1057,16 @@ export default function UserManagementPage() {
             }}
             onSuccess={handleModalSuccess}
           />
+          <AdminUpdatePasswordModal
+            isOpen={showPasswordModal}
+            onClose={() => {
+              setShowPasswordModal(false)
+              setSelectedUser(null)
+            }}
+            userId={selectedUser.id}
+            username={selectedUser.username}
+            onSuccess={handleModalSuccess}
+          />
         </>
       )}
       <QuickAddUserModal isOpen={showQuickAddModal} onClose={() => setShowQuickAddModal(false)} />
