@@ -295,7 +295,7 @@ function App() {
       <Route
         path="/missions/create"
         element={
-          <ProtectedRoute requiredPermissions={['missions.create']}>
+          <ProtectedRoute requiredPermissions={['missions.create.all', 'missions.create.own']}>
             <CreateMissionPage />
           </ProtectedRoute>
         }
