@@ -602,6 +602,159 @@ export default function ValidationsPage() {
             </div>
           </div>
         </Modal>
+
+        {/* Detail Panel Modal */}
+        <Modal
+          isOpen={showDetailPanel}
+          onClose={() => {
+            setShowDetailPanel(false)
+            setDetailValidation(null)
+          }}
+          title="Détail de la validation"
+        >
+          {detailValidation && (
+            <div className="space-y-6">
+              {/* User Info */}
+              <div className="bg-gray-50 rounded-lg p-4">
+                <h3 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
+                  <UserIcon className="w-5 h-5" />
+                  Informations utilisateur
+                </h3>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <p className="text-xs text-gray-500">Nom complet</p>
+                    <p className="text-sm font-medium text-gray-900">{detailValidation.full_name}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-500">Type</p>
+                    <p className="text-sm font-medium text-gray-900">{getValidationTypeLabel(detailValidation.validation_type)}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-500">Email</p>
+                    <p className="text-sm font-medium text-gray-900">{detailValidation.email}</p>
+                  </div>
+                  {detailValidation.phone && (
+                    <div>
+                      <p className="text-xs text-gray-500">Téléphone</p>
+                      <p className="text-sm font-medium text-gray-900">{detailValidation.phone}</p>
+                    </div>
+                  )}
+                  {detailValidation.location_label && (
+                    <div>
+                      <p className="text-xs text-gray-500">Localisation</p>
+                      <p className="text-sm font-medium text-gray-900 flex items-center gap-1">
+                        <MapPinIcon className="w-4 h-4 text-gray-400" />
+                        {detailValidation.location_label}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Company Info (for company type) */}
+              {detailValidation.validation_type === ValidationTypes.COMPANY && detailValidation.company_name && (
+                <div className="bg-indigo-50 rounded-lg p-4">
+                  <h3 className="text-sm font-semibold text-indigo-900 mb-3 flex items-center gap-2">
+                    <BuildingOfficeIcon className="w-5 h-5" />
+                    Informations entreprise
+                  </h3>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <p className="text-xs text-indigo-600">Nom de l'entreprise</p>
+                      <p className="text-sm font-medium text-indigo-900">{detailValidation.company_name}</p>
+                    </div>
+                    {(detailValidation as any).company_siret && (
+                      <div>
+                        <p className="text-xs text-indigo-600">SIRET</p>
+                        <p className="text-sm font-medium text-indigo-900">{(detailValidation as any).company_siret}</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Manager Info */}
+              {(detailValidation as any).created_by_name && (
+                <div className="bg-blue-50 rounded-lg p-4">
+                  <h3 className="text-sm font-semibold text-blue-900 mb-3 flex items-center gap-2">
+                    <UserPlusIcon className="w-5 h-5" />
+                    Créé par (Manager)
+                  </h3>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <p className="text-xs text-blue-600">Nom</p>
+                      <p className="text-sm font-medium text-blue-900">{(detailValidation as any).created_by_name}</p>
+                    </div>
+                    {(detailValidation as any).created_by_email && (
+                      <div>
+                        <p className="text-xs text-blue-600">Email</p>
+                        <p className="text-sm font-medium text-blue-900">{(detailValidation as any).created_by_email}</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Warnings */}
+              {detailValidation.has_location_warning && (
+                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                  <div className="flex items-start gap-3">
+                    <ExclamationTriangleIcon className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <h4 className="text-sm font-semibold text-yellow-900">Avertissement de localisation</h4>
+                      <p className="text-sm text-yellow-700 mt-1">
+                        Le pays de cette validation n'est pas dans la liste autorisée. Vous pouvez l'ajouter directement.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Actions */}
+              <div className="flex justify-end gap-3 pt-4 border-t">
+                <button
+                  onClick={() => setShowDetailPanel(false)}
+                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
+                >
+                  Fermer
+                </button>
+                {detailValidation.has_location_warning && (
+                  <button
+                    onClick={() => {
+                      handleAddCountry(detailValidation)
+                      setShowDetailPanel(false)
+                    }}
+                    className="px-4 py-2 text-sm font-medium text-white bg-yellow-600 rounded-lg hover:bg-yellow-700 flex items-center gap-2"
+                  >
+                    <MapPinIcon className="w-4 h-4" />
+                    Ajouter le pays
+                  </button>
+                )}
+                <button
+                  onClick={() => {
+                    setSelectedValidation(detailValidation)
+                    setShowDetailPanel(false)
+                    setShowRejectModal(true)
+                  }}
+                  className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 flex items-center gap-2"
+                >
+                  <XCircleIcon className="w-4 h-4" />
+                  Rejeter
+                </button>
+                <button
+                  onClick={() => {
+                    handleApprove(detailValidation)
+                    setShowDetailPanel(false)
+                  }}
+                  className="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 flex items-center gap-2"
+                >
+                  <CheckCircleIcon className="w-4 h-4" />
+                  Approuver
+                </button>
+              </div>
+            </div>
+          )}
+        </Modal>
       </div>
     </Layout>
   )
