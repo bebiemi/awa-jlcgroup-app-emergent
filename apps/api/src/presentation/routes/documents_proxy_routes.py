@@ -13,6 +13,42 @@ router = APIRouter()
 AUTH_SERVICE_URL = os.getenv("AUTH_SERVICE_URL", "http://localhost:8000")
 
 
+@router.api_route("/entreprises/form-config/{path:path}", methods=["GET", "POST", "PUT", "PATCH", "DELETE"])
+async def proxy_entreprise_form_config_requests(path: str, request: Request):
+    """
+    Proxy all /api/entreprises/form-config/* requests to auth-microservice
+    """
+    target_url = f"{AUTH_SERVICE_URL}/api/entreprises/form-config/{path}"
+    query_params = dict(request.query_params)
+    headers = {
+        key: value for key, value in request.headers.items()
+        if key.lower() not in ["host", "connection", "content-length", "x-forwarded-proto", "x-forwarded-for", "x-forwarded-host"]
+    }
+    body = await request.body()
+    
+    try:
+        async with httpx.AsyncClient(timeout=30.0, follow_redirects=True) as client:
+            response = await client.request(
+                method=request.method,
+                url=target_url,
+                params=query_params,
+                headers=headers,
+                content=body,
+            )
+            return Response(
+                content=response.content,
+                status_code=response.status_code,
+                headers=dict(response.headers),
+                media_type=response.headers.get('content-type', 'application/json'),
+            )
+    except httpx.RequestError as e:
+        return Response(
+            content=f'{{"detail": "Auth service unavailable: {str(e)}"}}',
+            status_code=503,
+            media_type="application/json",
+        )
+
+
 @router.api_route("/documents/{path:path}", methods=["GET", "POST", "PUT", "PATCH", "DELETE"])
 async def proxy_documents_requests(path: str, request: Request):
     """
