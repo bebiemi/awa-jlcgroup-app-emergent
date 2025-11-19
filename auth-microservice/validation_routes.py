@@ -37,6 +37,29 @@ class ValidationAssignment(BaseModel):
     assigned_to: str  # User ID of validator
 
 
+class RepresentantEntreprise(BaseModel):
+    """Entreprise info for representant"""
+    id: str
+    nom: str
+    email: Optional[str] = None
+    status: str = "active"
+    created_at: Optional[str] = None
+
+
+class RepresentantDetails(BaseModel):
+    """Details of existing representant"""
+    found: bool
+    user: Optional[dict] = None
+    entreprises: List[RepresentantEntreprise] = []
+    total_entreprises: int = 0
+
+
+class EnrichedValidationResponse(BaseModel):
+    """Validation with representant details"""
+    validation: Validation
+    representant_details: Optional[RepresentantDetails] = None
+
+
 @validation_router.get("", response_model=List[Validation])
 async def get_validations(
     validation_type: Optional[str] = Query(None, description="Filter by type: interim or company"),
