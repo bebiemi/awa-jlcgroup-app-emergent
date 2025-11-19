@@ -151,7 +151,7 @@ export const iamApi = createApi({
         method: 'POST',
         body: profile,
       }),
-      invalidatesTags: ['Profiles'],
+      invalidatesTags: [{ type: 'Profiles', id: 'LIST' }],
     }),
     
     updateProfile: builder.mutation<Profile, { id: string; data: ProfileUpdate }>({
