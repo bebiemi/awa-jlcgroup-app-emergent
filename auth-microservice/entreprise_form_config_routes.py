@@ -120,6 +120,34 @@ async def create_form_field(
     return field_doc
 
 
+# ==================== GET PUBLIC FIELDS (FOR REGISTRATION) ====================
+
+@router.get("/fields/public", response_model=FormConfigResponse)
+async def get_public_form_fields(
+    db: AsyncIOMotorDatabase = Depends(get_database)
+):
+    """
+    Récupérer les champs du formulaire visibles pour le public (inscription)
+    Endpoint PUBLIC - ne nécessite pas d'authentification
+    """
+    query = {
+        "is_active": True,
+        "visible_for_roles": {"$in": ["public", "all"]}
+    }
+    
+    # Récupérer les champs triés par ordre
+    fields = await db.entreprise_form_fields.find(query, {"_id": 0}).sort("order", 1).to_list(None)
+    
+    # Extraire les catégories uniques
+    categories = list(set([f.get("category", "general") for f in fields]))
+    
+    return {
+        "fields": fields,
+        "categories": sorted(categories),
+        "total_fields": len(fields)
+    }
+
+
 # ==================== GET ALL FIELDS ====================
 
 @router.get("/fields", response_model=FormConfigResponse)
