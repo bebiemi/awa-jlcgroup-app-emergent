@@ -156,20 +156,30 @@ get_db = get_database
 @router.post("", response_model=Mission, status_code=status.HTTP_201_CREATED)
 async def create_mission(
     mission: MissionCreate,
-    current_user: dict = Depends(get_current_user),
-    db = Depends(get_db)
+    current_user: User = Depends(get_user_dep),
+    db: AsyncIOMotorDatabase = Depends(get_database),
+    iam_service: IAMService = Depends(get_iam_service)
 ):
     """
     Créer une nouvelle mission (Étape 1)
-    Accessible par: Entreprises, Admin, Commerciaux
+    
+    Permissions requises:
+    - missions.create.own : Créer pour son entreprise
+    - missions.create.all : Créer pour n'importe quelle entreprise (Admin)
     """
-    # IAM Permission Check
-    checker = PermissionChecker(db)
-    has_permission = await checker.user_has_any_permission(
-        current_user.get("id"),
-        ["missions.create", "missions.manage"]
+    user_id = current_user.id
+    user_company_id = getattr(current_user, 'company_id', None)
+    
+    # Vérifier la permission de création
+    can_create = await check_resource_permission(
+        iam_service,
+        user_id,
+        user_company_id,
+        "missions",
+        "create"
     )
-    if not has_permission:
+    
+    if not can_create:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Vous n'avez pas la permission de créer une mission"
@@ -186,9 +196,22 @@ async def create_mission(
     mission_id = str(uuid.uuid4())
     now = datetime.now(timezone.utc)
     
+    # Déterminer le company_id de la mission
+    mission_company_id = mission.company_id if hasattr(mission, 'company_id') and mission.company_id else user_company_id
+    
+    # Vérifier que l'utilisateur a le droit de créer pour cette entreprise
+    has_create_all = await iam_service.user_has_permission(user_id, "missions.create.all")
+    if not has_create_all.has_permission and mission_company_id != user_company_id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Vous ne pouvez créer des missions que pour votre propre entreprise"
+        )
+    
     mission_data = {
         "id": mission_id,
         **mission.dict(),
+        "company_id": mission_company_id,
+        "created_by": user_id,
         "status": MissionStatus.DRAFT,
         "applications_count": 0,
         "shortlisted_count": 0,
@@ -198,6 +221,7 @@ async def create_mission(
         "updated_at": now
     }
     
+    logger.info(f"Mission créée par {user_id} pour company_id={mission_company_id}")
     await db.missions.insert_one(mission_data)
     
     # Remove MongoDB _id before creating Pydantic model
