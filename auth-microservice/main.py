@@ -50,6 +50,7 @@ from besoin_routes import router as besoin_router
 from entreprise_routes import router as entreprise_router
 from invitation_routes import router as invitation_router
 from entreprise_form_config_routes import router as entreprise_form_config_router
+from entreprise_grouping_routes import grouping_router
 from form_config_routes import router as form_config_router
 from bulk_operations_routes import bulk_router
 from notification_routes import router as notification_router
