@@ -48,15 +48,37 @@ const ProfilePermissionsBreakdown: React.FC<PermissionBreakdownProps> = ({ profi
       try {
         setLoading(true);
         
+        // Récupérer le token d'authentification
+        const token = localStorage.getItem('access_token');
+        
+        // Déterminer le baseUrl
+        const getBaseUrl = () => {
+          if (typeof window === 'undefined') return '/api';
+          
+          const isHTTPS = window.location.protocol === 'https:';
+          const hostname = window.location.hostname;
+          const isEmergentPreview = hostname.includes('preview.emergentagent.com') || hostname.includes('emergent.host');
+          
+          if (isHTTPS && isEmergentPreview) {
+            return `https://${hostname}/api`;
+          }
+          
+          return '/api';
+        };
+        
+        const baseUrl = getBaseUrl();
+        const headers: HeadersInit = {
+          'Content-Type': 'application/json',
+        };
+        
+        if (token) {
+          headers['Authorization'] = `Bearer ${token}`;
+        }
+        
         // Récupérer les permissions effectives
         const effectiveRes = await fetch(
-          `/api/iam/profiles/${profileId}/effective-permissions`,
-          {
-            headers: {
-              'Authorization': `Bearer ${localStorage.getItem('token')}`,
-              'Content-Type': 'application/json',
-            },
-          }
+          `${baseUrl}/iam/profiles/${profileId}/effective-permissions`,
+          { headers }
         );
         
         if (!effectiveRes.ok) {
@@ -68,12 +90,7 @@ const ProfilePermissionsBreakdown: React.FC<PermissionBreakdownProps> = ({ profi
 
         // Récupérer les détails des bundles
         if (effectiveData.capability_bundle_ids && effectiveData.capability_bundle_ids.length > 0) {
-          const bundlesRes = await fetch('/api/iam/bundles', {
-            headers: {
-              'Authorization': `Bearer ${localStorage.getItem('token')}`,
-              'Content-Type': 'application/json',
-            },
-          });
+          const bundlesRes = await fetch(`${baseUrl}/iam/bundles`, { headers });
           
           if (bundlesRes.ok) {
             const bundlesData = await bundlesRes.json();
