@@ -629,16 +629,18 @@ async def remove_profile_from_group(
     
     logger.info(f"Profile {profile_id} removed from group {group_id} by {current_user.username}")
     
-    # Invalidate cache for all users in the group
+    # Invalidate cache for all users that have this group
     iam_service = IAMService(db)
-    user_ids = group.get("user_ids", [])
-    for user_id in user_ids:
-        await iam_service.cache.invalidate_user(user_id)
+    group_code = group.get("code")
+    if group_code:
+        users_with_group = await db.users.find({"roles": group_code}).to_list(1000)
+        for user in users_with_group:
+            await iam_service.cache.invalidate_user(user["id"])
     
     return {
         "success": True,
         "message": "Profile removed from group",
-        "users_affected": len(user_ids)
+        "group_code": group_code
     }
 
 
