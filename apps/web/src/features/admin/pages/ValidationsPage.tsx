@@ -194,7 +194,7 @@ export default function ValidationsPage() {
     try {
       // Approuver toutes les validations sélectionnées
       await Promise.all(
-        selectedValidations.map(id => approveValidation(id).unwrap())
+        selectedValidations.map(id => approveValidation({ id }).unwrap())
       )
       toast.success(`${selectedValidations.length} validation(s) approuvée(s)`)
       setShowBulkActionsModal(false)
