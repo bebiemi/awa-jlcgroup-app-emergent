@@ -211,7 +211,7 @@ export default function EditFieldModal({ field, isOpen, onClose, onSuccess }: Ed
       <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
-          <h2 className="text-2xl font-bold text-gray-900">Créer un champ</h2>
+          <h2 className="text-2xl font-bold text-gray-900">Modifier le champ</h2>
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-gray-600 transition-colors"
