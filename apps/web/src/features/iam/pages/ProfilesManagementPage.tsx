@@ -48,12 +48,43 @@ const ProfilesManagementPage: React.FC = () => {
     if (!selectedProfile) return
     
     try {
-      await deleteProfile(selectedProfile.id).unwrap()
+      // Essayer de supprimer sans force d'abord
+      const result = await deleteProfile({ 
+        id: selectedProfile.id, 
+        force: false 
+      }).unwrap()
+      
       toast.success('Profil supprimé avec succès')
       setShowDeleteModal(false)
       setSelectedProfile(null)
     } catch (error: any) {
-      toast.error(error?.data?.detail || 'Erreur lors de la suppression du profil')
+      const errorDetail = error?.data?.detail || ''
+      
+      // Si le profil est encore assigné, proposer la suppression forcée
+      if (errorDetail.includes('assigned to') && errorDetail.includes('Use force=true')) {
+        const confirmForce = window.confirm(
+          `${errorDetail}\n\nVoulez-vous désassigner ce profil et le supprimer ?`
+        )
+        
+        if (confirmForce) {
+          try {
+            const result = await deleteProfile({ 
+              id: selectedProfile.id, 
+              force: true 
+            }).unwrap()
+            
+            toast.success(
+              `Profil supprimé avec succès (${result.unassigned_users || 0} utilisateur(s) et ${result.unassigned_groups || 0} groupe(s) désassignés)`
+            )
+            setShowDeleteModal(false)
+            setSelectedProfile(null)
+          } catch (forceError: any) {
+            toast.error(forceError?.data?.detail || 'Erreur lors de la suppression forcée')
+          }
+        }
+      } else {
+        toast.error(errorDetail || 'Erreur lors de la suppression du profil')
+      }
     }
   }
 
