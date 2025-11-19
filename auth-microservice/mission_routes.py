@@ -749,12 +749,16 @@ async def apply_to_mission(
 async def get_mission_applications(
     mission_id: str,
     status: Optional[ApplicationStatus] = None,
-    current_user: dict = Depends(get_current_user),
-    db = Depends(get_db)
+    current_user: User = Depends(get_user_dep),
+    db: AsyncIOMotorDatabase = Depends(get_database),
+    iam_service: IAMService = Depends(get_iam_service)
 ):
     """
     Récupérer les candidatures d'une mission (Étape 5-6)
-    Accessible par: Admin, Commercial, Entreprise propriétaire
+    
+    Permissions:
+    - applications.read.all : Voir toutes les candidatures (Admin, Commercial)
+    - applications.read.own : Voir les candidatures de ses missions (Entreprise)
     """
     # Vérifier que la mission existe
     mission = await db.missions.find_one({"id": mission_id})
@@ -764,28 +768,38 @@ async def get_mission_applications(
             detail="Mission non trouvée"
         )
     
-    # IAM: Check permissions
-    checker = PermissionChecker(db)
-    user_id = current_user.get("sub")
+    user_id = current_user.id
+    user_company_id = current_user.company_id
+    mission_company_id = mission.get("company_id")
     
-    can_manage = await checker.user_has_any_permission(
-        current_user.get("id"),
-        ["applications.manage", "applications.review"]
-    )
-    can_create = await checker.user_has_permission(
-        current_user.get("id"),
-        "missions.create"
-    )
+    # Vérifier les permissions pour lire les candidatures
+    has_read_all = await iam_service.user_has_permission(user_id, "applications.read.all")
+    has_read_own = await iam_service.user_has_permission(user_id, "applications.read.own")
     
-    can_view = (
-        can_manage or
-        (mission["company_id"] == user_id and can_create)
-    )
+    # Legacy fallback
+    if not has_read_all.has_permission and not has_read_own.has_permission:
+        has_view_all = await iam_service.user_has_permission(user_id, "applications.view_all")
+        has_view_own = await iam_service.user_has_permission(user_id, "applications.view_own")
+        
+        if has_view_all.has_permission:
+            has_read_all = has_view_all
+        elif has_view_own.has_permission:
+            has_read_own = has_view_own
     
-    if not can_view:
+    # Permission .all : accès complet
+    if has_read_all.has_permission:
+        pass  # OK
+    # Permission .own : vérifier que c'est sa mission
+    elif has_read_own.has_permission:
+        if user_company_id != mission_company_id:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Vous ne pouvez voir que les candidatures de vos propres missions"
+            )
+    else:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Vous n'avez pas accès aux candidatures"
+            detail="Vous n'avez pas la permission de voir les candidatures"
         )
     
     # Récupérer les candidatures
@@ -794,6 +808,10 @@ async def get_mission_applications(
         query["status"] = status
     
     applications = await db.applications.find(query).to_list(length=None)
+    
+    # Remove _id
+    for app in applications:
+        app.pop('_id', None)
     
     return [Application(**app) for app in applications]
 
