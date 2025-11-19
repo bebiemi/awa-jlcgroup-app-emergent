@@ -5,6 +5,7 @@ Extended user management endpoints
 from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File, Request
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from typing import List, Optional
+from pydantic import BaseModel
 import uuid
 from datetime import datetime, timezone
 import os
