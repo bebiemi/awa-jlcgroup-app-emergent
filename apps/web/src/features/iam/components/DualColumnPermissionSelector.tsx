@@ -190,12 +190,13 @@ const DualColumnPermissionSelector: React.FC<DualColumnPermissionSelectorProps> 
               Permissions Disponibles
             </h3>
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <Input
+              <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <input
+                type="text"
                 placeholder="Rechercher..."
                 value={searchLeft}
                 onChange={(e) => setSearchLeft(e.target.value)}
-                className="pl-10"
+                className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 disabled={disabled}
               />
             </div>
