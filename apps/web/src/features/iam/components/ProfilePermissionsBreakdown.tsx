@@ -49,18 +49,39 @@ const ProfilePermissionsBreakdown: React.FC<PermissionBreakdownProps> = ({ profi
         setLoading(true);
         
         // Récupérer les permissions effectives
-        const effectiveRes = await axios.get(
-          `/api/iam/profiles/${profileId}/effective-permissions`
+        const effectiveRes = await fetch(
+          `/api/iam/profiles/${profileId}/effective-permissions`,
+          {
+            headers: {
+              'Authorization': `Bearer ${localStorage.getItem('token')}`,
+              'Content-Type': 'application/json',
+            },
+          }
         );
-        setData(effectiveRes.data);
+        
+        if (!effectiveRes.ok) {
+          throw new Error('Erreur lors du chargement des permissions');
+        }
+        
+        const effectiveData = await effectiveRes.json();
+        setData(effectiveData);
 
         // Récupérer les détails des bundles
-        if (effectiveRes.data.capability_bundle_ids.length > 0) {
-          const bundlesRes = await axios.get('/api/iam/bundles');
-          const profileBundles = bundlesRes.data.filter((b: Bundle) =>
-            effectiveRes.data.capability_bundle_ids.includes(b.id)
-          );
-          setBundles(profileBundles);
+        if (effectiveData.capability_bundle_ids && effectiveData.capability_bundle_ids.length > 0) {
+          const bundlesRes = await fetch('/api/iam/bundles', {
+            headers: {
+              'Authorization': `Bearer ${localStorage.getItem('token')}`,
+              'Content-Type': 'application/json',
+            },
+          });
+          
+          if (bundlesRes.ok) {
+            const bundlesData = await bundlesRes.json();
+            const profileBundles = bundlesData.filter((b: Bundle) =>
+              effectiveData.capability_bundle_ids.includes(b.id)
+            );
+            setBundles(profileBundles);
+          }
         }
       } catch (error) {
         console.error('Erreur chargement permissions:', error);
