@@ -181,38 +181,23 @@ export default function EditFieldModal({ field, isOpen, onClose, onSuccess }: Ed
           ? options.filter((o) => o.label && o.value)
           : undefined
 
-      await createField({
-        ...formData,
-        order: parseInt(formData.order.toString()) || 0,
-        validation: validationData,
-        visible_for_roles: visibleRoles,
-        editable_for_roles: editableRoles,
-        options: fieldOptions,
+      await updateField({
+        id: field.id,
+        data: {
+          field_label: formData.field_label,
+          field_type: formData.field_type,
+          category: formData.category,
+          order: parseInt(formData.order.toString()) || 0,
+          placeholder: formData.placeholder || undefined,
+          help_text: formData.help_text || undefined,
+          validation: validationData,
+          visible_for_roles: visibleRoles,
+          editable_for_roles: editableRoles,
+          options: fieldOptions,
+        },
       }).unwrap()
 
       onSuccess?.()
-      
-      // Reset form
-      setFormData({
-        field_key: '',
-        field_label: '',
-        field_type: 'text',
-        category: 'general',
-        order: 0,
-        placeholder: '',
-        help_text: '',
-        default_value: '',
-      })
-      setValidation({
-        required: false,
-        min_length: '',
-        max_length: '',
-        min_value: '',
-        max_value: '',
-        pattern: '',
-        custom_error_message: '',
-      })
-      setOptions([{ label: '', value: '' }])
     } catch (error: any) {
       console.error('Failed to create field:', error)
       setErrors({ submit: error?.data?.detail || 'Erreur lors de la création' })
