@@ -93,11 +93,19 @@ class IAMService:
                     reason="User has no profiles assigned"
                 )
             
-            # 3. Get all permissions from profiles
+            # 3. Get all permissions from profiles (directes + bundles)
             profiles_cursor = self.profiles_collection.find({"id": {"$in": list(all_profile_ids)}})
             all_permission_ids = set()
             async for profile in profiles_cursor:
+                # Permissions directes
                 all_permission_ids.update(profile.get("permission_ids", []))
+                
+                # Permissions des bundles
+                bundle_ids = profile.get("capability_bundle_ids", [])
+                if bundle_ids:
+                    bundles_cursor = self.bundles_collection.find({"id": {"$in": bundle_ids}})
+                    async for bundle in bundles_cursor:
+                        all_permission_ids.update(bundle.get("permission_ids", []))
             
             # 4. Check if permission exists in user's permissions
             permission = await self.permissions_collection.find_one({"code": permission_code})
