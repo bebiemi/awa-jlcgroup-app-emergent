@@ -526,28 +526,65 @@ export default function ValidationsPage() {
           onClose={() => {
             setShowBulkActionsModal(false)
             setSelectedValidations([])
+            setRejectionReason('')
           }}
           title="Actions groupées"
         >
           <div className="space-y-4">
-            <p className="text-sm text-gray-500">
-              Vous avez sélectionné {selectedValidations.length} validation(s) de type {
-                bulkActionType === 'candidat' ? 'Candidats' :
-                bulkActionType === 'company' ? 'Entreprises' :
-                bulkActionType === 'collaborator' ? 'Collaborateurs' :
-                bulkActionType === 'warnings' ? 'Avertissements' :
-                'Toutes'
-              }.
-            </p>
-            <div className="flex justify-end gap-2">
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <p className="text-sm font-medium text-blue-900">
+                {selectedValidations.length} validation(s) sélectionnée(s)
+              </p>
+              <p className="text-xs text-blue-700 mt-1">
+                Type : {
+                  bulkActionType === 'candidat' ? 'Candidats' :
+                  bulkActionType === 'interim' ? 'Intérimaires' :
+                  bulkActionType === 'company' ? 'Entreprises' :
+                  bulkActionType === 'collaborator' ? 'Collaborateurs' :
+                  bulkActionType === 'warnings' ? 'Avertissements' :
+                  'Toutes'
+                }
+              </p>
+            </div>
+
+            {/* Rejection reason (shown when needed) */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Raison du rejet (optionnel pour approbation, requis pour rejet)
+              </label>
+              <textarea
+                value={rejectionReason}
+                onChange={(e) => setRejectionReason(e.target.value)}
+                placeholder="Entrez une raison..."
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                rows={3}
+              />
+            </div>
+
+            <div className="flex justify-end gap-3">
               <button
                 onClick={() => {
                   setShowBulkActionsModal(false)
                   setSelectedValidations([])
+                  setRejectionReason('')
                 }}
                 className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
               >
                 Annuler
+              </button>
+              <button
+                onClick={handleBulkReject}
+                className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 flex items-center gap-2"
+              >
+                <XCircleIcon className="w-4 h-4" />
+                Rejeter tout ({selectedValidations.length})
+              </button>
+              <button
+                onClick={handleBulkApprove}
+                className="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 flex items-center gap-2"
+              >
+                <CheckCircleIcon className="w-4 h-4" />
+                Approuver tout ({selectedValidations.length})
               </button>
             </div>
           </div>
