@@ -21,15 +21,17 @@ import {
 } from '@heroicons/react/24/outline'
 import { useListEntreprisesQuery, useUpdateEntrepriseMutation } from '@/features/company/api/entrepriseApi'
 import type { Entreprise, EntrepriseUpdate } from '@/features/company/api/entrepriseApi'
+import CreateEntrepriseModal from '../components/CreateEntrepriseModal'
 
 export default function EntreprisesManagementPage() {
-  const { data, isLoading, error } = useListEntreprisesQuery({ limit: 1000 })
+  const { data, isLoading, error, refetch } = useListEntreprisesQuery({ limit: 1000 })
   const [updateEntreprise] = useUpdateEntrepriseMutation()
   
   const [searchTerm, setSearchTerm] = useState('')
   const [expandedId, setExpandedId] = useState<string | null>(null)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editForm, setEditForm] = useState<EntrepriseUpdate>({})
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
 
   const entreprises = data || []
 
