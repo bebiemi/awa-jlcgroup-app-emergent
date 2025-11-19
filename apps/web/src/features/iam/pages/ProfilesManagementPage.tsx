@@ -301,6 +301,16 @@ const ProfilesManagementPage: React.FC = () => {
         onClose={() => setShowCreateModal(false)} 
       />
 
+      {/* View Details Modal */}
+      <ViewProfileDetailsModal
+        isOpen={showDetailsModal}
+        onClose={() => {
+          setShowDetailsModal(false)
+          setSelectedProfile(null)
+        }}
+        profile={selectedProfile}
+      />
+
       {/* Edit Modal */}
       {selectedProfile && (
         <EditProfileModal 
