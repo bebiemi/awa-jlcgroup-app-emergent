@@ -151,7 +151,7 @@ export default function AttachToExistingModal({
         </div>
 
         {/* Sélection entreprise cible si plusieurs */}
-        {entreprises.length > 1 && (
+        {representantEntreprises.length > 1 && (
           <div className="mb-6">
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Sélectionner l'entreprise cible *
