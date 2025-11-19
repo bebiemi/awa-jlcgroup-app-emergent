@@ -66,6 +66,7 @@ class IAMPermissions:
     ADMIN_DASHBOARD = "admin.dashboard"
     USERS_READ = "users.read"
     USERS_MANAGE = "users.manage"
+    USERS_PASSWORD_UPDATE = "users.password.update"
     
     # Email Settings
     EMAIL_SETTINGS_READ = "email.settings.read"
