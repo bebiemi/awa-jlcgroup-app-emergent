@@ -396,6 +396,23 @@ export default function Sidebar() {
 
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto p-4 space-y-6">
+        {/* Vue d'ensemble - Always visible, not collapsible */}
+        {userPermissions['admin.dashboard'] && (
+          <Link
+            to="/admin"
+            className={`flex items-center ${
+              isCollapsed ? 'justify-center' : 'justify-start'
+            } px-3 py-2.5 rounded-lg transition-all ${
+              isActive('/admin')
+                ? 'bg-jlc-magenta text-white'
+                : 'text-white/80 hover:bg-jlc-magenta/30 hover:text-white'
+            }`}
+          >
+            <HomeIcon className={`h-5 w-5 ${isCollapsed ? '' : 'mr-3'} flex-shrink-0`} />
+            {!isCollapsed && <span className="font-medium">Vue d'ensemble</span>}
+          </Link>
+        )}
+
         {navigationSections.map((section, idx) => {
           const sectionExpanded = isSectionExpanded(section.title)
           
