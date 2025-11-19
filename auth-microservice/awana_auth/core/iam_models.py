@@ -65,12 +65,12 @@ class Permission(BaseModel):
     Format: resource:action:scope (e.g., "missions:create:organization")
     """
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    code: str  # Unique identifier (e.g., "missions.create")
-    name: str  # Display name
+    code: str = Field(..., min_length=3, max_length=100, description="Code unique (ex: missions.create, iam.profiles.manage)")
+    name: str = Field(..., min_length=1, max_length=200)
     description: Optional[str] = None
-    resource: str  # Resource type (missions, users, contracts, etc.)
-    action: str  # Action (accepte n'importe quelle string pour flexibilité)
-    scope: str = "organization"  # Scope (accepte n'importe quelle string)
+    resource: str = Field(..., min_length=1, max_length=50)
+    action: str = Field(..., min_length=1, max_length=50)
+    scope: str = Field(default="organization", min_length=1, max_length=50)
     
     # Metadata
     is_system: bool = False  # Protected system permission
@@ -78,6 +78,43 @@ class Permission(BaseModel):
     
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    
+    @field_validator('code')
+    @classmethod
+    def validate_code(cls, v: str) -> str:
+        """
+        Valide que le code respecte le pattern:
+        - Caractères autorisés: a-z, 0-9, points, underscores
+        - Format: resource.action ou resource.subresource.action
+        - Exemples valides: missions.create, iam.profiles.manage, system.config.read
+        """
+        if not v or not v.strip():
+            raise ValueError("Le code ne peut pas être vide")
+        
+        # Pattern: segments séparés par des points, chaque segment contient a-z, 0-9, underscores
+        pattern = re.compile(r'^[a-z0-9_]+(\.[a-z0-9_]+)+$|^\*\.\*$')
+        if not pattern.match(v):
+            raise ValueError(
+                f"Code invalide '{v}'. Format attendu: 'resource.action' ou 'resource.subresource.action'. "
+                "Caractères autorisés: a-z, 0-9, underscore (_), point (.). Exemple: missions.create, iam.profiles.manage"
+            )
+        
+        return v.strip().lower()
+    
+    @field_validator('resource', 'action')
+    @classmethod
+    def validate_resource_action(cls, v: str) -> str:
+        """Valide que resource et action ne contiennent que des caractères valides"""
+        if not v or not v.strip():
+            raise ValueError("Le champ ne peut pas être vide")
+        
+        pattern = re.compile(r'^[a-z0-9_]+$')
+        if not pattern.match(v):
+            raise ValueError(
+                f"Valeur invalide '{v}'. Caractères autorisés: a-z, 0-9, underscore (_)"
+            )
+        
+        return v.strip().lower()
     
     class Config:
         json_encoders = {
