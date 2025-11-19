@@ -630,10 +630,10 @@ async def remove_profile_from_group(
             detail="Cannot modify protected group"
         )
     
-    # Remove profile from group (use iam_role_ids field)
+    # Remove profile from group (use profile_ids field)
     result = await groups_collection.update_one(
         {"_id": group["_id"]},
-        {"$pull": {"iam_role_ids": profile_id}}
+        {"$pull": {"profile_ids": profile_id}}
     )
     
     logger.info(f"Profile {profile_id} removed from group {group_id} by {current_user.username}")
