@@ -24,6 +24,8 @@ _jwt_manager: Optional[JWTManager] = None
 _session_storage: Optional[SessionStorage] = None
 _rbac_manager: Optional[RBACManager] = None
 _db: Optional[AsyncIOMotorDatabase] = None
+_iam_service: Optional['IAMService'] = None
+_cache_service = None
 
 
 def get_database() -> AsyncIOMotorDatabase:
