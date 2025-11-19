@@ -366,7 +366,7 @@ export default function ValidationsPage() {
                     <div className="flex items-center justify-between">
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
-                          <h3 className="text-lg font-medium text-gray-900">{validation.full_name}</h3>
+                          <h3 className="text-lg font-medium text-gray-900">{validation.user_full_name}</h3>
                           <span className="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
                             {getValidationTypeLabel(validation.validation_type)}
                           </span>
