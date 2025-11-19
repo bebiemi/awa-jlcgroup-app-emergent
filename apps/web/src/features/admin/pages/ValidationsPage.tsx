@@ -56,6 +56,13 @@ export default function ValidationsPage() {
   const [rejectionReason, setRejectionReason] = useState('')
   const [selectedValidator, setSelectedValidator] = useState('')
   const [selectedValidations, setSelectedValidations] = useState<string[]>([])
+  const [showDetailPanel, setShowDetailPanel] = useState(false)
+  const [detailValidation, setDetailValidation] = useState<Validation | null>(null)
+
+  const handleViewDetail = (validation: Validation) => {
+    setDetailValidation(validation)
+    setShowDetailPanel(true)
+  }
 
   const handleTileClick = (type: 'all' | 'candidat' | 'interim' | 'company' | 'collaborator' | 'warnings') => {
     // Filter validations based on tile clicked
