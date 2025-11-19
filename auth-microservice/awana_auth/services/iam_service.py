@@ -267,6 +267,12 @@ class IAMService:
                     "$set": {"updated_at": datetime.now(timezone.utc)}
                 }
             )
+            
+            # Invalider le cache pour cet utilisateur
+            if self.cache and result.modified_count > 0:
+                await self.cache.invalidate_user_permissions(user_id)
+                logger.info(f"🗑️  Cache invalidé pour user {user_id} après assignation de profil")
+            
             return result.modified_count > 0 or result.matched_count > 0
         except Exception as e:
             logger.error(f"Error assigning profiles to user: {e}")
