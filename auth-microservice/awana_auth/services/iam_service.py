@@ -297,6 +297,11 @@ class IAMService:
                     {"$addToSet": {"user_ids": user_id}}
                 )
             
+            # Invalider le cache pour cet utilisateur
+            if self.cache and result.modified_count > 0:
+                await self.cache.invalidate_user_permissions(user_id)
+                logger.info(f"🗑️  Cache invalidé pour user {user_id} après assignation de groupe")
+            
             return result.modified_count > 0
         except Exception as e:
             logger.error(f"Error assigning groups to user: {e}")
