@@ -173,6 +173,34 @@ async def create_validation_record(
         # For non-collaborators, use the assigned role
         validation_type = user.roles[0] if user.roles else "candidat"
     
+    # Extraire les informations du représentant légal pour les entreprises
+    representant_legal_nom = ""
+    representant_legal_email = ""
+    has_existing_representant = False
+    existing_representant_user_id = None
+    existing_representant_entreprises = []
+    
+    if validation_type == "company":
+        # Le représentant légal peut être fourni explicitement ou c'est l'utilisateur lui-même
+        representant_legal_nom = register_data.legal_representative or register_data.full_name
+        representant_legal_email = register_data.email
+        
+        # Détecter si ce représentant existe déjà
+        from services.representant_detection_service import detect_existing_representant
+        detection = await detect_existing_representant(
+            nom=representant_legal_nom,
+            email=representant_legal_email,
+            db=db,
+            exclude_user_id=user.id
+        )
+        
+        if detection["found"]:
+            has_existing_representant = True
+            existing_representant_user_id = detection["user_id"]
+            existing_representant_entreprises = [e["id"] for e in detection["entreprises"]]
+            logger.warning(f"⚠️ Représentant légal existant détecté: {representant_legal_nom} ({representant_legal_email})")
+            logger.warning(f"   Entreprises liées: {len(existing_representant_entreprises)}")
+    
     validation = {
         "id": str(uuid.uuid4()),
         "user_id": user.id,
@@ -188,6 +216,15 @@ async def create_validation_record(
         "city_name": None,
         "district_name": None,
         "neighborhood_name": None,
+        # Nouveaux champs Phase 1
+        "representant_legal_nom": representant_legal_nom,
+        "representant_legal_email": representant_legal_email,
+        "has_existing_representant": has_existing_representant,
+        "existing_representant_user_id": existing_representant_user_id,
+        "existing_representant_entreprises": existing_representant_entreprises,
+        "contact_confirmation": False,
+        "rattachement_status": None,
+        "rattachement_to_entreprise_id": None,
         "created_at": datetime.now(timezone.utc).isoformat(),
         "updated_at": datetime.now(timezone.utc).isoformat()
     }
