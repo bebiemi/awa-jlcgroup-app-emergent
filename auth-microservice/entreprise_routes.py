@@ -132,18 +132,44 @@ async def get_entreprise(
 ):
     """
     Get entreprise by ID
-    Requires: entreprises.read permission
-    """
-    # Check if user can access this entreprise (own company or admin)
-    user_company_id = getattr(current_user, "company_id", None) or getattr(current_user, "entreprise_id", None)
     
-    # If not admin, can only access own company
-    has_all_scope = "admin" in current_user.roles or "super_admin" in current_user.roles
-    if not has_all_scope and user_company_id != entreprise_id:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Accès non autorisé à cette entreprise"
-        )
+    Permissions:
+    - entreprises.read.all : Voir toutes les entreprises (Admin)
+    - entreprises.read.own : Voir uniquement sa propre entreprise (Entreprise)
+    """
+    from awana_auth.core.dependencies import get_iam_service
+    from awana_auth.services.iam_service import IAMService
+    
+    # Get IAM service
+    iam_service = IAMService(db)
+    
+    user_company_id = current_user.company_id or current_user.entreprise_id
+    
+    # Vérifier permission .all
+    has_read_all = await iam_service.user_has_permission(current_user.id, "entreprises.read.all")
+    
+    # Si pas .all, vérifier .own
+    if not has_read_all.has_permission:
+        has_read_own = await iam_service.user_has_permission(current_user.id, "entreprises.read.own")
+        
+        # Legacy fallback
+        if not has_read_own.has_permission:
+            has_view_own = await iam_service.user_has_permission(current_user.id, "entreprises.view_own")
+            if has_view_own.has_permission:
+                has_read_own = has_view_own
+        
+        if has_read_own.has_permission:
+            # Vérifier que c'est bien son entreprise
+            if user_company_id != entreprise_id:
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="Vous ne pouvez accéder qu'à votre propre entreprise"
+                )
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Permission insuffisante"
+            )
     
     entreprise = await db.entreprises.find_one({"id": entreprise_id})
     
