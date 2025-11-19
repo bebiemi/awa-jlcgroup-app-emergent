@@ -569,10 +569,19 @@ async def assign_profile_to_group(
             detail="Cannot modify protected group"
         )
     
-    # Assign profile to group (use iam_role_ids field as groups don't have profile_ids)
+    # Check if profile already assigned
+    if profile_id in group.get("profile_ids", []):
+        return {
+            "success": True,
+            "message": f"Profile '{profile['name']}' already assigned to group '{group['name']}'",
+            "group_code": group.get("code"),
+            "already_assigned": True
+        }
+    
+    # Assign profile to group (use profile_ids field)
     result = await groups_collection.update_one(
         {"_id": group["_id"]},
-        {"$addToSet": {"iam_role_ids": profile_id}}
+        {"$addToSet": {"profile_ids": profile_id}}
     )
     
     logger.info(f"Profile {profile_id} assigned to group {group_id} by {current_user.username}")
