@@ -543,15 +543,21 @@ async def assign_profile_to_group(
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """Assign a profile to a group"""
+    from bson import ObjectId
     groups_collection = db.groups
     profiles_collection = db.profiles
     
-    # Verify group exists
-    group = await groups_collection.find_one({"id": group_id})
+    # Verify group exists (groups use MongoDB _id, not custom id field)
+    try:
+        group = await groups_collection.find_one({"_id": ObjectId(group_id)})
+    except:
+        # If not valid ObjectId, try with code field
+        group = await groups_collection.find_one({"code": group_id})
+    
     if not group:
         raise HTTPException(status_code=404, detail="Group not found")
     
-    # Verify profile exists
+    # Verify profile exists (profiles use custom id field)
     profile = await profiles_collection.find_one({"id": profile_id})
     if not profile:
         raise HTTPException(status_code=404, detail="Profile not found")
@@ -563,10 +569,10 @@ async def assign_profile_to_group(
             detail="Cannot modify protected group"
         )
     
-    # Assign profile to group
+    # Assign profile to group (use iam_role_ids field as groups don't have profile_ids)
     result = await groups_collection.update_one(
-        {"id": group_id},
-        {"$addToSet": {"profile_ids": profile_id}}
+        {"_id": group["_id"]},
+        {"$addToSet": {"iam_role_ids": profile_id}}
     )
     
     logger.info(f"Profile {profile_id} assigned to group {group_id} by {current_user.username}")
