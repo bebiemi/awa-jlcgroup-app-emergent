@@ -76,7 +76,7 @@ export default function ValidationsPage() {
     
     // Don't open modal if no validations
     if (filtered.length === 0) {
-      toast.info('Aucune validation disponible pour cette catégorie')
+      toast('Aucune validation disponible pour cette catégorie')
       return
     }
     
