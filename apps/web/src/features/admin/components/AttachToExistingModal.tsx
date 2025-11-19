@@ -48,7 +48,7 @@ export default function AttachToExistingModal({
   const [attachToExisting, { isLoading: isAttaching }] = useAttachToExistingRepresentantMutation()
   const [rejectAttachment, { isLoading: isRejecting }] = useRejectAttachmentMutation()
 
-  const handleSubmit = async () => {
+  const handleAttach = async () => {
     if (!validation) return
 
     if (!contactConfirmation) {
@@ -56,44 +56,47 @@ export default function AttachToExistingModal({
       return
     }
 
-    if (entreprises.length > 1 && !selectedEntrepriseId) {
+    if (representantEntreprises.length > 1 && !selectedEntrepriseId) {
       toast.error('Veuillez sélectionner une entreprise cible')
       return
     }
 
-    setIsSubmitting(true)
+    try {
+      const targetEntrepriseId = representantEntreprises.length === 1 
+        ? representantEntreprises[0].id 
+        : selectedEntrepriseId
+
+      await attachToExisting({
+        validation_id: validation.id,
+        target_entreprise_id: targetEntrepriseId,
+        contact_confirmed: contactConfirmation,
+        notes: notes || undefined,
+      }).unwrap()
+
+      toast.success('Entreprise rattachée avec succès')
+      onAttach()
+      handleClose()
+    } catch (error: any) {
+      console.error('Error attaching validation:', error)
+      toast.error(error?.data?.detail || 'Erreur lors du rattachement')
+    }
+  }
+
+  const handleReject = async () => {
+    if (!validation) return
 
     try {
-      const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/validations/${validation.id}/attach-to-existing`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
-          },
-          body: JSON.stringify({
-            contact_confirmation: contactConfirmation,
-            target_entreprise_id: entreprises.length === 1 ? entreprises[0].id : selectedEntrepriseId,
-            notes: notes || undefined,
-          }),
-        }
-      )
+      await rejectAttachment({
+        validation_id: validation.id,
+        notes: notes || undefined,
+      }).unwrap()
 
-      if (response.ok) {
-        const result = await response.json()
-        toast.success(result.message || 'Entreprise rattachée avec succès')
-        onSuccess()
-        handleClose()
-      } else {
-        const error = await response.json()
-        toast.error(error.detail || 'Erreur lors du rattachement')
-      }
-    } catch (error) {
-      console.error('Error attaching validation:', error)
-      toast.error('Erreur lors du rattachement')
-    } finally {
-      setIsSubmitting(false)
+      toast.success('Rattachement rejeté, création standard')
+      onAttach()
+      handleClose()
+    } catch (error: any) {
+      console.error('Error rejecting attachment:', error)
+      toast.error(error?.data?.detail || 'Erreur lors du rejet')
     }
   }
 
