@@ -15,6 +15,9 @@ export default function RegisterPage() {
   const [register, { isLoading }] = useRegisterMutation()
   const [verifyEmail, { data: emailVerification }] = useLazyVerifyEmailDomainQuery()
   
+  // Charger les champs dynamiques pour les entreprises
+  const { data: formConfig, isLoading: isLoadingFields } = useGetFormFieldsQuery({ is_active: true })
+  
   const [accountType, setAccountType] = useState<'candidat' | 'company' | ''>('')
   const [formData, setFormData] = useState({
     username: '',
@@ -38,6 +41,9 @@ export default function RegisterPage() {
       custom_country: '',
     },
   })
+  
+  // État pour les champs dynamiques d'entreprise
+  const [dynamicCompanyData, setDynamicCompanyData] = useState<Record<string, any>>({})
 
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [passwordMatch, setPasswordMatch] = useState<boolean | null>(null)
