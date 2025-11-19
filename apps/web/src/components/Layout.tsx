@@ -9,6 +9,7 @@ import UserStatusIndicator from './UserStatusIndicator'
 import Sidebar from './Sidebar'
 import Breadcrumb from './Breadcrumb'
 import EmailVerificationBanner from './EmailVerificationBanner'
+import AnimatedGradientBar from './AnimatedGradientBar'
 
 interface LayoutProps {
   children: React.ReactNode
