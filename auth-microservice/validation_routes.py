@@ -120,20 +120,35 @@ async def get_my_validation(
     return Validation(**validation)
 
 
-@validation_router.get("/{validation_id}", response_model=Validation)
+@validation_router.get("/{validation_id}", response_model=dict)
 async def get_validation(
     validation_id: str,
     current_user: User = Depends(require_permission("validations.manage")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
-    """Get specific validation"""
+    """
+    Get specific validation with enriched data
+    Phase 2: Include representant details if existing representant detected
+    """
     validation = await db.validations.find_one({"id": validation_id}, {"_id": 0})
     if not validation:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Validation not found"
         )
-    return Validation(**validation)
+    
+    # Enrichir avec les détails du représentant existant si applicable
+    representant_details = None
+    if validation.get("has_existing_representant") and validation.get("existing_representant_user_id"):
+        representant_details = await get_representant_details(
+            validation["existing_representant_user_id"],
+            db
+        )
+    
+    return {
+        "validation": validation,
+        "representant_details": representant_details
+    }
 
 
 @validation_router.post("/{validation_id}/approve")
