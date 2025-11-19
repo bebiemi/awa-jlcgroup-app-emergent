@@ -336,40 +336,34 @@ export default function ValidationsPage() {
                       </div>
                       <ActionButtonGroup>
                         <ActionButton
-                          variant="success"
+                          type="approve"
                           onClick={() => handleApprove(validation)}
-                          tooltip="Approuver"
-                        >
-                          <CheckCircleIcon className="w-5 h-5" />
-                        </ActionButton>
+                          label="Approuver"
+                        />
                         <ActionButton
-                          variant="danger"
+                          type="reject"
                           onClick={() => {
                             setSelectedValidation(validation)
                             setShowRejectModal(true)
                           }}
-                          tooltip="Rejeter"
-                        >
-                          <XCircleIcon className="w-5 h-5" />
-                        </ActionButton>
+                          label="Rejeter"
+                        />
                         <ActionButton
-                          variant="primary"
+                          type="assign"
                           onClick={() => {
                             setSelectedValidation(validation)
                             setShowAssignModal(true)
                           }}
-                          tooltip="Assigner un validateur"
-                        >
-                          <UserIcon className="w-5 h-5" />
-                        </ActionButton>
+                          label="Assigner"
+                        />
                         {validation.has_location_warning && (
                           <ActionButton
-                            variant="warning"
+                            type="custom"
+                            icon={MapPinIcon}
+                            color="text-yellow-600 hover:bg-yellow-50"
                             onClick={() => handleAddCountry(validation)}
-                            tooltip="Ajouter le pays à la liste"
-                          >
-                            <MapPinIcon className="w-5 h-5" />
-                          </ActionButton>
+                            label="Ajouter le pays"
+                          />
                         )}
                       </ActionButtonGroup>
                     </div>
