@@ -109,6 +109,7 @@ app.include_router(auth_api_proxy_routes.router, prefix="/auth-api", tags=["Auth
 app.include_router(besoins_proxy_routes.router, prefix="/api/besoins", tags=["Besoins Proxy"])
 # Proxy /api/entreprises to auth-microservice
 app.include_router(entreprises_proxy_routes.router, prefix="/api/entreprises", tags=["Entreprises Proxy"])
+app.include_router(entreprise_grouping_proxy.grouping_proxy_router, prefix="/api", tags=["Entreprise Grouping Proxy"])
 # Proxy /api/email-verification to auth-microservice
 app.include_router(email_verification_proxy_routes.router, prefix="/api/email-verification", tags=["Email Verification Proxy"])
 # Proxy /api/documents and /api/support to auth-microservice
