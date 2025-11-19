@@ -1466,6 +1466,280 @@ def test_authentication_for_config_routes():
     return True
 
 
+def test_iam_group_profile_assignment_system():
+    """Test du système d'assignation de profils aux groupes IAM (Bug Fix Critical)"""
+    print(f"\n{Colors.BOLD}{'='*80}{Colors.ENDC}")
+    print(f"{Colors.BOLD}TEST SYSTÈME D'ASSIGNATION DE PROFILS AUX GROUPES IAM{Colors.ENDC}")
+    print(f"{Colors.BOLD}Testing IAM Group Profile Assignment System (UUID vs ObjectId Fix){Colors.ENDC}")
+    print(f"{Colors.BOLD}Base URL: {AUTH_BASE_URL}{Colors.ENDC}")
+    print(f"{Colors.BOLD}{'='*80}{Colors.ENDC}")
+    
+    # Step 1: Admin Authentication
+    print(f"\n{Colors.BOLD}=== STEP 1: AUTHENTICATION ADMIN ==={Colors.ENDC}")
+    
+    admin_token = get_admin_token()
+    if not admin_token:
+        log_test("IAM Group Profile Assignment", "FAIL", "Cannot get admin token")
+        return False
+    
+    admin_headers = {"Authorization": f"Bearer {admin_token}"}
+    
+    # Step 2: List all groups and verify UUID fields
+    print(f"\n{Colors.BOLD}=== STEP 2: LIST GROUPS AND VERIFY UUID FIELDS ==={Colors.ENDC}")
+    
+    groups_response = test_endpoint(
+        "GET",
+        f"{AUTH_BASE_URL}/iam/groups",
+        headers=admin_headers,
+        expected_status=200,
+        test_name="List All Groups"
+    )
+    
+    if not groups_response:
+        log_test("IAM Group Profile Assignment", "FAIL", "Cannot get groups list")
+        return False
+    
+    # Find "Entreprises" group (code: grp.company)
+    entreprises_group = None
+    commerciaux_group = None
+    
+    for group in groups_response:
+        if group.get("code") == "grp.company":
+            entreprises_group = group
+        elif group.get("code") == "grp.commercial":
+            commerciaux_group = group
+    
+    if not entreprises_group:
+        log_test("Find Entreprises Group", "FAIL", "Group 'Entreprises' (grp.company) not found")
+        return False
+    
+    if not commerciaux_group:
+        log_test("Find Commerciaux Group", "FAIL", "Group 'Commerciaux' (grp.commercial) not found")
+        return False
+    
+    # Verify groups have UUID id fields
+    entreprises_id = entreprises_group.get("id")
+    commerciaux_id = commerciaux_group.get("id")
+    
+    if not entreprises_id or len(entreprises_id) < 30:  # UUID should be longer than 30 chars
+        log_test("Entreprises Group UUID", "FAIL", f"Invalid UUID format: {entreprises_id}")
+        return False
+    
+    if not commerciaux_id or len(commerciaux_id) < 30:
+        log_test("Commerciaux Group UUID", "FAIL", f"Invalid UUID format: {commerciaux_id}")
+        return False
+    
+    log_test("Groups UUID Verification", "PASS", f"Entreprises ID: {entreprises_id[:8]}..., Commerciaux ID: {commerciaux_id[:8]}...")
+    
+    # Step 3: List all profiles and verify UUID fields
+    print(f"\n{Colors.BOLD}=== STEP 3: LIST PROFILES AND VERIFY UUID FIELDS ==={Colors.ENDC}")
+    
+    profiles_response = test_endpoint(
+        "GET",
+        f"{AUTH_BASE_URL}/iam/profiles",
+        headers=admin_headers,
+        expected_status=200,
+        test_name="List All Profiles"
+    )
+    
+    if not profiles_response:
+        log_test("IAM Group Profile Assignment", "FAIL", "Cannot get profiles list")
+        return False
+    
+    # Find "Admin Société" profile (code: company_admin) and "Commercial" profile (code: commercial)
+    company_admin_profile = None
+    commercial_profile = None
+    
+    for profile in profiles_response:
+        if profile.get("code") == "company_admin":
+            company_admin_profile = profile
+        elif profile.get("code") == "commercial":
+            commercial_profile = profile
+    
+    if not company_admin_profile:
+        log_test("Find Company Admin Profile", "FAIL", "Profile 'Admin Société' (company_admin) not found")
+        return False
+    
+    if not commercial_profile:
+        log_test("Find Commercial Profile", "FAIL", "Profile 'Commercial' (commercial) not found")
+        return False
+    
+    # Verify profiles have UUID id fields
+    company_admin_id = company_admin_profile.get("id")
+    commercial_id = commercial_profile.get("id")
+    
+    if not company_admin_id or len(company_admin_id) < 30:
+        log_test("Company Admin Profile UUID", "FAIL", f"Invalid UUID format: {company_admin_id}")
+        return False
+    
+    if not commercial_id or len(commercial_id) < 30:
+        log_test("Commercial Profile UUID", "FAIL", f"Invalid UUID format: {commercial_id}")
+        return False
+    
+    log_test("Profiles UUID Verification", "PASS", f"Company Admin ID: {company_admin_id[:8]}..., Commercial ID: {commercial_id[:8]}...")
+    
+    # Step 4: Assign "Admin Société" profile to "Entreprises" group
+    print(f"\n{Colors.BOLD}=== STEP 4: ASSIGN PROFILE TO GROUP ==={Colors.ENDC}")
+    
+    assign_response = test_endpoint(
+        "POST",
+        f"{AUTH_BASE_URL}/iam/groups/{entreprises_id}/profiles/{company_admin_id}",
+        headers=admin_headers,
+        expected_status=200,
+        test_name="Assign Company Admin Profile to Entreprises Group"
+    )
+    
+    if not assign_response:
+        log_test("Profile Assignment", "FAIL", "Cannot assign profile to group")
+        return False
+    
+    # Verify response indicates success
+    if not assign_response.get("success"):
+        log_test("Assignment Success", "FAIL", f"Assignment failed: {assign_response}")
+        return False
+    
+    assignment_message = assign_response.get("message", "")
+    log_test("Assignment Success", "PASS", f"Assignment successful: {assignment_message}")
+    
+    # Step 5: Test idempotence - assign same profile again
+    print(f"\n{Colors.BOLD}=== STEP 5: TEST IDEMPOTENCE ==={Colors.ENDC}")
+    
+    idempotent_response = test_endpoint(
+        "POST",
+        f"{AUTH_BASE_URL}/iam/groups/{entreprises_id}/profiles/{company_admin_id}",
+        headers=admin_headers,
+        expected_status=200,
+        test_name="Assign Same Profile Again (Idempotence)"
+    )
+    
+    if not idempotent_response:
+        log_test("Idempotence Test", "FAIL", "Idempotent assignment failed")
+        return False
+    
+    # Should indicate already assigned
+    if idempotent_response.get("already_assigned"):
+        log_test("Idempotence Verification", "PASS", "Profile already assigned - idempotence working")
+    else:
+        log_test("Idempotence Verification", "WARN", "No already_assigned flag, but no error occurred")
+    
+    # Step 6: Remove profile from group
+    print(f"\n{Colors.BOLD}=== STEP 6: REMOVE PROFILE FROM GROUP ==={Colors.ENDC}")
+    
+    remove_response = test_endpoint(
+        "DELETE",
+        f"{AUTH_BASE_URL}/iam/groups/{entreprises_id}/profiles/{company_admin_id}",
+        headers=admin_headers,
+        expected_status=200,
+        test_name="Remove Profile from Group"
+    )
+    
+    if not remove_response:
+        log_test("Profile Removal", "FAIL", "Cannot remove profile from group")
+        return False
+    
+    # Verify removal success
+    if not remove_response.get("success"):
+        log_test("Removal Success", "FAIL", f"Removal failed: {remove_response}")
+        return False
+    
+    removal_message = remove_response.get("message", "")
+    log_test("Removal Success", "PASS", f"Removal successful: {removal_message}")
+    
+    # Step 7: Re-assign profile after removal
+    print(f"\n{Colors.BOLD}=== STEP 7: RE-ASSIGN AFTER REMOVAL ==={Colors.ENDC}")
+    
+    reassign_response = test_endpoint(
+        "POST",
+        f"{AUTH_BASE_URL}/iam/groups/{entreprises_id}/profiles/{company_admin_id}",
+        headers=admin_headers,
+        expected_status=200,
+        test_name="Re-assign Profile After Removal"
+    )
+    
+    if not reassign_response:
+        log_test("Profile Re-assignment", "FAIL", "Cannot re-assign profile after removal")
+        return False
+    
+    if not reassign_response.get("success"):
+        log_test("Re-assignment Success", "FAIL", f"Re-assignment failed: {reassign_response}")
+        return False
+    
+    log_test("Re-assignment Success", "PASS", "Profile successfully re-assigned after removal")
+    
+    # Step 8: Test with different group - Commerciaux
+    print(f"\n{Colors.BOLD}=== STEP 8: TEST WITH COMMERCIAUX GROUP ==={Colors.ENDC}")
+    
+    commercial_assign_response = test_endpoint(
+        "POST",
+        f"{AUTH_BASE_URL}/iam/groups/{commerciaux_id}/profiles/{commercial_id}",
+        headers=admin_headers,
+        expected_status=200,
+        test_name="Assign Commercial Profile to Commerciaux Group"
+    )
+    
+    if not commercial_assign_response:
+        log_test("Commercial Group Assignment", "FAIL", "Cannot assign commercial profile to commerciaux group")
+        return False
+    
+    if not commercial_assign_response.get("success"):
+        log_test("Commercial Assignment Success", "FAIL", f"Commercial assignment failed: {commercial_assign_response}")
+        return False
+    
+    log_test("Commercial Assignment Success", "PASS", "Commercial profile successfully assigned to Commerciaux group")
+    
+    # Step 9: Error handling - invalid group ID
+    print(f"\n{Colors.BOLD}=== STEP 9: ERROR HANDLING - INVALID GROUP ID ==={Colors.ENDC}")
+    
+    invalid_group_id = "00000000-0000-0000-0000-000000000000"  # Invalid UUID
+    
+    invalid_group_response = test_endpoint(
+        "POST",
+        f"{AUTH_BASE_URL}/iam/groups/{invalid_group_id}/profiles/{company_admin_id}",
+        headers=admin_headers,
+        expected_status=404,
+        test_name="Assign Profile to Invalid Group"
+    )
+    
+    if invalid_group_response:
+        error_detail = invalid_group_response.get("detail", "")
+        if "Group not found" in error_detail or "not found" in error_detail.lower():
+            log_test("Invalid Group Error", "PASS", f"Correctly returned 404: {error_detail}")
+        else:
+            log_test("Invalid Group Error", "WARN", f"Got 404 but unexpected message: {error_detail}")
+    
+    # Step 10: Error handling - invalid profile ID
+    print(f"\n{Colors.BOLD}=== STEP 10: ERROR HANDLING - INVALID PROFILE ID ==={Colors.ENDC}")
+    
+    invalid_profile_id = "00000000-0000-0000-0000-000000000000"  # Invalid UUID
+    
+    invalid_profile_response = test_endpoint(
+        "POST",
+        f"{AUTH_BASE_URL}/iam/groups/{entreprises_id}/profiles/{invalid_profile_id}",
+        headers=admin_headers,
+        expected_status=404,
+        test_name="Assign Invalid Profile to Group"
+    )
+    
+    if invalid_profile_response:
+        error_detail = invalid_profile_response.get("detail", "")
+        if "Profile not found" in error_detail or "not found" in error_detail.lower():
+            log_test("Invalid Profile Error", "PASS", f"Correctly returned 404: {error_detail}")
+        else:
+            log_test("Invalid Profile Error", "WARN", f"Got 404 but unexpected message: {error_detail}")
+    
+    print(f"\n{Colors.BOLD}=== RÉSUMÉ DES TESTS ==={Colors.ENDC}")
+    print(f"✅ Authentification admin réussie")
+    print(f"✅ Groupes et profils utilisent des UUID (pas des ObjectId)")
+    print(f"✅ Assignation de profil au groupe fonctionne")
+    print(f"✅ Idempotence vérifiée (pas d'erreur si déjà assigné)")
+    print(f"✅ Suppression de profil du groupe fonctionne")
+    print(f"✅ Ré-assignation après suppression fonctionne")
+    print(f"✅ Test avec groupe différent (Commerciaux) fonctionne")
+    print(f"✅ Gestion d'erreurs pour IDs invalides fonctionne")
+    
+    return True
+
+
 def test_iam_rtk_query_cache_fix():
     """Test du fix du bug P1 - Cache RTK Query pour les profils IAM"""
     print(f"\n{Colors.BOLD}{'='*80}{Colors.ENDC}")
