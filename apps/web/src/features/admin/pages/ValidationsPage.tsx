@@ -759,6 +759,21 @@ export default function ValidationsPage() {
             </div>
           </div>
       </Modal>
+
+      {/* Attach To Existing Modal - Phase 3 */}
+      <AttachToExistingModal
+        isOpen={showAttachModal}
+        onClose={() => {
+          setShowAttachModal(false)
+          setSelectedValidation(null)
+          setRepresentantEntreprises([])
+        }}
+        validation={selectedValidation}
+        entreprises={representantEntreprises}
+        onSuccess={() => {
+          refetch()
+        }}
+      />
     </Layout>
   )
 }
