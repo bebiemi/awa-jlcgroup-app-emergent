@@ -121,13 +121,33 @@ async def list_profiles(
     current_user: User = Depends(get_current_user),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
-    """List all profiles"""
+    """List all profiles with effective permission counts"""
     profiles_collection = db.profiles
+    bundles_collection = db.capability_bundles
     profiles = []
     
     cursor = profiles_collection.find({}, {"_id": 0})
-    async for profile in cursor:
-        profiles.append(Profile(**profile))
+    async for profile_data in cursor:
+        # Calculer le count effectif (direct + bundles)
+        direct_count = len(profile_data.get("permission_ids", []))
+        bundle_count = 0
+        
+        capability_bundle_ids = profile_data.get("capability_bundle_ids", [])
+        if capability_bundle_ids:
+            # Récupérer les permissions de tous les bundles
+            bundle_perms = set()
+            async for bundle in bundles_collection.find(
+                {"id": {"$in": capability_bundle_ids}},
+                {"_id": 0, "permission_ids": 1}
+            ):
+                bundle_perms.update(bundle.get("permission_ids", []))
+            bundle_count = len(bundle_perms)
+        
+        # Ajouter les champs calculés
+        profile_data["effective_permission_count"] = direct_count + bundle_count
+        profile_data["bundle_permission_count"] = bundle_count
+        
+        profiles.append(Profile(**profile_data))
     
     return profiles
 
