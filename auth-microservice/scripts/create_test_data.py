@@ -99,6 +99,38 @@ async def main():
     default_password = "Test123!!"
     password_hash = bcrypt.hashpw(default_password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
     
+    # Helper pour créer un user complet
+    def create_user_dict(username, email, full_name, company_id=None, profile_codes=None, roles=None):
+        profile_ids = []
+        if profile_codes:
+            for code in profile_codes:
+                if profiles.get(code):
+                    profile_ids.append(profiles[code]["id"])
+        
+        return {
+            "id": str(uuid4()),
+            "username": username,
+            "email": email,
+            "full_name": full_name,
+            "password_hash": password_hash,
+            "company_id": company_id,
+            "entreprise_id": company_id,
+            "profile_ids": profile_ids,
+            "group_ids": [],
+            "roles": roles or [],
+            "status": "active",
+            "is_verified": True,
+            "provider": "local",
+            "provider_user_id": None,
+            "mfa_enabled": False,
+            "mfa_required": False,
+            "mfa_methods": [],
+            "metadata": {},
+            "profile_history": [],
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        }
+    
     utilisateurs = [
         # 2.1 Entreprises (1 par entreprise)
         {
