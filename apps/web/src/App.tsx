@@ -274,13 +274,10 @@ function App() {
           </ProtectedRoute>
         }
       />
+      {/* LEGACY ROUTE: Redirect to new IAM Groups page */}
       <Route
         path="/admin/iam/roles"
-        element={
-          <ProtectedRoute requiredPermissions={['rbac.manage_profile_roles', 'rbac.manage_group_roles']} requireAll={false}>
-            <IAMRolesManagementPage />
-          </ProtectedRoute>
-        }
+        element={<Navigate to="/admin/iam/groups" replace />}
       />
       
       {/* Routes Missions - Admin & Commercial - IAM */}
