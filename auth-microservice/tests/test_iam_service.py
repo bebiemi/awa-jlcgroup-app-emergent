@@ -45,13 +45,13 @@ async def db():
     client.close()
 
 
-@pytest.fixture
+@pytest_asyncio.fixture
 async def iam_service(db):
     """Fixture pour IAMService"""
     return IAMService(db)
 
 
-@pytest.fixture
+@pytest_asyncio.fixture
 async def sample_permissions(db):
     """Créer des permissions de test"""
     permissions = [
@@ -72,7 +72,7 @@ async def sample_permissions(db):
     return permissions
 
 
-@pytest.fixture
+@pytest_asyncio.fixture
 async def sample_bundle(db, sample_permissions):
     """Créer un bundle de test"""
     bundle = {
@@ -91,7 +91,7 @@ async def sample_bundle(db, sample_permissions):
     return bundle
 
 
-@pytest.fixture
+@pytest_asyncio.fixture
 async def sample_profile(db, sample_permissions, sample_bundle):
     """Créer un profil de test avec permissions directes et bundle"""
     profile = {
@@ -110,7 +110,7 @@ async def sample_profile(db, sample_permissions, sample_bundle):
     return profile
 
 
-@pytest.fixture
+@pytest_asyncio.fixture
 async def sample_user(db, sample_profile):
     """Créer un utilisateur de test"""
     user = {
