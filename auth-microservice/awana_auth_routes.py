@@ -2131,11 +2131,15 @@ async def list_users(
         if status:
             query["status"] = status
         
-        if role:
-            query["roles"] = role
-        
         # Filter out super-admins unless caller is super-admin AND explicitly requests them
         is_super_admin = "super_admin" in current_user.roles
+        
+        # Build roles filter with both role filter and hidden roles exclusion
+        roles_conditions = []
+        
+        # Add role filter if specified
+        if role:
+            roles_conditions.append(role)
         
         if not is_super_admin or not include_super_admin:
             # Get hidden roles from system_references
@@ -2144,11 +2148,23 @@ async def list_users(
                 {"_id": 0, "code": 1}
             ).to_list(length=None)
             
-            hidden_role_codes = [role["code"] for role in hidden_roles]
+            hidden_role_codes = [r["code"] for r in hidden_roles]
             
             if hidden_role_codes:
-                # Exclude users who have ANY hidden role
-                query["roles"] = {"$not": {"$elemMatch": {"$in": hidden_role_codes}}}
+                # Combine role filter with hidden roles exclusion
+                if role:
+                    # User wants to filter by a specific role AND exclude hidden roles
+                    # Check if the role is visible, then add it
+                    query["roles"] = {
+                        "$all": [role],  # Must contain the filtered role
+                        "$not": {"$elemMatch": {"$in": hidden_role_codes}}  # Must not contain hidden roles
+                    }
+                else:
+                    # No specific role filter, just exclude hidden roles
+                    query["roles"] = {"$not": {"$elemMatch": {"$in": hidden_role_codes}}}
+        elif role:
+            # Super admin with role filter and include_super_admin=true
+            query["roles"] = role
         
         # Count total
         total = await users_collection.count_documents(query)
