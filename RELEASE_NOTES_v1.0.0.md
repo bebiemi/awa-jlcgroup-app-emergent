@@ -343,8 +343,8 @@ Cette release marque la **première version stable et production-ready** de la p
 - Hot Reload : Activé
 
 ### Emergent Preview (Staging)
-- URL : `https://entsynchro.preview.emergentagent.com`
-- API : `https://entsynchro.preview.emergentagent.com/api`
+- URL : `https://identity-refresh-2.preview.emergentagent.com`
+- API : `https://identity-refresh-2.preview.emergentagent.com/api`
 - HTTPS : Forcé
 - Mixed Content : Résolu ✅
 
