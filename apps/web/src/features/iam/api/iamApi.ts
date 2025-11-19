@@ -161,7 +161,7 @@ export const iamApi = createApi({
         body: data,
       }),
       invalidatesTags: (_result, _error, { id }) => [
-        'Profiles',
+        { type: 'Profiles', id: 'LIST' },
         { type: 'Profiles', id },
       ],
     }),
