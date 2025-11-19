@@ -242,10 +242,10 @@ class IAMService:
             if self.cache:
                 cache_data = {
                     "user_id": user_id,
-                    "direct_profiles": [p.model_dump() for p in direct_profiles],
-                    "group_profiles": [p.model_dump() for p in group_profiles],
-                    "all_permissions": [p.model_dump() for p in all_permissions],
-                    "groups": [g.model_dump() for g in groups]
+                    "direct_profiles": [p.model_dump(mode='json') for p in direct_profiles],
+                    "group_profiles": [p.model_dump(mode='json') for p in group_profiles],
+                    "all_permissions": [p.model_dump(mode='json') for p in all_permissions],
+                    "groups": [g.model_dump(mode='json') for g in groups]
                 }
                 await self.cache.set_user_permissions(user_id, cache_data)
                 logger.debug(f"💾 Permissions user {user_id} mises en cache")
