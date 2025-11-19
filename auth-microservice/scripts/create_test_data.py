@@ -110,10 +110,19 @@ async def main():
             "company_id": entreprises[0]["id"],
             "entreprise_id": entreprises[0]["id"],
             "profile_ids": [profiles.get("profile.company", {}).get("id")] if profiles.get("profile.company") else [],
+            "group_ids": [],
             "roles": ["company"],
             "status": "active",
             "is_verified": True,
-            "created_at": datetime.now(timezone.utc)
+            "provider": "local",
+            "provider_user_id": None,
+            "mfa_enabled": False,
+            "mfa_required": False,
+            "mfa_methods": [],
+            "metadata": {},
+            "profile_history": [],
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(timezone.utc).isoformat()
         },
         {
             "id": str(uuid4()),
