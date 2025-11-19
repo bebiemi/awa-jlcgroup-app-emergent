@@ -93,6 +93,11 @@ class IAMPermissions:
     ENTREPRISES_READ = "entreprises.read"
     ENTREPRISES_EDIT = "entreprises.edit"
     ENTREPRISES_DELETE = "entreprises.delete"
+    ENTREPRISES_VALIDATE = "entreprises.validate"
+    ENTREPRISES_LINK_EXISTING = "entreprises.link_existing"
+    ENTREPRISES_GROUP_REQUEST = "entreprises.group_request"
+    ENTREPRISES_GROUP_APPROVE = "entreprises.group_approve"
+    ENTREPRISES_VIEW_LINKED = "entreprises.view_linked"
     
     # Forms & Configuration
     FORMS_MANAGE = "forms.manage"
