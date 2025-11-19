@@ -67,6 +67,8 @@ from documents_routes import router as documents_router
 from iam_bundles_routes import router as iam_bundles_router
 from iam_expiration_routes import router as iam_expiration_router
 from iam_cache_routes import router as iam_cache_router
+from temporary_permissions_routes import router as temporary_permissions_router
+from iam_audit_routes import router as iam_audit_router
 from rate_limit import limiter
 
 client = None
