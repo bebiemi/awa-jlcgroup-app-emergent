@@ -42,6 +42,7 @@ export default function ValidationsPage() {
   const [selectedValidator, setSelectedValidator] = useState('')
   const [selectedValidations, setSelectedValidations] = useState<string[]>([])
   const [contactConfirmation, setContactConfirmation] = useState(false)
+  const [representantEntreprises, setRepresentantEntreprises] = useState<any[]>([])
 
   // Charger les entreprises du représentant quand la modal s'ouvre
   useEffect(() => {
