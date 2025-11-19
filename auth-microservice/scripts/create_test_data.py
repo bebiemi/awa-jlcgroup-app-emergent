@@ -284,6 +284,9 @@ async def main():
             "title": "Consultant en Stratégie",
             "description": "Accompagnement stratégique des entreprises",
             "company_id": entreprises[3]["id"],  # IDAE
+            "job_type": "full_time",
+            "experience_required": "5+ ans",
+            "required_skills": ["Stratégie", "Conseil", "Management", "Analyse"],
             "contract_type": "CDI",
             "location": "Libreville",
             "start_date": (datetime.now(timezone.utc) + timedelta(days=30)).isoformat(),
