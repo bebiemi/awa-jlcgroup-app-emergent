@@ -62,6 +62,10 @@ class User(BaseModel):
     profile_ids: List[str] = Field(default_factory=list)
     group_ids: List[str] = Field(default_factory=list)
     
+    # Company/Entreprise association
+    company_id: Optional[str] = None
+    entreprise_id: Optional[str] = None
+    
     # Collaborator flag
     is_collaborator: bool = False
     
