@@ -133,6 +133,7 @@ async def sample_user(db, sample_profile):
 # ==================== TESTS ====================
 
 @pytest.mark.asyncio
+@pytest.mark.asyncio
 async def test_iam_service_initialization(db):
     """Test que IAMService s'initialise correctement"""
     iam = IAMService(db)
@@ -146,6 +147,7 @@ async def test_iam_service_initialization(db):
 
 
 @pytest.mark.asyncio
+@pytest.mark.asyncio
 async def test_get_user_permissions_basic(iam_service, sample_user, sample_permissions):
     """Test chargement des permissions de base"""
     response = await iam_service.get_user_permissions(sample_user["id"])
@@ -158,6 +160,7 @@ async def test_get_user_permissions_basic(iam_service, sample_user, sample_permi
     assert len(perm_codes) > 0
 
 
+@pytest.mark.asyncio
 @pytest.mark.asyncio
 async def test_get_user_permissions_with_bundles(iam_service, sample_user, sample_bundle):
     """Test que les permissions des bundles sont chargées"""
@@ -174,6 +177,7 @@ async def test_get_user_permissions_with_bundles(iam_service, sample_user, sampl
         assert bundle_perm_id in perm_ids, f"Permission du bundle {bundle_perm_id} non trouvée"
 
 
+@pytest.mark.asyncio
 @pytest.mark.asyncio
 async def test_get_user_permissions_without_profile(iam_service, db):
     """Test utilisateur sans profil"""
@@ -193,6 +197,7 @@ async def test_get_user_permissions_without_profile(iam_service, db):
 
 
 @pytest.mark.asyncio
+@pytest.mark.asyncio
 async def test_get_user_permissions_nonexistent_user(iam_service):
     """Test utilisateur inexistant"""
     response = await iam_service.get_user_permissions("nonexistent_user_id")
@@ -201,6 +206,7 @@ async def test_get_user_permissions_nonexistent_user(iam_service):
     assert len(response.all_permissions) == 0
 
 
+@pytest.mark.asyncio
 @pytest.mark.asyncio
 async def test_user_has_permission_granted(iam_service, sample_user, sample_permissions):
     """Test vérification permission accordée"""
@@ -215,6 +221,7 @@ async def test_user_has_permission_granted(iam_service, sample_user, sample_perm
 
 
 @pytest.mark.asyncio
+@pytest.mark.asyncio
 async def test_user_has_permission_from_bundle(iam_service, sample_user, sample_permissions):
     """Test vérification permission venant d'un bundle"""
     # L'utilisateur doit avoir les permissions du bundle (perm_0 et perm_1)
@@ -227,6 +234,7 @@ async def test_user_has_permission_from_bundle(iam_service, sample_user, sample_
 
 
 @pytest.mark.asyncio
+@pytest.mark.asyncio
 async def test_user_has_permission_denied(iam_service, sample_user):
     """Test vérification permission refusée"""
     check = await iam_service.user_has_permission(
@@ -238,6 +246,7 @@ async def test_user_has_permission_denied(iam_service, sample_user):
     assert "not found" in check.reason.lower()
 
 
+@pytest.mark.asyncio
 @pytest.mark.asyncio
 async def test_super_admin_bypass(iam_service, db):
     """Test que super_admin a toutes les permissions"""
@@ -259,6 +268,7 @@ async def test_super_admin_bypass(iam_service, db):
     assert "SuperAdmin" in check.reason
 
 
+@pytest.mark.asyncio
 @pytest.mark.asyncio
 async def test_get_user_permissions_with_groups(iam_service, db, sample_profile, sample_permissions):
     """Test chargement permissions via groupes"""
@@ -289,6 +299,7 @@ async def test_get_user_permissions_with_groups(iam_service, db, sample_profile,
     assert len(response.group_profiles) == 1
 
 
+@pytest.mark.asyncio
 @pytest.mark.asyncio
 async def test_multiple_profiles_union(iam_service, db, sample_permissions):
     """Test union de permissions de plusieurs profils"""
@@ -330,6 +341,7 @@ async def test_multiple_profiles_union(iam_service, db, sample_permissions):
 
 
 @pytest.mark.asyncio
+@pytest.mark.asyncio
 async def test_bundle_with_no_permissions(iam_service, db, sample_permissions):
     """Test bundle vide ne cause pas d'erreur"""
     empty_bundle = {
@@ -364,6 +376,7 @@ async def test_bundle_with_no_permissions(iam_service, db, sample_permissions):
     assert len(response.all_permissions) == 1
 
 
+@pytest.mark.asyncio
 @pytest.mark.asyncio
 async def test_performance_many_permissions(iam_service, db):
     """Test performance avec beaucoup de permissions"""
@@ -413,6 +426,7 @@ async def test_performance_many_permissions(iam_service, db):
 
 
 @pytest.mark.asyncio
+@pytest.mark.asyncio
 async def test_assign_profiles_to_user(iam_service, db, sample_profile):
     """Test assignation de profils à un utilisateur"""
     user = {
@@ -437,6 +451,7 @@ async def test_assign_profiles_to_user(iam_service, db, sample_profile):
     assert sample_profile["id"] in updated_user["profile_ids"]
 
 
+@pytest.mark.asyncio
 @pytest.mark.asyncio
 async def test_assign_groups_to_user(iam_service, db):
     """Test assignation de groupes à un utilisateur"""
@@ -476,6 +491,7 @@ async def test_assign_groups_to_user(iam_service, db):
 
 # ==================== TESTS DE RÉGRESSION ====================
 
+@pytest.mark.asyncio
 @pytest.mark.asyncio
 async def test_no_regression_direct_permissions(iam_service, db, sample_permissions):
     """Test de non-régression: permissions directes toujours chargées"""
