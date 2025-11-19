@@ -1,4 +1,5 @@
 import { useAppSelector } from '@/store/hooks'
+import { useSidebar } from '@/contexts/SidebarContext'
 import { BellIcon } from '@heroicons/react/24/outline'
 import { useGetNotificationsQuery } from '@/features/notifications/api/notificationApi'
 import { useGetMyPresenceQuery } from '@/features/presence/api/presenceApi'
