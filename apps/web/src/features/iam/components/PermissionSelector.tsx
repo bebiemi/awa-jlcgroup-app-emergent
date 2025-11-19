@@ -26,12 +26,16 @@ export default function PermissionSelector({
   // Extraire les catégories et scopes uniques
   const categories = useMemo(() => {
     const uniqueCategories = new Set(permissions.map((p) => p.category))
-    return ['all', ...Array.from(uniqueCategories)]
+    // Filtrer 'all' s'il existe déjà dans les catégories avant de l'ajouter
+    const categoriesArray = Array.from(uniqueCategories).filter((cat) => cat !== 'all')
+    return ['all', ...categoriesArray]
   }, [permissions])
 
   const scopes = useMemo(() => {
     const uniqueScopes = new Set(permissions.map((p) => p.scope))
-    return ['all', ...Array.from(uniqueScopes)]
+    // Filtrer 'all' s'il existe déjà dans les scopes avant de l'ajouter
+    const scopesArray = Array.from(uniqueScopes).filter((scope) => scope !== 'all')
+    return ['all', ...scopesArray]
   }, [permissions])
 
   // Filtrer les permissions
