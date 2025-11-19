@@ -1,16 +1,17 @@
-import { useState } from 'react'
-import { useCreateFormFieldMutation, type FieldOption } from '@/features/company/api/entrepriseFormConfigApi'
+import { useState, useEffect } from 'react'
+import { useUpdateFormFieldMutation, type FieldOption, type FormFieldConfig } from '@/features/company/api/entrepriseFormConfigApi'
 import { XMarkIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline'
 import Button from '@/components/Button'
 
-interface CreateFieldModalProps {
+interface EditFieldModalProps {
+  field: FormFieldConfig
   isOpen: boolean
   onClose: () => void
   onSuccess?: () => void
 }
 
-export default function CreateFieldModal({ isOpen, onClose, onSuccess }: CreateFieldModalProps) {
-  const [createField, { isLoading }] = useCreateFormFieldMutation()
+export default function EditFieldModal({ field, isOpen, onClose, onSuccess }: EditFieldModalProps) {
+  const [updateField, { isLoading }] = useUpdateFormFieldMutation()
 
   const [formData, setFormData] = useState({
     field_key: '',
