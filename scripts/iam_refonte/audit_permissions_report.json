@@ -1,29 +1,11 @@
 {
   "audit_date": "2025-01-19",
-  "total_permissions": 238,
-  "used_in_profiles": 192,
+  "total_permissions": 219,
+  "used_in_profiles": 161,
   "used_in_bundles": 76,
-  "used_in_db_total": 251,
-  "unused_in_db": 9,
-  "unused_by_category": {
-    "builtin": [
-      "supprimer_entreprises",
-      "voir_entreprises",
-      "modifier_entreprises"
-    ],
-    "documents": [
-      "documents.read_own"
-    ],
-    "missions": [
-      "missions.reject",
-      "missions.validate"
-    ],
-    "applications": [
-      "applications.edit_all",
-      "applications.reject",
-      "applications.validate"
-    ]
-  },
+  "used_in_db_total": 219,
+  "unused_in_db": 0,
+  "unused_by_category": {},
   "usage_details": {
     "users.read": {
       "code": "users.read",
@@ -183,276 +165,6 @@
       "is_used": true,
       "resource": "*",
       "action": "execute",
-      "scope": "organization"
-    },
-    "gestion_utilisateurs": {
-      "code": "gestion_utilisateurs",
-      "name": "gestion_utilisateurs",
-      "category": "builtin",
-      "used_in_profiles": [
-        "Super Administrateur"
-      ],
-      "used_in_bundles": [],
-      "is_used": true,
-      "resource": "system",
-      "action": "read",
-      "scope": "organization"
-    },
-    "gestion_groupes": {
-      "code": "gestion_groupes",
-      "name": "gestion_groupes",
-      "category": "builtin",
-      "used_in_profiles": [
-        "Super Administrateur"
-      ],
-      "used_in_bundles": [],
-      "is_used": true,
-      "resource": "system",
-      "action": "read",
-      "scope": "organization"
-    },
-    "gestion_profils": {
-      "code": "gestion_profils",
-      "name": "gestion_profils",
-      "category": "builtin",
-      "used_in_profiles": [
-        "Super Administrateur"
-      ],
-      "used_in_bundles": [],
-      "is_used": true,
-      "resource": "system",
-      "action": "read",
-      "scope": "organization"
-    },
-    "voir_utilisateurs": {
-      "code": "voir_utilisateurs",
-      "name": "voir_utilisateurs",
-      "category": "builtin",
-      "used_in_profiles": [
-        "Super Administrateur",
-        "Test Profil"
-      ],
-      "used_in_bundles": [],
-      "is_used": true,
-      "resource": "system",
-      "action": "read",
-      "scope": "organization"
-    },
-    "voir_validations": {
-      "code": "voir_validations",
-      "name": "voir_validations",
-      "category": "builtin",
-      "used_in_profiles": [
-        "Super Administrateur"
-      ],
-      "used_in_bundles": [],
-      "is_used": true,
-      "resource": "system",
-      "action": "read",
-      "scope": "organization"
-    },
-    "approuver_validations": {
-      "code": "approuver_validations",
-      "name": "approuver_validations",
-      "category": "builtin",
-      "used_in_profiles": [
-        "Super Administrateur"
-      ],
-      "used_in_bundles": [],
-      "is_used": true,
-      "resource": "system",
-      "action": "read",
-      "scope": "organization"
-    },
-    "rejeter_validations": {
-      "code": "rejeter_validations",
-      "name": "rejeter_validations",
-      "category": "builtin",
-      "used_in_profiles": [
-        "Super Administrateur"
-      ],
-      "used_in_bundles": [],
-      "is_used": true,
-      "resource": "system",
-      "action": "read",
-      "scope": "organization"
-    },
-    "voir_interimaires": {
-      "code": "voir_interimaires",
-      "name": "voir_interimaires",
-      "category": "builtin",
-      "used_in_profiles": [
-        "Super Administrateur",
-        "Test Profil"
-      ],
-      "used_in_bundles": [],
-      "is_used": true,
-      "resource": "system",
-      "action": "read",
-      "scope": "organization"
-    },
-    "modifier_interimaires": {
-      "code": "modifier_interimaires",
-      "name": "modifier_interimaires",
-      "category": "builtin",
-      "used_in_profiles": [
-        "Super Administrateur"
-      ],
-      "used_in_bundles": [],
-      "is_used": true,
-      "resource": "system",
-      "action": "read",
-      "scope": "organization"
-    },
-    "supprimer_interimaires": {
-      "code": "supprimer_interimaires",
-      "name": "supprimer_interimaires",
-      "category": "builtin",
-      "used_in_profiles": [
-        "Super Administrateur"
-      ],
-      "used_in_bundles": [],
-      "is_used": true,
-      "resource": "system",
-      "action": "read",
-      "scope": "organization"
-    },
-    "voir_entreprises": {
-      "code": "voir_entreprises",
-      "name": "voir_entreprises",
-      "category": "builtin",
-      "used_in_profiles": [],
-      "used_in_bundles": [],
-      "is_used": false,
-      "resource": "system",
-      "action": "read",
-      "scope": "organization"
-    },
-    "modifier_entreprises": {
-      "code": "modifier_entreprises",
-      "name": "modifier_entreprises",
-      "category": "builtin",
-      "used_in_profiles": [],
-      "used_in_bundles": [],
-      "is_used": false,
-      "resource": "system",
-      "action": "read",
-      "scope": "organization"
-    },
-    "supprimer_entreprises": {
-      "code": "supprimer_entreprises",
-      "name": "supprimer_entreprises",
-      "category": "builtin",
-      "used_in_profiles": [],
-      "used_in_bundles": [],
-      "is_used": false,
-      "resource": "system",
-      "action": "read",
-      "scope": "organization"
-    },
-    "voir_rapports": {
-      "code": "voir_rapports",
-      "name": "voir_rapports",
-      "category": "builtin",
-      "used_in_profiles": [
-        "Super Administrateur"
-      ],
-      "used_in_bundles": [],
-      "is_used": true,
-      "resource": "system",
-      "action": "read",
-      "scope": "organization"
-    },
-    "exporter_rapports": {
-      "code": "exporter_rapports",
-      "name": "exporter_rapports",
-      "category": "builtin",
-      "used_in_profiles": [
-        "Super Administrateur"
-      ],
-      "used_in_bundles": [],
-      "is_used": true,
-      "resource": "system",
-      "action": "read",
-      "scope": "organization"
-    },
-    "voir_dashboard": {
-      "code": "voir_dashboard",
-      "name": "voir_dashboard",
-      "category": "builtin",
-      "used_in_profiles": [
-        "Super Administrateur"
-      ],
-      "used_in_bundles": [],
-      "is_used": true,
-      "resource": "system",
-      "action": "read",
-      "scope": "organization"
-    },
-    "voir_statistiques": {
-      "code": "voir_statistiques",
-      "name": "voir_statistiques",
-      "category": "builtin",
-      "used_in_profiles": [
-        "Super Administrateur"
-      ],
-      "used_in_bundles": [],
-      "is_used": true,
-      "resource": "system",
-      "action": "read",
-      "scope": "organization"
-    },
-    "voir_missions": {
-      "code": "voir_missions",
-      "name": "voir_missions",
-      "category": "builtin",
-      "used_in_profiles": [
-        "Super Administrateur",
-        "Test Profil"
-      ],
-      "used_in_bundles": [],
-      "is_used": true,
-      "resource": "system",
-      "action": "read",
-      "scope": "organization"
-    },
-    "creer_missions": {
-      "code": "creer_missions",
-      "name": "creer_missions",
-      "category": "builtin",
-      "used_in_profiles": [
-        "Super Administrateur"
-      ],
-      "used_in_bundles": [],
-      "is_used": true,
-      "resource": "system",
-      "action": "read",
-      "scope": "organization"
-    },
-    "modifier_missions": {
-      "code": "modifier_missions",
-      "name": "modifier_missions",
-      "category": "builtin",
-      "used_in_profiles": [
-        "Super Administrateur"
-      ],
-      "used_in_bundles": [],
-      "is_used": true,
-      "resource": "system",
-      "action": "read",
-      "scope": "organization"
-    },
-    "supprimer_missions": {
-      "code": "supprimer_missions",
-      "name": "supprimer_missions",
-      "category": "builtin",
-      "used_in_profiles": [
-        "Super Administrateur"
-      ],
-      "used_in_bundles": [],
-      "is_used": true,
-      "resource": "system",
-      "action": "read",
       "scope": "organization"
     },
     "users.create": {
@@ -1481,17 +1193,6 @@
       "action": "manage",
       "scope": "organization"
     },
-    "documents.read_own": {
-      "code": "documents.read_own",
-      "name": "Documents Read Own",
-      "category": "documents",
-      "used_in_profiles": [],
-      "used_in_bundles": [],
-      "is_used": false,
-      "resource": "documents",
-      "action": "read",
-      "scope": "organization"
-    },
     "documents.upload_own": {
       "code": "documents.upload_own",
       "name": "Documents Upload Own",
@@ -1693,28 +1394,6 @@
       "action": "delete_own",
       "scope": "own"
     },
-    "missions.validate": {
-      "code": "missions.validate",
-      "name": "Valider une mission",
-      "category": "missions",
-      "used_in_profiles": [],
-      "used_in_bundles": [],
-      "is_used": false,
-      "resource": "missions",
-      "action": "validate",
-      "scope": "global"
-    },
-    "missions.reject": {
-      "code": "missions.reject",
-      "name": "Rejeter une mission",
-      "category": "missions",
-      "used_in_profiles": [],
-      "used_in_bundles": [],
-      "is_used": false,
-      "resource": "missions",
-      "action": "reject",
-      "scope": "global"
-    },
     "applications.view_all": {
       "code": "applications.view_all",
       "name": "Voir toutes les candidatures",
@@ -1726,39 +1405,6 @@
       "is_used": true,
       "resource": "applications",
       "action": "view_all",
-      "scope": "global"
-    },
-    "applications.edit_all": {
-      "code": "applications.edit_all",
-      "name": "Modifier toutes les candidatures",
-      "category": "applications",
-      "used_in_profiles": [],
-      "used_in_bundles": [],
-      "is_used": false,
-      "resource": "applications",
-      "action": "edit_all",
-      "scope": "global"
-    },
-    "applications.validate": {
-      "code": "applications.validate",
-      "name": "Valider une candidature",
-      "category": "applications",
-      "used_in_profiles": [],
-      "used_in_bundles": [],
-      "is_used": false,
-      "resource": "applications",
-      "action": "validate",
-      "scope": "global"
-    },
-    "applications.reject": {
-      "code": "applications.reject",
-      "name": "Rejeter une candidature",
-      "category": "applications",
-      "used_in_profiles": [],
-      "used_in_bundles": [],
-      "is_used": false,
-      "resource": "applications",
-      "action": "reject",
       "scope": "global"
     },
     "besoins.view_own": {
@@ -3144,7 +2790,9 @@
       "code": "users.manage",
       "name": "Users Manage",
       "category": "builtin",
-      "used_in_profiles": [],
+      "used_in_profiles": [
+        "Super Administrateur"
+      ],
       "used_in_bundles": [
         "Gestion Utilisateurs"
       ],
@@ -3269,6 +2917,113 @@
       "resource": "dashboard",
       "action": "hr",
       "scope": "own"
+    },
+    "users.view": {
+      "code": "users.view",
+      "name": "Voir les utilisateurs",
+      "category": "users",
+      "used_in_profiles": [
+        "Super Administrateur",
+        "Test Profil"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "users",
+      "action": "view",
+      "scope": "organization"
+    },
+    "validations.view": {
+      "code": "validations.view",
+      "name": "Voir les validations",
+      "category": "validations",
+      "used_in_profiles": [
+        "Super Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "validations",
+      "action": "view",
+      "scope": "organization"
+    },
+    "candidates.view": {
+      "code": "candidates.view",
+      "name": "Voir les intérimaires",
+      "category": "users",
+      "used_in_profiles": [
+        "Super Administrateur",
+        "Test Profil"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "candidates",
+      "action": "view",
+      "scope": "organization"
+    },
+    "candidates.update": {
+      "code": "candidates.update",
+      "name": "Modifier les intérimaires",
+      "category": "users",
+      "used_in_profiles": [
+        "Super Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "candidates",
+      "action": "update",
+      "scope": "organization"
+    },
+    "candidates.delete": {
+      "code": "candidates.delete",
+      "name": "Supprimer les intérimaires",
+      "category": "users",
+      "used_in_profiles": [
+        "Super Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "candidates",
+      "action": "delete",
+      "scope": "organization"
+    },
+    "dashboard.view": {
+      "code": "dashboard.view",
+      "name": "Voir le dashboard",
+      "category": "dashboard",
+      "used_in_profiles": [
+        "Super Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "dashboard",
+      "action": "view",
+      "scope": "organization"
+    },
+    "statistics.view": {
+      "code": "statistics.view",
+      "name": "Voir les statistiques",
+      "category": "dashboard",
+      "used_in_profiles": [
+        "Super Administrateur"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "statistics",
+      "action": "view",
+      "scope": "organization"
+    },
+    "missions.view": {
+      "code": "missions.view",
+      "name": "Voir les missions",
+      "category": "missions",
+      "used_in_profiles": [
+        "Super Administrateur",
+        "Test Profil"
+      ],
+      "used_in_bundles": [],
+      "is_used": true,
+      "resource": "missions",
+      "action": "view",
+      "scope": "organization"
     }
   }
 }
