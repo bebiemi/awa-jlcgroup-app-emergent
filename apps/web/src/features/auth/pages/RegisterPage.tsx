@@ -93,7 +93,7 @@ export default function RegisterPage() {
     }
 
     if (!formData.email.trim()) {
-      newErrors.email = 'L\'email est requis'
+      newErrors.email = 'L\'email utilisateur est requis'
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = 'Email invalide'
     }
@@ -112,14 +112,35 @@ export default function RegisterPage() {
       newErrors.confirmPassword = 'Les mots de passe ne correspondent pas'
     }
 
-    // Company-specific validation
-    if (accountType === 'company') {
-      if (!formData.companyName.trim()) {
-        newErrors.companyName = 'Le nom de l\'entreprise est requis'
-      }
-      if (!formData.legalRepresentative.trim()) {
-        newErrors.legalRepresentative = 'Le représentant légal est requis'
-      }
+    // Company-specific validation avec champs dynamiques
+    if (accountType === 'company' && formConfig?.fields) {
+      // Valider les champs obligatoires définis dans la configuration
+      formConfig.fields.forEach((field) => {
+        if (field.validation.required && field.visible_for_roles.includes('public')) {
+          const value = dynamicCompanyData[field.field_key]
+          if (!value || (typeof value === 'string' && !value.trim())) {
+            newErrors[field.field_key] = field.validation.custom_error_message || `${field.field_label} est requis`
+          }
+          
+          // Validation de longueur
+          if (value && typeof value === 'string') {
+            if (field.validation.min_length && value.length < field.validation.min_length) {
+              newErrors[field.field_key] = `${field.field_label} doit contenir au moins ${field.validation.min_length} caractères`
+            }
+            if (field.validation.max_length && value.length > field.validation.max_length) {
+              newErrors[field.field_key] = `${field.field_label} ne doit pas dépasser ${field.validation.max_length} caractères`
+            }
+          }
+          
+          // Validation de pattern
+          if (value && typeof value === 'string' && field.validation.pattern) {
+            const regex = new RegExp(field.validation.pattern)
+            if (!regex.test(value)) {
+              newErrors[field.field_key] = field.validation.custom_error_message || `Format de ${field.field_label} invalide`
+            }
+          }
+        }
+      })
     }
 
     setErrors(newErrors)
