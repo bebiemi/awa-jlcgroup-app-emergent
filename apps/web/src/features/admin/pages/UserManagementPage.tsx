@@ -84,6 +84,7 @@ export default function UserManagementPage() {
   const [showArchiveModal, setShowArchiveModal] = useState(false)
   const [showRestoreModal, setShowRestoreModal] = useState(false)
   const [showBulkImportModal, setShowBulkImportModal] = useState(false)
+  const [showPasswordModal, setShowPasswordModal] = useState(false)
 
   // Fetch users with filters
   const { data, isLoading, isFetching, refetch } = useGetUsersQuery({
