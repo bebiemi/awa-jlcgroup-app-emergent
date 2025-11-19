@@ -543,17 +543,11 @@ async def assign_profile_to_group(
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """Assign a profile to a group"""
-    from bson import ObjectId
     groups_collection = db.groups
     profiles_collection = db.profiles
     
-    # Verify group exists (groups use MongoDB _id, not custom id field)
-    try:
-        group = await groups_collection.find_one({"_id": ObjectId(group_id)})
-    except:
-        # If not valid ObjectId, try with code field
-        group = await groups_collection.find_one({"code": group_id})
-    
+    # Verify group exists (search by id field, not _id)
+    group = await groups_collection.find_one({"id": group_id})
     if not group:
         raise HTTPException(status_code=404, detail="Group not found")
     
@@ -578,9 +572,9 @@ async def assign_profile_to_group(
             "already_assigned": True
         }
     
-    # Assign profile to group (use profile_ids field)
+    # Assign profile to group (use id field to identify group)
     result = await groups_collection.update_one(
-        {"_id": group["_id"]},
+        {"id": group_id},
         {"$addToSet": {"profile_ids": profile_id}}
     )
     
