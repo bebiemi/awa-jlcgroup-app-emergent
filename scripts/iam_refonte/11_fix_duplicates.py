@@ -44,8 +44,8 @@ async def fix_duplicate_permissions():
         
         # Garder la meilleure version (la plus complète)
         best_perm = max(perms, key=lambda p: (
-            len(p.get('description', '')),
-            len(p.get('name', '')),
+            len(p.get('description') or ''),
+            len(p.get('name') or ''),
             p.get('category') != 'builtin'  # Préférer non-builtin
         ))
         
