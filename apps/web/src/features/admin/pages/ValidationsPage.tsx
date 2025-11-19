@@ -426,6 +426,14 @@ export default function ValidationsPage() {
                             </p>
                           </div>
                         )}
+
+                        {/* Badge Représentant Existant */}
+                        {validation.has_existing_representant && (
+                          <RepresentantExistantBadge
+                            validation={validation}
+                            onAttachClick={() => handleOpenAttachModal(validation)}
+                          />
+                        )}
                       </div>
                       <ActionButtonGroup>
                         <ActionButton
