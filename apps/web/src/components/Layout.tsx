@@ -111,11 +111,15 @@ export default function Layout({ children }: LayoutProps) {
         {/* Email Verification Banner */}
         {isAuthenticated && <EmailVerificationBanner />}
 
+        {/* Breadcrumb - Sticky at top of content */}
+        {isAuthenticated && (
+          <div className="sticky top-0 z-30 bg-white border-b border-gray-200 px-4 sm:px-6 lg:px-8 py-3">
+            <Breadcrumb />
+          </div>
+        )}
+
         {/* Main content */}
         <main className="flex-1 px-4 sm:px-6 lg:px-8 py-8">
-          {/* Breadcrumb */}
-          {isAuthenticated && <Breadcrumb />}
-          
           {/* Page content */}
           {children}
         </main>
