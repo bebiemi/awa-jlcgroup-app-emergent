@@ -7,9 +7,12 @@
   "unused_in_db": 9,
   "unused_by_category": {
     "builtin": [
+      "supprimer_entreprises",
       "voir_entreprises",
-      "modifier_entreprises",
-      "supprimer_entreprises"
+      "modifier_entreprises"
+    ],
+    "documents": [
+      "documents.read_own"
     ],
     "missions": [
       "missions.reject",
@@ -19,9 +22,6 @@
       "applications.edit_all",
       "applications.reject",
       "applications.validate"
-    ],
-    "documents": [
-      "documents.read_own"
     ]
   },
   "usage_details": {
