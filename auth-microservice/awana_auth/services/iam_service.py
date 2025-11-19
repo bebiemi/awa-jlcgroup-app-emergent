@@ -176,14 +176,24 @@ class IAMService:
                     except Exception as e:
                         logger.error(f"Error creating Profile model from group: {e}, profile data: {profile}")
             
-            # Get all unique permissions
+            # Get all unique permissions (directes + bundles)
             all_profile_ids = set(direct_profile_ids) | group_profile_ids
             all_permission_ids = set()
             
             if all_profile_ids:
                 profiles_cursor = self.profiles_collection.find({"id": {"$in": list(all_profile_ids)}})
                 async for profile in profiles_cursor:
+                    # Permissions directes du profil
                     all_permission_ids.update(profile.get("permission_ids", []))
+                    
+                    # Permissions des bundles de capacités
+                    bundle_ids = profile.get("capability_bundle_ids", [])
+                    if bundle_ids:
+                        bundles_cursor = self.bundles_collection.find({"id": {"$in": bundle_ids}})
+                        async for bundle in bundles_cursor:
+                            bundle_perms = bundle.get("permission_ids", [])
+                            all_permission_ids.update(bundle_perms)
+                            logger.debug(f"Added {len(bundle_perms)} permissions from bundle {bundle.get('code')}")
             
             all_permissions = []
             if all_permission_ids:
