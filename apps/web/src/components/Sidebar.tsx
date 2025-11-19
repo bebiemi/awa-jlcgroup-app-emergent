@@ -53,6 +53,11 @@ export default function Sidebar() {
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
   const { user } = useAppSelector((state) => state.auth)
+  const [expandedSections, setExpandedSections] = useState<string[]>(() => {
+    // Load from localStorage or default to all expanded
+    const saved = localStorage.getItem('expandedSections')
+    return saved ? JSON.parse(saved) : []
+  })
 
   const handleLogout = async () => {
     try {
