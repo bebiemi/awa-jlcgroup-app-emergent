@@ -70,10 +70,11 @@ from rate_limit import limiter
 
 client = None
 db = None
+cache_service = None
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    global client, db
+    global client, db, cache_service
     logger.info(f"🚀 Starting AWANA Auth Microservice (env: {env})...")
     
     # Récupérer la configuration DB depuis ConfigManager
@@ -93,6 +94,12 @@ async def lifespan(app: FastAPI):
     )
     db = client[db_name]
     logger.info(f"✅ Connected to MongoDB: {db_name}")
+    
+    # Initialiser le cache service Redis pour IAM
+    from awana_auth.services.iam_cache_service import get_cache_service
+    cache_service = await get_cache_service()
+    app.state.cache_service = cache_service
+    logger.info("✅ Redis cache service initialized")
     
     from awana_auth.rbac.manager import RBACManager
     rbac_manager = RBACManager(db)
