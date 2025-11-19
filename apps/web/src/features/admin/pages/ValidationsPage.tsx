@@ -439,6 +439,21 @@ export default function ValidationsPage() {
                       <p className="text-xs text-gray-500 mt-2">
                         Demande créée le {new Date(validation.created_at).toLocaleDateString('fr-FR')}
                       </p>
+
+                      {/* Représentant Existant Badge - Phase 2 */}
+                      {validation.validation_type === validationTypesConfig.company && (
+                        <RepresentantExistantBadge
+                          validation={validation}
+                          onAttachClick={() => {
+                            setSelectedValidation(validation)
+                            setShowAttachModal(true)
+                          }}
+                          onRejectClick={() => {
+                            setSelectedValidation(validation)
+                            setShowRejectModal(true)
+                          }}
+                        />
+                      )}
                     </div>
 
                     {validation.status === validationStatusesConfig.pending && (
