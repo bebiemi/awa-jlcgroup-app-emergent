@@ -37,7 +37,7 @@ def test_missions(token: str, username: str, expected_filter: str):
 def test_besoins(token: str, username: str, expected_filter: str):
     """Test endpoint besoins"""
     headers = {"Authorization": f"Bearer {token}"}
-    response = requests.get(f"{BASE_URL}/api/besoins", headers=headers)
+    response = requests.get(f"{BASE_URL}/api/besoins/", headers=headers)  # Slash final
     
     if response.status_code == 200:
         data = response.json()
