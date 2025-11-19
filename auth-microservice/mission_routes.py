@@ -508,12 +508,16 @@ async def get_mission(
 async def update_mission(
     mission_id: str,
     mission_update: MissionUpdate,
-    current_user: dict = Depends(get_current_user),
-    db = Depends(get_db)
+    current_user: User = Depends(get_user_dep),
+    db: AsyncIOMotorDatabase = Depends(get_database),
+    iam_service: IAMService = Depends(get_iam_service)
 ):
     """
     Mettre à jour une mission
-    Accessible par: Créateur, Admin, Commercial assigné
+    
+    Permissions:
+    - missions.update.all : Modifier toutes les missions
+    - missions.update.own : Modifier ses propres missions uniquement
     """
     mission = await db.missions.find_one({"id": mission_id})
     
@@ -523,24 +527,18 @@ async def update_mission(
             detail="Mission non trouvée"
         )
     
-    # IAM: Check permissions
-    checker = PermissionChecker(db)
-    user_id = current_user.get("sub")
+    user_id = current_user.id
+    user_company_id = getattr(current_user, 'company_id', None)
+    mission_company_id = mission.get("company_id")
     
-    can_manage = await checker.user_has_permission(
-        current_user.get("id"),
-        "missions.manage"
-    )
-    can_edit = await checker.user_has_permission(
-        current_user.get("id"),
-        "missions.edit"
-    )
-    
-    can_update = (
-        can_manage or
-        can_edit or
-        mission["created_by"] == user_id or
-        mission.get("commercial_id") == user_id
+    # Vérifier la permission de mise à jour
+    can_update = await check_resource_permission(
+        iam_service,
+        user_id,
+        user_company_id,
+        "missions",
+        "update",
+        mission_company_id
     )
     
     if not can_update:
@@ -565,8 +563,8 @@ async def update_mission(
         {"$set": update_data}
     )
     
+    logger.info(f"Mission {mission_id} mise à jour par {user_id}")
     updated_mission = await db.missions.find_one({"id": mission_id})
-    # Remove MongoDB _id before creating Pydantic model
     updated_mission.pop('_id', None)
     return Mission(**updated_mission)
 
