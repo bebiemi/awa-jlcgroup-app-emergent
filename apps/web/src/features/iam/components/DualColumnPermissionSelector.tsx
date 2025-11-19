@@ -104,9 +104,9 @@ const DualColumnPermissionSelector: React.FC<DualColumnPermissionSelectorProps> 
             <span className="font-medium text-sm text-gray-900 truncate">
               {permission.name}
             </span>
-            <Badge variant="outline" className="text-xs">
+            <span className="px-2 py-0.5 text-xs rounded border border-gray-300 text-gray-700 bg-white">
               {permission.category}
-            </Badge>
+            </span>
           </div>
           
           <p className="text-xs text-gray-600 font-mono mb-1">
@@ -138,16 +138,14 @@ const DualColumnPermissionSelector: React.FC<DualColumnPermissionSelectorProps> 
           </div>
         </div>
         
-        <Button
-          size="sm"
-          variant="ghost"
+        <button
           onClick={onAction}
           disabled={disabled}
-          className="opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
+          className="opacity-0 group-hover:opacity-100 transition-opacity shrink-0 p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded disabled:opacity-50 disabled:cursor-not-allowed"
           title={actionLabel}
         >
           {actionIcon}
-        </Button>
+        </button>
       </div>
     </div>
   );
