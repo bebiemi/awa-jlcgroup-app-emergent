@@ -5,17 +5,7 @@
  */
 import React, { useState, useMemo } from 'react';
 import { Permission } from '../api/iamApi';
-import { Search, ArrowRight, ArrowLeft, X } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { MagnifyingGlassIcon, ArrowRightIcon, XMarkIcon } from '@heroicons/react/24/outline';
 
 interface DualColumnPermissionSelectorProps {
   allPermissions: Permission[];
