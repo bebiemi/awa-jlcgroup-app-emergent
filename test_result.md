@@ -396,15 +396,18 @@ frontend:
 
   - task: "Role Selection UI"
     implemented: true
-    working: "NA"
-    file: "/app/frontend/src/RoleSelectionPage.tsx"
+    working: true
+    file: "/app/apps/web/src/features/auth/pages/RegisterPage.tsx"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Role selection page created but not tested yet."
+      - working: true
+        agent: "testing"
+        comment: "✅ ROLE SELECTION UI VERIFIED: Role selection functionality integrated into RegisterPage.tsx and working correctly. **ACCOUNT TYPE SELECTION**: ✅ Two role options displayed with proper styling (Candidat with 👤 icon, Entreprise with 🏢 icon), ✅ Clear descriptions for each role ('Je cherche des missions d'intérim' for Candidat, 'Je cherche à recruter des intérimaires' for Entreprise), ✅ Hover effects and visual feedback working, ✅ Selection triggers appropriate form loading (dynamic fields for Entreprise, standard fields for Candidat), ✅ Back button allows changing account type. **ROLE ASSIGNMENT**: ✅ Selected role properly assigned during registration (company role assigned for Entreprise selection), ✅ Role-based form fields displayed correctly (dynamic enterprise fields shown only for company role). Role selection UI fully functional and integrated with registration flow."
 
   - task: "Google OAuth Integration"
     implemented: true
