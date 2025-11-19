@@ -66,7 +66,7 @@ export default function AdminUpdatePasswordModal({
 
     try {
       const response = await fetch(
-        `/api/users/${userId}/password/admin-update`,
+        `/api/iam/users/${userId}/password/admin-update`,
         {
           method: 'POST',
           headers: {
