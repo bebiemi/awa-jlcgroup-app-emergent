@@ -359,7 +359,8 @@ def _get_action_description(action: AuditAction) -> str:
     """Helper pour obtenir une description lisible d'une action"""
     descriptions = {
         AuditAction.PROFILE_CREATED: "Création d'un profil utilisateur",
-        AuditAction.PERMISSION_GRANTED: "Permission accordée",
+        AuditAction.PROFILE_UPDATED: "Mise à jour d'un profil",
+        AuditAction.PROFILE_DELETED: "Suppression d'un profil",
         AuditAction.PERMISSION_DENIED: "Tentative d'accès refusée",
         AuditAction.TEMP_PERMISSION_GRANTED: "Permission temporaire accordée",
         AuditAction.TEMP_PERMISSION_REVOKED: "Permission temporaire révoquée",
