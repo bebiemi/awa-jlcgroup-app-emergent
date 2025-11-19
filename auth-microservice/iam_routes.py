@@ -598,10 +598,16 @@ async def remove_profile_from_group(
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """Remove a profile from a group"""
+    from bson import ObjectId
     groups_collection = db.groups
     
-    # Verify group exists
-    group = await groups_collection.find_one({"id": group_id})
+    # Verify group exists (groups use MongoDB _id, not custom id field)
+    try:
+        group = await groups_collection.find_one({"_id": ObjectId(group_id)})
+    except:
+        # If not valid ObjectId, try with code field
+        group = await groups_collection.find_one({"code": group_id})
+    
     if not group:
         raise HTTPException(status_code=404, detail="Group not found")
     
@@ -612,10 +618,10 @@ async def remove_profile_from_group(
             detail="Cannot modify protected group"
         )
     
-    # Remove profile from group
+    # Remove profile from group (use iam_role_ids field)
     result = await groups_collection.update_one(
-        {"id": group_id},
-        {"$pull": {"profile_ids": profile_id}}
+        {"_id": group["_id"]},
+        {"$pull": {"iam_role_ids": profile_id}}
     )
     
     logger.info(f"Profile {profile_id} removed from group {group_id} by {current_user.username}")
