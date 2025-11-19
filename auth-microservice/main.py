@@ -48,6 +48,7 @@ from user_archive_routes import router as user_archive_router
 from country_config_routes import router as country_config_router
 from besoin_routes import router as besoin_router
 from entreprise_routes import router as entreprise_router
+from invitation_routes import router as invitation_router
 from form_config_routes import router as form_config_router
 from bulk_operations_routes import bulk_router
 from notification_routes import router as notification_router
