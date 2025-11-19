@@ -21,6 +21,7 @@ const ProfilesManagementPage: React.FC = () => {
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [showEditModal, setShowEditModal] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [showDetailsModal, setShowDetailsModal] = useState(false)
   const [selectedProfile, setSelectedProfile] = useState<Profile | null>(null)
   const [filterCategory, setFilterCategory] = useState<string>('all')
 
