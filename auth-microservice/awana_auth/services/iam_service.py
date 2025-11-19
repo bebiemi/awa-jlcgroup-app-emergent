@@ -230,13 +230,27 @@ class IAMService:
                     except Exception as e:
                         logger.error(f"Error creating Permission model: {e}, permission data: {perm}")
             
-            return UserPermissionsResponse(
+            response = UserPermissionsResponse(
                 user_id=user_id,
                 direct_profiles=direct_profiles,
                 group_profiles=group_profiles,
                 all_permissions=all_permissions,
                 groups=groups
             )
+            
+            # Mettre en cache le résultat
+            if self.cache:
+                cache_data = {
+                    "user_id": user_id,
+                    "direct_profiles": [p.model_dump() for p in direct_profiles],
+                    "group_profiles": [p.model_dump() for p in group_profiles],
+                    "all_permissions": [p.model_dump() for p in all_permissions],
+                    "groups": [g.model_dump() for g in groups]
+                }
+                await self.cache.set_user_permissions(user_id, cache_data)
+                logger.debug(f"💾 Permissions user {user_id} mises en cache")
+            
+            return response
             
         except Exception as e:
             logger.error(f"Error getting user permissions: {e}")
