@@ -12,6 +12,10 @@ import {
   XMarkIcon,
 } from '@heroicons/react/24/outline'
 import type { Validation } from '../api/validationApi'
+import { 
+  useAttachToExistingRepresentantMutation,
+  useRejectAttachmentMutation 
+} from '../api/validationApi'
 import toast from 'react-hot-toast'
 
 interface RepresentantEntreprise {
