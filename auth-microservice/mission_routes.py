@@ -231,7 +231,7 @@ async def create_mission(
 
 @router.get("", response_model=List[Mission])
 async def get_missions(
-    status: Optional[MissionStatus] = None,
+    mission_status: Optional[MissionStatus] = None,
     company_id: Optional[str] = None,
     commercial_id: Optional[str] = None,
     published_only: bool = False,
