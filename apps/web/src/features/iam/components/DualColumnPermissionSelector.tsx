@@ -257,7 +257,7 @@ const DualColumnPermissionSelector: React.FC<DualColumnPermissionSelectorProps> 
                   key={perm.id}
                   permission={perm}
                   onAction={() => onRemove(perm.id)}
-                  actionIcon={<X className="h-4 w-4" />}
+                  actionIcon={<XMarkIcon className="h-4 w-4" />}
                   actionLabel="Retirer"
                 />
               ))
