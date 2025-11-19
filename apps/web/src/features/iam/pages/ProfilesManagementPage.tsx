@@ -260,22 +260,34 @@ const ProfilesManagementPage: React.FC = () => {
                     </span>
                   </div>
 
-                  {!profile.is_protected && (
-                    <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
-                      <button
-                        onClick={() => handleEditClick(profile)}
-                        className="flex-1 px-3 py-2 bg-blue-50 text-blue-600 rounded hover:bg-blue-100 transition-colors text-sm font-medium"
-                      >
-                        Modifier
-                      </button>
-                      <button
-                        onClick={() => handleDeleteClick(profile)}
-                        className="flex-1 px-3 py-2 bg-red-50 text-red-600 rounded hover:bg-red-100 transition-colors text-sm font-medium"
-                      >
-                        Supprimer
-                      </button>
-                    </div>
-                  )}
+                  <div className="space-y-2" onClick={(e) => e.stopPropagation()}>
+                    {/* Bouton Voir Détails - Pour tous les profils */}
+                    <button
+                      onClick={() => handleViewDetailsClick(profile)}
+                      className="w-full px-3 py-2 bg-purple-50 text-purple-600 rounded hover:bg-purple-100 transition-colors text-sm font-medium flex items-center justify-center gap-2"
+                    >
+                      <EyeIcon className="h-4 w-4" />
+                      Voir Détails & Permissions
+                    </button>
+                    
+                    {/* Boutons Modifier/Supprimer - Seulement pour profils non protégés */}
+                    {!profile.is_protected && (
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => handleEditClick(profile)}
+                          className="flex-1 px-3 py-2 bg-blue-50 text-blue-600 rounded hover:bg-blue-100 transition-colors text-sm font-medium"
+                        >
+                          Modifier
+                        </button>
+                        <button
+                          onClick={() => handleDeleteClick(profile)}
+                          className="flex-1 px-3 py-2 bg-red-50 text-red-600 rounded hover:bg-red-100 transition-colors text-sm font-medium"
+                        >
+                          Supprimer
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>
