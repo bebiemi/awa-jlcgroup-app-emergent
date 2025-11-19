@@ -1,8 +1,9 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Layout from '@/components/Layout'
 import Modal from '@/components/Modal'
 import ActionButton, { ActionButtonGroup } from '@/components/ActionButton'
 import RepresentantExistantBadge from '../components/RepresentantExistantBadge'
+import AttachToExistingModal from '../components/AttachToExistingModal'
 import {
   useGetValidationsQuery,
   useGetValidationStatsQuery,
