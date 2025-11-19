@@ -572,12 +572,16 @@ async def update_mission(
 @router.delete("/{mission_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_mission(
     mission_id: str,
-    current_user: dict = Depends(get_current_user),
-    db = Depends(get_db)
+    current_user: User = Depends(get_user_dep),
+    db: AsyncIOMotorDatabase = Depends(get_database),
+    iam_service: IAMService = Depends(get_iam_service)
 ):
     """
     Supprimer une mission (soft delete en changeant le statut)
-    Accessible par: Créateur, Admin
+    
+    Permissions:
+    - missions.delete.all : Supprimer toutes les missions
+    - missions.delete.own : Supprimer ses propres missions uniquement
     """
     mission = await db.missions.find_one({"id": mission_id})
     
@@ -587,23 +591,18 @@ async def delete_mission(
             detail="Mission non trouvée"
         )
     
-    # IAM: Check permissions
-    checker = PermissionChecker(db)
-    user_id = current_user.get("sub")
+    user_id = current_user.id
+    user_company_id = getattr(current_user, 'company_id', None)
+    mission_company_id = mission.get("company_id")
     
-    can_manage = await checker.user_has_permission(
-        current_user.get("id"),
-        "missions.manage"
-    )
-    can_delete_perm = await checker.user_has_permission(
-        current_user.get("id"),
-        "missions.delete"
-    )
-    
-    can_delete = (
-        can_manage or
-        can_delete_perm or
-        mission["created_by"] == user_id
+    # Vérifier la permission de suppression
+    can_delete = await check_resource_permission(
+        iam_service,
+        user_id,
+        user_company_id,
+        "missions",
+        "delete",
+        mission_company_id
     )
     
     if not can_delete:
@@ -617,6 +616,8 @@ async def delete_mission(
         {"id": mission_id},
         {"$set": {"status": MissionStatus.CANCELLED, "closed_at": datetime.now(timezone.utc)}}
     )
+    
+    logger.info(f"Mission {mission_id} supprimée par {user_id}")
 
 
 @router.post("/{mission_id}/publish", response_model=Mission)
