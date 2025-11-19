@@ -748,7 +748,7 @@ async def apply_to_mission(
 @router.get("/{mission_id}/applications", response_model=List[Application])
 async def get_mission_applications(
     mission_id: str,
-    status: Optional[ApplicationStatus] = None,
+    application_status: Optional[ApplicationStatus] = None,
     current_user: User = Depends(get_user_dep),
     db: AsyncIOMotorDatabase = Depends(get_database),
     iam_service: IAMService = Depends(get_iam_service)
