@@ -5096,11 +5096,11 @@ def test_iam_permission_validation_system():
     print(f"\n{Colors.BOLD}=== STEP 2: TEST CRÉATION AVEC CODE VALIDE ==={Colors.ENDC}")
     
     valid_permission_data = {
-        "code": "test_valid.action",
+        "code": "test_valid.create",
         "name": "Test Valid Permission",
         "description": "Permission de test avec code valide",
         "resource": "test_valid",
-        "action": "action",
+        "action": "create",
         "scope": "organization",
         "category": "test"
     }
