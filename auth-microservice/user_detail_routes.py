@@ -505,6 +505,114 @@ async def reset_password(
     return {"success": True, "message": "Password reset initiated"}
 
 
+class AdminPasswordUpdateRequest(BaseModel):
+    """Request model for admin password update"""
+    new_password: str
+    confirm_password: str
+
+
+@router.post("/{user_id}/password/admin-update")
+async def admin_update_password(
+    user_id: str,
+    password_data: AdminPasswordUpdateRequest,
+    db: AsyncIOMotorDatabase = Depends(get_database),
+    current_user: User = Depends(require_permission(IAMPermissions.USERS_PASSWORD_UPDATE))
+):
+    """
+    Admin/SuperAdmin updates user password
+    
+    Security checks:
+    - Requires users.password.update permission
+    - Prevents privilege escalation
+    - Logs all password changes for audit
+    """
+    import bcrypt
+    from datetime import datetime, timezone
+    
+    # Validate passwords match
+    if password_data.new_password != password_data.confirm_password:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Les mots de passe ne correspondent pas"
+        )
+    
+    # Validate password strength
+    if len(password_data.new_password) < 8:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Le mot de passe doit contenir au moins 8 caractères"
+        )
+    
+    # Get target user
+    target_user = await db.users.find_one({"id": user_id})
+    if not target_user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Utilisateur non trouvé"
+        )
+    
+    # Security: Prevent privilege escalation
+    # Check if target user has higher privileges than current user
+    target_roles = set(target_user.get("roles", []))
+    current_roles = set(current_user.roles)
+    
+    # Define role hierarchy (higher value = higher privilege)
+    role_hierarchy = {
+        "super_admin": 100,
+        "admin": 50,
+        "company": 10,
+        "interim": 5,
+        "candidat": 5,
+        "collaborator": 5,
+    }
+    
+    # Get max privilege level for both users
+    target_max_level = max([role_hierarchy.get(r, 0) for r in target_roles], default=0)
+    current_max_level = max([role_hierarchy.get(r, 0) for r in current_roles], default=0)
+    
+    # Prevent changing password of user with equal or higher privilege
+    if target_max_level >= current_max_level and target_user["id"] != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Vous ne pouvez pas modifier le mot de passe d'un utilisateur avec des privilèges égaux ou supérieurs"
+        )
+    
+    # Hash new password
+    password_hash = bcrypt.hashpw(
+        password_data.new_password.encode('utf-8'),
+        bcrypt.gensalt()
+    ).decode('utf-8')
+    
+    # Update password
+    await db.users.update_one(
+        {"id": user_id},
+        {
+            "$set": {
+                "password_hash": password_hash,
+                "updated_at": datetime.now(timezone.utc).isoformat()
+            }
+        }
+    )
+    
+    # Log activity for audit
+    await log_activity(
+        db,
+        user_id=user_id,
+        action="admin_password_update",
+        metadata={
+            "updated_by": current_user.username,
+            "updated_by_id": current_user.id,
+            "target_user": target_user.get("username"),
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        }
+    )
+    
+    return {
+        "success": True,
+        "message": f"Mot de passe mis à jour avec succès pour {target_user.get('username')}"
+    }
+
+
 @router.post("/{user_id}/reset-mfa")
 async def reset_mfa(
     user_id: str,
