@@ -2,11 +2,12 @@
 IAM (Identity and Access Management) Models
 Complete RBAC system with Users, Groups, Profiles, and Permissions
 """
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 from typing import List, Optional, Dict, Any
 from datetime import datetime, timezone
 from enum import Enum
 import uuid
+import re
 
 
 class PermissionScope(str, Enum):
