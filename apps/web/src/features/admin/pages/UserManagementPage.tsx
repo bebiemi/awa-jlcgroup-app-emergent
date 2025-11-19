@@ -830,6 +830,25 @@ export default function UserManagementPage() {
                                 <ShieldExclamationIcon className="h-5 w-5" />
                               </button>
                               <button
+                                onClick={() => {
+                                  setSelectedUser(user)
+                                  setShowPasswordModal(true)
+                                }}
+                                disabled={user.status === 'archived'}
+                                className={`p-2 rounded-lg transition-colors ${
+                                  user.status === 'archived'
+                                    ? 'text-gray-400 cursor-not-allowed'
+                                    : 'text-blue-600 hover:bg-blue-50'
+                                }`}
+                                title={
+                                  user.status === 'archived'
+                                    ? 'Compte archivé (action impossible)'
+                                    : 'Modifier le mot de passe'
+                                }
+                              >
+                                <KeyIcon className="h-5 w-5" />
+                              </button>
+                              <button
                                 onClick={() => handleArchive(user)}
                                 disabled={user.status === 'archived'}
                                 className={`p-2 rounded-lg transition-colors ${
