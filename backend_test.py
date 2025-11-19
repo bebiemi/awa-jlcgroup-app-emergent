@@ -5075,7 +5075,7 @@ def run_authentication_fix_test():
     return test_results
 
 if __name__ == "__main__":
-    print(f"{Colors.BOLD}🚀 Starting IAM RTK Query Cache Fix Testing{Colors.ENDC}")
+    print(f"{Colors.BOLD}🚀 Starting IAM Group Profile Assignment System Testing{Colors.ENDC}")
     print(f"{Colors.BOLD}Testing Base URLs:{Colors.ENDC}")
     print(f"  Auth Service: {AUTH_BASE_URL}")
     print(f"  JLC API: {API_BASE_URL}")
@@ -5085,32 +5085,37 @@ if __name__ == "__main__":
         print(f"\n{Colors.RED}❌ Auth service not available - aborting all tests{Colors.ENDC}")
         sys.exit(1)
     
-    # Run IAM RTK Query Cache Fix test
-    cache_fix_success = test_iam_rtk_query_cache_fix()
+    # Run IAM Group Profile Assignment test
+    assignment_success = test_iam_group_profile_assignment_system()
     
     # Print final summary
     print(f"\n{Colors.BOLD}{'='*80}{Colors.ENDC}")
-    print(f"{Colors.BOLD}IAM RTK QUERY CACHE FIX TESTING SUMMARY{Colors.ENDC}")
+    print(f"{Colors.BOLD}IAM GROUP PROFILE ASSIGNMENT TESTING SUMMARY{Colors.ENDC}")
     print(f"{Colors.BOLD}{'='*80}{Colors.ENDC}")
     
-    if cache_fix_success:
-        print(f"\n{Colors.GREEN}✅ RTK QUERY CACHE FIX TEST PASSED{Colors.ENDC}")
-        print(f"  ✅ Permissions removed from profiles stay removed after refresh")
-        print(f"  ✅ Database persistence working correctly")
-        print(f"  ✅ No regression on create/delete operations")
-        print(f"  ✅ Cache invalidation working as expected")
+    if assignment_success:
+        print(f"\n{Colors.GREEN}✅ IAM GROUP PROFILE ASSIGNMENT TEST PASSED{Colors.ENDC}")
+        print(f"  ✅ Admin authentication working (admin/Awana2025!)")
+        print(f"  ✅ Groups and profiles use UUID fields (not ObjectId)")
+        print(f"  ✅ Profile assignment to group working")
+        print(f"  ✅ Idempotence verified (no error if already assigned)")
+        print(f"  ✅ Profile removal from group working")
+        print(f"  ✅ Re-assignment after removal working")
+        print(f"  ✅ Different groups tested (Entreprises, Commerciaux)")
+        print(f"  ✅ Error handling for invalid IDs working")
         
-        print(f"\n{Colors.GREEN}🎉 IAM RTK Query cache fix verification completed successfully!{Colors.ENDC}")
+        print(f"\n{Colors.GREEN}🎉 IAM Group Profile Assignment system working correctly!{Colors.ENDC}")
         print(f"{Colors.GREEN}✅ SUCCESS CRITERIA MET:{Colors.ENDC}")
-        print(f"  • Removed permissions stay removed after re-fetch ✅")
-        print(f"  • Permission count matches what was saved ✅") 
-        print(f"  • No regression on other operations ✅")
+        print(f"  • All CRUD operations work ✅")
+        print(f"  • UUID vs ObjectId bug fixed ✅") 
+        print(f"  • Error handling working ✅")
+        print(f"  • Idempotence working ✅")
         
         sys.exit(0)
     else:
-        print(f"\n{Colors.RED}❌ RTK QUERY CACHE FIX TEST FAILED{Colors.ENDC}")
-        print(f"  ❌ Cache invalidation not working correctly")
-        print(f"  ❌ Permissions may be reappearing after refresh")
+        print(f"\n{Colors.RED}❌ IAM GROUP PROFILE ASSIGNMENT TEST FAILED{Colors.ENDC}")
+        print(f"  ❌ Assignment system not working correctly")
+        print(f"  ❌ UUID vs ObjectId bug may still be present")
         
-        print(f"\n{Colors.RED}⚠️  RTK Query cache fix test failed. The bug may still be present.{Colors.ENDC}")
+        print(f"\n{Colors.RED}⚠️  IAM Group Profile Assignment test failed. The bug fix may not be working.{Colors.ENDC}")
         sys.exit(1)
