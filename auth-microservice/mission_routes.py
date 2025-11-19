@@ -804,8 +804,8 @@ async def get_mission_applications(
     
     # Récupérer les candidatures
     query = {"mission_id": mission_id}
-    if status:
-        query["status"] = status
+    if application_status:
+        query["status"] = application_status
     
     applications = await db.applications.find(query).to_list(length=None)
     
