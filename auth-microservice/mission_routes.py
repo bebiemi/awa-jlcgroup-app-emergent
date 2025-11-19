@@ -283,8 +283,8 @@ async def get_missions(
     # Sinon (iam_filter == {}) : cas .all, pas de filtre
     
     # Appliquer les filtres supplémentaires de l'API
-    if status:
-        query["status"] = status
+    if mission_status:
+        query["status"] = mission_status
     
     # Filtrer par company_id seulement si l'utilisateur a la permission .all
     has_read_all = await iam_service.user_has_permission(user_id, "missions.read.all")
