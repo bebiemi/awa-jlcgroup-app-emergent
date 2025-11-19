@@ -20,6 +20,7 @@ from awana_auth.core.user_detail_models import (
     NotificationRequest,
     ActivityResponse,
 )
+from awana_auth.core.models import User
 from awana_auth.core.dependencies import get_database
 from awana_auth.core.iam_constants import IAMPermissions
 from awana_auth.dependencies.permission_dependencies import require_permission
