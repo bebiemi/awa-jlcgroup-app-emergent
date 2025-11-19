@@ -131,7 +131,13 @@ export const iamApi = createApi({
     // Profiles
     listProfiles: builder.query<Profile[], void>({
       query: () => '/iam/profiles',
-      providesTags: ['Profiles'],
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.map(({ id }) => ({ type: 'Profiles' as const, id })),
+              { type: 'Profiles', id: 'LIST' },
+            ]
+          : [{ type: 'Profiles', id: 'LIST' }],
     }),
     
     getProfile: builder.query<Profile, string>({
