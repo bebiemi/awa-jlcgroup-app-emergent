@@ -744,6 +744,33 @@ export default function ValidationsPage() {
                 </div>
               )}
 
+              {/* Représentant Existant Warning */}
+              {detailValidation.has_existing_representant && (
+                <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
+                  <div className="flex items-start gap-3">
+                    <ExclamationTriangleIcon className="w-5 h-5 text-orange-600 flex-shrink-0 mt-0.5" />
+                    <div className="flex-1">
+                      <h4 className="text-sm font-semibold text-orange-900">Représentant légal déjà existant</h4>
+                      <p className="text-sm text-orange-700 mt-1">
+                        {detailValidation.representant_legal_nom} ({detailValidation.representant_legal_email})
+                      </p>
+                      <p className="text-xs text-orange-600 mt-2">
+                        {detailValidation.existing_representant_entreprises?.length || 0} entreprise(s) déjà enregistrée(s)
+                      </p>
+                      <button
+                        onClick={() => {
+                          setShowDetailPanel(false)
+                          handleOpenAttachModal(detailValidation)
+                        }}
+                        className="mt-3 text-sm font-medium text-orange-700 hover:text-orange-900 underline"
+                      >
+                        Voir les entreprises et rattacher →
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* Warnings */}
               {detailValidation.has_location_warning && (
                 <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
