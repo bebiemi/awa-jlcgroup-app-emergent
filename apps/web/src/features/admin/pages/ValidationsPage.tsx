@@ -125,7 +125,7 @@ export default function ValidationsPage() {
 
   const handleApprove = async (validation: Validation) => {
     try {
-      await approveValidation(validation.id).unwrap()
+      await approveValidation({ id: validation.id }).unwrap()
       toast.success('Validation approuvée avec succès')
       refetch()
     } catch (error: any) {
