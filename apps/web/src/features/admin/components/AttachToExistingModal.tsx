@@ -157,7 +157,7 @@ export default function AttachToExistingModal({
               Sélectionner l'entreprise cible *
             </label>
             <div className="space-y-2">
-              {entreprises.map((entreprise) => (
+              {representantEntreprises.map((entreprise) => (
                 <label
                   key={entreprise.id}
                   className={`flex items-center p-3 border-2 rounded-lg cursor-pointer transition-all ${
