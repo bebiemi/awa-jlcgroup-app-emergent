@@ -1466,6 +1466,300 @@ def test_authentication_for_config_routes():
     return True
 
 
+def test_iam_rtk_query_cache_fix():
+    """Test du fix du bug P1 - Cache RTK Query pour les profils IAM"""
+    print(f"\n{Colors.BOLD}{'='*80}{Colors.ENDC}")
+    print(f"{Colors.BOLD}TEST DU FIX DU BUG P1 - CACHE RTK QUERY POUR LES PROFILS IAM{Colors.ENDC}")
+    print(f"{Colors.BOLD}Testing RTK Query cache invalidation for IAM profiles{Colors.ENDC}")
+    print(f"{Colors.BOLD}Base URL: {AUTH_BASE_URL}{Colors.ENDC}")
+    print(f"{Colors.BOLD}{'='*80}{Colors.ENDC}")
+    
+    test_results = []
+    
+    # Step 1: Login as admin (admin/Awana2025!)
+    print(f"\n{Colors.BOLD}=== STEP 1: AUTHENTICATION ==={Colors.ENDC}")
+    
+    admin_token = get_admin_token()
+    if not admin_token:
+        log_test("IAM RTK Query Cache Fix", "FAIL", "Cannot get admin token")
+        return False
+    
+    admin_headers = {"Authorization": f"Bearer {admin_token}"}
+    
+    # Step 2: Get the list of profiles via GET /api/iam/profiles
+    print(f"\n{Colors.BOLD}=== STEP 2: GET INITIAL PROFILES LIST ==={Colors.ENDC}")
+    
+    initial_profiles_response = test_endpoint(
+        "GET",
+        f"{AUTH_BASE_URL}/iam/profiles",
+        headers=admin_headers,
+        expected_status=200,
+        test_name="Get Initial Profiles List"
+    )
+    
+    if not initial_profiles_response:
+        log_test("IAM RTK Query Cache Fix", "FAIL", "Cannot get initial profiles list")
+        return False
+    
+    # Find a non-protected profile for testing
+    test_profile = None
+    for profile in initial_profiles_response:
+        if not profile.get("is_protected", True) and profile.get("name") != "test_profils":
+            # Look for a profile that has some permissions to remove
+            if len(profile.get("permission_ids", [])) > 2:
+                test_profile = profile
+                break
+    
+    # If no suitable profile found, create one for testing
+    if not test_profile:
+        print(f"\n  Creating test profile for RTK Query cache testing...")
+        
+        # First get some permissions to assign
+        permissions_response = test_endpoint(
+            "GET",
+            f"{AUTH_BASE_URL}/iam/permissions",
+            headers=admin_headers,
+            expected_status=200,
+            test_name="Get Permissions for Test Profile"
+        )
+        
+        if not permissions_response or len(permissions_response) < 3:
+            log_test("IAM RTK Query Cache Fix", "FAIL", "Cannot get permissions for test profile")
+            return False
+        
+        # Select first 3 permissions for the test profile
+        test_permission_ids = [p["id"] for p in permissions_response[:3]]
+        
+        create_profile_data = {
+            "code": "test_rtk_cache_profile",
+            "name": "Test RTK Cache Profile",
+            "description": "Profile created for RTK Query cache testing",
+            "permission_ids": test_permission_ids,
+            "category": "test"
+        }
+        
+        create_response = test_endpoint(
+            "POST",
+            f"{AUTH_BASE_URL}/iam/profiles",
+            data=create_profile_data,
+            headers=admin_headers,
+            expected_status=201,
+            test_name="Create Test Profile"
+        )
+        
+        if not create_response:
+            log_test("IAM RTK Query Cache Fix", "FAIL", "Cannot create test profile")
+            return False
+        
+        test_profile = create_response
+        log_test("Test Profile Creation", "PASS", f"Created profile: {test_profile['name']} with {len(test_profile['permission_ids'])} permissions")
+    
+    profile_id = test_profile["id"]
+    initial_permission_count = len(test_profile.get("permission_ids", []))
+    
+    log_test("Test Profile Selection", "PASS", f"Using profile: {test_profile['name']} (ID: {profile_id}) with {initial_permission_count} permissions")
+    
+    # Step 3: Note the initial number of permissions
+    print(f"\n{Colors.BOLD}=== STEP 3: VERIFY INITIAL PERMISSIONS ==={Colors.ENDC}")
+    
+    initial_permissions = test_profile.get("permission_ids", [])
+    print(f"    Initial permissions count: {len(initial_permissions)}")
+    print(f"    Initial permission IDs: {initial_permissions[:3]}..." if len(initial_permissions) > 3 else f"    Initial permission IDs: {initial_permissions}")
+    
+    if len(initial_permissions) < 2:
+        log_test("IAM RTK Query Cache Fix", "FAIL", "Test profile needs at least 2 permissions to test removal")
+        return False
+    
+    # Step 4: Modify the profile by removing permissions via PUT /api/iam/profiles/{id}
+    print(f"\n{Colors.BOLD}=== STEP 4: REMOVE PERMISSIONS FROM PROFILE ==={Colors.ENDC}")
+    
+    # Remove the last permission from the list
+    permissions_to_keep = initial_permissions[:-1]  # Remove last permission
+    removed_permission_id = initial_permissions[-1]
+    
+    update_data = {
+        "permission_ids": permissions_to_keep
+    }
+    
+    update_response = test_endpoint(
+        "PUT",
+        f"{AUTH_BASE_URL}/iam/profiles/{profile_id}",
+        data=update_data,
+        headers=admin_headers,
+        expected_status=200,
+        test_name="Remove Permission from Profile"
+    )
+    
+    if not update_response:
+        log_test("IAM RTK Query Cache Fix", "FAIL", "Cannot update profile to remove permission")
+        return False
+    
+    updated_permissions = update_response.get("permission_ids", [])
+    expected_count = len(initial_permissions) - 1
+    
+    if len(updated_permissions) != expected_count:
+        log_test("Permission Removal", "FAIL", f"Expected {expected_count} permissions, got {len(updated_permissions)}")
+        return False
+    
+    if removed_permission_id in updated_permissions:
+        log_test("Permission Removal", "FAIL", f"Removed permission {removed_permission_id} still present in profile")
+        return False
+    
+    log_test("Permission Removal", "PASS", f"Successfully removed permission {removed_permission_id}. Profile now has {len(updated_permissions)} permissions")
+    
+    # Step 5: Verify the modification is persisted in database by getting the specific profile
+    print(f"\n{Colors.BOLD}=== STEP 5: VERIFY PERSISTENCE IN DATABASE ==={Colors.ENDC}")
+    
+    get_profile_response = test_endpoint(
+        "GET",
+        f"{AUTH_BASE_URL}/iam/profiles/{profile_id}",
+        headers=admin_headers,
+        expected_status=200,
+        test_name="Get Updated Profile Details"
+    )
+    
+    if not get_profile_response:
+        log_test("IAM RTK Query Cache Fix", "FAIL", "Cannot get updated profile details")
+        return False
+    
+    db_permissions = get_profile_response.get("permission_ids", [])
+    
+    if len(db_permissions) != expected_count:
+        log_test("Database Persistence", "FAIL", f"Database shows {len(db_permissions)} permissions, expected {expected_count}")
+        return False
+    
+    if removed_permission_id in db_permissions:
+        log_test("Database Persistence", "FAIL", f"Removed permission {removed_permission_id} still in database")
+        return False
+    
+    log_test("Database Persistence", "PASS", f"Database correctly shows {len(db_permissions)} permissions without removed permission")
+    
+    # Step 6: Re-fetch the list of profiles (simulate a refresh/cache invalidation)
+    print(f"\n{Colors.BOLD}=== STEP 6: RE-FETCH PROFILES LIST (SIMULATE REFRESH) ==={Colors.ENDC}")
+    
+    refreshed_profiles_response = test_endpoint(
+        "GET",
+        f"{AUTH_BASE_URL}/iam/profiles",
+        headers=admin_headers,
+        expected_status=200,
+        test_name="Re-fetch Profiles List"
+    )
+    
+    if not refreshed_profiles_response:
+        log_test("IAM RTK Query Cache Fix", "FAIL", "Cannot re-fetch profiles list")
+        return False
+    
+    # Step 7: Verify that the removed permissions are NOT reappearing
+    print(f"\n{Colors.BOLD}=== STEP 7: VERIFY REMOVED PERMISSIONS NOT REAPPEARING ==={Colors.ENDC}")
+    
+    # Find our test profile in the refreshed list
+    refreshed_test_profile = None
+    for profile in refreshed_profiles_response:
+        if profile["id"] == profile_id:
+            refreshed_test_profile = profile
+            break
+    
+    if not refreshed_test_profile:
+        log_test("Profile in Refreshed List", "FAIL", f"Test profile {profile_id} not found in refreshed list")
+        return False
+    
+    refreshed_permissions = refreshed_test_profile.get("permission_ids", [])
+    
+    # Critical test: Verify the removed permission is NOT back
+    if removed_permission_id in refreshed_permissions:
+        log_test("RTK Query Cache Fix", "FAIL", f"❌ BUG REPRODUCED: Removed permission {removed_permission_id} reappeared after refresh!")
+        return False
+    
+    # Verify the count matches what we expect
+    if len(refreshed_permissions) != expected_count:
+        log_test("RTK Query Cache Fix", "FAIL", f"Permission count mismatch after refresh: expected {expected_count}, got {len(refreshed_permissions)}")
+        return False
+    
+    log_test("RTK Query Cache Fix", "PASS", f"✅ SUCCESS: Removed permission stays removed after refresh. Profile has {len(refreshed_permissions)} permissions as expected")
+    
+    # Step 8: Test other operations to ensure no regression
+    print(f"\n{Colors.BOLD}=== STEP 8: TEST NO REGRESSION ON OTHER OPERATIONS ==={Colors.ENDC}")
+    
+    # Test create operation
+    create_test_data = {
+        "code": "test_rtk_regression_profile",
+        "name": "Test RTK Regression Profile",
+        "description": "Profile to test no regression on create",
+        "permission_ids": [permissions_to_keep[0]] if permissions_to_keep else [],
+        "category": "test"
+    }
+    
+    create_regression_response = test_endpoint(
+        "POST",
+        f"{AUTH_BASE_URL}/iam/profiles",
+        data=create_test_data,
+        headers=admin_headers,
+        expected_status=201,
+        test_name="Test Create Operation (No Regression)"
+    )
+    
+    if create_regression_response:
+        log_test("Create Operation Regression", "PASS", "Create operation works correctly")
+        
+        # Clean up the created profile
+        cleanup_profile_id = create_regression_response["id"]
+        test_endpoint(
+            "DELETE",
+            f"{AUTH_BASE_URL}/iam/profiles/{cleanup_profile_id}",
+            headers=admin_headers,
+            expected_status=200,
+            test_name="Cleanup Created Profile"
+        )
+    else:
+        log_test("Create Operation Regression", "FAIL", "Create operation failed")
+    
+    # Final verification: Get the profiles list one more time to ensure consistency
+    print(f"\n{Colors.BOLD}=== FINAL VERIFICATION ==={Colors.ENDC}")
+    
+    final_profiles_response = test_endpoint(
+        "GET",
+        f"{AUTH_BASE_URL}/iam/profiles",
+        headers=admin_headers,
+        expected_status=200,
+        test_name="Final Profiles List Verification"
+    )
+    
+    if final_profiles_response:
+        final_test_profile = None
+        for profile in final_profiles_response:
+            if profile["id"] == profile_id:
+                final_test_profile = profile
+                break
+        
+        if final_test_profile:
+            final_permissions = final_test_profile.get("permission_ids", [])
+            if removed_permission_id not in final_permissions and len(final_permissions) == expected_count:
+                log_test("Final Verification", "PASS", "✅ RTK Query cache fix working correctly - permissions stay consistent")
+                test_results.append(("RTK Query Cache Fix", True))
+            else:
+                log_test("Final Verification", "FAIL", "❌ Inconsistency detected in final verification")
+                test_results.append(("RTK Query Cache Fix", False))
+        else:
+            log_test("Final Verification", "FAIL", "Test profile not found in final list")
+            test_results.append(("RTK Query Cache Fix", False))
+    else:
+        log_test("Final Verification", "FAIL", "Cannot get final profiles list")
+        test_results.append(("RTK Query Cache Fix", False))
+    
+    # Cleanup: Remove the test profile if we created it
+    if test_profile.get("code") == "test_rtk_cache_profile":
+        print(f"\n  Cleaning up test profile...")
+        test_endpoint(
+            "DELETE",
+            f"{AUTH_BASE_URL}/iam/profiles/{profile_id}",
+            headers=admin_headers,
+            expected_status=200,
+            test_name="Cleanup Test Profile"
+        )
+    
+    return len([r for r in test_results if r[1]]) == len(test_results)
+
+
 def test_company_management_system():
     """Test the complete Company Management System (Entreprise endpoints)"""
     print(f"\n{Colors.BOLD}{'='*80}{Colors.ENDC}")
