@@ -379,14 +379,16 @@ export default function ValidationsPage() {
                             <ExclamationTriangleIcon className="w-5 h-5 text-yellow-500" />
                           )}
                         </div>
-                        <p className="text-sm text-gray-500">{validation.email}</p>
-                        {validation.phone && (
-                          <p className="text-sm text-gray-500">{validation.phone}</p>
+                        <p className="text-sm text-gray-500">{validation.user_email}</p>
+                        {(validation as any).phone && (
+                          <p className="text-sm text-gray-500">{(validation as any).phone}</p>
                         )}
-                        {validation.location && validation.location_label && (
+                        {validation.country_name && (
                           <div className="flex items-center gap-1 mt-1">
                             <MapPinIcon className="w-4 h-4 text-gray-400" />
-                            <p className="text-sm text-gray-500">{validation.location_label}</p>
+                            <p className="text-sm text-gray-500">
+                              {[validation.country_name, validation.city_name].filter(Boolean).join(', ')}
+                            </p>
                           </div>
                         )}
                       </div>
