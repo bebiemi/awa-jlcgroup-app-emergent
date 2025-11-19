@@ -31,6 +31,15 @@ async def proxy_users_requests(path: str, request: Request):
     return await _proxy_request(target_url, request)
 
 
+@router.api_route("/iam/{path:path}", methods=["GET", "POST", "PUT", "PATCH", "DELETE"])
+async def proxy_iam_requests(path: str, request: Request):
+    """
+    Proxy all /api/iam/* requests to auth-microservice /api/iam/*
+    """
+    target_url = f"{AUTH_SERVICE_URL}/api/iam/{path}"
+    return await _proxy_request(target_url, request)
+
+
 @router.api_route("/profiles", methods=["GET", "POST"])
 @router.api_route("/profiles/{path:path}", methods=["GET", "POST", "PUT", "PATCH", "DELETE"])
 async def proxy_profiles_requests(path: str = "", request: Request = None):
