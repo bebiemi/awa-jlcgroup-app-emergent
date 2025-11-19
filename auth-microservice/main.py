@@ -194,6 +194,8 @@ app.include_router(system_references_router)
 app.include_router(retention_management_router)
 app.include_router(retention_policies_router)
 app.include_router(iam_unified_router)
+app.include_router(iam_bundles_router, prefix="/api")
+app.include_router(iam_expiration_router, prefix="/api")
 
 @app.get("/health")
 async def health_check():
