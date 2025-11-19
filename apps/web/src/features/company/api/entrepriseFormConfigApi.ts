@@ -163,4 +163,5 @@ export const {
   useDeleteFormFieldMutation,
   useReorderFormFieldsMutation,
   useGetFieldsForRoleQuery,
+  useGetPublicFormFieldsQuery,
 } = entrepriseFormConfigApi
