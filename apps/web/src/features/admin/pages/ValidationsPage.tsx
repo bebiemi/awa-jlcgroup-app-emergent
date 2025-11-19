@@ -59,7 +59,35 @@ export default function ValidationsPage() {
   const [rejectionReason, setRejectionReason] = useState('')
   const [selectedValidator, setSelectedValidator] = useState('')
   const [selectedValidations, setSelectedValidations] = useState<string[]>([])
-  const [contactConfirmation, setContactConfirmation] = useState(false)
+  const [representantEntreprises, setRepresentantEntreprises] = useState<any[]>([])
+
+  // Charger les entreprises du représentant quand la modal s'ouvre
+  useEffect(() => {
+    if (showAttachModal && selectedValidation?.existing_representant_user_id) {
+      loadRepresentantEntreprises(selectedValidation.existing_representant_user_id)
+    }
+  }, [showAttachModal, selectedValidation])
+
+  const loadRepresentantEntreprises = async (userId: string) => {
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/validations/representant/${userId}/details`,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+          }
+        }
+      )
+
+      if (response.ok) {
+        const data = await response.json()
+        setRepresentantEntreprises(data.entreprises || [])
+      }
+    } catch (error) {
+      console.error('Error loading representant entreprises:', error)
+      setRepresentantEntreprises([])
+    }
+  }
 
   const handleTileClick = (type: 'all' | 'candidat' | 'interim' | 'company' | 'collaborator' | 'warnings') => {
     // Filter validations based on tile clicked
