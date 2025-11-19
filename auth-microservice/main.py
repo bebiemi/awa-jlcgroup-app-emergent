@@ -129,6 +129,12 @@ async def lifespan(app: FastAPI):
         scheduler.shutdown()
         logger.info("🛑 Background jobs stopped")
     
+    # Fermer le cache Redis
+    if cache_service:
+        from awana_auth.services.iam_cache_service import close_cache_service
+        await close_cache_service()
+        logger.info("🔌 Redis cache service closed")
+    
     if client:
         logger.info("🔌 Closing MongoDB connection...")
         client.close()
