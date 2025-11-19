@@ -114,12 +114,12 @@ export default function Layout({ children }: LayoutProps) {
 
         {/* Breadcrumb - Sticky just below header */}
         {isAuthenticated && (
-          <div className="sticky top-16 z-10 bg-white">
+          <div className="sticky top-16 z-10 bg-white relative">
             <div className="px-4 sm:px-6 lg:px-8 py-3">
               <Breadcrumb />
             </div>
-            {/* Liseré dégradé violet fin */}
-            <div className="h-0.5 bg-gradient-to-r from-jlc-neon-pink-gray via-jlc-magenta to-jlc-indigo-dark"></div>
+            {/* Barre de chargement animée synchronisée au scroll */}
+            <AnimatedGradientBar />
           </div>
         )}
 
