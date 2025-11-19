@@ -14,30 +14,56 @@ export default function EditFieldModal({ field, isOpen, onClose, onSuccess }: Ed
   const [updateField, { isLoading }] = useUpdateFormFieldMutation()
 
   const [formData, setFormData] = useState({
-    field_key: '',
-    field_label: '',
-    field_type: 'text',
-    category: 'general',
-    order: 0,
-    placeholder: '',
-    help_text: '',
-    default_value: '',
+    field_key: field.field_key,
+    field_label: field.field_label,
+    field_type: field.field_type,
+    category: field.category,
+    order: field.order,
+    placeholder: field.placeholder || '',
+    help_text: field.help_text || '',
+    default_value: field.default_value || '',
   })
 
   const [validation, setValidation] = useState({
-    required: false,
-    min_length: '',
-    max_length: '',
-    min_value: '',
-    max_value: '',
-    pattern: '',
-    custom_error_message: '',
+    required: field.validation.required,
+    min_length: field.validation.min_length?.toString() || '',
+    max_length: field.validation.max_length?.toString() || '',
+    min_value: field.validation.min_value?.toString() || '',
+    max_value: field.validation.max_value?.toString() || '',
+    pattern: field.validation.pattern || '',
+    custom_error_message: field.validation.custom_error_message || '',
   })
 
-  const [visibleRoles, setVisibleRoles] = useState<string[]>(['admin', 'company_manager'])
-  const [editableRoles, setEditableRoles] = useState<string[]>(['admin'])
-  const [options, setOptions] = useState<FieldOption[]>([{ label: '', value: '' }])
+  const [visibleRoles, setVisibleRoles] = useState<string[]>(field.visible_for_roles)
+  const [editableRoles, setEditableRoles] = useState<string[]>(field.editable_for_roles)
+  const [options, setOptions] = useState<FieldOption[]>(field.options || [{ label: '', value: '' }])
   const [errors, setErrors] = useState<Record<string, string>>({})
+
+  // Update state when field prop changes
+  useEffect(() => {
+    setFormData({
+      field_key: field.field_key,
+      field_label: field.field_label,
+      field_type: field.field_type,
+      category: field.category,
+      order: field.order,
+      placeholder: field.placeholder || '',
+      help_text: field.help_text || '',
+      default_value: field.default_value || '',
+    })
+    setValidation({
+      required: field.validation.required,
+      min_length: field.validation.min_length?.toString() || '',
+      max_length: field.validation.max_length?.toString() || '',
+      min_value: field.validation.min_value?.toString() || '',
+      max_value: field.validation.max_value?.toString() || '',
+      pattern: field.validation.pattern || '',
+      custom_error_message: field.validation.custom_error_message || '',
+    })
+    setVisibleRoles(field.visible_for_roles)
+    setEditableRoles(field.editable_for_roles)
+    setOptions(field.options || [{ label: '', value: '' }])
+  }, [field])
 
   const fieldTypes = [
     { value: 'text', label: 'Texte' },
