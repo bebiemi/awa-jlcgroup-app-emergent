@@ -142,7 +142,7 @@ export default function ValidationsPage() {
     try {
       await rejectValidation({
         id: selectedValidation.id,
-        reason: rejectionReason,
+        rejection_reason: rejectionReason,
       }).unwrap()
       toast.success('Validation rejetée')
       setShowRejectModal(false)
