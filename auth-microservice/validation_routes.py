@@ -13,6 +13,10 @@ from awana_auth.core.dependencies import get_database, get_current_user
 from awana_auth.dependencies.permission_dependencies import require_permission
 from pydantic import BaseModel
 from awana_auth.utils.config_helpers import cfg
+from services.representant_detection_service import (
+    check_validation_representant,
+    get_representant_details
+)
 
 validation_router = APIRouter(prefix="/validations", tags=["Validations"])
 
