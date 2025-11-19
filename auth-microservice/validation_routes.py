@@ -370,6 +370,181 @@ async def get_representant_details_endpoint(
     return details
 
 
+@validation_router.post("/{validation_id}/attach-to-existing")
+async def attach_to_existing_representant(
+    validation_id: str,
+    attach_request: AttachToExistingRequest,
+    current_user: User = Depends(require_permission("entreprises.link_existing")),
+    db: AsyncIOMotorDatabase = Depends(get_database)
+):
+    """
+    Rattacher une validation à un représentant légal existant
+    Phase 3: Workflow de rattachement
+    
+    Requires:
+    - contact_confirmation: True (prise de contact obligatoire)
+    - Permission: entreprises.link_existing
+    """
+    
+    # Validation de la confirmation de contact
+    if not attach_request.contact_confirmation:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="La prise de contact avec le client existant est obligatoire avant le rattachement"
+        )
+    
+    # Récupérer la validation
+    validation = await db.validations.find_one({"id": validation_id})
+    if not validation:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Validation not found"
+        )
+    
+    # Vérifier que c'est une validation company
+    if validation["validation_type"] != "company":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Le rattachement ne s'applique qu'aux validations de type 'company'"
+        )
+    
+    # Vérifier qu'il y a bien un représentant existant détecté
+    if not validation.get("has_existing_representant"):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Aucun représentant existant détecté pour cette validation"
+        )
+    
+    existing_user_id = validation.get("existing_representant_user_id")
+    if not existing_user_id:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="ID du représentant existant manquant"
+        )
+    
+    # Récupérer le user de la nouvelle validation
+    new_user = await db.users.find_one({"id": validation["user_id"]})
+    if not new_user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Utilisateur de la validation non trouvé"
+        )
+    
+    # Récupérer les entreprises du représentant existant
+    existing_entreprises = await db.entreprises.find(
+        {"user_id": existing_user_id},
+        {"_id": 0}
+    ).to_list(None)
+    
+    if not existing_entreprises:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Aucune entreprise trouvée pour le représentant existant"
+        )
+    
+    # Déterminer l'entreprise cible
+    target_entreprise = None
+    if attach_request.target_entreprise_id:
+        # Entreprise spécifique sélectionnée
+        target_entreprise = await db.entreprises.find_one(
+            {"id": attach_request.target_entreprise_id},
+            {"_id": 0}
+        )
+        if not target_entreprise:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Entreprise cible non trouvée"
+            )
+    else:
+        # Prendre la première entreprise si une seule existe
+        if len(existing_entreprises) == 1:
+            target_entreprise = existing_entreprises[0]
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Plusieurs entreprises trouvées. Veuillez spécifier target_entreprise_id"
+            )
+    
+    # Créer une nouvelle entrée entreprise pour la validation, mais liée au user existant
+    # Cette entreprise sera "rattachée" mais reste indépendante
+    from uuid import uuid4
+    new_entreprise_id = str(uuid4())
+    
+    # Extraire les données de la validation ou des champs dynamiques
+    company_data = new_user.get("company_data", {})
+    
+    new_entreprise = {
+        "id": new_entreprise_id,
+        "nom": company_data.get("nom_commercial") or company_data.get("raison_sociale") or validation.get("user_full_name"),
+        "raison_sociale": company_data.get("raison_sociale", ""),
+        "representant_legal_nom": validation.get("representant_legal_nom", ""),
+        "representant_legal_email": validation.get("representant_legal_email", ""),
+        "email": company_data.get("email", new_user.get("email")),
+        "telephone": company_data.get("telephone", new_user.get("phone")),
+        "nif": company_data.get("nif", ""),
+        "siret": company_data.get("siret", ""),
+        "user_id": existing_user_id,  # IMPORTANT: Lié au user existant
+        "linked_entreprises": [target_entreprise["id"]],  # Lien vers l'entreprise existante
+        "grouping_status": "linked",  # Statut = rattachée
+        "grouping_parent_id": None,
+        "created_at": datetime.now(timezone.utc),
+        "created_by": current_user.id,
+        "updated_at": datetime.now(timezone.utc),
+        "status": "active"
+    }
+    
+    await db.entreprises.insert_one(new_entreprise)
+    
+    # Mettre à jour l'entreprise cible pour ajouter le lien inverse
+    await db.entreprises.update_one(
+        {"id": target_entreprise["id"]},
+        {
+            "$addToSet": {"linked_entreprises": new_entreprise_id},
+            "$set": {
+                "grouping_status": "linked",
+                "updated_at": datetime.now(timezone.utc)
+            }
+        }
+    )
+    
+    # Mettre à jour le statut de l'utilisateur de la validation à "active"
+    # Car le rattachement équivaut à une validation
+    await db.users.update_one(
+        {"id": new_user["id"]},
+        {
+            "$set": {
+                "status": UserStatus.ACTIVE.value,
+                "updated_at": datetime.now(timezone.utc).isoformat()
+            }
+        }
+    )
+    
+    # Mettre à jour la validation
+    await db.validations.update_one(
+        {"id": validation_id},
+        {
+            "$set": {
+                "status": "approved",
+                "rattachement_status": "approved",
+                "rattachement_to_entreprise_id": target_entreprise["id"],
+                "contact_confirmation": True,
+                "validated_by": current_user.id,
+                "validated_at": datetime.now(timezone.utc).isoformat(),
+                "notes": attach_request.notes or f"Rattaché à l'entreprise {target_entreprise['nom']}",
+                "updated_at": datetime.now(timezone.utc).isoformat()
+            }
+        }
+    )
+    
+    return {
+        "success": True,
+        "message": f"Entreprise rattachée avec succès à {target_entreprise['nom']}",
+        "new_entreprise_id": new_entreprise_id,
+        "linked_to_entreprise_id": target_entreprise["id"],
+        "existing_user_id": existing_user_id
+    }
+
+
 @validation_router.post("/{validation_id}/assign")
 async def assign_validation(
     validation_id: str,
