@@ -135,98 +135,24 @@ async def main():
         # 2.1 Entreprises (1 par entreprise)
         create_user_dict("techcorp_admin", "admin@techcorp.ga", "Admin TechCorp", 
                         entreprises[0]["id"], ["profile.company"], ["company"]),
-        {
-            "id": str(uuid4()),
-            "username": "construction_admin",
-            "email": "admin@constructionplus.ga",
-            "full_name": "Admin Construction Plus",
-            "password_hash": password_hash,
-            "company_id": entreprises[1]["id"],
-            "entreprise_id": entreprises[1]["id"],
-            "profile_ids": [profiles.get("profile.company", {}).get("id")] if profiles.get("profile.company") else [],
-            "roles": ["company"],
-            "status": "active",
-            "is_verified": True,
-            "created_at": datetime.now(timezone.utc)
-        },
-        {
-            "id": str(uuid4()),
-            "username": "sante_admin",
-            "email": "admin@santeservices.ga",
-            "full_name": "Admin Santé Services",
-            "password_hash": password_hash,
-            "company_id": entreprises[2]["id"],
-            "entreprise_id": entreprises[2]["id"],
-            "profile_ids": [profiles.get("profile.company", {}).get("id")] if profiles.get("profile.company") else [],
-            "roles": ["company"],
-            "status": "active",
-            "is_verified": True,
-            "created_at": datetime.now(timezone.utc)
-        },
+        create_user_dict("construction_admin", "admin@constructionplus.ga", "Admin Construction Plus",
+                        entreprises[1]["id"], ["profile.company"], ["company"]),
+        create_user_dict("sante_admin", "admin@santeservices.ga", "Admin Santé Services",
+                        entreprises[2]["id"], ["profile.company"], ["company"]),
         
         # 2.2 Commerciaux
-        {
-            "id": str(uuid4()),
-            "username": "commercial1",
-            "email": "commercial1@jlc.ga",
-            "full_name": "Jean Commercial",
-            "password_hash": password_hash,
-            "profile_ids": [profiles.get("commercial", {}).get("id")] if profiles.get("commercial") else [],
-            "roles": ["commercial"],
-            "status": "active",
-            "is_verified": True,
-            "created_at": datetime.now(timezone.utc)
-        },
-        {
-            "id": str(uuid4()),
-            "username": "commercial2",
-            "email": "commercial2@jlc.ga",
-            "full_name": "Marie Commerciale",
-            "password_hash": password_hash,
-            "profile_ids": [profiles.get("commercial", {}).get("id")] if profiles.get("commercial") else [],
-            "roles": ["commercial"],
-            "status": "active",
-            "is_verified": True,
-            "created_at": datetime.now(timezone.utc)
-        },
+        create_user_dict("commercial1", "commercial1@jlc.ga", "Jean Commercial",
+                        None, ["commercial"], ["commercial"]),
+        create_user_dict("commercial2", "commercial2@jlc.ga", "Marie Commerciale",
+                        None, ["commercial"], ["commercial"]),
         
         # 2.3 Candidats
-        {
-            "id": str(uuid4()),
-            "username": "candidat1",
-            "email": "candidat1@gmail.com",
-            "full_name": "Pierre Candidat",
-            "password_hash": password_hash,
-            "profile_ids": [profiles.get("applicant", {}).get("id")] if profiles.get("applicant") else [],
-            "roles": ["applicant"],
-            "status": "active",
-            "is_verified": True,
-            "created_at": datetime.now(timezone.utc)
-        },
-        {
-            "id": str(uuid4()),
-            "username": "candidat2",
-            "email": "candidat2@gmail.com",
-            "full_name": "Sophie Candidate",
-            "password_hash": password_hash,
-            "profile_ids": [profiles.get("applicant", {}).get("id")] if profiles.get("applicant") else [],
-            "roles": ["applicant"],
-            "status": "active",
-            "is_verified": True,
-            "created_at": datetime.now(timezone.utc)
-        },
-        {
-            "id": str(uuid4()),
-            "username": "candidat3",
-            "email": "candidat3@gmail.com",
-            "full_name": "Ahmed Candidat",
-            "password_hash": password_hash,
-            "profile_ids": [profiles.get("applicant", {}).get("id")] if profiles.get("applicant") else [],
-            "roles": ["applicant"],
-            "status": "active",
-            "is_verified": True,
-            "created_at": datetime.now(timezone.utc)
-        },
+        create_user_dict("candidat1", "candidat1@gmail.com", "Pierre Candidat",
+                        None, ["applicant"], ["applicant"]),
+        create_user_dict("candidat2", "candidat2@gmail.com", "Sophie Candidate",
+                        None, ["applicant"], ["applicant"]),
+        create_user_dict("candidat3", "candidat3@gmail.com", "Ahmed Candidat",
+                        None, ["applicant"], ["applicant"]),
     ]
     
     created_users = {}
