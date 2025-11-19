@@ -108,10 +108,14 @@ class Permission(BaseModel):
         if not v or not v.strip():
             raise ValueError("Le champ ne peut pas être vide")
         
+        # Allow wildcard '*' for special permissions
+        if v.strip() == '*':
+            return v.strip()
+        
         pattern = re.compile(r'^[a-z0-9_]+$')
         if not pattern.match(v):
             raise ValueError(
-                f"Valeur invalide '{v}'. Caractères autorisés: a-z, 0-9, underscore (_)"
+                f"Valeur invalide '{v}'. Caractères autorisés: a-z, 0-9, underscore (_), ou '*' pour wildcard"
             )
         
         return v.strip().lower()
