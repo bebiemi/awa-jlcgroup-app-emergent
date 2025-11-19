@@ -511,7 +511,7 @@ export default function EditFieldModal({ field, isOpen, onClose, onSuccess }: Ed
               Annuler
             </Button>
             <Button type="submit" variant="primary" disabled={isLoading}>
-              {isLoading ? 'Création...' : 'Créer le champ'}
+              {isLoading ? 'Modification...' : 'Enregistrer'}
             </Button>
           </div>
         </form>
