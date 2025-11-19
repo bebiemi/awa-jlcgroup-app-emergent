@@ -213,51 +213,67 @@ async def get_missions(
     published_only: bool = False,
     skip: int = 0,
     limit: int = 50,
-    current_user: dict = Depends(get_current_user),
-    db = Depends(get_db)
+    current_user: User = Depends(get_user_dep),
+    db: AsyncIOMotorDatabase = Depends(get_database),
+    iam_service: IAMService = Depends(get_iam_service)
 ):
     """
-    Récupérer la liste des missions
-    Filtres selon le rôle:
-    - Intérimaires: Seulement missions publiées
-    - Entreprises: Leurs missions uniquement
-    - Admin/Commercial: Toutes les missions
+    Récupérer la liste des missions selon les permissions IAM
+    
+    Permissions supportées:
+    - missions.read.all : Voir toutes les missions (Admin, Commercial)
+    - missions.read.own : Voir uniquement ses missions (Entreprise)
+    - missions.browse : Voir uniquement les missions publiées (Candidat)
     """
+    user_id = current_user.id
+    user_company_id = getattr(current_user, 'company_id', None)
+    
+    # Appliquer le filtrage IAM basé sur les permissions
+    iam_filter = await get_resource_filter(
+        iam_service, 
+        user_id, 
+        user_company_id, 
+        "missions", 
+        "read"
+    )
+    
+    # Vérifier la permission missions.browse (candidats)
+    browse_result = await iam_service.user_has_permission(user_id, "missions.browse")
+    
+    if iam_filter is None and not browse_result.has_permission:
+        # Aucune permission
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Vous n'avez pas la permission de consulter les missions"
+        )
+    
+    # Construire la query
     query = {}
-    user_id = current_user.get("sub")
     
-    # IAM: Check permissions instead of roles
-    checker = PermissionChecker(db)
-    can_manage_all = await checker.user_has_any_permission(
-        current_user.get("id"),
-        ["missions.manage", "missions.read"]
-    )
-    can_create = await checker.user_has_permission(
-        current_user.get("id"),
-        "missions.create"
-    )
-    can_browse = await checker.user_has_permission(
-        current_user.get("id"),
-        "missions.browse"
-    )
-    
-    # Filtrer selon les permissions
-    if can_browse and not can_manage_all and not can_create:
-        # Interim users (missions.browse) - only published missions
+    if iam_filter is None:
+        # Cas missions.browse : missions publiées uniquement
         query["status"] = MissionStatus.PUBLISHED
-    elif can_create and not can_manage_all:
-        # Company users (missions.create) - only their missions
-        query["company_id"] = user_id
+    elif iam_filter:
+        # Cas .own : filtrer par company_id
+        query.update(iam_filter)
+    # Sinon (iam_filter == {}) : cas .all, pas de filtre
     
-    # Appliquer les filtres supplémentaires
+    # Appliquer les filtres supplémentaires de l'API
     if status:
         query["status"] = status
-    if company_id and can_manage_all:
+    
+    # Filtrer par company_id seulement si l'utilisateur a la permission .all
+    has_read_all = await iam_service.user_has_permission(user_id, "missions.read.all")
+    if company_id and has_read_all.has_permission:
         query["company_id"] = company_id
+    
     if commercial_id:
         query["commercial_id"] = commercial_id
+    
     if published_only:
         query["status"] = MissionStatus.PUBLISHED
+    
+    logger.info(f"User {user_id} querying missions with filter: {query}")
     
     missions = await db.missions.find(query).skip(skip).limit(limit).to_list(length=limit)
     
