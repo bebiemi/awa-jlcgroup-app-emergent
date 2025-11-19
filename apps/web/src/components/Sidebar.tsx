@@ -446,9 +446,11 @@ export default function Sidebar() {
                   </li>
                 )
               })}
-            </ul>
-          </div>
-        ))}
+                </ul>
+              )}
+            </div>
+          )
+        })}
       </nav>
 
       {/* Language Switcher & User Info */}
