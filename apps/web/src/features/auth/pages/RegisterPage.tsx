@@ -156,17 +156,25 @@ export default function RegisterPage() {
     }
 
     try {
-      const payload = {
+      const payload: any = {
         username: formData.username,
         email: formData.email,
         password: formData.password,
         full_name: formData.fullName,
         phone: formData.phone || undefined,
         date_of_birth: formData.dateOfBirth || undefined,
-        company_name: formData.companyName || undefined,
-        legal_representative: formData.legalRepresentative || undefined,
-        nif: formData.nif || undefined,
         location: Object.values(formData.location).some(v => v) ? formData.location : undefined,
+      }
+      
+      // Pour les entreprises, ajouter les champs dynamiques
+      if (accountType === 'company') {
+        // Mapper les champs dynamiques vers les champs attendus par l'API
+        payload.company_name = dynamicCompanyData.nom_commercial || dynamicCompanyData.raison_sociale
+        payload.legal_representative = dynamicCompanyData.representant_legal
+        payload.nif = dynamicCompanyData.nif
+        
+        // Ajouter tous les autres champs dynamiques
+        payload.company_data = dynamicCompanyData
       }
 
       const result = await register(payload).unwrap()
