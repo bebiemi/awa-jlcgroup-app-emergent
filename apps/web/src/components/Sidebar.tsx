@@ -362,16 +362,17 @@ export default function Sidebar() {
     <div className="flex flex-col h-full bg-gradient-to-b from-jlc-indigo-dark to-jlc-neon-pink-gray text-white">
       {/* Header */}
       <div className="p-4 border-b border-jlc-neon-pink/30">
-        <div className="flex items-center justify-between">
-          <Link to={getDashboardPath()} className="flex items-center space-x-3 hover:opacity-80 transition">
+        <div className="flex items-center justify-between gap-2">
+          <Link to={getDashboardPath()} className="flex items-center space-x-3 hover:opacity-80 transition flex-1 min-w-0">
             <img 
               src="/logo-jlc.png" 
               alt="JLC Group" 
-              className={`${isCollapsed ? 'h-10 w-auto' : 'h-14 w-auto max-w-[180px]'} object-contain transition-all`}
+              className={`${isCollapsed ? 'h-10 w-auto' : 'h-14 w-auto max-w-[180px]'} object-contain transition-all flex-shrink-0`}
             />
             {!isCollapsed && (
-              <div>
-                <p className="text-xs text-white/70 mt-1">
+              <div className="min-w-0">
+                <h2 className="font-bold text-xl text-jlc-neon-pink truncate">JLC Group</h2>
+                <p className="text-xs text-white/60 truncate">
                   {user?.roles.includes(roles.admin) ? 'Administration' : 
                    user?.roles.includes(roles.interim) || user?.roles.includes('intérimaire') ? 'Intérimaire' : 
                    user?.roles.includes(roles.company) || user?.roles.includes('entreprise') ? 'Entreprise' :
@@ -383,12 +384,13 @@ export default function Sidebar() {
           </Link>
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
-            className="p-2 rounded-lg hover:bg-jlc-magenta/30 transition-colors hidden lg:block"
+            className="p-2 rounded-lg hover:bg-jlc-magenta/30 transition-colors hidden lg:block flex-shrink-0"
+            title={isCollapsed ? 'Étendre le menu' : 'Réduire le menu'}
           >
             {isCollapsed ? (
-              <ChevronRightIcon className="h-5 w-5" />
+              <ChevronRightIcon className="h-5 w-5 text-white" />
             ) : (
-              <ChevronLeftIcon className="h-5 w-5" />
+              <ChevronLeftIcon className="h-5 w-5 text-white" />
             )}
           </button>
         </div>
