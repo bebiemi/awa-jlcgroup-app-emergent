@@ -20,6 +20,7 @@ import {
   ArrowRightOnRectangleIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
+  ChevronDownIcon,
   Bars3Icon,
   ShieldCheckIcon,
   MapPinIcon,
