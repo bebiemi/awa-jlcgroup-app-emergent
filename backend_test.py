@@ -4801,7 +4801,7 @@ def run_authentication_fix_test():
     return test_results
 
 if __name__ == "__main__":
-    print(f"{Colors.BOLD}🚀 Starting Company Management System Testing{Colors.ENDC}")
+    print(f"{Colors.BOLD}🚀 Starting IAM RTK Query Cache Fix Testing{Colors.ENDC}")
     print(f"{Colors.BOLD}Testing Base URLs:{Colors.ENDC}")
     print(f"  Auth Service: {AUTH_BASE_URL}")
     print(f"  JLC API: {API_BASE_URL}")
@@ -4811,32 +4811,32 @@ if __name__ == "__main__":
         print(f"\n{Colors.RED}❌ Auth service not available - aborting all tests{Colors.ENDC}")
         sys.exit(1)
     
-    # Run Company Management System tests
-    company_results = test_company_management_system()
+    # Run IAM RTK Query Cache Fix test
+    cache_fix_success = test_iam_rtk_query_cache_fix()
     
     # Print final summary
     print(f"\n{Colors.BOLD}{'='*80}{Colors.ENDC}")
-    print(f"{Colors.BOLD}COMPANY MANAGEMENT SYSTEM TESTING SUMMARY{Colors.ENDC}")
+    print(f"{Colors.BOLD}IAM RTK QUERY CACHE FIX TESTING SUMMARY{Colors.ENDC}")
     print(f"{Colors.BOLD}{'='*80}{Colors.ENDC}")
     
-    passed_tests = [r for r in company_results if r[1]]  # r[1] is success boolean
-    failed_tests = [r for r in company_results if not r[1]]
-    
-    print(f"\n{Colors.GREEN}✅ PASSED TESTS ({len(passed_tests)}):{Colors.ENDC}")
-    for test_name, success in passed_tests:
-        print(f"  ✅ {test_name}")
-    
-    if failed_tests:
-        print(f"\n{Colors.RED}❌ FAILED TESTS ({len(failed_tests)}):{Colors.ENDC}")
-        for test_name, success in failed_tests:
-            print(f"  ❌ {test_name}")
-    
-    success_rate = (len(passed_tests) / len(company_results)) * 100 if company_results else 0
-    print(f"\n{Colors.BOLD}Overall Success Rate: {success_rate:.1f}% ({len(passed_tests)}/{len(company_results)}){Colors.ENDC}")
-    
-    if success_rate >= 70:  # Lower threshold for initial testing
-        print(f"{Colors.GREEN}🎉 Company Management System testing completed successfully!{Colors.ENDC}")
+    if cache_fix_success:
+        print(f"\n{Colors.GREEN}✅ RTK QUERY CACHE FIX TEST PASSED{Colors.ENDC}")
+        print(f"  ✅ Permissions removed from profiles stay removed after refresh")
+        print(f"  ✅ Database persistence working correctly")
+        print(f"  ✅ No regression on create/delete operations")
+        print(f"  ✅ Cache invalidation working as expected")
+        
+        print(f"\n{Colors.GREEN}🎉 IAM RTK Query cache fix verification completed successfully!{Colors.ENDC}")
+        print(f"{Colors.GREEN}✅ SUCCESS CRITERIA MET:{Colors.ENDC}")
+        print(f"  • Removed permissions stay removed after re-fetch ✅")
+        print(f"  • Permission count matches what was saved ✅") 
+        print(f"  • No regression on other operations ✅")
+        
         sys.exit(0)
     else:
-        print(f"{Colors.RED}⚠️  Some Company Management tests failed. Please review the results above.{Colors.ENDC}")
+        print(f"\n{Colors.RED}❌ RTK QUERY CACHE FIX TEST FAILED{Colors.ENDC}")
+        print(f"  ❌ Cache invalidation not working correctly")
+        print(f"  ❌ Permissions may be reappearing after refresh")
+        
+        print(f"\n{Colors.RED}⚠️  RTK Query cache fix test failed. The bug may still be present.{Colors.ENDC}")
         sys.exit(1)
