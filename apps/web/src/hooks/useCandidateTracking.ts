@@ -22,7 +22,8 @@ export const useHasCandidatures = (): boolean => {
   }
 
   // Vérifier si au moins une candidature existe
-  const applications = data?.applications || []
+  // Note: L'API retourne directement un tableau, pas un objet avec une clé "applications"
+  const applications = data || []
   return applications.length > 0
 }
 
