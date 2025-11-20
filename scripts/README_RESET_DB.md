@@ -1,5 +1,15 @@
 # 🔄 Script de Réinitialisation de la Base de Données IAM
 
+## ⚠️ Important : Configuration de la Base de Données
+
+Ce script utilise **`auth_db`** par défaut (défini dans `auth-microservice/.env`).
+
+Vos bases de données :
+- **`auth_db`** : Authentification et IAM (permissions, profils, groupes, users)
+- **`jlc_db`** : Application principale (missions, besoins, entreprises, etc.)
+
+Le script lit automatiquement la variable `DATABASE_NAME` de votre environnement.
+
 ## 📋 Description
 
 Ce script permet de réinitialiser complètement votre base de données locale IAM avec :
