@@ -352,8 +352,8 @@ async def reset_database(delete_users: bool = False):
         print("✅ RÉINITIALISATION TERMINÉE AVEC SUCCÈS!")
         print("="*80)
         print("\n🔑 Identifiants SuperAdmin:")
-        print("   Email: admin@awana.fr")
-        print("   Username: admin")
+        print("   Email: adminbe@awana-group.com")
+        print("   Username: adminbe")
         print("   Password: Awana2025!")
         print("\n")
         
