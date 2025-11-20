@@ -19,10 +19,10 @@ import argparse
 sys.path.insert(0, str(Path(__file__).parent.parent / "auth-microservice"))
 
 from motor.motor_asyncio import AsyncIOMotorClient
-from passlib.context import CryptContext
+import bcrypt
 
-# Password hashing
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+# Note: Nous utilisons bcrypt directement au lieu de passlib
+# pour éviter les problèmes de compatibilité de version
 
 # Configuration MongoDB
 MONGO_URL = os.getenv("MONGO_URL", "mongodb://localhost:27017")
