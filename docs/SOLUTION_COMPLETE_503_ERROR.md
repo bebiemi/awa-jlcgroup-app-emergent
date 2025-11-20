@@ -6,7 +6,7 @@
 
 ### Analyse
 ```
-Browser → https://id-manager-4.preview.emergentagent.com/api/besoins
+Browser → https://dev-stabilizer.preview.emergentagent.com/api/besoins
           ↓
           TOUTES les requêtes tombaient sur le frontend (port 3000)
           ↓
@@ -17,7 +17,7 @@ Browser → https://id-manager-4.preview.emergentagent.com/api/besoins
 
 ### Preuve
 ```bash
-curl https://id-manager-4.preview.emergentagent.com/health
+curl https://dev-stabilizer.preview.emergentagent.com/health
 # Retournait: <!doctype html>... (page React)
 # Au lieu de: {"status":"healthy",...}
 ```
@@ -70,7 +70,7 @@ Ajouté `/api/health` dans `server.py` pour compatibilité avec le routing `/api
 ```
 ┌─────────────────────────────────────────────────────┐
 │  Production (Kubernetes/Ingress)                     │
-│  https://id-manager-4.preview.emergentagent.com │
+│  https://dev-stabilizer.preview.emergentagent.com │
 └───────────────────────┬─────────────────────────────┘
                         │
                         ▼

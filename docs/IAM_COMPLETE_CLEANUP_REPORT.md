@@ -19,7 +19,7 @@
 
 **Symptôme :**
 ```
-GET https://id-manager-4.preview.emergentagent.com/ net::ERR_HTTP_RESPONSE_CODE_FAILURE 502 (Bad Gateway)
+GET https://dev-stabilizer.preview.emergentagent.com/ net::ERR_HTTP_RESPONSE_CODE_FAILURE 502 (Bad Gateway)
 ```
 
 **Cause Racine :**
