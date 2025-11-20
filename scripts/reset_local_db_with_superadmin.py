@@ -336,6 +336,7 @@ async def reset_database(delete_users: bool = False):
             "is_active": True,
             "is_verified": True,
             "role": "super_admin",
+            "roles": ["super_admin"],  # IMPORTANT: Pour le JWT token
             "profile_ids": [superadmin_profile_id],
             "group_ids": [],
             "created_at": datetime.now(timezone.utc),
