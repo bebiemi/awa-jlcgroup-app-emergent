@@ -315,8 +315,8 @@ async def reset_database(delete_users: bool = False):
         
         superadmin_user = {
             "id": superadmin_user_id,
-            "email": "admin@awana.fr",
-            "username": "admin",
+            "email": "adminbe@awana-group.com",
+            "username": "adminbe",
             "first_name": "Super",
             "last_name": "Admin",
             "hashed_password": hashed_password,
@@ -329,8 +329,8 @@ async def reset_database(delete_users: bool = False):
             "updated_at": datetime.now(timezone.utc),
         }
         
-        # Supprimer l'ancien compte admin s'il existe
-        await db.users.delete_many({"$or": [{"email": "admin@awana.fr"}, {"username": "admin"}]})
+        # Supprimer l'ancien compte adminbe s'il existe
+        await db.users.delete_many({"$or": [{"email": "adminbe@awana-group.com"}, {"username": "adminbe"}]})
         
         # Insérer le nouveau compte
         await db.users.insert_one(superadmin_user)
