@@ -15,6 +15,33 @@ from awana_auth.services.iam_service import IAMService
 from awana_auth.dependencies.permission_dependencies import require_permission
 from awana_auth.core.dependencies import get_database
 
+
+# ==================== Modèles ====================
+
+class Document(BaseModel):
+    id: str
+    user_id: str
+    user_email: str
+    user_name: Optional[str] = None
+    filename: str
+    original_filename: str
+    file_size: int
+    mime_type: str
+    category: str
+    visibility: str
+    description: Optional[str] = None
+    tags: List[str] = []
+    status: str
+    is_confidential: bool
+    verified_by: Optional[str] = None
+    verified_at: Optional[str] = None
+    retention_period_days: Optional[int] = None
+    expiry_date: Optional[str] = None
+    created_at: str
+    updated_at: str
+    download_count: int = 0
+
+
 router = APIRouter(prefix="/documents", tags=["documents"])
 
 # Configuration upload
