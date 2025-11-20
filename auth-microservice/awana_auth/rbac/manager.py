@@ -22,14 +22,13 @@ class RBACManager:
     
     async def initialize_default_roles(self):
         """Initialize default system roles and permissions"""
-        # Create default permissions
-        for permission in DEFAULT_PERMISSIONS:
-            existing = await self.permissions_collection.find_one({"name": permission.name})
-            if not existing:
-                await self.permissions_collection.insert_one(permission.model_dump())
-                logger.info(f"Created permission: {permission.name}")
+        # NOTE: Les permissions sont maintenant gérées par le système IAM moderne
+        # et sont créées via le script de réinitialisation (reset_local_db_with_superadmin.py)
+        # Nous n'insérons plus les DEFAULT_PERMISSIONS ici pour éviter les conflits
         
-        # Create default roles
+        logger.info("Skipping DEFAULT_PERMISSIONS insertion (managed by IAM system)")
+        
+        # Create default roles (conservé pour compatibilité RBAC legacy)
         for role in DEFAULT_ROLES:
             existing = await self.roles_collection.find_one({"name": role.name})
             if not existing:
