@@ -133,8 +133,8 @@ pip install motor passlib[bcrypt]
 
 ### Le script s'exécute mais l'erreur 500 persiste
 **Solution** : 
-1. Vérifiez que vous utilisez bien la même base de données (par défaut : `awana`)
-2. Vérifiez votre variable d'environnement `MONGO_URL` dans `.env`
+1. Vérifiez que vous utilisez bien la même base de données (par défaut : `auth_db`)
+2. Vérifiez votre variable d'environnement `DATABASE_NAME` dans `auth-microservice/.env` (doit être `auth_db`)
 3. Redémarrez complètement votre backend
 
 ## 📞 Questions ?
