@@ -275,8 +275,9 @@ export default function Sidebar() {
         ],
       }
     )
-  } else if (userPermissions['besoins.create'] || userPermissions['missions.create']) {
-    // Company role (can create missions/besoins)
+  } else if (userPermissions['besoins.create.own'] || userPermissions['besoins.create.all'] || 
+             userPermissions['missions.create.own'] || userPermissions['missions.create.all']) {
+    // Company role (can create missions/besoins with .own or .all scope)
     navigationSections.push(
       {
         title: 'Tableau de bord',
