@@ -59,3 +59,6 @@ export const {
   useGetDocumentTypesQuery,
   useGetReferencesByCategoryQuery,
 } = referencesApi
+
+// Alias pour compatibilité avec useDocuments hook
+export const useGetReferenceValuesQuery = useGetReferencesByCategoryQuery
