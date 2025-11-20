@@ -65,7 +65,7 @@ sudo supervisorctl restart backend
 # Tentez de vous connecter avec le compte superAdmin
 curl -X POST http://localhost:8001/api/auth/login \
   -H "Content-Type: application/json" \
-  -d '{"username":"admin","password":"Awana2025!"}'
+  -d '{"username":"adminbe","password":"Awana2025!"}'
 
 # Si vous obtenez un token, testez l'endpoint permissions
 TOKEN="<votre_token>"
