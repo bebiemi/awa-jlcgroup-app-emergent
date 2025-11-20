@@ -171,7 +171,22 @@ export const useBadgeConfig = () => {
 }
 
 export const useDocumentCategories = () => {
-  return useGetConfigValueQuery('documents.categories') as {
+  const result = useGetConfigValueQuery('documents.categories')
+  
+  // Si erreur 404, retourner des données vides
+  if (result.error && 'status' in result.error && result.error.status === 404) {
+    return {
+      data: undefined,
+      isLoading: false,
+      error: undefined,
+    } as {
+      data: DocumentCategory[] | undefined
+      isLoading: boolean
+      error: any
+    }
+  }
+  
+  return result as {
     data: DocumentCategory[] | undefined
     isLoading: boolean
     error: any
@@ -179,7 +194,22 @@ export const useDocumentCategories = () => {
 }
 
 export const useNotificationTypes = () => {
-  return useGetConfigValueQuery('notifications.types') as {
+  const result = useGetConfigValueQuery('notifications.types')
+  
+  // Si erreur 404, retourner des données vides
+  if (result.error && 'status' in result.error && result.error.status === 404) {
+    return {
+      data: undefined,
+      isLoading: false,
+      error: undefined,
+    } as {
+      data: Record<string, NotificationType> | undefined
+      isLoading: boolean
+      error: any
+    }
+  }
+  
+  return result as {
     data: Record<string, NotificationType> | undefined
     isLoading: boolean
     error: any
@@ -187,7 +217,22 @@ export const useNotificationTypes = () => {
 }
 
 export const useDashboardWidgets = () => {
-  return useGetConfigValueQuery('dashboard.widgets') as {
+  const result = useGetConfigValueQuery('dashboard.widgets')
+  
+  // Si erreur 404, retourner des données vides
+  if (result.error && 'status' in result.error && result.error.status === 404) {
+    return {
+      data: undefined,
+      isLoading: false,
+      error: undefined,
+    } as {
+      data: Record<string, DashboardWidget> | undefined
+      isLoading: boolean
+      error: any
+    }
+  }
+  
+  return result as {
     data: Record<string, DashboardWidget> | undefined
     isLoading: boolean
     error: any
