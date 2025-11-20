@@ -104,8 +104,8 @@ Après l'exécution, vous devriez voir :
 ================================================================================
 
 🔑 Identifiants SuperAdmin:
-   Email: admin@awana.fr
-   Username: admin
+   Email: adminbe@awana-group.com
+   Username: adminbe
    Password: Awana2025!
 ```
 
