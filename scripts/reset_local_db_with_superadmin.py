@@ -331,6 +331,7 @@ async def reset_database(delete_users: bool = False):
             "first_name": "Super",
             "last_name": "Admin",
             "hashed_password": hashed_password,
+            "provider": "local",  # IMPORTANT: Requis pour l'authentification locale
             "is_active": True,
             "is_verified": True,
             "role": "super_admin",
