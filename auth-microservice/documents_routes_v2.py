@@ -21,24 +21,24 @@ from awana_auth.core.dependencies import get_database
 class Document(BaseModel):
     id: str
     user_id: str
-    user_email: str
+    user_email: str = ""
     user_name: Optional[str] = None
     filename: str
     original_filename: str
     file_size: int
     mime_type: str
-    category: str
-    visibility: str
+    category: str = "other"
+    visibility: str = "private"
     description: Optional[str] = None
     tags: List[str] = []
-    status: str
-    is_confidential: bool
+    status: str = "pending"
+    is_confidential: bool = False
     verified_by: Optional[str] = None
     verified_at: Optional[str] = None
     retention_period_days: Optional[int] = None
     expiry_date: Optional[str] = None
-    created_at: str
-    updated_at: str
+    created_at: str = ""
+    updated_at: str = ""
     download_count: int = 0
 
 
