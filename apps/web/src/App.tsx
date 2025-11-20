@@ -526,7 +526,7 @@ function App() {
         path="/dashboard"
         element={
           isAuthenticated ? (
-            <Navigate to={getDashboardPath()} replace />
+            <Navigate to={dashboardPath} replace />
           ) : (
             <Navigate to="/login" replace />
           )
