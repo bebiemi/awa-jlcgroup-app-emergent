@@ -72,8 +72,8 @@ Une fois le script exécuté avec succès, vous verrez :
 ================================================================================
 
 🔑 Identifiants SuperAdmin:
-   Email: admin@awana.fr
-   Username: admin
+   Email: adminbe@awana-group.com
+   Username: adminbe
    Password: Awana2025!
 ```
 
