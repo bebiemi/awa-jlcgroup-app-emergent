@@ -26,7 +26,7 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 # Configuration MongoDB
 MONGO_URL = os.getenv("MONGO_URL", "mongodb://localhost:27017")
-DB_NAME = "awana"
+DB_NAME = os.getenv("DATABASE_NAME", "auth_db")  # Base de données IAM (auth_db par défaut)
 
 # Toutes les permissions IAM modernes
 ALL_MODERN_PERMISSIONS = [
