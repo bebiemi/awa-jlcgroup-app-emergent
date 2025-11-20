@@ -144,11 +144,14 @@ export default function ValidationsPage() {
     const allUsers = usersData?.users || []
     
     // For interim and company, show all admins and commercials
-    return allUsers.filter(user =>
-      user.roles.includes(UserRoles.ADMIN) ||
-      user.roles.includes(UserRoles.SUPER_ADMIN) ||
-      user.roles.includes('commercial')
-    )
+    return allUsers.filter(user => {
+      const roles = user.roles || []
+      return (
+        roles.includes(UserRoles.ADMIN) ||
+        roles.includes(UserRoles.SUPER_ADMIN) ||
+        roles.includes('commercial')
+      )
+    })
   }
 
   const validators = getFilteredValidators()
