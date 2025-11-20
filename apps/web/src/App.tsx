@@ -365,21 +365,16 @@ function App() {
         }
       />
       <Route
-        path="/postulant"
+        path="/candidat"
         element={
           <ProtectedRoute>
             <PostulantMainDashboard />
           </ProtectedRoute>
         }
       />
-      <Route
-        path="/postulant/profile-overview"
-        element={
-          <ProtectedRoute>
-            <ProfileOverviewPage />
-          </ProtectedRoute>
-        }
-      />
+      {/* Legacy redirect */}
+      <Route path="/postulant" element={<Navigate to="/candidat" replace />} />
+      <Route path="/postulant/profile-overview" element={<Navigate to="/candidat" replace />} />
       <Route
         path="/dashboard"
         element={
