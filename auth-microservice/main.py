@@ -63,7 +63,7 @@ from retention_policies_routes import router as retention_policies_router
 from iam_unified_routes import router as iam_unified_router
 from professional_experiences_routes import router as professional_experiences_router
 from support_routes import router as support_router
-from documents_routes import router as documents_router
+from documents_routes_v2 import router as documents_router
 from iam_bundles_routes import router as iam_bundles_router
 from iam_expiration_routes import router as iam_expiration_router
 from iam_cache_routes import router as iam_cache_router
