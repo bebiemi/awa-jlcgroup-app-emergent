@@ -87,16 +87,8 @@ function App() {
   // Auto-logout after 30 minutes of inactivity
   useInactivityLogout()
 
-  // Redirect to role-specific dashboard
-  const getDashboardPath = () => {
-    if (!user) return '/login'
-    if (user.roles.includes(roles.admin)) return '/admin'
-    if (user.roles.includes(roles.interim)) return '/interimaire'
-    if (user.roles.includes(roles.company)) return '/entreprise'
-    if (user.roles.includes(roles.agency)) return '/agence'
-    if (user.roles.includes('candidat')) return '/candidat'
-    return '/profile'
-  }
+  // Redirect to role-specific dashboard (IAM-based)
+  const dashboardPath = useDashboardPath()
 
   return (
     <SidebarProvider>
