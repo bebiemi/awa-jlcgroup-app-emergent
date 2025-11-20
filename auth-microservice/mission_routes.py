@@ -809,11 +809,40 @@ async def get_mission_applications(
     
     applications = await db.applications.find(query).to_list(length=None)
     
-    # Remove _id
+    # Clean and validate data before creating Application objects
+    validated_apps = []
     for app in applications:
         app.pop('_id', None)
+        
+        # Fix missing user_id (might be named differently in old data)
+        if 'user_id' not in app:
+            if 'candidate_id' in app:
+                app['user_id'] = app['candidate_id']
+            elif 'applicant_id' in app:
+                app['user_id'] = app['applicant_id']
+            else:
+                # Skip applications without user reference
+                continue
+        
+        # Fix invalid status values
+        if 'status' in app:
+            # Map legacy/invalid statuses to valid ones
+            status_mapping = {
+                'pending': 'submitted',  # pending → submitted
+                'applied': 'submitted',
+                'new': 'submitted',
+            }
+            if app['status'] in status_mapping:
+                app['status'] = status_mapping[app['status']]
+        
+        try:
+            validated_apps.append(Application(**app))
+        except Exception as e:
+            # Log but continue processing other applications
+            logger.warning(f"Could not validate application {app.get('id', 'unknown')}: {str(e)}")
+            continue
     
-    return [Application(**app) for app in applications]
+    return validated_apps
 
 
 @router.get("/applications/my-applications", response_model=List[Application])
