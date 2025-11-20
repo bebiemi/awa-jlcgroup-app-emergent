@@ -314,6 +314,15 @@ function App() {
           </ProtectedRoute>
         }
       />
+      {/* Route alternative : version simple des candidatures */}
+      <Route
+        path="/my-applications"
+        element={
+          <ProtectedRoute requiredPermissions={['applications.read.own']}>
+            <MyApplicationsPage />
+          </ProtectedRoute>
+        }
+      />
       
       {/* Routes Offres - IAM Permissions (postulants, candidats, intérimaires) */}
       <Route
