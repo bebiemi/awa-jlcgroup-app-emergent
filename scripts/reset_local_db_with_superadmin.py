@@ -268,8 +268,14 @@ async def reset_database(delete_users: bool = False):
         # ÉTAPE 4: Création de l'index unique sur le code
         # ================================================================
         print("🔐 Création de l'index unique sur le champ 'code'...")
-        await db.permissions.create_index("code", unique=True)
-        print("   ✅ Index créé\n")
+        try:
+            await db.permissions.create_index("code", unique=True)
+            print("   ✅ Index créé\n")
+        except Exception as idx_err:
+            if "already exists" in str(idx_err) or "IndexKeySpecsConflict" in str(idx_err):
+                print("   ℹ️  Index déjà existant (normal)\n")
+            else:
+                print(f"   ⚠️  Avertissement index: {idx_err}\n")
         
         # ================================================================
         # ÉTAPE 5: Création du profil SuperAdmin
