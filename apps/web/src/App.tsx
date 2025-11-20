@@ -114,7 +114,7 @@ function App() {
       <Route
         path="/admin"
         element={
-          <ProtectedRoute requiredPermissions={['admin.dashboard']}>
+          <ProtectedRoute requiredPermissions={['admin.dashboard', 'admin.access']}>
             <AdminDashboard />
           </ProtectedRoute>
         }
@@ -122,7 +122,7 @@ function App() {
       <Route
         path="/admin/validations"
         element={
-          <ProtectedRoute requiredPermissions={['validations.manage']}>
+          <ProtectedRoute requiredPermissions={['validations.manage', 'admin.access']}>
             <ValidationsPage />
           </ProtectedRoute>
         }
@@ -130,7 +130,7 @@ function App() {
       <Route
         path="/admin/users"
         element={
-          <ProtectedRoute requiredPermissions={['users.read']}>
+          <ProtectedRoute requiredPermissions={['users.read', 'users.manage']}>
             <UserManagementPage />
           </ProtectedRoute>
         }
@@ -163,7 +163,7 @@ function App() {
       <Route
         path="/admin/entreprises"
         element={
-          <ProtectedRoute requiredPermissions={['entreprises.read']}>
+          <ProtectedRoute requiredPermissions={['entreprises.read', 'entreprises.manage']}>
             <EntreprisesManagementPage />
           </ProtectedRoute>
         }
@@ -171,7 +171,7 @@ function App() {
       <Route
         path="/admin/config/entreprises"
         element={
-          <ProtectedRoute requiredPermissions={['entreprises.read']}>
+          <ProtectedRoute requiredPermissions={['entreprises.read', 'entreprises.manage']}>
             <EntrepriseFormConfigPage />
           </ProtectedRoute>
         }
@@ -203,7 +203,7 @@ function App() {
       <Route
         path="/admin/versions"
         element={
-          <ProtectedRoute requiredPermissions={['config.manage']}>
+          <ProtectedRoute requiredPermissions={['config.manage', 'admin.access']}>
             <ConfigurationVersionsPage />
           </ProtectedRoute>
         }
@@ -211,7 +211,7 @@ function App() {
       <Route
         path="/admin/feature-flags"
         element={
-          <ProtectedRoute requiredPermissions={['flags.manage']}>
+          <ProtectedRoute requiredPermissions={['flags.manage', 'admin.access']}>
             <FeatureFlagsPage />
           </ProtectedRoute>
         }
@@ -219,7 +219,7 @@ function App() {
       <Route
         path="/admin/email-settings"
         element={
-          <ProtectedRoute requiredPermissions={['emails.configure']}>
+          <ProtectedRoute requiredPermissions={['emails.configure', 'admin.access']}>
             <EmailSettingsPage />
           </ProtectedRoute>
         }
@@ -253,7 +253,7 @@ function App() {
       <Route
         path="/admin/iam/profiles"
         element={
-          <ProtectedRoute requiredPermissions={['iam.profiles.manage']}>
+          <ProtectedRoute requiredPermissions={['iam.profiles.manage', 'iam.groups.manage']}>
             <ProfilesManagementPage />
           </ProtectedRoute>
         }
@@ -261,7 +261,7 @@ function App() {
       <Route
         path="/admin/iam/groups"
         element={
-          <ProtectedRoute requiredPermissions={['iam.groups.manage']}>
+          <ProtectedRoute requiredPermissions={['iam.groups.manage', 'iam.profiles.manage']}>
             <GroupsManagementPage />
           </ProtectedRoute>
         }
@@ -269,7 +269,7 @@ function App() {
       <Route
         path="/admin/iam/control"
         element={
-          <ProtectedRoute requiredPermissions={['iam.groups.manage']}>
+          <ProtectedRoute requiredPermissions={['iam.groups.manage', 'iam.profiles.manage']}>
             <IAMControlPage />
           </ProtectedRoute>
         }
@@ -284,7 +284,7 @@ function App() {
       <Route
         path="/missions"
         element={
-          <ProtectedRoute requiredPermissions={['missions.read', 'missions.manage.all']}>
+          <ProtectedRoute requiredPermissions={['missions.read', 'missions.browse', 'missions.manage.all']}>
             <MissionsPage />
           </ProtectedRoute>
         }
@@ -455,7 +455,7 @@ function App() {
       <Route
         path="/entreprise/settings"
         element={
-          <ProtectedRoute requiredPermissions={['entreprises.read']}>
+          <ProtectedRoute requiredPermissions={['entreprises.read', 'entreprises.manage']}>
             <CompanySettingsPage />
           </ProtectedRoute>
         }
@@ -479,7 +479,7 @@ function App() {
       <Route
         path="/agence"
         element={
-          <ProtectedRoute requiredPermissions={['admin.dashboard']}>
+          <ProtectedRoute requiredPermissions={['admin.dashboard', 'admin.access']}>
             <AgencyDashboard />
           </ProtectedRoute>
         }
