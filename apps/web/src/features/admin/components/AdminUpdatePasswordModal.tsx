@@ -247,11 +247,18 @@ export default function AdminUpdatePasswordModal({
           )}
           
           {/* Match indicator */}
-          {newPassword && confirmPassword && !errors.confirmPassword && (
-            <div className="mt-2 flex items-center text-xs text-green-600">
-              <CheckCircleIcon className="h-4 w-4 mr-1" />
-              <span>Les mots de passe correspondent</span>
-            </div>
+          {newPassword && confirmPassword && (
+            newPassword === confirmPassword ? (
+              <div className="mt-2 flex items-center text-xs text-green-600">
+                <CheckCircleIcon className="h-4 w-4 mr-1" />
+                <span>Les mots de passe correspondent</span>
+              </div>
+            ) : (
+              <div className="mt-2 flex items-center text-xs text-red-600">
+                <ExclamationTriangleIcon className="h-4 w-4 mr-1" />
+                <span>Les mots de passe ne correspondent pas</span>
+              </div>
+            )
           )}
         </div>
 
