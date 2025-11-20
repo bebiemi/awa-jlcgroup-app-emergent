@@ -265,13 +265,14 @@ export default function Sidebar() {
         ],
       }
     )
-  } else if (user?.roles.includes(roles.interim) || user?.roles.includes('intérimaire')) {
-    // Intérimaire role - has contracts and missions
+  } else if (userPermissions['dashboard.candidat.access'] || 
+             (userPermissions['applications.read.own'] && userPermissions['missions.browse'])) {
+    // Candidat role - IAM-based (anciennement postulant/intérimaire)
     navigationSections.push(
       {
         title: 'Tableau de bord',
         items: [
-          { label: 'Vue d\'ensemble', path: '/interimaire', icon: HomeIcon },
+          { label: 'Vue d\'ensemble', path: '/candidat', icon: HomeIcon },
         ],
       },
       {
@@ -282,9 +283,21 @@ export default function Sidebar() {
         ],
       },
       {
-        title: 'Compte',
+        title: 'Mon profil',
         items: [
           { label: 'Mon Profil', path: '/profile', icon: UserCircleIcon },
+          { label: 'Mes documents', path: '/documents', icon: DocumentTextIcon },
+        ],
+      },
+      {
+        title: 'Support',
+        items: [
+          { label: 'Mes Tickets', path: '/support/tickets', icon: InboxIcon },
+        ],
+      },
+      {
+        title: 'Compte',
+        items: [
           { label: 'Sécurité', path: '/security', icon: ShieldCheckIcon },
         ],
       }
@@ -311,37 +324,6 @@ export default function Sidebar() {
         title: 'Compte',
         items: [
           { label: 'Mon Profil', path: '/profile', icon: UserCircleIcon },
-          { label: 'Sécurité', path: '/security', icon: ShieldCheckIcon },
-        ],
-      }
-    )
-  } else if (user?.roles?.includes('postulant') || user?.roles?.includes('candidat')) {
-    // Postulant/Candidat role (applicant in onboarding process)
-    navigationSections.push(
-      {
-        title: 'Tableau de bord',
-        items: [
-          { label: 'Vue d\'ensemble', path: '/postulant', icon: HomeIcon },
-        ],
-      },
-      {
-        title: 'Missions',
-        items: [
-          { label: 'Offres disponibles', path: '/offres', icon: BriefcaseIcon },
-          { label: 'Mes Candidatures', path: '/mes-candidatures', icon: ClipboardDocumentCheckIcon },
-        ],
-      },
-      {
-        title: 'Mon profil',
-        items: [
-          { label: 'Overview', path: '/postulant/profile-overview', icon: UserCircleIcon },
-          { label: 'Mon Profil', path: '/profile', icon: UserCircleIcon },
-          { label: 'Mes documents', path: '/documents', icon: DocumentTextIcon },
-        ],
-      },
-      {
-        title: 'Compte',
-        items: [
           { label: 'Sécurité', path: '/security', icon: ShieldCheckIcon },
         ],
       }
