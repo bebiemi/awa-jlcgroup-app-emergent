@@ -273,6 +273,21 @@ export default function Sidebar() {
   } else if (userPermissions['dashboard.candidat.access'] || 
              (userPermissions['applications.read.own'] && userPermissions['missions.browse'])) {
     // Candidat role - IAM-based (anciennement postulant/intérimaire)
+    
+    // Construire dynamiquement les items de la section Missions
+    const missionsItems = [
+      { label: 'Offres disponibles', path: '/offres', icon: BriefcaseIcon },
+    ]
+    
+    // Ajouter "Mes Candidatures" seulement si l'utilisateur a des candidatures ET les permissions
+    if (showCandidatureTracking) {
+      missionsItems.push({ 
+        label: 'Mes Candidatures', 
+        path: '/mes-candidatures', 
+        icon: ClipboardDocumentCheckIcon 
+      })
+    }
+    
     navigationSections.push(
       {
         title: 'Tableau de bord',
@@ -282,10 +297,7 @@ export default function Sidebar() {
       },
       {
         title: 'Missions',
-        items: [
-          { label: 'Offres disponibles', path: '/offres', icon: BriefcaseIcon },
-          { label: 'Mes Candidatures', path: '/mes-candidatures', icon: ClipboardDocumentCheckIcon },
-        ],
+        items: missionsItems,
       },
       {
         title: 'Mon profil',
