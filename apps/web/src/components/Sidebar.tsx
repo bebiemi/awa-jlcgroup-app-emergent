@@ -160,6 +160,7 @@ export default function Sidebar() {
     'entreprises.manage',
     'entreprises.read',
     'dashboard.access',
+    'dashboard.candidat.access',
   ])
 
   // Navigation sections based on user permissions (IAM)
