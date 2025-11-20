@@ -148,7 +148,22 @@ export const {
 
 // Typed hooks for specific configs
 export const useBadgeConfig = () => {
-  return useGetConfigValueQuery('profiles.badge_new_user') as {
+  const result = useGetConfigValueQuery('profiles.badge_new_user')
+  
+  // Si erreur 404, retourner des données vides (config non configurée)
+  if (result.error && 'status' in result.error && result.error.status === 404) {
+    return {
+      data: undefined,
+      isLoading: false,
+      error: undefined,
+    } as {
+      data: BadgeConfig | undefined
+      isLoading: boolean
+      error: any
+    }
+  }
+  
+  return result as {
     data: BadgeConfig | undefined
     isLoading: boolean
     error: any
