@@ -61,6 +61,9 @@ export default function Sidebar() {
     return saved ? JSON.parse(saved) : []
   })
 
+  // Hook pour vérifier l'accès au suivi des candidatures (IAM + présence de candidatures)
+  const showCandidatureTracking = useCandidateTrackingAccess()
+
   const handleLogout = async () => {
     try {
       // 1. FIRST: Set user status to "offline" in backend
