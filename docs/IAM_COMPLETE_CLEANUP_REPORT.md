@@ -19,7 +19,7 @@
 
 **Symptôme :**
 ```
-GET https://security-mend.preview.emergentagent.com/ net::ERR_HTTP_RESPONSE_CODE_FAILURE 502 (Bad Gateway)
+GET https://id-manager-4.preview.emergentagent.com/ net::ERR_HTTP_RESPONSE_CODE_FAILURE 502 (Bad Gateway)
 ```
 
 **Cause Racine :**
