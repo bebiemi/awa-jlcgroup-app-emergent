@@ -95,19 +95,19 @@ export const configApi = createApi({
   endpoints: (builder) => ({
     // Form schemas
     getFormSchema: builder.query<FormSchema, string>({
-      query: (formType) => `/api/config/forms/${formType}`,
+      query: (formType) => `/config/forms/${formType}`,
       providesTags: (result, error, formType) => [{ type: 'FormSchema', id: formType }],
     }),
 
     // Workflow configs
     getWorkflowConfig: builder.query<WorkflowConfig, string>({
-      query: (entityType) => `/api/config/workflows/${entityType}`,
+      query: (entityType) => `/config/workflows/${entityType}`,
       providesTags: (result, error, entityType) => [{ type: 'WorkflowConfig', id: entityType }],
     }),
 
     // Reference data
     getReferenceData: builder.query<ReferenceData, string>({
-      query: (referenceType) => `/api/config/references/${referenceType}`,
+      query: (referenceType) => `/config/references/${referenceType}`,
       providesTags: (result, error, referenceType) => [{ type: 'ReferenceData', id: referenceType }],
     }),
   }),
