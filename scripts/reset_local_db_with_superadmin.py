@@ -317,7 +317,12 @@ async def reset_database(delete_users: bool = False):
         print("👤 Création/Réinitialisation du compte superAdmin...")
         
         superadmin_user_id = str(uuid4())
-        hashed_password = pwd_context.hash("Awana2025!")
+        
+        # Hash du mot de passe avec bcrypt (méthode directe, plus fiable)
+        password = "Awana2025!"
+        salt = bcrypt.gensalt()
+        hashed = bcrypt.hashpw(password.encode('utf-8'), salt)
+        hashed_password = hashed.decode('utf-8')
         
         superadmin_user = {
             "id": superadmin_user_id,
