@@ -79,8 +79,8 @@ Si vous obtenez une liste de permissions sans erreur 500, c'est gagné ! ✅
 
 Après l'exécution du script, vous pouvez vous connecter avec :
 
-- **Email** : `admin@awana.fr`
-- **Username** : `admin`  
+- **Email** : `adminbe@awana-group.com`
+- **Username** : `adminbe`  
 - **Password** : `Awana2025!`
 
 Ce compte a **tous les droits** (138 permissions).
