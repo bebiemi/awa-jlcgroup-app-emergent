@@ -88,13 +88,13 @@ Pour vérifier que tout fonctionne :
 
 ```bash
 # Compter les permissions
-mongo awana --eval "db.permissions.countDocuments({})"
+mongo auth_db --eval "db.permissions.countDocuments({})"
 
 # Vérifier le profil super_admin
-mongo awana --eval "db.profiles.findOne({code: 'super_admin'})"
+mongo auth_db --eval "db.profiles.findOne({code: 'super_admin'})"
 
-# Vérifier le compte admin
-mongo awana --eval "db.users.findOne({username: 'admin'})"
+# Vérifier le compte adminbe
+mongo auth_db --eval "db.users.findOne({username: 'adminbe'})"
 ```
 
 ## 🆘 En cas de problème
