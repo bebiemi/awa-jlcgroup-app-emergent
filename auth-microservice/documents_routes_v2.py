@@ -10,7 +10,7 @@ from datetime import datetime, timezone, timedelta
 from fastapi import APIRouter, File, UploadFile, Form, Depends, HTTPException, status
 
 from awana_auth.core.models import User
-from awana_auth.core.iam_service import IAMService
+from awana_auth.services.iam_service import IAMService
 from awana_auth.dependencies.permission_dependencies import require_permission
 from awana_auth.database import get_database
 from awana_auth.core.models import Document
