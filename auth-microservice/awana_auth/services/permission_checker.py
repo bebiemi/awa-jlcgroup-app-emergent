@@ -117,30 +117,28 @@ class PermissionChecker:
         resource_id: Optional[str] = None
     ) -> bool:
         """
-        Check if user has a specific permission
+        Check if user has a specific permission with flexible matching
+        
+        Supports:
+        1. Exact match: user has "besoins.create.own" and required = "besoins.create.own"
+        2. Scope match: user has "besoins.create.own" and required = "besoins.create" (générique)
+        3. Wildcard match: user has "besoins.*" and required = "besoins.create.own"
+        4. Super admin: user has "*.*"
         
         Args:
             user_id: User ID to check
-            permission_code: Permission code (e.g., "users.manage")
+            permission_code: Permission code (e.g., "users.manage", "besoins.create")
             resource_id: Optional resource ID for scope checking
         
         Returns:
             True if user has permission, False otherwise
         """
         user_permissions = await self.get_user_permissions(user_id)
+        user_perms_list = list(user_permissions)
         
-        # Direct match
-        if permission_code in user_permissions:
-            return True
-        
-        # Wildcard matching (e.g., "users.*" matches "users.manage")
-        parts = permission_code.split(".")
-        for i in range(len(parts)):
-            wildcard = ".".join(parts[:i+1]) + ".*"
-            if wildcard in user_permissions:
-                return True
-        
-        return False
+        # Use the flexible permission checker
+        from awana_auth.core.permission_checker import PermissionChecker as FlexibleChecker
+        return FlexibleChecker.has_permission(user_perms_list, permission_code)
     
     async def user_has_any_permission(
         self, 
