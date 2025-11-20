@@ -431,7 +431,7 @@ function App() {
       <Route
         path="/entreprise/besoins/:id"
         element={
-          <ProtectedRoute requiredPermissions={['besoins.read', 'besoins.view.all', 'besoins.view.own', 'besoins.view_all', 'besoins.view_own']}>
+          <ProtectedRoute requiredPermissions={['besoins.read', 'besoins.view.all', 'besoins.view.own']}>
             <BesoinDetailPage />
           </ProtectedRoute>
         }
