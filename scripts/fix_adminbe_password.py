@@ -49,12 +49,13 @@ async def fix_password():
         
         print(f"✅ Hash généré: {hashed_str[:30]}...")
         
-        # Mettre à jour le mot de passe
+        # Mettre à jour le mot de passe ET s'assurer que provider est défini
         result = await db.users.update_one(
             {"username": "adminbe"},
             {
                 "$set": {
                     "hashed_password": hashed_str,
+                    "provider": "local",  # S'assurer que le provider est défini
                     "updated_at": datetime.now(timezone.utc)
                 }
             }
