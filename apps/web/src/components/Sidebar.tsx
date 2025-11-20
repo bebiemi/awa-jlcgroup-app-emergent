@@ -219,8 +219,8 @@ export default function Sidebar() {
         ],
       }
     )
-  } else if (userPermissions['missions.manage'] && !userPermissions['admin.dashboard']) {
-    // Commercial role (has missions.manage but not full admin)
+  } else if (userPermissions['missions.manage.all'] && !userPermissions['admin.dashboard']) {
+    // Commercial role (has missions.manage.all but not full admin)
     navigationSections.push(
       {
         title: 'Tableau de bord',
