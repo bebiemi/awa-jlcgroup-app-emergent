@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next'
 import LanguageSwitcher from './LanguageSwitcher'
 import UserStatusDropdown from './UserStatusDropdown'
 import { usePermissions } from '@/hooks/usePermission'
+import { useCandidateTrackingAccess } from '@/hooks/useCandidateTracking'
 import {
   HomeIcon,
   UserGroupIcon,
