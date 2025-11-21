@@ -12,16 +12,16 @@ import {
   useBulkArchiveUsersMutation,
   useBulkDeleteUsersMutation,
   useExportUsersCSVMutation,
-} from '@/features/admin/api/usersApi'
+} from '../api/usersApi'
 
-import EditUserModal from '@/features/admin/components/EditUserModal'
-import DeleteUserModal from '@/features/admin/components/DeleteUserModal'
-import BlockUserModal from '@/features/admin/components/BlockUserModal'
-import RestoreUserModal from '@/features/admin/components/RestoreUserModal'
-import ArchiveUserModal from '@/features/admin/components/ArchiveUserModal'
-import UserDetailModal from '@/features/admin/components/UserDetailModal'
-import ResetMfaModal from '@/features/admin/components/ResetMfaModal'
-import AdminUpdatePasswordModal from '@/features/admin/components/AdminUpdatePasswordModal'
+import EditUserModal from '../components/EditUserModal'
+import DeleteUserModal from '../components/DeleteUserModal'
+import BlockUserModal from '../components/BlockUserModal'
+import RestoreUserModal from '../components/RestoreUserModal'
+import ArchiveUserModal from '../components/ArchiveUserModal'
+import UserDetailModal from '../components/UserDetailModal'
+import ResetMfaModal from '../components/ResetMfaModal'
+import AdminUpdatePasswordModal from '../components/AdminUpdatePasswordModal'
 
 export const UsersPageConfig = {
   /** ------------------------------
