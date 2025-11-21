@@ -98,15 +98,34 @@ export function useSidebarItems(context?: NavigationContext) {
 }
 
 /**
- * Hook pour générer le breadcrumb (fil d'Ariane)
+ * Hook pour générer le breadcrumb (fil d'Ariane) - Contextuel
  */
 export function useBreadcrumb(currentPath: string) {
   const { t } = useTranslation()
-  const { context } = useNavigationConfig()
+  const currentContext = useCurrentContext()
   
   const breadcrumb = useMemo(() => {
-    // Trouver l'item correspondant au path actuel
-    const currentItem = findNavigationItemByPath(currentPath)
+    // Trouver TOUS les items qui correspondent au path actuel
+    const allItems = Object.values(navigationConfig)
+    const matchingItems = allItems.filter(item => {
+      if (!item.path.includes(':')) {
+        return item.path === currentPath
+      }
+      const pattern = item.path.replace(/:[^/]+/g, '[^/]+')
+      const regex = new RegExp(`^${pattern}$`)
+      return regex.test(currentPath)
+    })
+    
+    // Filtrer pour ne garder que l'item du contexte actuel
+    let currentItem = matchingItems.find(item => 
+      item.contexts.includes(currentContext)
+    )
+    
+    // Si pas trouvé, prendre le premier item correspondant
+    if (!currentItem && matchingItems.length > 0) {
+      currentItem = matchingItems[0]
+    }
+    
     if (!currentItem) return []
     
     // Construire le chemin complet
@@ -119,7 +138,7 @@ export function useBreadcrumb(currentPath: string) {
       path: item.path,
       icon: item.icon,
     }))
-  }, [currentPath, context, t])
+  }, [currentPath, currentContext, t])
   
   return breadcrumb
 }
