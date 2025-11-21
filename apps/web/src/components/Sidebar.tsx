@@ -288,6 +288,9 @@ export default function Sidebar() {
             ? [{ label: 'Demandes clientes', path: '/entreprise/besoins', icon: ClipboardDocumentCheckIcon }]
             : []),
           { label: 'Missions', path: '/missions', icon: BriefcaseIcon },
+          ...(userPermissions['applications.read.all'] || userPermissions['applications.manage']
+            ? [{ label: 'Candidatures', path: '/entreprise/candidatures', icon: UsersIcon }]
+            : []),
         ],
       },
       {
