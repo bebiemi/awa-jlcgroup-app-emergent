@@ -16,7 +16,7 @@ import {
   CheckCircleIcon,
   PaperAirplaneIcon,
 } from '@heroicons/react/24/outline'
-import { useGetBesoinsQuery } from '@/features/besoins/api/besoinApi'
+import { useGetBesoinsQuery } from '@/features/besoins/api/besoinsApi'
 import { useGetWorkflowConfigQuery } from '@/features/besoins/api/configApi'
 import { toast } from 'react-hot-toast'
 import Breadcrumb from '@/components/Breadcrumb'
