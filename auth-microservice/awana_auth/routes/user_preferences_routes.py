@@ -108,7 +108,7 @@ async def update_my_ui_preferences(
         
         # Mettre à jour dans la base de données
         update_result = await db.users.update_one(
-            {"id": current_user["id"]},
+            {"id": user_id},
             {
                 "$set": {
                     "ui_preferences": updated_prefs,
@@ -119,13 +119,13 @@ async def update_my_ui_preferences(
         
         if update_result.modified_count == 0:
             # Vérifier si l'utilisateur existe vraiment
-            user_exists = await db.users.find_one({"id": current_user["id"]})
+            user_exists = await db.users.find_one({"id": user_id})
             if not user_exists:
                 raise HTTPException(status_code=404, detail="Utilisateur non trouvé")
         
         # Récupérer et retourner les préférences mises à jour
         updated_user = await db.users.find_one(
-            {"id": current_user["id"]},
+            {"id": user_id},
             {"_id": 0, "ui_preferences": 1, "updated_at": 1}
         )
         
