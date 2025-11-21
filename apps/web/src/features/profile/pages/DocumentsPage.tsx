@@ -75,22 +75,22 @@ export default function DocumentsPage() {
   // Filtrer les documents
   const filteredDocuments = userDocuments.filter((doc: any) => {
     const matchesSearch = 
-      (doc.filename?.toLowerCase() || '').includes(searchQuery.toLowerCase()) ||
-      (doc.type?.toLowerCase() || '').includes(searchQuery.toLowerCase())
+      (doc.original_filename?.toLowerCase() || '').includes(searchQuery.toLowerCase()) ||
+      (doc.category?.toLowerCase() || '').includes(searchQuery.toLowerCase())
     
-    const docCategory = getCategoryForType(doc.type || doc.document_type)
+    const docCategory = getCategoryForType(doc.category)
     const matchesCategory = selectedCategory === 'all' || docCategory === selectedCategory
     
-    const matchesType = selectedType === 'all' || doc.type === selectedType || doc.document_type === selectedType
+    const matchesType = selectedType === 'all' || doc.category === selectedType
 
     return matchesSearch && matchesCategory && matchesType
   })
 
   // Grouper par catégorie
   const documentsByCategory = {
-    administrative: filteredDocuments.filter((doc: any) => getCategoryForType(doc.type || doc.document_type) === 'administrative'),
-    professional: filteredDocuments.filter((doc: any) => getCategoryForType(doc.type || doc.document_type) === 'professional'),
-    personal: filteredDocuments.filter((doc: any) => getCategoryForType(doc.type || doc.document_type) === 'personal'),
+    administrative: filteredDocuments.filter((doc: any) => getCategoryForType(doc.category) === 'administrative'),
+    professional: filteredDocuments.filter((doc: any) => getCategoryForType(doc.category) === 'professional'),
+    personal: filteredDocuments.filter((doc: any) => getCategoryForType(doc.category) === 'personal'),
   }
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
