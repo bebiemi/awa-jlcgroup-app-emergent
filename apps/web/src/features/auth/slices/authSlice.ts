@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import type { User } from '@/types'
 import { authApi } from '../api/authApi'
+import { extractPermissionsFromJWT } from '@/utils/jwt'
 
 interface AuthState {
   user: User | null
