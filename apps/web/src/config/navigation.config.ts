@@ -16,6 +16,7 @@ export interface NavigationItem {
   id: string
   path: string
   labelKey: string // Clé i18n
+  label?: string // Label direct (fallback si i18n pas configuré)
   icon?: string // Nom de l'icône (HeroIcons)
   parentId?: string | null
   requiredPermissions?: string[] // Permissions IAM (OR)
