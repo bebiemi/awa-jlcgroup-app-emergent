@@ -238,9 +238,8 @@ export default function Sidebar() {
       }
     )
   } else if (userPermissions['dashboard.commercial.access'] || 
-             (userPermissions['missions.manage.all'] && !userPermissions['admin.dashboard']) ||
-             (user.roles && Array.isArray(user.roles) && user.roles.includes('commercial'))) {
-    // Commercial role (IAM-based + fallback roles)
+             (userPermissions['missions.manage.all'] && !userPermissions['admin.dashboard'])) {
+    // Commercial role (IAM-based)
     navigationSections.push(
       {
         title: 'Tableau de bord',
