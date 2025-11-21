@@ -267,7 +267,7 @@ export default function Sidebar() {
       ...(userPermissions['validations.manage']
         ? [{ label: 'Validations', path: '/admin/validations', icon: ClipboardDocumentCheckIcon }]
         : []),
-      ...(userPermissions['entreprises.read'] || userPermissions['entreprises.manage']
+      ...(userPermissions['entreprises.read'] || userPermissions['entreprises.read.all'] || userPermissions['entreprises.manage']
         ? [{ label: 'Entreprises', path: '/admin/entreprises', icon: BuildingOfficeIcon }]
         : []),
     ]
