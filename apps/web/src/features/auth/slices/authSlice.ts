@@ -118,9 +118,22 @@ const authSlice = createSlice({
     builder.addMatcher(
       authApi.endpoints.getCurrentUser.matchFulfilled,
       (state, { payload }) => {
-        state.user = payload
+        console.log('🔄 getCurrentUser.matchFulfilled - preserving permissions')
+        
+        // CRITICAL: Preserve permissions from JWT when updating user
+        // getCurrentUser API doesn't return permissions, they're only in JWT
+        const existingPermissions = state.user?.permissions || []
+        
+        const userWithPermissions = {
+          ...payload,
+          permissions: existingPermissions,  // Keep JWT permissions
+        }
+        
+        state.user = userWithPermissions
         state.isAuthenticated = true
-        localStorage.setItem('user', JSON.stringify(payload))
+        localStorage.setItem('user', JSON.stringify(userWithPermissions))
+        
+        console.log('✅ getCurrentUser.matchFulfilled complete - permissions preserved')
       }
     )
   },
