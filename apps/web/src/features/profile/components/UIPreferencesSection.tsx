@@ -3,10 +3,9 @@
  * Permet de choisir le style de sidebar et autres préférences d'interface
  */
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { PaintBrushIcon } from '@heroicons/react/24/outline'
 import toast from 'react-hot-toast'
-
 import { useUIPreferences } from '@/hooks/useUIPreferences'
 
 export default function UIPreferencesSection() {
