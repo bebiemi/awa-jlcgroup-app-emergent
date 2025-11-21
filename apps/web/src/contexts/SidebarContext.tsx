@@ -1,29 +1,48 @@
-import { createContext, useContext, useState, ReactNode } from 'react'
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useState,
+  type ReactNode,
+} from 'react'
 
-interface SidebarContextType {
-  isCollapsed: boolean
-  setIsCollapsed: (collapsed: boolean) => void
-  isMobileOpen: boolean
-  setIsMobileOpen: (open: boolean) => void
+interface SidebarContextValue {
+  isOpen: boolean
+  openSidebar: () => void
+  closeSidebar: () => void
+  toggleSidebar: () => void
 }
 
-const SidebarContext = createContext<SidebarContextType | undefined>(undefined)
+const SidebarContext = createContext<SidebarContextValue | undefined>(undefined)
 
 export function SidebarProvider({ children }: { children: ReactNode }) {
-  const [isCollapsed, setIsCollapsed] = useState(false)
-  const [isMobileOpen, setIsMobileOpen] = useState(false)
+  // Par défaut : sidebar ouverte (desktop), fermée ou non gérée côté mobile
+  const [isOpen, setIsOpen] = useState(true)
+
+  const openSidebar = useCallback(() => setIsOpen(true), [])
+  const closeSidebar = useCallback(() => setIsOpen(false), [])
+  const toggleSidebar = useCallback(() => {
+    setIsOpen((prev) => !prev)
+  }, [])
 
   return (
-    <SidebarContext.Provider value={{ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen }}>
+    <SidebarContext.Provider
+      value={{
+        isOpen,
+        openSidebar,
+        closeSidebar,
+        toggleSidebar,
+      }}
+    >
       {children}
     </SidebarContext.Provider>
   )
 }
 
-export function useSidebar() {
-  const context = useContext(SidebarContext)
-  if (context === undefined) {
+export function useSidebar(): SidebarContextValue {
+  const ctx = useContext(SidebarContext)
+  if (!ctx) {
     throw new Error('useSidebar must be used within a SidebarProvider')
   }
-  return context
+  return ctx
 }
