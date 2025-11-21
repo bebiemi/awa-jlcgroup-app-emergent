@@ -154,6 +154,8 @@ export default function Sidebar() {
     'entreprises.read',
     'dashboard.access',
     'dashboard.candidat.access',
+    'dashboard.commercial.access',  // ✅ AJOUTÉ
+    'dashboard.company.access',      // ✅ AJOUTÉ
   ])
 
   // Get dashboard path based on user permissions (IAM)
