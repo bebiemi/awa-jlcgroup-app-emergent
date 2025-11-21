@@ -70,7 +70,7 @@ async def get_my_ui_preferences(
 )
 async def update_my_ui_preferences(
     preferences: UIPreferencesUpdate,
-    current_user: dict = Depends(get_current_user),
+    current_user = Depends(get_current_user),
     db = Depends(get_database)
 ):
     """
@@ -79,9 +79,12 @@ async def update_my_ui_preferences(
     Rétrocompatible : crée le champ ui_preferences s'il n'existe pas.
     """
     try:
+        # Extraire l'ID utilisateur (peut être un dict ou un objet)
+        user_id = current_user.id if hasattr(current_user, 'id') else current_user.get('id')
+        
         # Récupérer les préférences actuelles
         user = await db.users.find_one(
-            {"id": current_user["id"]},
+            {"id": user_id},
             {"_id": 0, "ui_preferences": 1}
         )
         
