@@ -7,7 +7,8 @@ import CandidatProfileForm from '../components/CandidatProfileForm'
 import DocumentsSection from '../components/DocumentsSection'
 import ExperiencesSection from '../components/ExperiencesSection'
 import MyPermissionsSection from '../components/MyPermissionsSection'
-import { UserCircleIcon, DocumentTextIcon, BriefcaseIcon, ShieldCheckIcon } from '@heroicons/react/24/outline'
+import UIPreferencesSection from '../components/UIPreferencesSection'
+import { UserCircleIcon, DocumentTextIcon, BriefcaseIcon, ShieldCheckIcon, PaintBrushIcon } from '@heroicons/react/24/outline'
 import { useAppSelector } from '@/store/hooks'
 import toast from 'react-hot-toast'
 
@@ -15,7 +16,7 @@ export default function ProfilePage() {
   const { data, isLoading } = useGetMyProfileQuery()
   const [updateProfile] = useUpdateMyProfileMutation()
   const currentUser = useAppSelector((state) => state.auth.user)
-  const [activeTab, setActiveTab] = useState<'info' | 'documents' | 'experiences' | 'permissions'>('info')
+  const [activeTab, setActiveTab] = useState<'info' | 'documents' | 'experiences' | 'permissions' | 'preferences'>('info')
   
   // Vérifier si l'utilisateur est candidat ou intérimaire (profils avec expériences)
   const canHaveExperiences = currentUser?.roles?.includes('candidat') || 
