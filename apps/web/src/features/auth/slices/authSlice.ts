@@ -27,12 +27,21 @@ const authSlice = createSlice({
       state,
       action: PayloadAction<{ user: User; token: string; refreshToken?: string }>
     ) => {
-      state.user = action.payload.user
+      // Extract permissions from JWT
+      const permissions = extractPermissionsFromJWT(action.payload.token)
+      
+      // Add permissions to user object
+      const userWithPermissions = {
+        ...action.payload.user,
+        permissions,
+      }
+      
+      state.user = userWithPermissions
       state.token = action.payload.token
       state.refreshToken = action.payload.refreshToken || null
       state.isAuthenticated = true
       localStorage.setItem('access_token', action.payload.token)
-      localStorage.setItem('user', JSON.stringify(action.payload.user))
+      localStorage.setItem('user', JSON.stringify(userWithPermissions))
       if (action.payload.refreshToken) {
         localStorage.setItem('refresh_token', action.payload.refreshToken)
       }
