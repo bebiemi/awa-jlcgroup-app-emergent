@@ -58,13 +58,19 @@ def get_configuration():
     return get_config()
 
 
-def get_jwt_manager() -> JWTManager:
-    """Get JWT manager instance"""
-    global _jwt_manager
+async def get_jwt_manager(
+    db: AsyncIOMotorDatabase = Depends(get_database)
+) -> JWTManager:
+    """Get JWT manager instance with IAM service"""
+    global _jwt_manager, _iam_service
     
     if _jwt_manager is None:
-        _jwt_manager = JWTManager(auth_config)
-        logger.info("JWT Manager initialized")
+        # Initialize IAM service if needed
+        if _iam_service is None:
+            _iam_service = await get_iam_service(db)
+        
+        _jwt_manager = JWTManager(auth_config, iam_service=_iam_service)
+        logger.info("JWT Manager initialized with IAM service")
     
     return _jwt_manager
 
