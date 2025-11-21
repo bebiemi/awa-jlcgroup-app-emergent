@@ -1,99 +1,79 @@
 /**
- * Page Missions – Version propre et 100% config-driven
- * Utilise NeedListTemplate pour workflow avancé
+ * Page Missions - Version stable, alignée avec Entreprises/Users
+ * Architecture Config-Driven (EntityListTemplate)
  */
 
-import { useState, useMemo } from "react"
-import { useNavigate } from "react-router-dom"
+import { EyeIcon, PencilIcon, ArchiveBoxIcon, XCircleIcon, TrashIcon } from "@heroicons/react/24/outline"
 import EntityListTemplate from "@/templates/EntityListTemplate"
 import { usePermissions } from "@/hooks/usePermission"
 import { MissionsPageConfig } from "../config/missions.config"
+import type { EntityListConfig } from "@/templates/EntityListTemplate"
 import type { Mission } from "../api/missionApi"
+import { useNavigate } from "react-router-dom"
+import { useState } from "react"
 import toast from "react-hot-toast"
 
 export default function MissionsPage() {
   const navigate = useNavigate()
-
-  /** 👉 Permissions */
   const { permissions: userPermissions } = usePermissions([
     "missions.read.all",
     "missions.create",
     "missions.edit",
     "missions.delete",
+    "missions.archive",
+    "missions.cancel",
   ])
 
-  /** 👉 Local UI state */
+  const [page, setPage] = useState(1)
   const [searchQuery, setSearchQuery] = useState("")
   const [statusFilter, setStatusFilter] = useState("")
-  const [page, setPage] = useState(1)
 
-  /** 👉 API list */
   const { data, isLoading } = MissionsPageConfig.api.list({
     status: statusFilter || undefined,
+    search: searchQuery || undefined,
     page,
     page_size: 20,
-    search: searchQuery || undefined,
   })
 
-  /** 👉 Actions centralisées */
-  const actions = useMemo(
-    () => ({
-      create: () => navigate("/admin/missions/new"),
+  // Actions rapides
+  const handleView = (mission: Mission) =>
+    navigate(`/admin/missions/${mission.id}`)
 
-      view: (m: Mission) => navigate(`/admin/missions/${m.id}`),
+  const handleEdit = (mission: Mission) =>
+    navigate(`/admin/missions/${mission.id}/edit`)
 
-      edit: (m: Mission) => navigate(`/admin/missions/${m.id}/edit`),
+  const handleArchive = (mission: Mission) => {
+    toast.success("Archivage à implémenter")
+  }
 
-      delete: (m: Mission) => {
-        if (window.confirm(`Supprimer la mission "${m.titre}" ?`)) {
-          toast.error("Suppression à implémenter dans missionApi")
-        }
-      },
-    }),
-    [navigate]
-  )
+  const handleCancel = (mission: Mission) => {
+    toast.error("Annulation à implémenter")
+  }
 
-  /** 👉 Colonnes enrichies */
-  const columns = useMemo(
-    () =>
-      MissionsPageConfig.columns.map((col) => ({
-        ...col,
-        render:
-          col.key === "status"
-            ? (status: string) => {
-                const map = {
-                  ouverte: "bg-blue-100 text-blue-700",
-                  en_cours: "bg-green-100 text-green-700",
-                  en_pause: "bg-yellow-100 text-yellow-700",
-                  terminée: "bg-gray-100 text-gray-700",
-                  annulée: "bg-red-100 text-red-700",
-                }
-                return (
-                  <span
-                    className={`px-2 py-1 rounded-full text-xs font-medium ${
-                      map[status] ?? map.ouverte
-                    }`}
-                  >
-                    {status.charAt(0).toUpperCase() + status.slice(1)}
-                  </span>
-                )
-              }
-            : col.key.includes("date")
-            ? (value: string) =>
-                value ? new Date(value).toLocaleDateString("fr-FR") : "-"
-            : undefined,
-      })),
-    []
-  )
+  const handleDelete = (mission: Mission) => {
+    if (window.confirm(`Supprimer la mission "${mission.titre}" ?`)) {
+      toast.error("Suppression à implémenter")
+    }
+  }
 
-  /** 👉 Template config */
-  const templateConfig = {
+  // Mapping colonnes
+  const renderColumns = MissionsPageConfig.columns.map((col) => ({
+    ...col,
+    render:
+      col.key === "date_debut" || col.key === "date_fin"
+        ? (date: string) => (date ? new Date(date).toLocaleDateString("fr-FR") : "-")
+        : undefined,
+  }))
+
+  // Template Config
+  const templateConfig: EntityListConfig = {
     entityName: "Mission",
     entityNamePlural: "Missions",
     title: MissionsPageConfig.title,
     subtitle: MissionsPageConfig.subtitle,
+    icon: EyeIcon,
 
-    columns,
+    columns: renderColumns,
     data: data?.items || [],
     isLoading,
 
@@ -106,20 +86,20 @@ export default function MissionsPage() {
       : undefined,
 
     onSearch: setSearchQuery,
-    searchPlaceholder: "Rechercher par titre, entreprise, intérimaire…",
+    searchPlaceholder: "Rechercher une mission...",
 
     filters: [
       {
         key: "status",
-        label: "Statut",
+        label: "Par statut",
         type: "select",
         options: [
           { value: "", label: "Tous" },
           { value: "ouverte", label: "Ouverte" },
           { value: "en_cours", label: "En cours" },
           { value: "en_pause", label: "En pause" },
-          { value: "terminée", label: "Terminée" },
-          { value: "annulée", label: "Annulée" },
+          { value: "terminee", label: "Terminée" },
+          { value: "annulee", label: "Annulée" },
         ],
       },
     ],
@@ -127,40 +107,57 @@ export default function MissionsPage() {
     actions: {
       create: {
         label: "Créer une mission",
-        onClick: actions.create,
+        onClick: () => navigate("/admin/missions/new"),
         permission: "missions.create",
       },
-
       row: [
         {
           key: "view",
           label: "Voir",
-          onClick: actions.view,
+          icon: EyeIcon,
+          onClick: handleView,
         },
         {
           key: "edit",
           label: "Modifier",
-          onClick: actions.edit,
+          icon: PencilIcon,
+          onClick: handleEdit,
           permission: "missions.edit",
+        },
+        {
+          key: "archive",
+          label: "Archiver",
+          icon: ArchiveBoxIcon,
+          onClick: handleArchive,
+          permission: "missions.archive",
+        },
+        {
+          key: "cancel",
+          label: "Annuler",
+          icon: XCircleIcon,
+          variant: "danger" as const,
+          onClick: handleCancel,
+          permission: "missions.cancel",
         },
         {
           key: "delete",
           label: "Supprimer",
-          onClick: actions.delete,
+          icon: TrashIcon,
+          variant: "danger" as const,
+          onClick: handleDelete,
           permission: "missions.delete",
         },
       ],
     },
 
     emptyState: {
-      message: "Aucune mission pour le moment",
+      message: "Aucune mission trouvée",
       action: {
         label: "Créer une mission",
-        onClick: actions.create,
+        onClick: () => navigate("/admin/missions/new"),
       },
     },
   }
 
-  /** 👉 Utilisation d'EntityListTemplate (plus cohérent avec l'architecture) */
   return <EntityListTemplate config={templateConfig} permissions={userPermissions} />
 }
