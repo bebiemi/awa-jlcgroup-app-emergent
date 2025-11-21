@@ -56,21 +56,22 @@ export function useUIPreferences() {
         if (response.ok) {
           const data = await response.json()
           const apiPrefs: UIPreferences = {
-            sidebar_style: data.ui_preferences.sidebar_style
+            sidebar_style: data.ui_preferences?.sidebar_style || 'v2'
           }
           setPreferences(apiPrefs)
           // Sync avec localStorage
           localStorage.setItem('sidebar_style', apiPrefs.sidebar_style)
         } else {
           // Fallback sur localStorage si l'API échoue
+          console.warn(`API preferences failed with status ${response.status}, using localStorage fallback`)
           const localStyle = localStorage.getItem('sidebar_style') as 'v2' | 'v3' | null
           if (localStyle) {
             setPreferences({ sidebar_style: localStyle })
           }
         }
       } catch (err) {
-        console.error('Erreur lors du chargement des préférences:', err)
-        // Fallback sur localStorage
+        // Fallback silencieux sur localStorage pour ne pas perturber l'UX
+        console.warn('Unable to load preferences from API, using localStorage:', err)
         const localStyle = localStorage.getItem('sidebar_style') as 'v2' | 'v3' | null
         if (localStyle) {
           setPreferences({ sidebar_style: localStyle })
