@@ -45,19 +45,14 @@ const authSlice = createSlice({
       state,
       action: PayloadAction<{ user: User; token: string; refreshToken?: string }>
     ) => {
-      console.log('🔐 setCredentials called in authSlice')
-      
       // Extract permissions from JWT
       const permissions = extractPermissionsFromJWT(action.payload.token)
-      console.log(`📋 Extracted ${permissions.length} permissions from JWT`)
       
       // Add permissions to user object
       const userWithPermissions = {
         ...action.payload.user,
         permissions,
       }
-      
-      console.log('💾 Storing user with permissions in Redux + localStorage')
       
       state.user = userWithPermissions
       state.token = action.payload.token
@@ -68,8 +63,6 @@ const authSlice = createSlice({
       if (action.payload.refreshToken) {
         localStorage.setItem('refresh_token', action.payload.refreshToken)
       }
-      
-      console.log('✅ setCredentials complete - permissions stored')
     },
     logout: (state) => {
       state.user = null
