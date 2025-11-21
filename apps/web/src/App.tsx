@@ -94,7 +94,7 @@ function App() {
   const dashboardPath = useDashboardPath()
 
   return (
-    <SidebarProvider>
+    <RootLayout>
       <Routes>
       {/* Public routes */}
       <Route path="/" element={<LandingPage />} />
