@@ -179,3 +179,6 @@ export const {
   useAttachToExistingRepresentantMutation,
   useRejectAttachmentMutation,
 } = validationApi
+
+// Aliases pour la config
+export const useListValidationsQuery = useGetValidationsQuery
