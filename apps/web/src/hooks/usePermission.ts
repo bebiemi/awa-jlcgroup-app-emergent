@@ -4,7 +4,6 @@
  */
 import { useMemo } from 'react'
 import { useAppSelector } from '@/store/hooks'
-import { useGetUserPermissionsQuery } from '@/features/iam/api/iamApi'
 
 /**
  * Hook to check if current user has a specific permission
