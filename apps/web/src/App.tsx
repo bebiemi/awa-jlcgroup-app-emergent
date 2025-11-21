@@ -189,6 +189,14 @@ function App() {
         }
       />
       <Route
+        path="/admin/missions/new"
+        element={
+          <ProtectedRoute requiredPermissions={['missions.create']}>
+            <CreateMissionPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/admin/references"
         element={
           <ProtectedRoute requiredPermissions={['references.manage']}>
