@@ -112,10 +112,10 @@ export function useBreadcrumb(currentPath: string) {
     // Construire le chemin complet
     const path = buildBreadcrumbPath(currentItem.id)
     
-    // Traduire les labels
+    // Traduire les labels (utilise label direct si disponible, sinon i18n)
     return path.map(item => ({
       id: item.id,
-      label: t(item.labelKey),
+      label: item.label || t(item.labelKey, { defaultValue: item.labelKey }),
       path: item.path,
       icon: item.icon,
     }))
