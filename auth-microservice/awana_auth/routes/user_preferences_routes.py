@@ -127,9 +127,13 @@ async def update_my_ui_preferences(
             {"id": user_id},
             {"_id": 0, "ui_preferences": 1, "updated_at": 1}
         )
+        print(f"DEBUG PATCH - updated_user: {updated_user}")
+        
+        if not updated_user:
+            raise HTTPException(status_code=404, detail="Utilisateur non trouvé après mise à jour")
         
         preferences_obj = UIPreferences(
-            sidebar_style=updated_user["ui_preferences"].get("sidebar_style", "v2")
+            sidebar_style=updated_user.get("ui_preferences", {}).get("sidebar_style", "v2")
         )
         
         return UIPreferencesResponse(
