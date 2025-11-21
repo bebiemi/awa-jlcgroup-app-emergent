@@ -63,11 +63,12 @@ export default function UIPreferencesSection() {
             {/* Option V2 - Classique */}
             <button
               onClick={() => handleStyleChange('v2')}
+              disabled={isSaving}
               className={`relative p-4 border-2 rounded-lg transition-all ${
                 sidebarStyle === 'v2'
                   ? 'border-jlc-purple-600 bg-jlc-purple-50'
                   : 'border-gray-300 hover:border-gray-400'
-              }`}
+              } ${isSaving ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
               <div className="flex items-start gap-3">
                 <input
