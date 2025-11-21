@@ -171,6 +171,14 @@ function App() {
         }
       />
       <Route
+        path="/admin/besoins"
+        element={
+          <ProtectedRoute requiredPermissions={['besoins.read.all']}>
+            <BesoinsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/admin/references"
         element={
           <ProtectedRoute requiredPermissions={['references.manage']}>
