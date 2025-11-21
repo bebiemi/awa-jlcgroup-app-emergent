@@ -108,6 +108,7 @@ export const navigationConfig: Record<string, NavigationItem> = {
     id: 'commercialDashboard',
     path: '/commercial',
     labelKey: 'nav.commercial.dashboard',
+    label: 'Tableau de bord commercial',
     icon: 'HomeIcon',
     parentId: null,
     requiredPermissions: ['dashboard.commercial.access'],
