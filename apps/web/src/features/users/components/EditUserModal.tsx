@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { XMarkIcon, ShieldCheckIcon } from '@heroicons/react/24/outline'
-import { useUpdateUserMutation, usersApi, type User } from '../api/usersApi'
+import { useUpdateUserMutation, usersApi, type User } from '@/features/users/api/usersApi'
 import { 
   useListProfilesQuery, 
   useListGroupsQuery,

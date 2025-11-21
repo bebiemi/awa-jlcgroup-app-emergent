@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { XMarkIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline'
-import { useDeleteUserMutation, type User } from '../api/usersApi'
+import { useDeleteUserMutation, type User } from '@/features/users/api/usersApi'
 
 interface DeleteUserModalProps {
   user: User

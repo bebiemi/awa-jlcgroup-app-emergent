@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useResetUserMfaMutation } from '../api/usersApi'
+import { useResetUserMfaMutation } from '@/features/users/api/usersApi'
 import toast from 'react-hot-toast'
 import { XMarkIcon, ShieldExclamationIcon, ArrowPathIcon } from '@heroicons/react/24/outline'
 

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { XMarkIcon, NoSymbolIcon, CheckCircleIcon } from '@heroicons/react/24/outline'
-import { useUpdateUserStatusMutation, type User } from '../api/usersApi'
+import { useUpdateUserStatusMutation, type User } from '@/features/users/api/usersApi'
 
 interface BlockUserModalProps {
   user: User
