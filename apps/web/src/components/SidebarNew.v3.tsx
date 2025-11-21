@@ -131,24 +131,17 @@ export default function SidebarNew() {
     }
 
     // Item "simple" - Desktop: sidebar reste ouverte, Mobile: ferme
-    const handleClick = (e: React.MouseEvent) => {
-      e.preventDefault()
-      
-      // Naviguer avec React Router (pas de rechargement)
-      navigate(item.path)
-      
-      // Fermer seulement en mobile
-      if (window.innerWidth < 1024) {
-        closeSidebar()
-      }
-    }
-
     return (
-      <a
+      <Link
         key={item.id}
-        href={item.path}
-        onClick={handleClick}
-        className={`group relative flex items-center gap-3 px-4 py-2 text-sm rounded-lg transition-all cursor-pointer ${
+        to={item.path}
+        onClick={() => {
+          // Fermer seulement en mobile
+          if (window.innerWidth < 1024) {
+            closeSidebar()
+          }
+        }}
+        className={`group relative flex items-center gap-3 px-4 py-2 text-sm rounded-lg transition-all ${
           isActive
             ? 'bg-white/10 text-white shadow-sm'
             : 'text-gray-100 hover:bg-white/5'
@@ -165,7 +158,7 @@ export default function SidebarNew() {
           )}
           <span className="truncate">{item.label}</span>
         </span>
-      </a>
+      </Link>
     )
   }
 
