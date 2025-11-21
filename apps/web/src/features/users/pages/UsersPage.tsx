@@ -17,7 +17,7 @@ import {
   ArrowPathIcon,
   TrashIcon,
 } from '@heroicons/react/24/outline'
-import { UsersPageConfig } from './users.config'
+import { UsersPageConfig } from '../config/users.config'
 import EntityListTemplate from '@/templates/EntityListTemplate'
 import { usePermissions } from '@/hooks/usePermission'
 import type { EntityListConfig } from '@/templates/EntityListTemplate'
