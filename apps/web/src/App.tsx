@@ -118,7 +118,7 @@ function App() {
       <Route
         path="/admin/validations"
         element={
-          <ProtectedRoute requiredPermissions={['validations.manage', 'admin.access']}>
+          <ProtectedRoute requiredPermissions={['validations.read.all']}>
             <ValidationsPage />
           </ProtectedRoute>
         }
