@@ -169,11 +169,18 @@ export default function NeedListTemplate({
                     className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-jlc-purple-500 focus:border-transparent appearance-none bg-white"
                   >
                     <option value="">Tous les statuts</option>
-                    {workflowConfig?.statuses.map((status) => (
-                      <option key={status.key} value={status.key}>
-                        {status.label}
-                      </option>
-                    ))}
+                    {workflowConfig?.statuses.map((status) => {
+                      // Extraire le label correctement si c'est un objet de traduction
+                      const label = typeof status.label === 'object' && status.label !== null
+                        ? (status.label.fr || status.label.en || status.key)
+                        : status.label
+                      
+                      return (
+                        <option key={status.key} value={status.key}>
+                          {label}
+                        </option>
+                      )
+                    })}
                   </select>
                 </div>
               </div>
