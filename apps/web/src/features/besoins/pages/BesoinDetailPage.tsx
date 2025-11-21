@@ -13,7 +13,7 @@ import {
   useSubmitBesoinMutation,
   useGetCommentsQuery,
   useAddCommentMutation,
-} from '../api/besoinApi'
+} from '../api/besoinsApi'
 import { useGetWorkflowConfigQuery } from '../api/configApi'
 import { toast } from 'react-hot-toast'
 import CommentThread from '../components/CommentThread'

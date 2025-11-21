@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useGetCommentsQuery, useAddCommentMutation, Comment } from '../api/besoinApi'
+import { useGetCommentsQuery, useAddCommentMutation, Comment } from '../api/besoinsApi'
 import { PaperAirplaneIcon, UserCircleIcon, ChatBubbleLeftRightIcon } from '@heroicons/react/24/outline'
 import { toast } from 'react-hot-toast'
 

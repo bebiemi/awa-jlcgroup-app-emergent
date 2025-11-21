@@ -1,4 +1,4 @@
-import { StatusHistoryEntry } from '../api/besoinApi'
+import { StatusHistoryEntry } from '../api/besoinsApi'
 import { WorkflowConfig } from '../api/configApi'
 import { CheckCircleIcon, ArrowRightIcon } from '@heroicons/react/24/solid'
 
