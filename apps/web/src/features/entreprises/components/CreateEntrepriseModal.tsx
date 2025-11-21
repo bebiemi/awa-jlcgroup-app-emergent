@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useCreateEntrepriseMutation } from '@/features/company/api/entrepriseApi'
+import { useCreateEntrepriseMutation } from '../api/entreprisesApi'
 import { useCreateBulkInvitationsMutation } from '@/features/company/api/invitationApi'
 import { XMarkIcon, PlusIcon, TrashIcon, EnvelopeIcon } from '@heroicons/react/24/outline'
 import Button from '@/components/Button'
