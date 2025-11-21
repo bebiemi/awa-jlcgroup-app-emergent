@@ -68,11 +68,11 @@ export function useNavigationConfig(context?: NavigationContext) {
     return buildNavigationTree(filtered)
   }, [effectiveContext, userPermissions])
   
-  // Traduire les labels (fallback si i18n pas configuré)
+  // Traduire les labels (utilise label direct si disponible, sinon i18n)
   const translatedItems = useMemo(() => {
     return navigationItems.map(item => ({
       ...item,
-      label: t(item.labelKey, { defaultValue: item.labelKey }),
+      label: item.label || t(item.labelKey, { defaultValue: item.labelKey }),
     }))
   }, [navigationItems, t])
   
