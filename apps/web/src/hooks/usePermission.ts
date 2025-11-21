@@ -22,6 +22,9 @@ export function usePermission(permissionCode: string) {
     // Get permissions from JWT (stored in user object)
     const allPermissions = user.permissions || []
     
+    // Universal wildcard (*.* grants all permissions)
+    if (allPermissions.includes('*.*')) return true
+    
     // Direct match
     if (allPermissions.includes(permissionCode)) return true
     
