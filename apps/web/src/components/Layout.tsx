@@ -42,7 +42,7 @@ export default function Layout({ children }: LayoutProps) {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Sidebar - Only shown for authenticated users */}
-      {isAuthenticated && <Sidebar isOpen={!isCollapsed} onClose={() => {}} />}
+      {isAuthenticated && <SidebarNew isOpen={!isCollapsed} onClose={() => {}} />}
 
       {/* Main content with proper spacing for sidebar */}
       <div 
