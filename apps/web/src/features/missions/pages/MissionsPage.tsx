@@ -28,11 +28,11 @@ export default function MissionsPage() {
   const [searchQuery, setSearchQuery] = useState("")
   const [statusFilter, setStatusFilter] = useState("")
 
-  const { data, isLoading } = MissionsPageConfig.api.list({
+  const { data: missionsData, isLoading } = MissionsPageConfig.api.list({
     status: statusFilter || undefined,
-    search: searchQuery || undefined,
-    page,
-    page_size: 20,
+    // Note: L'API missions utilise skip/limit au lieu de page/page_size
+    skip: (page - 1) * 20,
+    limit: 20,
   })
 
   // Actions rapides
