@@ -100,29 +100,28 @@ export default function SidebarNew() {
     const sectionKey = item.label || item.id
     const expanded = isSectionExpanded(sectionKey)
 
+    // Groupe (section + enfants)
     if (item.path === '#' || hasChildren) {
       return (
         <div key={item.id}>
           <button
             type="button"
             onClick={() => toggleSection(sectionKey)}
-            className="group w-full flex items-center justify-between px-4 py-2 text-sm font-medium text-gray-700 hover:bg-white/10 rounded-lg transition-colors"
+            className="w-full flex items-center justify-between px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
           >
             <div className="flex items-center gap-3">
-              {Icon && (
-                <Icon className="h-5 w-5 text-gray-500 group-hover:text-jlc-purple-500 transition-colors" />
-              )}
+              {Icon && <Icon className="h-5 w-5" />}
               <span>{item.label}</span>
             </div>
             {expanded ? (
-              <ChevronDownIcon className="h-4 w-4 text-gray-400" />
+              <ChevronDownIcon className="h-4 w-4" />
             ) : (
-              <ChevronRightIcon className="h-4 w-4 text-gray-400" />
+              <ChevronRightIcon className="h-4 w-4" />
             )}
           </button>
 
           {expanded && children.length > 0 && (
-            <div className="ml-4 mt-1 space-y-1 border-l border-white/10 pl-2">
+            <div className="ml-4 mt-1 space-y-1">
               {children.map(renderMenuItem)}
             </div>
           )}
@@ -130,27 +129,22 @@ export default function SidebarNew() {
       )
     }
 
+    // Item "simple" - Desktop: sidebar reste ouverte, Mobile: ferme
     return (
       <Link
         key={item.id}
         to={item.path}
-        className={`group relative flex items-center gap-3 px-4 py-2 text-sm rounded-lg transition-all ${
+        onClick={() => {
+          if (window.innerWidth < 1024) closeSidebar() // mobile only
+        }}
+        className={`flex items-center gap-3 px-4 py-2 text-sm rounded-lg transition-colors ${
           isActive
-            ? 'bg-white/10 text-white shadow-sm'
-            : 'text-gray-100 hover:bg-white/5'
+            ? 'bg-gradient-to-r from-jlc-purple-600 to-indigo-600 text-white'
+            : 'text-gray-700 hover:bg-gray-100'
         }`}
       >
-        {/* Barre active à gauche */}
-        {isActive && (
-          <span className="absolute left-0 top-1/2 -translate-y-1/2 h-7 w-1 rounded-full bg-jlc-accent-yellow" />
-        )}
-
-        <span className="flex items-center gap-3 pl-1">
-          {Icon && (
-            <Icon className="h-5 w-5 transition-transform group-hover:scale-110" />
-          )}
-          <span className="truncate">{item.label}</span>
-        </span>
+        {Icon && <Icon className="h-5 w-5" />}
+        <span>{item.label}</span>
       </Link>
     )
   }
