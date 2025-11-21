@@ -396,7 +396,7 @@ function App() {
       <Route
         path="/entreprise"
         element={
-          <ProtectedRoute requiredPermissions={['besoins.create.all', 'besoins.create.own']}>
+          <ProtectedRoute requiredPermissions={['dashboard.company.access']}>
             <CompanyDashboard />
           </ProtectedRoute>
         }
