@@ -69,6 +69,7 @@ from iam_expiration_routes import router as iam_expiration_router
 from iam_cache_routes import router as iam_cache_router
 from temporary_permissions_routes import router as temporary_permissions_router
 from iam_audit_routes import router as iam_audit_router
+from awana_auth.routes.user_preferences_routes import router as user_preferences_router
 from rate_limit import limiter
 
 client = None
