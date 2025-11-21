@@ -13,7 +13,7 @@ import {
   useBulkDeleteUsersMutation,
   useExportUsersCSVMutation,
   type User,
-} from '../api/usersApi'
+} from '@/features/users/api/usersApi'
 import toast from 'react-hot-toast'
 import {
   MagnifyingGlassIcon,
