@@ -5,7 +5,7 @@ import {
   useGetProfilesQuery,
   useGetUsersQuery,
 } from '../api/securityApi'
-import { useGetUsersQuery as useGetAllUsers } from '../api/usersApi'
+import { useGetUsersQuery as useGetAllUsers } from '@/features/users/api/usersApi'
 
 interface CreateGroupModalProps {
   isOpen: boolean

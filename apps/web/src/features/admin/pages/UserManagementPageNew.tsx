@@ -11,7 +11,7 @@ import {
   useGetUsersQuery,
   useDeleteUserMutation,
   type User,
-} from '../api/usersApi'
+} from '@/features/users/api/usersApi'
 import {
   UserGroupIcon,
   PencilIcon,

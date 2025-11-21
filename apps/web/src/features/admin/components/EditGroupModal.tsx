@@ -5,7 +5,7 @@ import {
   useGetProfilesQuery,
   type Group,
 } from '../api/securityApi'
-import { useGetUsersQuery } from '../api/usersApi'
+import { useGetUsersQuery } from '@/features/users/api/usersApi'
 
 interface EditGroupModalProps {
   group: Group

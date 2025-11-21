@@ -13,7 +13,7 @@ import {
   useAssignValidationMutation,
   type Validation,
 } from '../api/validationApi'
-import { useGetUsersQuery } from '../api/usersApi'
+import { useGetUsersQuery } from '@/features/users/api/usersApi'
 import { useReferences } from '@/hooks/useReferences'
 import {
   CheckCircleIcon,
