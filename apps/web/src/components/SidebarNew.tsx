@@ -164,40 +164,37 @@ export default function SidebarNew() {
         />
       )}
 
-      {/* Sidebar */}
+      {/* Sidebar V2 - Classique */}
       <aside
-        className={`fixed top-0 left-0 h-full w-64 bg-gradient-to-b from-jlc-purple-900 via-jlc-purple-800 to-slate-900 text-gray-100 shadow-2xl z-50 transform transition-transform duration-300 ease-in-out ${
+        className={`fixed top-0 left-0 h-full w-64 bg-white shadow-xl z-50 transform transition-transform duration-300 ease-in-out ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
         <div className="flex flex-col h-full">
-          {/* Header */}
-          <div className="p-4 border-b border-white/10">
-            <Link
-              to={dashboardPath}
-              className="flex items-center gap-3"
-            >
+          {/* Header avec logo */}
+          <div className="p-4 border-b border-gray-200">
+            <Link to={dashboardPath} className="flex items-center gap-3">
               <img
                 src="/logo-jlc.png"
                 alt="JLC Group"
-                className="h-12 w-auto object-contain drop-shadow"
+                className="h-12 w-auto object-contain"
               />
             </Link>
           </div>
 
           {/* User info */}
-          <div className="p-4 border-b border-white/10">
+          <div className="p-4 border-b border-gray-200">
             <div className="flex items-center gap-3">
               <div className="flex-shrink-0">
-                <div className="h-10 w-10 rounded-full bg-gradient-to-tr from-jlc-accent-yellow to-amber-400 flex items-center justify-center text-jlc-purple-900 font-semibold shadow-md">
+                <div className="h-10 w-10 rounded-full bg-gradient-to-r from-jlc-purple-600 to-indigo-600 flex items-center justify-center text-white font-semibold">
                   {user.first_name?.[0] || user.username?.[0] || 'U'}
                 </div>
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-white truncate">
+                <p className="text-sm font-medium text-gray-900 truncate">
                   {user.first_name} {user.last_name}
                 </p>
-                <p className="text-xs text-jlc-accent-yellow/80 truncate capitalize">
+                <p className="text-xs text-gray-500 truncate capitalize">
                   {context}
                 </p>
               </div>
@@ -210,8 +207,8 @@ export default function SidebarNew() {
           </nav>
 
           {/* Footer */}
-          <div className="p-4 border-t border-white/10">
-            <p className="text-[11px] text-gray-300 text-center">
+          <div className="p-4 border-t border-gray-200">
+            <p className="text-xs text-gray-500 text-center">
               © {new Date().getFullYear()} JLC Group
             </p>
           </div>
