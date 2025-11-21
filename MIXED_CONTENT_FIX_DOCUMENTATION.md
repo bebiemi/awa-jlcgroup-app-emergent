@@ -5,7 +5,7 @@
 Sur l'environnement de prévisualisation Emergent (HTTPS), les pages affichaient l'erreur :
 
 ```
-Mixed Content: The page at 'https://app-refactor-3.preview.emergentagent.com/admin/feature-flags' 
+Mixed Content: The page at 'https://safe-permission-sys.preview.emergentagent.com/admin/feature-flags' 
 was loaded over HTTPS, but requested an insecure resource 
 'http://docker-iam-fixer.preview.emergentagent.com/api/feature-flags/?include_inactive=true'. 
 This request has been blocked; the content must be served over HTTPS.

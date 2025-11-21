@@ -6,7 +6,7 @@
 
 ### Analyse
 ```
-Browser → https://app-refactor-3.preview.emergentagent.com/api/besoins
+Browser → https://safe-permission-sys.preview.emergentagent.com/api/besoins
           ↓
           TOUTES les requêtes tombaient sur le frontend (port 3000)
           ↓
@@ -17,7 +17,7 @@ Browser → https://app-refactor-3.preview.emergentagent.com/api/besoins
 
 ### Preuve
 ```bash
-curl https://app-refactor-3.preview.emergentagent.com/health
+curl https://safe-permission-sys.preview.emergentagent.com/health
 # Retournait: <!doctype html>... (page React)
 # Au lieu de: {"status":"healthy",...}
 ```
@@ -70,7 +70,7 @@ Ajouté `/api/health` dans `server.py` pour compatibilité avec le routing `/api
 ```
 ┌─────────────────────────────────────────────────────┐
 │  Production (Kubernetes/Ingress)                     │
-│  https://app-refactor-3.preview.emergentagent.com │
+│  https://safe-permission-sys.preview.emergentagent.com │
 └───────────────────────┬─────────────────────────────┘
                         │
                         ▼
