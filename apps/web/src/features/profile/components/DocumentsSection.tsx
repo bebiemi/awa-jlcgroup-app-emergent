@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react'
-import { useGetMyDocumentsQuery, useUploadDocumentMutation, useDeleteDocumentMutation } from '../api/profileApi'
+import { useListDocumentsQuery, useUploadDocumentMutation, useDeleteDocumentMutation } from '@/features/documents/api/documentsApi'
 import { DocumentTextIcon, TrashIcon, ArrowUpTrayIcon } from '@heroicons/react/24/outline'
 import toast from 'react-hot-toast'
 
