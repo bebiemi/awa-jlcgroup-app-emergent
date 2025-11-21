@@ -65,12 +65,21 @@ const authSlice = createSlice({
     builder.addMatcher(
       authApi.endpoints.localLogin.matchFulfilled,
       (state, { payload }) => {
-        state.user = payload.user
+        // Extract permissions from JWT
+        const permissions = extractPermissionsFromJWT(payload.access_token)
+        
+        // Add permissions to user object
+        const userWithPermissions = {
+          ...payload.user,
+          permissions,
+        }
+        
+        state.user = userWithPermissions
         state.token = payload.access_token
         state.refreshToken = payload.refresh_token || null
         state.isAuthenticated = true
         localStorage.setItem('access_token', payload.access_token)
-        localStorage.setItem('user', JSON.stringify(payload.user))
+        localStorage.setItem('user', JSON.stringify(userWithPermissions))
         if (payload.refresh_token) {
           localStorage.setItem('refresh_token', payload.refresh_token)
         }
