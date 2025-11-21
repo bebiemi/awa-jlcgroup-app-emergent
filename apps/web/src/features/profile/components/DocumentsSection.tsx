@@ -77,7 +77,7 @@ export default function DocumentsSection() {
     )
   }
 
-  const documents = data?.documents || []
+  const documents = data || []
 
   return (
     <div className="space-y-6">
