@@ -99,6 +99,7 @@ export function useSidebarItems(context?: NavigationContext) {
 
 /**
  * Hook pour générer le breadcrumb (fil d'Ariane) - Contextuel
+ * Construit le breadcrumb en fonction du contexte utilisateur
  */
 export function useBreadcrumb(currentPath: string) {
   const { t } = useTranslation()
@@ -128,8 +129,33 @@ export function useBreadcrumb(currentPath: string) {
     
     if (!currentItem) return []
     
-    // Construire le chemin complet
-    const path = buildBreadcrumbPath(currentItem.id)
+    // Construire le chemin en remontant par parentId
+    // MAIS ne remonter que si le parent est aussi dans le contexte actuel
+    const path: NavigationItem[] = []
+    let current: NavigationItem | undefined = currentItem
+    
+    while (current) {
+      path.unshift(current)
+      
+      if (!current.parentId) break
+      
+      const parent = navigationConfig[current.parentId]
+      // Vérifier si le parent est dans le bon contexte
+      if (parent && parent.contexts.includes(currentContext)) {
+        current = parent
+      } else {
+        // Chercher un parent alternatif dans le contexte actuel
+        const contextRoot = allItems.find(item => 
+          item.contexts.includes(currentContext) && 
+          !item.parentId &&
+          item.order === 1 // Dashboard principal
+        )
+        if (contextRoot && path[0].id !== contextRoot.id) {
+          path.unshift(contextRoot)
+        }
+        break
+      }
+    }
     
     // Traduire les labels (utilise label direct si disponible, sinon i18n)
     return path.map(item => ({
