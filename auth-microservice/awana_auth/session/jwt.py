@@ -15,12 +15,13 @@ logger = logging.getLogger(__name__)
 class JWTManager:
     """Manages JWT token creation and validation"""
     
-    def __init__(self, config: AuthConfig):
+    def __init__(self, config: AuthConfig, iam_service=None):
         self.config = config
         self.secret_key = config.jwt_secret_key
         self.algorithm = config.jwt_algorithm
         self.access_token_expire = timedelta(minutes=config.jwt_access_token_expire_minutes)
         self.refresh_token_expire = timedelta(days=config.jwt_refresh_token_expire_days)
+        self.iam_service = iam_service  # IAM service for permission resolution
     
     def create_access_token(
         self,
