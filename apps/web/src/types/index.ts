@@ -5,6 +5,7 @@ export interface User {
   email: string
   full_name?: string
   roles: string[]
+  permissions?: string[]  // IAM permissions from JWT
   status: 'active' | 'pending' | 'rejected'
   provider: 'local' | 'entraid'
   created_at: string
