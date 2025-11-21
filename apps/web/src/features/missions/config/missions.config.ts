@@ -1,6 +1,6 @@
 /**
  * Configuration de la page Missions
- * Basé sur NeedListTemplate (workflow + suivi + RH + Paie + Emargement)
+ * Architecture Config-Driven (EntityListTemplate)
  */
 
 import {
@@ -13,7 +13,7 @@ import {
 
 export const MissionsPageConfig = {
   title: "Gestion des Missions",
-  subtitle: "Suivi complet des missions, affectations et émargements",
+  subtitle: "Suivi opérationnel des missions et de leurs statuts",
 
   api: {
     list: useListMissionsQuery,
@@ -28,11 +28,8 @@ export const MissionsPageConfig = {
     create: "missions.create",
     edit: "missions.edit",
     delete: "missions.delete",
-    related: {
-      emargements: "missions.emargements.read",
-      candidats: "candidatures.read.all",
-      besoins: "besoins.read.all",
-    }
+    archive: "missions.archive",
+    cancel: "missions.cancel",
   },
 
   columns: [
@@ -45,39 +42,6 @@ export const MissionsPageConfig = {
   ],
 
   filters: {
-    status: ["ouverte", "en_cours", "en_pause", "terminée", "annulée"],
-    entreprise: {
-      enabled: true,
-      type: "select",
-      source: "references.entreprises",
-    },
-    interimaire: {
-      enabled: true,
-      type: "select",
-      source: "references.interimaires",
-    },
-  },
-
-  relatedActions: [
-    {
-      label: "Émargements",
-      to: (id: string) => `/admin/missions/${id}/emargements`,
-      permission: "missions.emargements.read",
-    },
-    {
-      label: "Suivi RH",
-      to: (id: string) => `/admin/missions/${id}/rh`,
-      permission: "missions.rh.read",
-    },
-    {
-      label: "Archive missions",
-      to: (id: string) => `/admin/missions/${id}/archive`,
-      permission: "missions.archive.read",
-    }
-  ],
-
-  pagination: {
-    pageSize: 20,
-    serverSide: true,
+    status: ["ouverte", "en_cours", "en_pause", "terminee", "annulee"],
   },
 }
