@@ -1,7 +1,7 @@
 import React from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { useAppSelector } from './store/hooks'
-import { SidebarProvider } from './contexts/SidebarContext'
+import RootLayout from './layouts/RootLayout'
 import { useInactivityLogout } from './hooks/useInactivityLogout'
 import { useRoles } from './hooks/useAppConfig'
 import { useDashboardPath } from './hooks/useDashboardPath'
