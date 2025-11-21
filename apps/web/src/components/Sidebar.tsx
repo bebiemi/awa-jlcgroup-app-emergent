@@ -284,7 +284,7 @@ export default function Sidebar() {
       {
         title: 'Processus',
         items: [
-          ...(userPermissions['besoins.read'] || userPermissions['besoins.view.all'] 
+          ...(userPermissions['besoins.read'] || userPermissions['besoins.read.all'] || userPermissions['besoins.view.all'] 
             ? [{ label: 'Demandes clientes', path: '/entreprise/besoins', icon: ClipboardDocumentCheckIcon }]
             : []),
           { label: 'Missions', path: '/missions', icon: BriefcaseIcon },
