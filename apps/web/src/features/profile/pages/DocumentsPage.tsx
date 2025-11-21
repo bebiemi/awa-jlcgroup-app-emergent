@@ -131,7 +131,6 @@ export default function DocumentsPage() {
     try {
       await deleteDocument(documentId).unwrap()
       toast.success('✅ Document supprimé')
-      refetch()
     } catch (error: any) {
       toast.error(`❌ ${error?.data?.detail || 'Erreur lors de la suppression'}`)
     }
