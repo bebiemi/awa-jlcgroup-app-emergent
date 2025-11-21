@@ -15,13 +15,13 @@ import CreateEntrepriseModal from '../components/CreateEntrepriseModal'
 
 export const EntreprisesPageConfig = {
   /** ------------------------------
-   *   TITRE ⟶ affiché dans le header
+   *   TITRE
    *  ------------------------------ */
   title: "Gestion des Entreprises",
   subtitle: "Gérez toutes les entreprises inscrites sur la plateforme",
 
   /** ------------------------------
-   *  APIs génériques du template
+   *  APIs génériques
    *  ------------------------------ */
   api: {
     list: useListEntreprisesQuery,
@@ -33,17 +33,22 @@ export const EntreprisesPageConfig = {
 
   /** ------------------------------
    *   Permissions IAM
-   *   (utilisées par EntityListTemplate)
    *  ------------------------------ */
   permissions: {
     view: "entreprises.read.all",
     create: "company.create",
     edit: "company.edit",
     delete: "company.delete",
+    related: {
+      needs: "besoins.read.own",
+      missions: "missions.read.own",
+      validation: "entreprises.validate",
+      documents: "documents.read.own",
+    }
   },
 
   /** ------------------------------
-   *   Colonnes du tableau
+   *   Colonnes
    *  ------------------------------ */
   columns: [
     { key: "nom", label: "Entreprise", sortable: true },
@@ -55,18 +60,64 @@ export const EntreprisesPageConfig = {
   ],
 
   /** ------------------------------
-   *   Modales Actions
+   *   Modales & Actions
    *  ------------------------------ */
   actions: {
     create: CreateEntrepriseModal,
-    // edit: EditEntrepriseModal, // À créer si besoin
-    // delete: DeleteEntrepriseModal, // À créer si besoin
   },
 
   /** ------------------------------
-   *   Filtres
+   *   Filtres enrichis
    *  ------------------------------ */
   filters: {
-    status: ["active", "inactive", "pending"],
+    status: ["active", "inactive", "pending", "blocked"],
+    localisation: {
+      enabled: true,
+      type: "select",
+      source: "references.countries", // récupéré via config API (pas de hardcode)
+    },
+    secteur: {
+      enabled: true,
+      type: "select",
+      source: "references.secteurs",
+    },
+    date_creation: {
+      enabled: true,
+      type: "daterange",
+    },
+  },
+
+  /** ------------------------------
+   *   Actions transverses (multi-modules)
+   *  ------------------------------ */
+  relatedActions: [
+    {
+      label: "Voir les besoins",
+      to: (id: string) => `/admin/besoins?entreprise=${id}`,
+      permission: "besoins.read.own",
+    },
+    {
+      label: "Voir les missions",
+      to: (id: string) => `/admin/missions?entreprise=${id}`,
+      permission: "missions.read.own",
+    },
+    {
+      label: "Valider cette entreprise",
+      to: (id: string) => `/admin/validations/entreprise/${id}`,
+      permission: "entreprises.validate",
+    },
+    {
+      label: "Documents de l'entreprise",
+      to: (id: string) => `/admin/documents?entreprise=${id}`,
+      permission: "documents.read.own",
+    }
+  ],
+
+  /** ------------------------------
+   *   Pagination
+   *  ------------------------------ */
+  pagination: {
+    pageSize: 20,
+    serverSide: true,
   },
 }
