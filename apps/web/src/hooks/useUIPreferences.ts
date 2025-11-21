@@ -10,7 +10,7 @@ interface UIPreferences {
   sidebar_style: 'v2' | 'v3'
 }
 
-const API_BASE = import.meta.env.VITE_BACKEND_URL || (import.meta.env.REACT_APP_BACKEND_URL as string) || 'http://localhost:8000'
+const API_BASE = import.meta.env.VITE_BACKEND_URL || ''
 
 export function useUIPreferences() {
   const { isAuthenticated } = useAppSelector((state) => state.auth)
