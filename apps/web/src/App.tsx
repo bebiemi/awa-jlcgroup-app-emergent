@@ -156,8 +156,8 @@ function App() {
       <Route
         path="/admin/entreprises"
         element={
-          <ProtectedRoute requiredPermissions={['entreprises.read', 'entreprises.manage']}>
-            <EntreprisesManagementPage />
+          <ProtectedRoute requiredPermissions={['entreprises.read', 'entreprises.read.all', 'entreprises.manage']}>
+            <EntreprisesManagementPageNew />
           </ProtectedRoute>
         }
       />
