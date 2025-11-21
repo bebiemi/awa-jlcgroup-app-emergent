@@ -476,7 +476,7 @@ function App() {
       <Route
         path="/commercial"
         element={
-          <ProtectedRoute requiredPermissions={['missions.manage.all']}>
+          <ProtectedRoute requiredPermissions={['dashboard.commercial.access', 'missions.manage.all']}>
             <CommercialDashboard />
           </ProtectedRoute>
         }
