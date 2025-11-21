@@ -323,32 +323,32 @@ export default function DocumentsPage() {
                             <DocumentTextIcon className="h-5 w-5 text-gray-400" />
                             <div>
                               <p className="font-medium text-gray-900 text-sm truncate">
-                                {doc.filename || doc.original_filename || 'Document sans nom'}
+                                {doc.original_filename || 'Document sans nom'}
                               </p>
                               <p className="text-xs text-gray-500">
-                                {doc.type || doc.document_type}
+                                {doc.category}
                               </p>
                             </div>
                           </div>
                           <span className={`px-2 py-1 text-xs rounded-full ${
-                            doc.validation_status === 'validated'
+                            doc.status === 'verified'
                               ? 'bg-green-100 text-green-700'
-                              : doc.validation_status === 'rejected'
+                              : doc.status === 'rejected'
                               ? 'bg-red-100 text-red-700'
                               : 'bg-yellow-100 text-yellow-700'
                           }`}>
-                            {doc.validation_status === 'validated' ? '✓' : doc.validation_status === 'rejected' ? '✗' : '⏳'}
+                            {doc.status === 'verified' ? '✓' : doc.status === 'rejected' ? '✗' : '⏳'}
                           </span>
                         </div>
 
                         <div className="text-xs text-gray-500">
-                          Uploadé le {new Date(doc.uploaded_at).toLocaleDateString('fr-FR')}
+                          Uploadé le {new Date(doc.created_at).toLocaleDateString('fr-FR')}
                         </div>
 
                         <div className="flex gap-2">
                           <Button
                             variant="secondary"
-                            onClick={() => window.open(doc.file_url, '_blank')}
+                            onClick={() => window.open(`/api/documents/${doc.id}/download`, '_blank')}
                             className="flex-1 text-sm py-1.5"
                           >
                             <EyeIcon className="h-4 w-4 mr-1" />
