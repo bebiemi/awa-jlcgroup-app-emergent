@@ -1,7 +1,7 @@
 """
 FastAPI dependencies for authentication and authorization
 """
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
 from fastapi import Depends, HTTPException, status, Request
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
@@ -13,6 +13,9 @@ from ..session.storage import SessionStorage
 from ..rbac.manager import RBACManager
 from .config_manager import get_config
 import logging
+
+if TYPE_CHECKING:
+    from ..services.iam_service import IAMService
 
 logger = logging.getLogger(__name__)
 
