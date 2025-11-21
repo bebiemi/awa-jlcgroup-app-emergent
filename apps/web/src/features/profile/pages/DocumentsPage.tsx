@@ -12,7 +12,7 @@ import { useState } from 'react'
 import Layout from '@/components/Layout'
 import Card from '@/components/Card'
 import Button from '@/components/Button'
-import { useGetMyProfileQuery, useUploadDocumentMutation, useDeleteDocumentMutation } from '../api/profileApi'
+import { useListDocumentsQuery, useUploadDocumentMutation, useDeleteDocumentMutation } from '@/features/documents/api/documentsApi'
 import { useGetDocumentTypesQuery } from '../api/referencesApi'
 import {
   DocumentTextIcon,
