@@ -45,29 +45,34 @@ export const useDashboardPath = (): string => {
     return '/candidat'
   }
 
-  // === FALLBACK LEGACY (pour compatibilité) ===
+  // === FALLBACK BASÉ SUR ROLES (quand permissions pas disponibles) ===
   
-  // Admin legacy
+  // Admin
   if (user.roles?.includes(roles.admin) || user.roles?.includes(roles.super_admin)) {
     return '/admin'
   }
 
-  // Intérimaire legacy
+  // Commercial (basé sur rôle "commercial")
+  if (user.roles?.includes('commercial')) {
+    return '/commercial'
+  }
+
+  // Intérimaire
   if (user.roles?.includes(roles.interim)) {
     return '/interimaire'
   }
 
-  // Entreprise legacy (seulement si pas commercial)
-  if (user.roles?.includes(roles.company) && !permissions['dashboard.commercial.access']) {
+  // Entreprise (seulement si pas commercial)
+  if (user.roles?.includes(roles.company)) {
     return '/entreprise'
   }
 
-  // Agence legacy
+  // Agence
   if (user.roles?.includes(roles.agency)) {
     return '/agence'
   }
 
-  // Candidat legacy
+  // Candidat
   if (user.roles?.includes('postulant') || user.roles?.includes('candidat')) {
     return '/candidat'
   }
