@@ -117,11 +117,8 @@ async def update_my_ui_preferences(
             }
         )
         
-        if update_result.modified_count == 0:
-            # Vérifier si l'utilisateur existe vraiment
-            user_exists = await db.users.find_one({"id": user_id})
-            if not user_exists:
-                raise HTTPException(status_code=404, detail="Utilisateur non trouvé")
+        # Note: modified_count peut être 0 si les valeurs sont identiques
+        # On ne considère pas ça comme une erreur
         
         # Récupérer et retourner les préférences mises à jour
         updated_user = await db.users.find_one(
