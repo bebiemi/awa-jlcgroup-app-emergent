@@ -162,8 +162,6 @@ export default function MissionsPage() {
     },
   }
 
-  /** 👉 Choix automatique du template */
-  const Template = NeedListTemplate ?? EntityListTemplate
-
-  return <Template config={templateConfig} permissions={userPermissions} />
+  /** 👉 Utilisation d'EntityListTemplate (plus cohérent avec l'architecture) */
+  return <EntityListTemplate config={templateConfig} permissions={userPermissions} />
 }
