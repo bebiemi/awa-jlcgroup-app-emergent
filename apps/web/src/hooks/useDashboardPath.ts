@@ -14,6 +14,8 @@ export const useDashboardPath = (): string => {
   const { permissions } = usePermissions([
     'dashboard.access',
     'dashboard.candidat.access',
+    'dashboard.commercial.access',
+    'dashboard.company.access',
     'admin.dashboard',
     'admin.access',
   ])
@@ -22,32 +24,54 @@ export const useDashboardPath = (): string => {
     return '/login'
   }
 
-  // Ordre de priorité pour la détermination du dashboard
+  // Ordre de priorité pour la détermination du dashboard (IAM FIRST)
   // 1. Admin (le plus prioritaire)
-  if (user.roles?.includes(roles.admin) || permissions['admin.access']) {
+  if (permissions['admin.dashboard'] || permissions['admin.access']) {
     return '/admin'
   }
 
-  // 2. Intérimaire
-  if (user.roles?.includes(roles.interim)) {
-    return '/interimaire'
+  // 2. Commercial (AVANT entreprise pour éviter conflit)
+  if (permissions['dashboard.commercial.access']) {
+    return '/commercial'
   }
 
   // 3. Entreprise
-  if (user.roles?.includes(roles.company)) {
+  if (permissions['dashboard.company.access']) {
     return '/entreprise'
   }
 
-  // 4. Agence
-  if (user.roles?.includes(roles.agency)) {
-    return '/agence'
-  }
-
-  // 5. Candidat (basé sur permission IAM, pas sur rôle)
+  // 4. Candidat
   if (permissions['dashboard.candidat.access']) {
     return '/candidat'
   }
 
-  // 6. Par défaut : page de profil
+  // === FALLBACK LEGACY (pour compatibilité) ===
+  
+  // Admin legacy
+  if (user.roles?.includes(roles.admin) || user.roles?.includes(roles.super_admin)) {
+    return '/admin'
+  }
+
+  // Intérimaire legacy
+  if (user.roles?.includes(roles.interim)) {
+    return '/interimaire'
+  }
+
+  // Entreprise legacy (seulement si pas commercial)
+  if (user.roles?.includes(roles.company) && !permissions['dashboard.commercial.access']) {
+    return '/entreprise'
+  }
+
+  // Agence legacy
+  if (user.roles?.includes(roles.agency)) {
+    return '/agence'
+  }
+
+  // Candidat legacy
+  if (user.roles?.includes('postulant') || user.roles?.includes('candidat')) {
+    return '/candidat'
+  }
+
+  // Par défaut : page de profil
   return '/profile'
 }
