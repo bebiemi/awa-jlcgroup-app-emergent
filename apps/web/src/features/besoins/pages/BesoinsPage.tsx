@@ -1,25 +1,16 @@
 /**
- * Page de Gestion des Besoins
- * Utilise EntityListTemplate (temporairement - à migrer vers NeedListTemplate)
- * Architecture Config-Driven
+ * Page Besoins – Version améliorée, clean et 100% config-driven
+ * Préfusée pour migration NeedListTemplate
  */
 
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import {
-  BriefcaseIcon,
-  PencilIcon,
-  EyeIcon,
-  CheckCircleIcon,
-  XCircleIcon,
-  TrashIcon,
-} from '@heroicons/react/24/outline'
-import { BesoinsPageConfig } from '../config/besoins.config'
-import EntityListTemplate from '@/templates/EntityListTemplate'
-import { usePermissions } from '@/hooks/usePermission'
-import type { EntityListConfig } from '@/templates/EntityListTemplate'
-import type { Besoin } from '../api/besoinsApi'
-import toast from 'react-hot-toast'
+import { useState, useMemo } from "react"
+import { useNavigate } from "react-router-dom"
+import NeedListTemplate from "@/templates/NeedListTemplate"
+import EntityListTemplate from "@/templates/EntityListTemplate"
+import { usePermissions } from "@/hooks/usePermission"
+import { BesoinsPageConfig } from "../config/besoins.config"
+import type { Besoin } from "../api/besoinsApi"
+import toast from "react-hot-toast"
 
 export default function BesoinsPage() {
   const navigate = useNavigate()
