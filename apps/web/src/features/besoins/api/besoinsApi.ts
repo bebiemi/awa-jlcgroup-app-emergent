@@ -203,4 +203,9 @@ export const {
   useGetCommentsQuery,
   useAddCommentMutation,
   useGetAuditTrailQuery,
+  useValidateBesoinMutation,
+  useDeleteBesoinMutation,
 } = besoinApi
+
+// Aliases pour la config
+export const useListBesoinsQuery = useGetBesoinsQuery
