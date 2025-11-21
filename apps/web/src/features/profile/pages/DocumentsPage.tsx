@@ -54,13 +54,12 @@ export default function DocumentsPage() {
   const [uploadingFile, setUploadingFile] = useState<File | null>(null)
   const [selectedDocType, setSelectedDocType] = useState<string>('cv')
 
-  const { data: profileData, isLoading, refetch } = useGetMyProfileQuery()
+  const { data: documentsData, isLoading } = useListDocumentsQuery({})
   const { data: documentTypesData } = useGetDocumentTypesQuery({ requiredOnly: false })
   const [uploadDocument, { isLoading: isUploading }] = useUploadDocumentMutation()
   const [deleteDocument, { isLoading: isDeleting }] = useDeleteDocumentMutation()
 
-  const profile = profileData?.profile
-  const userDocuments = profile?.documents || []
+  const userDocuments = documentsData || []
   const allDocumentTypes = documentTypesData?.data || []
 
   // Fonction pour catégoriser un document
