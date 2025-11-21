@@ -81,12 +81,14 @@ async def update_my_ui_preferences(
     try:
         # Extraire l'ID utilisateur (peut être un dict ou un objet)
         user_id = current_user.id if hasattr(current_user, 'id') else current_user.get('id')
+        print(f"DEBUG PATCH - user_id: {user_id}, type: {type(user_id)}")
         
         # Récupérer les préférences actuelles
         user = await db.users.find_one(
             {"id": user_id},
             {"_id": 0, "ui_preferences": 1}
         )
+        print(f"DEBUG PATCH - user found: {user is not None}")
         
         if not user:
             raise HTTPException(status_code=404, detail="Utilisateur non trouvé")
