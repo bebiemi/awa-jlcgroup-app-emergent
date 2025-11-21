@@ -1,0 +1,18 @@
+{
+  "besoins": {
+    "entreprise": {
+      "title": "Mes besoins",
+      "subtitle": "Gérez vos demandes de recrutement",
+      "create": "Créer un besoin",
+      "empty": "Aucun besoin pour le moment",
+      "emptyAction": "Créer votre premier besoin"
+    },
+    "commercial": {
+      "title": "Demandes clientes",
+      "subtitle": "Gérez les demandes de recrutement des entreprises",
+      "create": "Créer une demande",
+      "empty": "Aucune demande cliente pour le moment",
+      "emptyAction": "Créer une nouvelle demande"
+    }
+  }
+}
