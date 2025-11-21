@@ -270,41 +270,41 @@ export default function UsersPage() {
       
       {activeModal === 'delete' && selectedUser && (
         <DeleteModal
+          user={selectedUser}
           isOpen={true}
           onClose={closeModal}
-          userId={selectedUser.id}
         />
       )}
       
       {activeModal === 'block' && selectedUser && (
         <BlockModal
+          user={selectedUser}
           isOpen={true}
           onClose={closeModal}
-          userId={selectedUser.id}
         />
       )}
       
       {activeModal === 'archive' && selectedUser && (
         <ArchiveModal
+          user={selectedUser}
           isOpen={true}
           onClose={closeModal}
-          userId={selectedUser.id}
         />
       )}
       
       {activeModal === 'restore' && selectedUser && (
         <RestoreModal
+          user={selectedUser}
           isOpen={true}
           onClose={closeModal}
-          userId={selectedUser.id}
         />
       )}
       
       {activeModal === 'resetMfa' && selectedUser && (
         <ResetMfaModal
+          user={selectedUser}
           isOpen={true}
           onClose={closeModal}
-          userId={selectedUser.id}
         />
       )}
       
@@ -313,6 +313,8 @@ export default function UsersPage() {
           isOpen={true}
           onClose={closeModal}
           userId={selectedUser.id}
+          username={selectedUser.username || selectedUser.email}
+          onSuccess={closeModal}
         />
       )}
     </>
