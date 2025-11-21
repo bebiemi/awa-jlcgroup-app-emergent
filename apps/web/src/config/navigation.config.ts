@@ -247,7 +247,7 @@ export const navigationConfig: Record<string, NavigationItem> = {
     path: '#', // Groupe, pas une vraie route
     labelKey: 'nav.admin.gestion',
     icon: 'Cog6ToothIcon',
-    parentId: 'adminDashboard',
+    parentId: null, // Section de niveau racine dans la sidebar
     contexts: ['admin'],
     children: ['adminUsers', 'adminValidations', 'adminEntreprises', 'adminLocations'],
     order: 2,
