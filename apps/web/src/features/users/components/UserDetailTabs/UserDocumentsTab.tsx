@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { UserDetail, useGetUserDocumentsQuery, useVerifyDocumentMutation, useDeleteDocumentMutation } from '../../api/userDetailsApi'
+import { UserDetail, useGetUserDocumentsQuery, useVerifyDocumentMutation, useDeleteDocumentMutation } from '@/features/users/api/userDetailsApi'
 import { DOCUMENT_TYPES, BADGE_VARIANTS, COLORS } from '@/constants/ui'
 import { CheckCircleIcon, XCircleIcon, EyeIcon, TrashIcon } from '@heroicons/react/24/outline'
 import toast from 'react-hot-toast'

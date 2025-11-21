@@ -1,4 +1,4 @@
-import { UserDetail } from '../../api/userDetailsApi'
+import { UserDetail } from '@/features/users/api/userDetailsApi'
 import { USER_STATUS_CONFIG, BADGE_VARIANTS } from '@/constants/ui'
 import { getRoleLabel, getRoleColor } from '@/constants/iamConstants'
 

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { UserDetail, useGetUserActivityQuery } from '../../api/userDetailsApi'
+import { UserDetail, useGetUserActivityQuery } from '@/features/users/api/userDetailsApi'
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
 
 interface UserActivityTabProps {

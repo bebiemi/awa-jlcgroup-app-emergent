@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { UserDetail, useGetUserGroupsQuery, useGetUserProfilesQuery, useAssignGroupMutation, useRemoveGroupMutation, useAssignProfileMutation, useRemoveProfileMutation } from '../../api/userDetailsApi'
+import { UserDetail, useGetUserGroupsQuery, useGetUserProfilesQuery, useAssignGroupMutation, useRemoveGroupMutation, useAssignProfileMutation, useRemoveProfileMutation } from '@/features/users/api/userDetailsApi'
 import { useListGroupsQuery, useListProfilesQuery } from '@/features/iam/api/iamApi'
 import { PlusIcon, TrashIcon } from '@heroicons/react/24/outline'
 import toast from 'react-hot-toast'
