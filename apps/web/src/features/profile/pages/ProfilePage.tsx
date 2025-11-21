@@ -114,11 +114,22 @@ export default function ProfilePage() {
               <ShieldCheckIcon className="h-5 w-5 inline mr-2" />
               Permissions
             </button>
+            <button
+              onClick={() => setActiveTab('preferences')}
+              className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                activeTab === 'preferences'
+                  ? 'border-jlc-purple-600 text-jlc-purple-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              <PaintBrushIcon className="h-5 w-5 inline mr-2" />
+              Préférences
+            </button>
           </nav>
         </div>
 
         {/* Content */}
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className={activeTab === 'preferences' ? '' : 'bg-white rounded-lg shadow p-6'}>
           {activeTab === 'info' && (
             <>
               {profileType === 'interim' && <InterimProfileForm profile={profile} />}
@@ -139,6 +150,8 @@ export default function ProfilePage() {
           {activeTab === 'documents' && <DocumentsSection />}
 
           {activeTab === 'permissions' && <MyPermissionsSection />}
+
+          {activeTab === 'preferences' && <UIPreferencesSection />}
         </div>
       </div>
     </Layout>
