@@ -23,10 +23,10 @@ class Document(BaseModel):
     user_id: str
     user_email: str = ""
     user_name: Optional[str] = None
-    filename: str
-    original_filename: str
-    file_size: int
-    mime_type: str
+    filename: str = ""
+    original_filename: str = ""
+    file_size: int = 0
+    mime_type: str = ""
     category: str = "other"
     visibility: str = "private"
     description: Optional[str] = None
