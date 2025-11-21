@@ -7,25 +7,36 @@ import { useState, useEffect } from 'react'
 import { PaintBrushIcon } from '@heroicons/react/24/outline'
 import toast from 'react-hot-toast'
 
+import { useUIPreferences } from '@/hooks/useUIPreferences'
+
 export default function UIPreferencesSection() {
-  const [sidebarStyle, setSidebarStyle] = useState<'v2' | 'v3'>('v2')
+  const { preferences, updatePreferences, isLoading, error } = useUIPreferences()
+  const [isSaving, setIsSaving] = useState(false)
 
-  // Charger la préférence actuelle au montage
-  useEffect(() => {
-    const savedStyle = localStorage.getItem('sidebar_style') as 'v2' | 'v3' | null
-    if (savedStyle) {
-      setSidebarStyle(savedStyle)
+  const sidebarStyle = preferences.sidebar_style
+
+  const handleStyleChange = async (newStyle: 'v2' | 'v3') => {
+    setIsSaving(true)
+    const success = await updatePreferences({ sidebar_style: newStyle })
+    setIsSaving(false)
+    
+    if (success) {
+      toast.success('Style de sidebar sauvegardé ! Rechargez la page pour voir les changements.')
+    } else {
+      toast.error('Erreur lors de la sauvegarde des préférences')
     }
-  }, [])
-
-  const handleStyleChange = (newStyle: 'v2' | 'v3') => {
-    setSidebarStyle(newStyle)
-    localStorage.setItem('sidebar_style', newStyle)
-    toast.success('Style de sidebar mis à jour ! Rechargez la page pour voir les changements.')
   }
 
   const handleReload = () => {
     window.location.reload()
+  }
+
+  if (isLoading) {
+    return (
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <p className="text-gray-500">Chargement des préférences...</p>
+      </div>
+    )
   }
 
   return (
