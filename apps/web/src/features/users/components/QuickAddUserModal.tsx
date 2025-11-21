@@ -3,7 +3,7 @@ import { XMarkIcon, EnvelopeIcon } from '@heroicons/react/24/outline'
 import {
   useCreateUserMutation,
   useGetGroupsQuery,
-} from '../api/securityApi'
+} from '@/features/admin/api/securityApi'
 
 interface QuickAddUserModalProps {
   isOpen: boolean
