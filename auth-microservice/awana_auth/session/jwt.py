@@ -23,22 +23,37 @@ class JWTManager:
         self.refresh_token_expire = timedelta(days=config.jwt_refresh_token_expire_days)
         self.iam_service = iam_service  # IAM service for permission resolution
     
-    def create_access_token(
+    async def create_access_token(
         self,
         user: User,
         session_id: str,
         expires_delta: Optional[timedelta] = None
     ) -> str:
-        """Create a new access token"""
+        """Create a new access token with IAM permissions"""
         if expires_delta:
             expire = datetime.now(timezone.utc) + expires_delta
         else:
             expire = datetime.now(timezone.utc) + self.access_token_expire
         
+        # Resolve user permissions via IAM
+        permissions = []
+        if self.iam_service:
+            try:
+                user_perms = await self.iam_service.get_user_permissions(user.id)
+                # Extract permission codes from Permission objects
+                permissions = [perm.code for perm in user_perms.all_permissions]
+                logger.info(f"Resolved {len(permissions)} permissions for user {user.id}")
+            except Exception as e:
+                logger.error(f"Failed to resolve permissions for user {user.id}: {e}")
+                # Continue without permissions rather than failing login
+        else:
+            logger.warning("IAM service not available, token will not contain permissions")
+        
         payload = TokenPayload(
             sub=user.id,
             email=user.email,
             roles=user.roles,
+            permissions=permissions,
             session_id=session_id,
             exp=expire,
             iat=datetime.now(timezone.utc),
