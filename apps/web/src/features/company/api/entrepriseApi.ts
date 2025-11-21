@@ -1,6 +1,9 @@
 /**
  * Entreprise API - Company Management
  * RTK Query API slice for managing company/entreprise information
+ * 
+ * @deprecated Use @/features/entreprises/api/entreprisesApi instead
+ * This file is kept for backward compatibility with company pages
  */
 import { createApi } from '@reduxjs/toolkit/query/react'
 import { baseQueryWithAuth } from '@/utils/baseQueryWithAuth'
