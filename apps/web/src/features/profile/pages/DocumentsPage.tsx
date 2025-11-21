@@ -109,14 +109,15 @@ export default function DocumentsPage() {
     if (!uploadingFile) return
 
     try {
-      await uploadDocument({
-        file: uploadingFile,
-        document_type: selectedDocType
-      }).unwrap()
+      const formData = new FormData()
+      formData.append('file', uploadingFile)
+      formData.append('category', selectedDocType)
+      formData.append('visibility', 'private')
+      
+      await uploadDocument(formData).unwrap()
       
       toast.success('✅ Document uploadé avec succès')
       setUploadingFile(null)
-      refetch()
     } catch (error: any) {
       toast.error(`❌ ${error?.data?.detail || 'Erreur lors de l\'upload'}`)
     }
