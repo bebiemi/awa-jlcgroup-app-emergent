@@ -37,7 +37,7 @@ export const authApi = createApi({
           
           if (data.access_token && data.user) {
             console.log('💾 Storing credentials in Redux + localStorage')
-            // Store credentials in Redux store
+            // Store credentials in Redux store (which will also handle localStorage with permissions)
             dispatch(
               setCredentials({
                 user: data.user,
@@ -45,12 +45,6 @@ export const authApi = createApi({
                 refreshToken: data.refresh_token,
               })
             )
-            // Store in localStorage for persistence
-            localStorage.setItem('access_token', data.access_token)
-            if (data.refresh_token) {
-              localStorage.setItem('refresh_token', data.refresh_token)
-            }
-            localStorage.setItem('user', JSON.stringify(data.user))
             console.log('✅ Credentials stored successfully')
           } else {
             console.warn('⚠️  No credentials to store (MFA flow or incomplete response)')
