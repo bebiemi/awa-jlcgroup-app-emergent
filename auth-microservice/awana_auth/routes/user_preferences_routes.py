@@ -19,7 +19,7 @@ router = APIRouter(prefix="/users/me/preferences", tags=["User Preferences"])
     summary="Récupérer les préférences UI de l'utilisateur connecté"
 )
 async def get_my_ui_preferences(
-    current_user: dict = Depends(get_current_user),
+    current_user = Depends(get_current_user),
     db = Depends(get_database)
 ):
     """
@@ -29,9 +29,12 @@ async def get_my_ui_preferences(
     retourne les valeurs par défaut.
     """
     try:
+        # Extraire l'ID utilisateur (peut être un dict ou un objet)
+        user_id = current_user.id if hasattr(current_user, 'id') else current_user.get('id')
+        
         # Récupérer l'utilisateur avec ses préférences
         user = await db.users.find_one(
-            {"id": current_user["id"]},
+            {"id": user_id},
             {"_id": 0, "ui_preferences": 1, "updated_at": 1}
         )
         
