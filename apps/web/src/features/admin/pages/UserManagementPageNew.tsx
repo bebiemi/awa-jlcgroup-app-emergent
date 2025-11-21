@@ -48,7 +48,7 @@ export default function UserManagementPageNew() {
   const [deleteUser] = useDeleteUserMutation()
 
   const handleCreateUser = () => {
-    navigate('/admin/users/create')
+    navigate('/admin/users/new')
   }
 
   const handleViewUser = (user: User) => {
