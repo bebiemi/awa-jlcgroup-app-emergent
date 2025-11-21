@@ -12,8 +12,9 @@ import { useAppSelector } from '@/store/hooks'
 export default function SidebarResolver() {
   const { user } = useAppSelector((state) => state.auth)
   
-  // Récupérer la préférence utilisateur, par défaut v2 (classique)
-  const sidebarStyle = user?.ui_preferences?.sidebar_style ?? 'v2'
+  // Récupérer la préférence depuis localStorage (temporaire) ou user preferences (futur)
+  const localStorageStyle = localStorage.getItem('sidebar_style')
+  const sidebarStyle = localStorageStyle || user?.ui_preferences?.sidebar_style || 'v2'
 
   // Charger le composant approprié
   if (sidebarStyle === 'v3') {
