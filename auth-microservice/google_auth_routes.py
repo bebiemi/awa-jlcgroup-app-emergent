@@ -397,7 +397,7 @@ async def google_callback(
         )
         
         # Generate JWT tokens with real session_id
-        access_token = jwt_manager.create_access_token(
+        access_token = await jwt_manager.create_access_token(
             user=user_obj,
             session_id=session.id
         )
@@ -628,7 +628,7 @@ async def complete_google_registration(
         session_id = session.id if session else secrets.token_urlsafe(32)
         
         # Generate new JWT tokens with updated role
-        access_token = jwt_manager.create_access_token(
+        access_token = await jwt_manager.create_access_token(
             user=updated_user,
             session_id=session_id
         )

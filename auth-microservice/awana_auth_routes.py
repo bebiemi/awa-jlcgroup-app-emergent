@@ -528,7 +528,7 @@ async def entraid_callback(
             logger.info(f"New user created: {user.email}")
         
         # Create JWT tokens
-        access_token = jwt_manager.create_access_token(user, session_id="temp")
+        access_token = await jwt_manager.create_access_token(user, session_id="temp")
         refresh_token = jwt_manager.create_refresh_token(user, session_id="temp")
         
         # Create session
@@ -545,7 +545,7 @@ async def entraid_callback(
         )
         
         # Update tokens with actual session ID
-        access_token = jwt_manager.create_access_token(user, session.id)
+        access_token = await jwt_manager.create_access_token(user, session.id)
         refresh_token = jwt_manager.create_refresh_token(user, session.id)
         
         await session_storage.update_session(
@@ -743,7 +743,7 @@ async def entraid_token_login(
         )
         
         # Now create JWT tokens with the real session_id
-        access_token = jwt_manager.create_access_token(
+        access_token = await jwt_manager.create_access_token(
             user=user,
             session_id=session.id
         )
@@ -1027,7 +1027,7 @@ async def local_login(
         )
         
         # Now create JWT tokens with the real session_id
-        access_token = jwt_manager.create_access_token(
+        access_token = await jwt_manager.create_access_token(
             user=user,
             session_id=session.id
         )
@@ -1132,7 +1132,7 @@ async def complete_login_after_mfa(
         )
         
         # Create JWT tokens
-        access_token = jwt_manager.create_access_token(
+        access_token = await jwt_manager.create_access_token(
             user=user,
             session_id=session.id
         )
@@ -1327,7 +1327,7 @@ async def local_register(
         )
         
         # Create JWT tokens
-        access_token = jwt_manager.create_access_token(
+        access_token = await jwt_manager.create_access_token(
             user=user,
             session_id=session.id
         )
@@ -1592,7 +1592,7 @@ async def refresh_token(
         user = User(**user_doc)
         
         # Create new tokens
-        new_access_token = jwt_manager.create_access_token(user, session.id)
+        new_access_token = await jwt_manager.create_access_token(user, session.id)
         new_refresh_token = jwt_manager.create_refresh_token(user, session.id)
         
         # Update session
