@@ -163,12 +163,6 @@ export default function Sidebar() {
     if (userPermissions['dashboard.commercial.access']) return '/commercial'
     if (userPermissions['dashboard.company.access']) return '/entreprise'
     if (userPermissions['dashboard.candidat.access']) return '/candidat'
-    // Fallback pour anciens profils
-    if (user.roles.includes(roles.admin) || user.roles.includes(roles.super_admin)) return '/admin'
-    if (user.roles.includes(roles.interim)) return '/interimaire'
-    if (user.roles.includes(roles.company)) return '/entreprise'
-    if (user.roles.includes(roles.agency)) return '/agence'
-    if (user.roles.includes('postulant') || user.roles.includes('candidat')) return '/postulant'
     return '/profile'
   }
 
