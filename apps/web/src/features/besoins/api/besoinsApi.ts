@@ -172,6 +172,25 @@ export const besoinApi = createApi({
         params: { page },
       }),
     }),
+
+    // Validate besoin (for admin/commercial)
+    validateBesoin: builder.mutation<Besoin, { id: string; approved: boolean; comment?: string }>({
+      query: ({ id, approved, comment }) => ({
+        url: `/api/besoins/${id}/validate`,
+        method: 'POST',
+        body: { approved, comment },
+      }),
+      invalidatesTags: (result, error, { id }) => [{ type: 'Besoin', id }, 'Besoins'],
+    }),
+
+    // Delete besoin
+    deleteBesoin: builder.mutation<void, string>({
+      query: (id) => ({
+        url: `/api/besoins/${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['Besoins'],
+    }),
   }),
 })
 
