@@ -3,22 +3,19 @@
  * Charge la version de sidebar selon les préférences utilisateur
  * v2 = Classique (fond blanc)
  * v3 = Premium (fond dark avec gradient)
+ * 
+ * SIMPLE: Lecture synchrone localStorage uniquement, pas d'API blocking
  */
 
 import SidebarV2 from './SidebarNew'
 import SidebarV3 from './SidebarNew.v3'
-import { useUIPreferences } from '@/hooks/useUIPreferences'
 
 export default function SidebarResolver() {
-  const { preferences, isLoading } = useUIPreferences()
+  // Lecture SYNCHRONE depuis localStorage uniquement
+  const sidebarStyle = localStorage.getItem('sidebar_style')
 
-  // Pendant le chargement, afficher la version par défaut
-  if (isLoading) {
-    return <SidebarV2 />
-  }
-
-  // Charger le composant approprié selon les préférences
-  if (preferences.sidebar_style === 'v3') {
+  // Charger le composant approprié
+  if (sidebarStyle === 'v3') {
     return <SidebarV3 />
   }
   
