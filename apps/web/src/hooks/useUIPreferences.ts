@@ -15,8 +15,15 @@ const API_BASE = import.meta.env.VITE_BACKEND_URL || ''
 
 export function useUIPreferences() {
   const { isAuthenticated } = useAppSelector((state) => state.auth)
+  
+  // Charger immédiatement depuis localStorage pour éviter le flash
+  const initialStyle = () => {
+    const saved = localStorage.getItem('sidebar_style')
+    return saved === 'v3' ? 'v3' : 'v2'
+  }
+  
   const [preferences, setPreferences] = useState<UIPreferences>({
-    sidebar_style: 'v2'
+    sidebar_style: initialStyle()
   })
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
