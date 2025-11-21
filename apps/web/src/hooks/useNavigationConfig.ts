@@ -85,16 +85,43 @@ export function useNavigationConfig(context?: NavigationContext) {
 
 /**
  * Hook pour obtenir les items de la sidebar
+ * Retourne TOUS les items filtrés (pas seulement l'arbre)
  */
 export function useSidebarItems(context?: NavigationContext) {
-  const { items } = useNavigationConfig(context)
+  const detectedContext = useCurrentContext()
+  const effectiveContext = context || detectedContext
+  const { t } = useTranslation()
   
-  // Filtrer les items cachés
-  const sidebarItems = useMemo(() => {
-    return items.filter(item => !item.hidden)
-  }, [items])
+  // Récupérer toutes les permissions de l'utilisateur
+  const allPermissionsToCheck = useMemo(() => {
+    const perms = new Set<string>()
+    Object.values(navigationConfig).forEach(item => {
+      item.requiredPermissions?.forEach(p => perms.add(p))
+      item.requiredAllPermissions?.forEach(p => perms.add(p))
+    })
+    return Array.from(perms)
+  }, [])
   
-  return sidebarItems
+  const { permissions } = usePermissions(allPermissionsToCheck)
+  
+  // Transformer les permissions en tableau
+  const userPermissions = useMemo(() => {
+    return Object.entries(permissions)
+      .filter(([_, hasPermission]) => hasPermission)
+      .map(([perm]) => perm)
+  }, [permissions])
+  
+  // Filtrer TOUS les items (pas seulement construire l'arbre)
+  const filteredItems = useMemo(() => {
+    const filtered = filterNavigationItems(effectiveContext, userPermissions)
+    // Traduire et retourner TOUS les items filtrés (pas l'arbre)
+    return filtered.map(item => ({
+      ...item,
+      label: item.label || t(item.labelKey, { defaultValue: item.labelKey }),
+    })).filter(item => !item.hidden)
+  }, [effectiveContext, userPermissions, t])
+  
+  return filteredItems
 }
 
 /**
