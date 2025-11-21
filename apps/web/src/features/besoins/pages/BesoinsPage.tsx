@@ -5,7 +5,6 @@
 
 import { useState, useMemo } from "react"
 import { useNavigate } from "react-router-dom"
-import NeedListTemplate from "@/templates/NeedListTemplate"
 import EntityListTemplate from "@/templates/EntityListTemplate"
 import { usePermissions } from "@/hooks/usePermission"
 import { BesoinsPageConfig } from "../config/besoins.config"
