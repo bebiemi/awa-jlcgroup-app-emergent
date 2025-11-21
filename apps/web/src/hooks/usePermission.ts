@@ -13,13 +13,6 @@ import { useGetUserPermissionsQuery } from '@/features/iam/api/iamApi'
  */
 export function usePermission(permissionCode: string) {
   const { user } = useAppSelector((state) => state.auth)
-  
-  const { data: userPermissions, isLoading } = useGetUserPermissionsQuery(
-    user?.id || '',
-    {
-      skip: !user?.id,
-    }
-  )
 
   const hasPermission = useMemo(() => {
     if (!user) return false
@@ -27,9 +20,8 @@ export function usePermission(permissionCode: string) {
     // SuperAdmin has all permissions
     if (user.roles.includes('super_admin')) return true
     
-    if (!userPermissions) return false
-    
-    const allPermissions = userPermissions.all_permissions.map(p => p.code)
+    // Get permissions from JWT (stored in user object)
+    const allPermissions = user.permissions || []
     
     // Direct match
     if (allPermissions.includes(permissionCode)) return true
@@ -42,11 +34,11 @@ export function usePermission(permissionCode: string) {
     }
     
     return false
-  }, [user, userPermissions, permissionCode])
+  }, [user, permissionCode])
 
   return {
     hasPermission,
-    isLoading,
+    isLoading: false,  // No API call, so never loading
   }
 }
 
