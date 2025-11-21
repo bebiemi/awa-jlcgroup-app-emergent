@@ -11,8 +11,26 @@ interface AuthState {
   isLoading: boolean
 }
 
+// Initialize user with permissions from JWT if available
+const initializeUser = (): User | null => {
+  const userStr = localStorage.getItem('user')
+  const token = localStorage.getItem('access_token')
+  
+  if (!userStr || !token) return null
+  
+  const user = JSON.parse(userStr)
+  
+  // Extract permissions from JWT and add to user object
+  const permissions = extractPermissionsFromJWT(token)
+  
+  return {
+    ...user,
+    permissions,
+  }
+}
+
 const initialState: AuthState = {
-  user: localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')!) : null,
+  user: initializeUser(),
   token: localStorage.getItem('access_token'),
   refreshToken: localStorage.getItem('refresh_token'),
   isAuthenticated: !!localStorage.getItem('access_token'),
