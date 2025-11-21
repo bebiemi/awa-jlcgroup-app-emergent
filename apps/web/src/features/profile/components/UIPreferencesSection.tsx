@@ -3,39 +3,56 @@
  * Permet de choisir le style de sidebar et autres préférences d'interface
  */
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { PaintBrushIcon } from '@heroicons/react/24/outline'
 import toast from 'react-hot-toast'
-import { useUIPreferences } from '@/hooks/useUIPreferences'
+
+const API_BASE = import.meta.env.VITE_BACKEND_URL || ''
 
 export default function UIPreferencesSection() {
-  const { preferences, updatePreferences, isLoading, error } = useUIPreferences()
+  const [sidebarStyle, setSidebarStyle] = useState<'v2' | 'v3'>('v2')
   const [isSaving, setIsSaving] = useState(false)
 
-  const sidebarStyle = preferences.sidebar_style
+  // Charger depuis localStorage au montage
+  useEffect(() => {
+    const saved = localStorage.getItem('sidebar_style')
+    if (saved === 'v3') {
+      setSidebarStyle('v3')
+    }
+  }, [])
 
   const handleStyleChange = async (newStyle: 'v2' | 'v3') => {
     setIsSaving(true)
-    const success = await updatePreferences({ sidebar_style: newStyle })
-    setIsSaving(false)
+    setSidebarStyle(newStyle)
     
-    if (success) {
-      toast.success('Style de sidebar sauvegardé ! Rechargez la page pour voir les changements.')
-    } else {
-      toast.error('Erreur lors de la sauvegarde des préférences')
+    // Sauvegarder dans localStorage IMMÉDIATEMENT
+    localStorage.setItem('sidebar_style', newStyle)
+    
+    // Tenter de sauvegarder sur le serveur en arrière-plan (non bloquant)
+    const token = localStorage.getItem('access_token')
+    if (token) {
+      try {
+        await fetch(`${API_BASE}/api/auth/users/me/preferences`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify({ sidebar_style: newStyle })
+        })
+        // Succès silencieux, localStorage est déjà sauvegardé
+      } catch (err) {
+        // Erreur silencieuse, localStorage est sauvegardé de toute façon
+        console.warn('Failed to sync preferences to server:', err)
+      }
     }
+    
+    setIsSaving(false)
+    toast.success('Style de sidebar sauvegardé ! Rechargez la page pour voir les changements.')
   }
 
   const handleReload = () => {
     window.location.reload()
-  }
-
-  if (isLoading) {
-    return (
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <p className="text-gray-500">Chargement des préférences...</p>
-      </div>
-    )
   }
 
   return (
