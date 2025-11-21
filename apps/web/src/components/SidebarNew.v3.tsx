@@ -52,6 +52,7 @@ const ICON_MAP: Record<string, any> = {
 
 export default function SidebarNew() {
   const location = useLocation()
+  const navigate = useNavigate()
   const { user } = useAppSelector((state) => state.auth)
   const { isOpen, closeSidebar } = useSidebar()
   const context = useCurrentContext()
