@@ -248,16 +248,34 @@ export default function Sidebar() {
         items: [
           { label: 'Vue d\'ensemble', path: '/commercial', icon: HomeIcon },
         ],
-      },
-      {
+      }
+    )
+    
+    // Section Gestion : Afficher uniquement si l'utilisateur a les permissions
+    const gestionItems = [
+      ...(userPermissions['users.read'] || userPermissions['users.manage']
+        ? [{ label: 'Utilisateurs', path: '/admin/users', icon: UserGroupIcon }]
+        : []),
+      ...(userPermissions['locations.manage']
+        ? [{ label: 'Localisations', path: '/admin/locations', icon: MapPinIcon }]
+        : []),
+      ...(userPermissions['validations.manage']
+        ? [{ label: 'Validations', path: '/admin/validations', icon: ClipboardDocumentCheckIcon }]
+        : []),
+      ...(userPermissions['entreprises.read'] || userPermissions['entreprises.manage']
+        ? [{ label: 'Entreprises', path: '/admin/entreprises', icon: BuildingOfficeIcon }]
+        : []),
+    ]
+    
+    // Ajouter la section Gestion seulement si au moins un élément est visible
+    if (gestionItems.length > 0) {
+      navigationSections.push({
         title: 'Gestion',
-        items: [
-          { label: 'Utilisateurs', path: '/admin/users', icon: UserGroupIcon },
-          { label: 'Localisations', path: '/admin/locations', icon: MapPinIcon },
-          { label: 'Validations', path: '/admin/validations', icon: ClipboardDocumentCheckIcon },
-          { label: 'Entreprises', path: '/admin/entreprises', icon: BuildingOfficeIcon },
-        ],
-      },
+        items: gestionItems,
+      })
+    }
+    
+    navigationSections.push(
       {
         title: 'Processus',
         items: [
