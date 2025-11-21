@@ -35,15 +35,19 @@ export function useCurrentContext(): NavigationContext {
   return 'public'
 }
 
+// Cache global pour les arbres de navigation
+const memoizedNavigationTrees = new Map<string, NavigationItem[]>()
+
 /**
- * Hook pour obtenir la configuration de navigation filtrée
+ * Hook pour accéder à la configuration de navigation filtrée par contexte et permissions
+ * Version optimisée avec memoization
  */
 export function useNavigationConfig(context?: NavigationContext) {
   const detectedContext = useCurrentContext()
   const effectiveContext = context || detectedContext
   const { t } = useTranslation()
   
-  // Récupérer toutes les permissions de l'utilisateur
+  // Récupérer toutes les permissions à vérifier
   const allPermissionsToCheck = useMemo(() => {
     const perms = new Set<string>()
     Object.values(navigationConfig).forEach(item => {
@@ -61,14 +65,26 @@ export function useNavigationConfig(context?: NavigationContext) {
       .filter(([_, hasPermission]) => hasPermission)
       .map(([perm]) => perm)
   }, [permissions])
-  
-  // Filtrer et construire l'arbre de navigation
+
+  // Clé de cache basée sur contexte et permissions
+  const cacheKey = `${effectiveContext}::${userPermissions.sort().join(',')}`
+
+  // Filtrer et construire l'arbre avec cache
   const navigationItems = useMemo(() => {
+    // Vérifier le cache
+    if (memoizedNavigationTrees.has(cacheKey)) {
+      return memoizedNavigationTrees.get(cacheKey)!
+    }
+
+    // Calculer et mettre en cache
     const filtered = filterNavigationItems(effectiveContext, userPermissions)
-    return buildNavigationTree(filtered)
-  }, [effectiveContext, userPermissions])
+    const tree = buildNavigationTree(filtered)
+
+    memoizedNavigationTrees.set(cacheKey, tree)
+    return tree
+  }, [cacheKey, effectiveContext, userPermissions])
   
-  // Traduire les labels (utilise label direct si disponible, sinon i18n)
+  // Traduire les labels
   const translatedItems = useMemo(() => {
     return navigationItems.map(item => ({
       ...item,
