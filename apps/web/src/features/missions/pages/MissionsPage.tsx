@@ -74,16 +74,11 @@ export default function MissionsPage() {
     icon: EyeIcon,
 
     columns: renderColumns,
-    data: data?.items || [],
+    data: missionsData || [],
     isLoading,
 
-    pagination: data
-      ? {
-          currentPage: data.page,
-          totalPages: data.total_pages,
-          onPageChange: setPage,
-        }
-      : undefined,
+    // Note: L'API missions ne retourne pas de pagination, on désactive pour l'instant
+    pagination: undefined,
 
     onSearch: setSearchQuery,
     searchPlaceholder: "Rechercher une mission...",
