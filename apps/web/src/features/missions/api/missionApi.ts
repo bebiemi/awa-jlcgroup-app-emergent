@@ -531,3 +531,6 @@ export const {
   useGetApplicationTimelineStatsQuery,
   useGetMyApplicationsWithHistoryQuery,
 } = missionApi
+
+// Alias pour la config
+export const useListMissionsQuery = useGetMissionsQuery
