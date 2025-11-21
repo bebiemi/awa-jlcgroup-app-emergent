@@ -42,20 +42,52 @@
     "country": "Pays"
   },
   "nav": {
-    "home": "Accueil",
-    "dashboard": "Tableau de bord",
-    "missions": "Missions",
-    "offers": "Offres",
-    "applications": "Candidatures",
-    "my_applications": "Mes candidatures",
-    "validations": "Validations",
-    "users": "Utilisateurs",
-    "groups": "Groupes",
-    "profiles": "Profils",
-    "locations": "Localisations",
-    "references": "Référentiels",
-    "business_rules": "Règles métier",
-    "admin": "Administration"
+    "entreprise": {
+      "dashboard": "Tableau de bord entreprise",
+      "besoins": "Mes besoins",
+      "besoins.create": "Créer un besoin",
+      "besoins.detail": "Détail du besoin",
+      "besoins.edit": "Modifier le besoin",
+      "candidatures": "Candidatures"
+    },
+    "commercial": {
+      "dashboard": "Tableau de bord commercial",
+      "besoins": "Demandes clientes",
+      "missions": "Missions"
+    },
+    "candidat": {
+      "dashboard": "Tableau de bord",
+      "offres": "Offres d'emploi",
+      "candidatures": "Mes candidatures"
+    },
+    "admin": {
+      "dashboard": "Administration",
+      "gestion": "Gestion",
+      "users": "Utilisateurs",
+      "validations": "Validations",
+      "entreprises": "Entreprises",
+      "locations": "Localisations",
+      "iam": "IAM & Sécurité",
+      "iam.profiles": "Profils IAM",
+      "iam.groups": "Groupes IAM",
+      "iam.control": "Contrôle d'Accès",
+      "retention": "Rétention des Données",
+      "config": "Configuration",
+      "references": "Référentiels",
+      "countries": "Pays et Devises",
+      "rules": "Règles Métier",
+      "flags": "Feature Flags",
+      "emails": "Configuration Email"
+    },
+    "missions": {
+      "list": "Missions",
+      "detail": "Détail de la mission",
+      "edit": "Modifier la mission",
+      "candidatures": "Candidatures"
+    },
+    "profile": "Mon Profil",
+    "security": "Sécurité",
+    "documents": "Documents"
   },
   "landing": {
     "hero_title": "Votre partenaire intérim au Gabon",
