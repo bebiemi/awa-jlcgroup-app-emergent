@@ -238,8 +238,9 @@ export default function Sidebar() {
         ],
       }
     )
-  } else if (userPermissions['missions.manage.all'] && !userPermissions['admin.dashboard']) {
-    // Commercial role (has missions.manage.all but not full admin)
+  } else if (userPermissions['dashboard.commercial.access'] || 
+             (userPermissions['missions.manage.all'] && !userPermissions['admin.dashboard'])) {
+    // Commercial role (IAM-based)
     navigationSections.push(
       {
         title: 'Tableau de bord',
@@ -259,6 +260,9 @@ export default function Sidebar() {
       {
         title: 'Processus',
         items: [
+          ...(userPermissions['besoins.read'] || userPermissions['besoins.view.all'] 
+            ? [{ label: 'Demandes clientes', path: '/entreprise/besoins', icon: ClipboardDocumentCheckIcon }]
+            : []),
           { label: 'Missions', path: '/missions', icon: BriefcaseIcon },
         ],
       },
