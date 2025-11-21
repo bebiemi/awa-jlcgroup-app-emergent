@@ -1,7 +1,7 @@
 import { Fragment, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { ExclamationTriangleIcon, XMarkIcon } from '@heroicons/react/24/outline'
-import { useArchiveUserMutation, useGetRetentionConfigQuery } from '../api/userDetailsApi'
+import { useArchiveUserMutation, useGetRetentionConfigQuery } from '@/features/users/api/userDetailsApi'
 import { toast } from 'react-hot-toast'
 
 interface ArchiveUserModalProps {

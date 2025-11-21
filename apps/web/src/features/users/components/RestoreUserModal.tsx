@@ -1,7 +1,7 @@
 import { Fragment, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { ArrowPathIcon, XMarkIcon } from '@heroicons/react/24/outline'
-import { useRestoreUserMutation } from '../api/userDetailsApi'
+import { useRestoreUserMutation } from '@/features/users/api/userDetailsApi'
 import { toast } from 'react-hot-toast'
 
 interface RestoreUserModalProps {
