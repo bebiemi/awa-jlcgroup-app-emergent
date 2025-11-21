@@ -100,24 +100,32 @@ export function useUIPreferences() {
       // Si authentifié, sauvegarder sur le serveur
       if (isAuthenticated) {
         const token = localStorage.getItem('access_token')
-        const response = await fetch(`${API_BASE}/api/auth/users/me/preferences`, {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`
-          },
-          body: JSON.stringify(newPrefs)
-        })
+        if (token) {
+          try {
+            const response = await fetch(`${API_BASE}/api/auth/users/me/preferences`, {
+              method: 'PATCH',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`
+              },
+              body: JSON.stringify(newPrefs)
+            })
 
-        if (!response.ok) {
-          throw new Error('Échec de la sauvegarde des préférences')
+            if (response.ok) {
+              const data = await response.json()
+              // Mettre à jour avec les données du serveur
+              setPreferences({
+                sidebar_style: data.ui_preferences?.sidebar_style || 'v2'
+              })
+            } else {
+              console.warn(`Failed to save preferences to server (${response.status}), but localStorage saved`)
+              // Ne pas considérer comme une erreur si localStorage est sauvegardé
+            }
+          } catch (apiErr) {
+            console.warn('Failed to save preferences to API, but localStorage saved:', apiErr)
+            // Ne pas considérer comme une erreur si localStorage est sauvegardé
+          }
         }
-
-        const data = await response.json()
-        // Mettre à jour avec les données du serveur
-        setPreferences({
-          sidebar_style: data.ui_preferences.sidebar_style
-        })
       }
 
       return true
