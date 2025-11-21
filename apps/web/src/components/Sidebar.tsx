@@ -322,10 +322,9 @@ export default function Sidebar() {
         ],
       }
     )
-  } else if ((userPermissions['besoins.create.own'] || userPermissions['besoins.create.all'] || 
-             userPermissions['missions.create.own'] || userPermissions['missions.create.all']) ||
-             (user.roles?.includes(roles.company) && !user.roles?.includes('commercial'))) {
-    // Company role (IAM + fallback, exclude commercial)
+  } else if (userPermissions['besoins.create.own'] || userPermissions['besoins.create.all'] || 
+             userPermissions['missions.create.own'] || userPermissions['missions.create.all']) {
+    // Company role (IAM-based)
     navigationSections.push(
       {
         title: 'Tableau de bord',
