@@ -11,6 +11,7 @@ export { UsersPageConfig } from './config/users.config'
 
 // API
 export * from './api/usersApi'
+export * from './api/userDetailsApi'
 
 // Composants (si besoin d'être réutilisés ailleurs)
 export { default as EditUserModal } from './components/EditUserModal'
