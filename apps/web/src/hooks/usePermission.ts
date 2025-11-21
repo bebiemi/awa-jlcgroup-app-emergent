@@ -49,68 +49,51 @@ export function usePermission(permissionCode: string) {
  */
 export function usePermissions(permissionCodes: string[]) {
   const { user } = useAppSelector((state) => state.auth)
-  
-  const { data: userPermissions, isLoading } = useGetUserPermissionsQuery(
-    user?.id || '',
-    {
-      skip: !user?.id,
-    }
-  )
 
   const permissions = useMemo(() => {
-    const result: Record<string, boolean> = {}
-    
     if (!user) {
-      permissionCodes.forEach(code => {
-        result[code] = false
-      })
-      return result
+      return permissionCodes.reduce((acc, code) => {
+        acc[code] = false
+        return acc
+      }, {} as Record<string, boolean>)
     }
     
     // SuperAdmin has all permissions
     if (user.roles.includes('super_admin')) {
-      permissionCodes.forEach(code => {
-        result[code] = true
-      })
-      return result
+      return permissionCodes.reduce((acc, code) => {
+        acc[code] = true
+        return acc
+      }, {} as Record<string, boolean>)
     }
     
-    if (!userPermissions) {
-      permissionCodes.forEach(code => {
-        result[code] = false
-      })
-      return result
-    }
+    // Get permissions from JWT (stored in user object)
+    const allPermissions = user.permissions || []
     
-    const allPermissions = userPermissions.all_permissions.map(p => p.code)
-    
-    permissionCodes.forEach(code => {
+    return permissionCodes.reduce((acc, code) => {
       // Direct match
       if (allPermissions.includes(code)) {
-        result[code] = true
-        return
+        acc[code] = true
+        return acc
       }
       
       // Wildcard matching
       const parts = code.split('.')
-      let hasWildcard = false
       for (let i = 0; i < parts.length; i++) {
         const wildcard = parts.slice(0, i + 1).join('.') + '.*'
         if (allPermissions.includes(wildcard)) {
-          hasWildcard = true
-          break
+          acc[code] = true
+          return acc
         }
       }
       
-      result[code] = hasWildcard
-    })
-    
-    return result
-  }, [user, userPermissions, permissionCodes])
+      acc[code] = false
+      return acc
+    }, {} as Record<string, boolean>)
+  }, [user, permissionCodes])
 
   return {
     permissions,
-    isLoading,
+    isLoading: false,  // No API call, so never loading
   }
 }
 
