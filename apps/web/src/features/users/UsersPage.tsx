@@ -6,7 +6,17 @@
 
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { UsersIcon } from '@heroicons/react/24/outline'
+import { 
+  UsersIcon,
+  EyeIcon,
+  PencilIcon,
+  KeyIcon,
+  ShieldCheckIcon,
+  NoSymbolIcon,
+  ArchiveBoxIcon,
+  ArrowPathIcon,
+  TrashIcon,
+} from '@heroicons/react/24/outline'
 import { UsersPageConfig } from './users.config'
 import EntityListTemplate from '@/templates/EntityListTemplate'
 import { usePermissions } from '@/hooks/usePermission'
@@ -14,7 +24,14 @@ import type { EntityListConfig } from '@/templates/EntityListTemplate'
 
 export default function UsersPage() {
   const navigate = useNavigate()
-  const { hasPermission } = usePermissions()
+  const { permissions: userPermissions } = usePermissions([
+    'users.view',
+    'users.edit',
+    'users.create',
+    'users.delete',
+    'users.bulk',
+    'users.export',
+  ])
   
   // États locaux pour les filtres et recherche
   const [page, setPage] = useState(1)
