@@ -50,7 +50,13 @@ export function usePermissions(permissionCodes: string[]) {
   const { user } = useAppSelector((state) => state.auth)
 
   const permissions = useMemo(() => {
+    console.log('🔍 usePermissions - checking permissions')
+    console.log('   User:', user?.email)
+    console.log('   Has permissions field?', !!user?.permissions)
+    console.log('   Permissions count:', user?.permissions?.length || 0)
+    
     if (!user) {
+      console.log('   ❌ No user - denying all')
       return permissionCodes.reduce((acc, code) => {
         acc[code] = false
         return acc
@@ -59,6 +65,7 @@ export function usePermissions(permissionCodes: string[]) {
     
     // SuperAdmin has all permissions
     if (user.roles.includes('super_admin')) {
+      console.log('   ✅ SuperAdmin - granting all')
       return permissionCodes.reduce((acc, code) => {
         acc[code] = true
         return acc
@@ -67,6 +74,7 @@ export function usePermissions(permissionCodes: string[]) {
     
     // Get permissions from JWT (stored in user object)
     const allPermissions = user.permissions || []
+    console.log('   Checking against', allPermissions.length, 'permissions from JWT')
     
     return permissionCodes.reduce((acc, code) => {
       // Direct match
