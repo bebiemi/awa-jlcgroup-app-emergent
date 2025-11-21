@@ -14,20 +14,22 @@ import toast from "react-hot-toast"
 
 export default function BesoinsPage() {
   const navigate = useNavigate()
+
+  /** 👉 Permissions */
   const { permissions: userPermissions } = usePermissions([
-    'besoins.read.all',
-    'besoins.create',
-    'besoins.edit',
-    'besoins.delete',
-    'besoins.validate',
+    "besoins.read.all",
+    "besoins.create",
+    "besoins.edit",
+    "besoins.delete",
+    "besoins.validate",
   ])
 
-  // États locaux
-  const [searchQuery, setSearchQuery] = useState('')
-  const [statusFilter, setStatusFilter] = useState('')
+  /** 👉 Local UI state (recherche + filtre + pagination) */
+  const [searchQuery, setSearchQuery] = useState("")
+  const [statusFilter, setStatusFilter] = useState("")
   const [page, setPage] = useState(1)
 
-  // RTK Query
+  /** 👉 API list */
   const { data, isLoading } = BesoinsPageConfig.api.list({
     status: statusFilter || undefined,
     page,
@@ -35,71 +37,75 @@ export default function BesoinsPage() {
     search: searchQuery || undefined,
   })
 
-  // Handlers
-  const handleCreateBesoin = () => {
-    navigate('/admin/besoins/new')
-  }
+  /** 👉 Actions centralisées (navigation + workflows) */
+  const actions = useMemo(
+    () => ({
+      create: () => navigate("/admin/besoins/new"),
 
-  const handleViewBesoin = (besoin: Besoin) => {
-    navigate(`/admin/besoins/${besoin.id}`)
-  }
+      view: (b: Besoin) => navigate(`/admin/besoins/${b.id}`),
 
-  const handleEditBesoin = (besoin: Besoin) => {
-    navigate(`/admin/besoins/${besoin.id}/edit`)
-  }
+      edit: (b: Besoin) => navigate(`/admin/besoins/${b.id}/edit`),
 
-  const handleValidateBesoin = (besoin: Besoin) => {
-    // TODO: Ouvrir modale de validation
-    toast.success('Validation à implémenter')
-  }
+      validate: (b: Besoin) =>
+        toast.success(
+          `Validation en attente de modale – besoin: ${b.titre}`
+        ),
 
-  const handleRejectBesoin = (besoin: Besoin) => {
-    // TODO: Ouvrir modale de rejet
-    toast.error('Rejet à implémenter')
-  }
+      reject: (b: Besoin) =>
+        toast.error(`Rejet en attente de modale – besoin: ${b.titre}`),
 
-  const handleDeleteBesoin = (besoin: Besoin) => {
-    if (window.confirm(`Voulez-vous vraiment supprimer le besoin "${besoin.titre}" ?`)) {
-      // TODO: Implémenter la suppression
-      toast.error('Suppression à implémenter')
-    }
-  }
+      delete: (b: Besoin) => {
+        if (window.confirm(`Supprimer le besoin "${b.titre}" ?`)) {
+          toast.error("Suppression à implémenter dans besoinsApi")
+        }
+      },
+    }),
+    [navigate]
+  )
 
-  // Rendu des colonnes
-  const renderColumns = BesoinsPageConfig.columns.map((col) => ({
-    ...col,
-    render:
-      col.key === 'status'
-        ? (status: string) => {
-            const statusConfig: Record<string, { label: string; color: string }> = {
-              brouillon: { label: 'Brouillon', color: 'bg-gray-100 text-gray-700' },
-              soumis: { label: 'Soumis', color: 'bg-blue-100 text-blue-700' },
-              validé: { label: 'Validé', color: 'bg-green-100 text-green-700' },
-              rejeté: { label: 'Rejeté', color: 'bg-red-100 text-red-700' },
-              annulé: { label: 'Annulé', color: 'bg-gray-100 text-gray-700' },
-            }
-            const config = statusConfig[status] || statusConfig.brouillon
-            return (
-              <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${config.color}`}>
-                {config.label}
-              </span>
-            )
-          }
-        : col.key === 'date_debut_souhaitee' || col.key === 'date_fin_souhaitee'
-        ? (value: string) => (value ? new Date(value).toLocaleDateString('fr-FR') : '-')
-        : undefined,
-  }))
+  /** 👉 Colonnes enrichies (badges, dates, etc.) */
+  const columns = useMemo(
+    () =>
+      BesoinsPageConfig.columns.map((col) => ({
+        ...col,
+        render:
+          col.key === "status"
+            ? (status: string) => {
+                const map = {
+                  brouillon: "bg-gray-100 text-gray-700",
+                  soumis: "bg-blue-100 text-blue-700",
+                  validé: "bg-green-100 text-green-700",
+                  rejeté: "bg-red-100 text-red-700",
+                  annulé: "bg-gray-200 text-gray-600",
+                }
+                return (
+                  <span
+                    className={`px-2 py-1 rounded-full text-xs font-medium ${
+                      map[status] ?? map.brouillon
+                    }`}
+                  >
+                    {status.charAt(0).toUpperCase() + status.slice(1)}
+                  </span>
+                )
+              }
+            : col.key.includes("date")
+            ? (value: string) =>
+                value
+                  ? new Date(value).toLocaleDateString("fr-FR")
+                  : "-"
+            : undefined,
+      })),
+    []
+  )
 
-  // Configuration template
-  const templateConfig: EntityListConfig = {
-    entityName: 'Besoin',
-    entityNamePlural: 'Besoins',
+  /** 👉 Template config unifiée */
+  const templateConfig = {
+    entityName: "Besoin",
+    entityNamePlural: "Besoins",
     title: BesoinsPageConfig.title,
     subtitle: BesoinsPageConfig.subtitle,
-    icon: BriefcaseIcon,
 
-    columns: renderColumns,
-
+    columns,
     data: data?.items || [],
     isLoading,
 
@@ -112,83 +118,77 @@ export default function BesoinsPage() {
       : undefined,
 
     onSearch: setSearchQuery,
-    searchPlaceholder: 'Rechercher par titre, entreprise...',
+    searchPlaceholder: "Rechercher par titre, entreprise…",
 
     filters: [
       {
-        key: 'status',
-        label: 'Filtrer par statut',
-        type: 'select',
+        key: "status",
+        label: "Statut",
+        type: "select",
         options: [
-          { value: '', label: 'Tous les statuts' },
-          { value: 'brouillon', label: 'Brouillon' },
-          { value: 'soumis', label: 'Soumis' },
-          { value: 'validé', label: 'Validé' },
-          { value: 'rejeté', label: 'Rejeté' },
-          { value: 'annulé', label: 'Annulé' },
+          { value: "", label: "Tous" },
+          { value: "brouillon", label: "Brouillon" },
+          { value: "soumis", label: "Soumis" },
+          { value: "validé", label: "Validé" },
+          { value: "rejeté", label: "Rejeté" },
+          { value: "annulé", label: "Annulé" },
         ],
       },
     ],
 
     actions: {
       create: {
-        label: 'Créer un besoin',
-        onClick: handleCreateBesoin,
-        permission: 'besoins.create',
+        label: "Créer un besoin",
+        onClick: actions.create,
+        permission: "besoins.create",
       },
+
       row: [
         {
-          key: 'view',
-          label: 'Voir les détails',
-          icon: EyeIcon,
-          onClick: handleViewBesoin,
-          variant: 'secondary' as const,
+          key: "view",
+          label: "Voir",
+          onClick: actions.view,
         },
         {
-          key: 'edit',
-          label: 'Modifier',
-          icon: PencilIcon,
-          onClick: handleEditBesoin,
-          variant: 'primary' as const,
-          permission: 'besoins.edit',
+          key: "edit",
+          label: "Modifier",
+          onClick: actions.edit,
+          permission: "besoins.edit",
         },
         {
-          key: 'validate',
-          label: 'Valider',
-          icon: CheckCircleIcon,
-          onClick: handleValidateBesoin,
-          variant: 'primary' as const,
-          permission: 'besoins.validate',
-          show: (besoin: Besoin) => besoin.status === 'soumis',
+          key: "validate",
+          label: "Valider",
+          show: (b: Besoin) => b.status === "soumis",
+          onClick: actions.validate,
+          permission: "besoins.validate",
         },
         {
-          key: 'reject',
-          label: 'Rejeter',
-          icon: XCircleIcon,
-          onClick: handleRejectBesoin,
-          variant: 'danger' as const,
-          permission: 'besoins.validate',
-          show: (besoin: Besoin) => besoin.status === 'soumis',
+          key: "reject",
+          label: "Rejeter",
+          show: (b: Besoin) => b.status === "soumis",
+          onClick: actions.reject,
+          permission: "besoins.validate",
         },
         {
-          key: 'delete',
-          label: 'Supprimer',
-          icon: TrashIcon,
-          onClick: handleDeleteBesoin,
-          variant: 'danger' as const,
-          permission: 'besoins.delete',
+          key: "delete",
+          label: "Supprimer",
+          onClick: actions.delete,
+          permission: "besoins.delete",
         },
       ],
     },
 
     emptyState: {
-      message: 'Aucun besoin trouvé',
+      message: "Aucun besoin pour le moment",
       action: {
-        label: 'Créer le premier besoin',
-        onClick: handleCreateBesoin,
+        label: "Créer un besoin",
+        onClick: actions.create,
       },
     },
   }
 
-  return <EntityListTemplate config={templateConfig} permissions={userPermissions} />
+  /** 👉 Choix automatique du template */
+  const Template = NeedListTemplate ?? EntityListTemplate
+
+  return <Template config={templateConfig} permissions={userPermissions} />
 }
