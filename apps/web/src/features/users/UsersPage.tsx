@@ -235,14 +235,7 @@ export default function UsersPage() {
   }
 
   // Permissions pour le template
-  const permissions = {
-    'users.view': hasPermission('users.view'),
-    'users.edit': hasPermission('users.edit'),
-    'users.create': hasPermission('users.create'),
-    'users.delete': hasPermission('users.delete'),
-    'users.bulk': hasPermission('users.bulk'),
-    'users.export': hasPermission('users.export'),
-  }
+  const permissions = userPermissions
 
   // Récupération des composants modaux depuis la config
   const EditModal = UsersPageConfig.actions.edit
