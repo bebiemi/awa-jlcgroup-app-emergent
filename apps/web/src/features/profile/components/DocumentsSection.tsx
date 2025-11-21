@@ -4,7 +4,7 @@ import { DocumentTextIcon, TrashIcon, ArrowUpTrayIcon } from '@heroicons/react/2
 import toast from 'react-hot-toast'
 
 export default function DocumentsSection() {
-  const { data, isLoading } = useGetMyDocumentsQuery()
+  const { data, isLoading } = useListDocumentsQuery({})
   const [uploadDocument] = useUploadDocumentMutation()
   const [deleteDocument] = useDeleteDocumentMutation()
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -22,7 +22,12 @@ export default function DocumentsSection() {
 
     setUploading(true)
     try {
-      await uploadDocument({ file, document_type: selectedDocType }).unwrap()
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('category', selectedDocType)
+      formData.append('visibility', 'private')
+      
+      await uploadDocument(formData).unwrap()
       toast.success('Document uploadé avec succès')
       if (fileInputRef.current) {
         fileInputRef.current.value = ''
