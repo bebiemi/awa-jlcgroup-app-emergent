@@ -176,7 +176,7 @@ app.include_router(validation_router, prefix="/api")
 app.include_router(profile_router, prefix="/api")
 app.include_router(professional_experiences_router, prefix="/api")
 app.include_router(mission_router)
-app.include_router(document_router)
+# app.include_router(document_router)  # DEPRECATED: Using documents_routes_v2 instead
 app.include_router(configuration_router, prefix="/api/auth")
 app.include_router(version_router)
 app.include_router(feature_flag_router)
