@@ -83,11 +83,8 @@ const authSlice = createSlice({
     builder.addMatcher(
       authApi.endpoints.localLogin.matchFulfilled,
       (state, { payload }) => {
-        console.log('🔄 localLogin.matchFulfilled - extracting permissions again')
-        
         // Extract permissions from JWT
         const permissions = extractPermissionsFromJWT(payload.access_token)
-        console.log(`📋 Extracted ${permissions.length} permissions in matcher`)
         
         // Add permissions to user object
         const userWithPermissions = {
@@ -104,8 +101,6 @@ const authSlice = createSlice({
         if (payload.refresh_token) {
           localStorage.setItem('refresh_token', payload.refresh_token)
         }
-        
-        console.log('✅ localLogin.matchFulfilled complete')
       }
     )
     builder.addMatcher(
