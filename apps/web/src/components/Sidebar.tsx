@@ -122,15 +122,18 @@ export default function Sidebar() {
     'missions.manage.all',
     'missions.browse',
     'missions.read',
+    'missions.read.all',
     'missions.create.all',
     'missions.create.own',
     'besoins.create.all',
     'besoins.create.own',
     'besoins.read',
+    'besoins.read.all',
     'besoins.view.all',
     'besoins.view.own',
     'applications.read.all',
     'applications.read.own',
+    'applications.manage',
     'iam.profiles.manage',
     'iam.groups.manage',
     'profiles.manage',
@@ -152,10 +155,12 @@ export default function Sidebar() {
     'forms.enterprise.manage',
     'entreprises.manage',
     'entreprises.read',
+    'entreprises.read.all',
+    'entreprises.create.own',
     'dashboard.access',
     'dashboard.candidat.access',
-    'dashboard.commercial.access',  // ✅ AJOUTÉ
-    'dashboard.company.access',      // ✅ AJOUTÉ
+    'dashboard.commercial.access',
+    'dashboard.company.access',
   ])
 
   // Get dashboard path based on user permissions (IAM)
