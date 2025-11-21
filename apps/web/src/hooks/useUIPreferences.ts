@@ -10,6 +10,7 @@ interface UIPreferences {
   sidebar_style: 'v2' | 'v3'
 }
 
+// Utiliser une URL relative (vide) pour que Vite proxy/production routing fonctionne
 const API_BASE = import.meta.env.VITE_BACKEND_URL || ''
 
 export function useUIPreferences() {
@@ -36,6 +37,16 @@ export function useUIPreferences() {
       try {
         // Authentifié : charger depuis l'API
         const token = localStorage.getItem('access_token')
+        if (!token) {
+          // Pas de token : fallback localStorage
+          const localStyle = localStorage.getItem('sidebar_style') as 'v2' | 'v3' | null
+          if (localStyle) {
+            setPreferences({ sidebar_style: localStyle })
+          }
+          setIsLoading(false)
+          return
+        }
+
         const response = await fetch(`${API_BASE}/api/auth/users/me/preferences`, {
           headers: {
             Authorization: `Bearer ${token}`
