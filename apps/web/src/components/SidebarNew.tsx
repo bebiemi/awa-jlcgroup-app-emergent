@@ -80,19 +80,8 @@ export default function SidebarNew({ isOpen, onClose }: SidebarProps) {
 
   if (!user) return null
 
-  // Trouver le dashboard pour le contexte actuel
-  const contextDashboard = sidebarItems.find(item => 
-    item.path === dashboardPath && !item.hidden
-  )
-  
   // Grouper les items par parentId (construire la hiérarchie)
-  // Si on a un dashboard contextuel avec des enfants, utiliser ses enfants comme racine
-  // Sinon, utiliser les items sans parent
-  const rootItems = contextDashboard && contextDashboard.children 
-    ? sidebarItems.filter(item => 
-        contextDashboard.children?.includes(item.id) && !item.hidden
-      )
-    : sidebarItems.filter(item => !item.parentId && !item.hidden)
+  const rootItems = sidebarItems.filter(item => !item.parentId && !item.hidden)
   
   // Fonction pour obtenir les enfants d'un item
   const getChildren = (parentId: string) => {
