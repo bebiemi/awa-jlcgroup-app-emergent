@@ -205,10 +205,10 @@ export default function UserManagementPageNew() {
     data: data?.users || [],
     isLoading,
 
-    pagination: data
+    pagination: data?.pagination
       ? {
           currentPage: page,
-          totalPages: Math.ceil(data.total / 15),
+          totalPages: Math.ceil(data.pagination.total / 15),
           onPageChange: setPage,
         }
       : undefined,
