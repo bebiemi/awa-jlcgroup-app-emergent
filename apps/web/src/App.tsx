@@ -15,7 +15,7 @@ import GoogleCallback from './features/auth/pages/GoogleCallback'
 import RoleSelectionPage from './features/auth/pages/RoleSelectionPage'
 import AdminDashboard from './features/admin/pages/AdminDashboard'
 import ValidationsPage from './features/admin/pages/ValidationsPageNew'
-import UserManagementPage from './features/admin/pages/UserManagementPageNew'
+import UserManagementPage from './features/admin/pages/UserManagementPageComplete'
 import CreateUserPage from './features/admin/pages/CreateUserPage'
 // OLD: import GroupsPage from './features/admin/pages/GroupsPage' // DEPRECATED - Use IAMControlPage
 // OLD: import ProfilesPage from './features/admin/pages/ProfilesPage' // DEPRECATED - Use ProfilesManagementPage
