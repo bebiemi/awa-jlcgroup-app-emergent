@@ -71,15 +71,15 @@ export default function BesoinsListPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Mes Besoins</h1>
-            <p className="text-gray-600 mt-1">Gérez vos demandes de recrutement</p>
+            <h1 className="text-3xl font-bold text-gray-900">Demandes clientes</h1>
+            <p className="text-gray-600 mt-1">Gérez les demandes de recrutement des entreprises</p>
           </div>
           <button
             onClick={() => navigate('/entreprise/besoins/create')}
             className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-jlc-purple-600 to-indigo-600 text-white rounded-lg hover:from-jlc-purple-700 hover:to-indigo-700 shadow-md transition-all"
           >
             <PlusIcon className="h-5 w-5" />
-            Créer un besoin
+            Créer une demande
           </button>
         </div>
 
