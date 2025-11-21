@@ -67,13 +67,13 @@ class JWTManager:
         encoded_jwt = jwt.encode(to_encode, self.secret_key, algorithm=self.algorithm)
         return encoded_jwt
     
-    def create_refresh_token(
+    async def create_refresh_token(
         self,
         user: User,
         session_id: str,
         expires_delta: Optional[timedelta] = None
     ) -> str:
-        """Create a new refresh token"""
+        """Create a new refresh token (refresh tokens don't need permissions)"""
         if expires_delta:
             expire = datetime.now(timezone.utc) + expires_delta
         else:
@@ -83,6 +83,7 @@ class JWTManager:
             sub=user.id,
             email=user.email,
             roles=user.roles,
+            permissions=[],  # Refresh tokens don't need permissions
             session_id=session_id,
             exp=expire,
             iat=datetime.now(timezone.utc),
