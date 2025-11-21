@@ -45,38 +45,6 @@ export const useDashboardPath = (): string => {
     return '/candidat'
   }
 
-  // === FALLBACK BASÉ SUR ROLES (quand permissions pas disponibles) ===
-  
-  // Admin
-  if (user.roles?.includes(roles.admin) || user.roles?.includes(roles.super_admin)) {
-    return '/admin'
-  }
-
-  // Commercial (basé sur rôle "commercial")
-  if (user.roles?.includes('commercial')) {
-    return '/commercial'
-  }
-
-  // Intérimaire
-  if (user.roles?.includes(roles.interim)) {
-    return '/interimaire'
-  }
-
-  // Entreprise (seulement si pas commercial)
-  if (user.roles?.includes(roles.company)) {
-    return '/entreprise'
-  }
-
-  // Agence
-  if (user.roles?.includes(roles.agency)) {
-    return '/agence'
-  }
-
-  // Candidat
-  if (user.roles?.includes('postulant') || user.roles?.includes('candidat')) {
-    return '/candidat'
-  }
-
-  // Par défaut : page de profil
+  // Par défaut : page de profil (si aucune permission dashboard)
   return '/profile'
 }
