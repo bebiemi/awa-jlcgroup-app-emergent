@@ -119,7 +119,8 @@ export const navigationConfig: Record<string, NavigationItem> = {
   commercialBesoins: {
     id: 'commercialBesoins',
     path: '/entreprise/besoins', // Même route que entreprise, contexte différent
-    labelKey: 'nav.commercial.besoins', // "Demandes clientes"
+    labelKey: 'nav.commercial.besoins',
+    label: 'Demandes clientes', // Label direct
     icon: 'ClipboardDocumentCheckIcon',
     parentId: 'commercialDashboard',
     requiredPermissions: ['besoins.view.all', 'besoins.read'],
