@@ -73,7 +73,14 @@ export default function NeedListTemplate({
 
   const getStatusLabel = (statusKey: string) => {
     const status = workflowConfig?.statuses.find((s) => s.key === statusKey)
-    return status?.label || statusKey
+    if (!status?.label) return statusKey
+    
+    // Si label est un objet de traduction {fr, en}, extraire la langue appropriée
+    if (typeof status.label === 'object' && status.label !== null) {
+      return status.label.fr || status.label.en || statusKey
+    }
+    
+    return status.label
   }
 
   const handleCreateClick = () => {
