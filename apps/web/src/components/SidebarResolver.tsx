@@ -7,17 +7,18 @@
 
 import SidebarV2 from './SidebarNew'
 import SidebarV3 from './SidebarNew.v3'
-import { useAppSelector } from '@/store/hooks'
+import { useUIPreferences } from '@/hooks/useUIPreferences'
 
 export default function SidebarResolver() {
-  const { user } = useAppSelector((state) => state.auth)
-  
-  // Récupérer la préférence depuis localStorage (temporaire) ou user preferences (futur)
-  const localStorageStyle = localStorage.getItem('sidebar_style')
-  const sidebarStyle = localStorageStyle || user?.ui_preferences?.sidebar_style || 'v2'
+  const { preferences, isLoading } = useUIPreferences()
 
-  // Charger le composant approprié
-  if (sidebarStyle === 'v3') {
+  // Pendant le chargement, afficher la version par défaut
+  if (isLoading) {
+    return <SidebarV2 />
+  }
+
+  // Charger le composant approprié selon les préférences
+  if (preferences.sidebar_style === 'v3') {
     return <SidebarV3 />
   }
   
