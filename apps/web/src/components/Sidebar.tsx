@@ -247,11 +247,6 @@ export default function Sidebar() {
              (userPermissions['missions.manage.all'] && !userPermissions['admin.dashboard']) ||
              (user.roles && Array.isArray(user.roles) && user.roles.includes('commercial'))) {
     // Commercial role (IAM-based + fallback roles)
-    console.log('[Sidebar] Commercial section detected', {
-      hasPermission: userPermissions['dashboard.commercial.access'],
-      hasRole: user.roles?.includes('commercial'),
-      roles: user.roles
-    })
     navigationSections.push(
       {
         title: 'Tableau de bord',
