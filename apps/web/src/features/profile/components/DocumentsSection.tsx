@@ -148,7 +148,7 @@ export default function DocumentsSection() {
                       {doc.original_filename}
                     </p>
                     <p className="text-xs text-gray-500">
-                      {getDocumentTypeLabel(doc.type)} • {formatFileSize(doc.file_size)} • {new Date(doc.uploaded_at).toLocaleDateString('fr-FR')}
+                      {getDocumentTypeLabel(doc.category)} • {formatFileSize(doc.file_size)} • {new Date(doc.created_at).toLocaleDateString('fr-FR')}
                     </p>
                   </div>
                 </div>
