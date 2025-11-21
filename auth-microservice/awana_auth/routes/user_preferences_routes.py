@@ -29,22 +29,18 @@ async def get_my_ui_preferences(
     retourne les valeurs par défaut.
     """
     try:
-        # Extraire l'ID utilisateur (peut être un dict ou un objet)
+        # Extraire l'ID utilisateur
         user_id = current_user.id if hasattr(current_user, 'id') else current_user.get('id')
         
-        # Récupérer l'utilisateur avec ses préférences
-        user = await db.users.find_one(
-            {"id": user_id},
-            {"_id": 0, "ui_preferences": 1, "updated_at": 1}
-        )
+        # Récupérer l'utilisateur
+        user = await db.users.find_one({"id": user_id})
         
         if not user:
             raise HTTPException(status_code=404, detail="Utilisateur non trouvé")
         
-        # Si pas de préférences, retourner les valeurs par défaut
+        # Récupérer les préférences UI ou utiliser les valeurs par défaut
         ui_prefs = user.get("ui_preferences", {})
         
-        # Créer l'objet UIPreferences avec les valeurs par défaut si besoin
         preferences = UIPreferences(
             sidebar_style=ui_prefs.get("sidebar_style", "v2")
         )
@@ -79,21 +75,15 @@ async def update_my_ui_preferences(
     Rétrocompatible : crée le champ ui_preferences s'il n'existe pas.
     """
     try:
-        # Extraire l'ID utilisateur (peut être un dict ou un objet)
+        # Extraire l'ID utilisateur
         user_id = current_user.id if hasattr(current_user, 'id') else current_user.get('id')
-        print(f"DEBUG PATCH - user_id: {user_id}, type: {type(user_id)}")
         
-        # Récupérer les préférences actuelles
-        user = await db.users.find_one(
-            {"id": user_id},
-            {"_id": 0, "ui_preferences": 1}
-        )
-        print(f"DEBUG PATCH - user found: {user is not None}")
-        
+        # Vérifier que l'utilisateur existe
+        user = await db.users.find_one({"id": user_id})
         if not user:
             raise HTTPException(status_code=404, detail="Utilisateur non trouvé")
         
-        # Récupérer les préférences existantes ou créer un dict vide
+        # Récupérer les préférences existantes
         current_prefs = user.get("ui_preferences", {})
         
         # Mettre à jour uniquement les champs fournis
@@ -109,7 +99,7 @@ async def update_my_ui_preferences(
         updated_prefs = {**current_prefs, **update_data}
         
         # Mettre à jour dans la base de données
-        update_result = await db.users.update_one(
+        await db.users.update_one(
             {"id": user_id},
             {
                 "$set": {
@@ -119,18 +109,8 @@ async def update_my_ui_preferences(
             }
         )
         
-        # Note: modified_count peut être 0 si les valeurs sont identiques
-        # On ne considère pas ça comme une erreur
-        
         # Récupérer et retourner les préférences mises à jour
-        updated_user = await db.users.find_one(
-            {"id": user_id},
-            {"_id": 0, "ui_preferences": 1, "updated_at": 1}
-        )
-        print(f"DEBUG PATCH - updated_user: {updated_user}")
-        
-        if not updated_user:
-            raise HTTPException(status_code=404, detail="Utilisateur non trouvé après mise à jour")
+        updated_user = await db.users.find_one({"id": user_id})
         
         preferences_obj = UIPreferences(
             sidebar_style=updated_user.get("ui_preferences", {}).get("sidebar_style", "v2")
