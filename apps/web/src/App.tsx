@@ -123,8 +123,8 @@ function App() {
       <Route
         path="/admin/users"
         element={
-          <ProtectedRoute requiredPermissions={['users.read', 'users.manage']}>
-            <UserManagementPage />
+          <ProtectedRoute requiredPermissions={['users.view']}>
+            <UsersPage />
           </ProtectedRoute>
         }
       />
