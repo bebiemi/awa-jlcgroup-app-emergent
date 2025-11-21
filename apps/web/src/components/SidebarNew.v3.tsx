@@ -130,10 +130,14 @@ export default function SidebarNew() {
       )
     }
 
+    // Item "simple" - Desktop: sidebar reste ouverte, Mobile: ferme
     return (
       <Link
         key={item.id}
         to={item.path}
+        onClick={() => {
+          if (window.innerWidth < 1024) closeSidebar() // mobile only
+        }}
         className={`group relative flex items-center gap-3 px-4 py-2 text-sm rounded-lg transition-all ${
           isActive
             ? 'bg-white/10 text-white shadow-sm'
