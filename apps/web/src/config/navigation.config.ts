@@ -134,12 +134,61 @@ export const navigationConfig: Record<string, NavigationItem> = {
   commercialMissions: {
     id: 'commercialMissions',
     path: '/missions',
-    labelKey: 'nav.commercial.missions', // "Missions"
+    labelKey: 'nav.commercial.missions',
+    label: 'Missions',
     icon: 'BriefcaseIcon',
     parentId: 'commercialDashboard',
     requiredPermissions: ['missions.read', 'missions.browse'],
     contexts: ['commercial'],
     order: 3,
+  },
+  
+  commercialUsers: {
+    id: 'commercialUsers',
+    path: '/admin/users',
+    labelKey: 'nav.commercial.users',
+    label: 'Utilisateurs',
+    icon: 'UserGroupIcon',
+    parentId: null,
+    requiredPermissions: ['users.read', 'users.manage'],
+    contexts: ['commercial'],
+    order: 10,
+  },
+  
+  commercialLocations: {
+    id: 'commercialLocations',
+    path: '/admin/locations',
+    labelKey: 'nav.commercial.locations',
+    label: 'Localisations',
+    icon: 'MapPinIcon',
+    parentId: null,
+    requiredPermissions: ['locations.manage'],
+    contexts: ['commercial'],
+    order: 11,
+  },
+  
+  commercialValidations: {
+    id: 'commercialValidations',
+    path: '/admin/validations',
+    labelKey: 'nav.commercial.validations',
+    label: 'Validations',
+    icon: 'ClipboardDocumentCheckIcon',
+    parentId: null,
+    requiredPermissions: ['validations.manage'],
+    contexts: ['commercial'],
+    order: 12,
+  },
+  
+  commercialEntreprises: {
+    id: 'commercialEntreprises',
+    path: '/admin/entreprises',
+    labelKey: 'nav.commercial.entreprises',
+    label: 'Entreprises',
+    icon: 'BuildingOfficeIcon',
+    parentId: null,
+    requiredPermissions: ['entreprises.read', 'entreprises.manage'],
+    contexts: ['commercial'],
+    order: 13,
   },
   
   // ==================== CONTEXTE CANDIDAT ====================
