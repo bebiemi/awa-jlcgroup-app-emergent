@@ -69,6 +69,12 @@ export function usePermissions(permissionCodes: string[]) {
     const allPermissions = user.permissions || []
     
     return permissionCodes.reduce((acc, code) => {
+      // Universal wildcard (*.* grants all permissions)
+      if (allPermissions.includes('*.*')) {
+        acc[code] = true
+        return acc
+      }
+      
       // Direct match
       if (allPermissions.includes(code)) {
         acc[code] = true
