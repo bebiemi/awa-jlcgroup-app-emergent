@@ -6,7 +6,7 @@
  */
 
 import { useState } from 'react'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { useAppSelector } from '@/store/hooks'
 import { useSidebar } from '@/contexts/SidebarContext'
 import { useSidebarItems, useCurrentContext } from '@/hooks/useNavigationConfig'
