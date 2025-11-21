@@ -402,7 +402,7 @@ async def google_callback(
             session_id=session.id
         )
         
-        refresh_token = jwt_manager.create_refresh_token(
+        refresh_token = await jwt_manager.create_refresh_token(
             user=user_obj,
             session_id=session.id
         )
@@ -633,7 +633,7 @@ async def complete_google_registration(
             session_id=session_id
         )
         
-        refresh_token = jwt_manager.create_refresh_token(
+        refresh_token = await jwt_manager.create_refresh_token(
             user=updated_user,
             session_id=session_id
         )
