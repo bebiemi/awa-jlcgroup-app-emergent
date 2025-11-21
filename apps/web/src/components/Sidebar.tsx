@@ -190,7 +190,9 @@ export default function Sidebar() {
       {
         title: 'Processus',
         items: [
+          { label: 'Demandes clientes', path: '/entreprise/besoins', icon: ClipboardDocumentCheckIcon },
           { label: 'Missions', path: '/missions', icon: BriefcaseIcon },
+          { label: 'Candidatures', path: '/entreprise/candidatures', icon: UsersIcon },
         ],
       },
       {
