@@ -335,3 +335,73 @@ python3 init_db_unified.py
 ```
 
 ---
+
+---
+
+## 🔧 Bug P1 - Erreur 404 sur profiles.badge_new_user - RÉSOLU ✅
+
+**Date:** 23 Novembre 2025 23:32  
+**Priorité:** P1 (Récurrent 3+ fois)  
+**Statut:** ✅ RÉSOLU
+
+### Symptômes
+- Erreur `GET .../api/config/app/value?key=profiles.badge_new_user 404 (Not Found)` dans la console
+- Bug récurrent depuis 3+ forks
+
+### Cause Racine
+La clé de configuration `profiles.badge_new_user` n'existait pas dans la collection `app_config` de MongoDB.
+
+### Solution Appliquée
+
+#### 1. Configuration Créée en Base de Données
+```javascript
+{
+  key: "profiles.badge_new_user",
+  value: {
+    enabled: true,
+    expiration_days: 7,
+    expiration_mode: "creation_date",
+    badge_text: {
+      fr: "NOUVEAU",
+      en: "NEW"
+    }
+  },
+  description: "Configuration du badge NOUVEAU pour les profils récemment créés",
+  category: "profiles"
+}
+```
+
+#### 2. Script de Vérification Créé
+**Fichier:** `/app/scripts/ensure_app_configs.py`
+
+- Vérifie automatiquement les configurations essentielles
+- Crée les configurations manquantes
+- Peut être exécuté à tout moment pour s'assurer que tout est en place
+
+### Contexte du Badge
+
+Le composant `NewBadge.tsx` affiche un badge "NOUVEAU" sur les profils récemment créés :
+- **Durée par défaut:** 7 jours après création
+- **Mode:** `creation_date` (basé sur la date de création)
+- **Texte:** "NOUVEAU" (FR) / "NEW" (EN)
+
+### Tests de Validation
+
+✅ Configuration créée en base de données
+✅ Script `ensure_app_configs.py` fonctionne
+✅ Vérification : plus d'erreur 404 dans les logs
+
+### Prévention
+
+Le script `/app/scripts/ensure_app_configs.py` peut être exécuté lors de l'initialisation pour s'assurer que toutes les configurations essentielles existent.
+
+**Usage:**
+```bash
+python3 /app/scripts/ensure_app_configs.py
+```
+
+### Impact
+- **Avant:** ❌ Erreur 404 dans la console → Pollution des logs
+- **Après:** ✅ Configuration présente → Badge fonctionnel si activé
+
+---
