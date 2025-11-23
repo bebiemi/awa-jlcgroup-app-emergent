@@ -467,6 +467,7 @@ async def reset_database_with_bundles(delete_users=False):
         "last_name": "System",
         "full_name": "Admin System",
         "password_hash": hashed.decode('utf-8'),
+        "provider": "local",
         "roles": ["super_admin"],
         "profile_ids": [super_admin_profile["id"]],
         "is_active": True,
