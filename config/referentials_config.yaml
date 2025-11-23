@@ -1,0 +1,660 @@
+# ========================================
+# Configuration des Référentiels
+# ========================================
+# Ce fichier définit tous les référentiels de données
+# de l'application (listes de valeurs, énumérations, etc.)
+#
+# Version: 1.0
+# Dernière mise à jour: 2025-11-23
+# ========================================
+
+# ========================================
+# STATUTS UTILISATEURS
+# ========================================
+user_statuses:
+  collection: "referentials"
+  key: "user_statuses"
+  version: "1.0"
+  items:
+    - code: "active"
+      label:
+        fr: "Actif"
+        en: "Active"
+      color: "green"
+      description: "Utilisateur actif et fonctionnel"
+      order: 1
+      
+    - code: "inactive"
+      label:
+        fr: "Inactif"
+        en: "Inactive"
+      color: "gray"
+      description: "Utilisateur désactivé temporairement"
+      order: 2
+      
+    - code: "pending"
+      label:
+        fr: "En attente"
+        en: "Pending"
+      color: "yellow"
+      description: "En attente de validation"
+      order: 3
+      
+    - code: "suspended"
+      label:
+        fr: "Suspendu"
+        en: "Suspended"
+      color: "orange"
+      description: "Compte suspendu"
+      order: 4
+      
+    - code: "archived"
+      label:
+        fr: "Archivé"
+        en: "Archived"
+      color: "gray"
+      description: "Utilisateur archivé"
+      order: 5
+
+# ========================================
+# STATUTS MISSIONS
+# ========================================
+mission_statuses:
+  collection: "referentials"
+  key: "mission_statuses"
+  version: "1.0"
+  items:
+    - code: "draft"
+      label:
+        fr: "Brouillon"
+        en: "Draft"
+      color: "gray"
+      description: "Mission en cours de création"
+      order: 1
+      
+    - code: "pending_validation"
+      label:
+        fr: "En attente de validation"
+        en: "Pending Validation"
+      color: "yellow"
+      description: "Mission soumise, en attente de validation"
+      order: 2
+      
+    - code: "published"
+      label:
+        fr: "Publiée"
+        en: "Published"
+      color: "green"
+      description: "Mission publiée et visible"
+      order: 3
+      
+    - code: "in_progress"
+      label:
+        fr: "En cours"
+        en: "In Progress"
+      color: "blue"
+      description: "Mission en cours d'exécution"
+      order: 4
+      
+    - code: "paused"
+      label:
+        fr: "En pause"
+        en: "Paused"
+      color: "orange"
+      description: "Mission mise en pause"
+      order: 5
+      
+    - code: "completed"
+      label:
+        fr: "Terminée"
+        en: "Completed"
+      color: "green"
+      description: "Mission terminée avec succès"
+      order: 6
+      
+    - code: "cancelled"
+      label:
+        fr: "Annulée"
+        en: "Cancelled"
+      color: "red"
+      description: "Mission annulée"
+      order: 7
+      
+    - code: "archived"
+      label:
+        fr: "Archivée"
+        en: "Archived"
+      color: "gray"
+      description: "Mission archivée"
+      order: 8
+
+# ========================================
+# TYPES DE CONTRAT
+# ========================================
+contract_types:
+  collection: "referentials"
+  key: "contract_types"
+  version: "1.0"
+  items:
+    - code: "cdi"
+      label:
+        fr: "CDI"
+        en: "Permanent Contract"
+      description: "Contrat à durée indéterminée"
+      order: 1
+      
+    - code: "cdd"
+      label:
+        fr: "CDD"
+        en: "Fixed-term Contract"
+      description: "Contrat à durée déterminée"
+      order: 2
+      
+    - code: "interim"
+      label:
+        fr: "Intérim"
+        en: "Temporary Work"
+      description: "Travail temporaire"
+      order: 3
+      
+    - code: "freelance"
+      label:
+        fr: "Freelance"
+        en: "Freelance"
+      description: "Travailleur indépendant"
+      order: 4
+      
+    - code: "stage"
+      label:
+        fr: "Stage"
+        en: "Internship"
+      description: "Stage en entreprise"
+      order: 5
+      
+    - code: "apprentissage"
+      label:
+        fr: "Apprentissage"
+        en: "Apprenticeship"
+      description: "Contrat d'apprentissage"
+      order: 6
+
+# ========================================
+# SECTEURS D'ACTIVITÉ
+# ========================================
+business_sectors:
+  collection: "referentials"
+  key: "business_sectors"
+  version: "1.0"
+  items:
+    - code: "it"
+      label:
+        fr: "Informatique / Tech"
+        en: "IT / Tech"
+      icon: "💻"
+      order: 1
+      
+    - code: "construction"
+      label:
+        fr: "BTP / Construction"
+        en: "Construction"
+      icon: "🏗️"
+      order: 2
+      
+    - code: "health"
+      label:
+        fr: "Santé"
+        en: "Healthcare"
+      icon: "🏥"
+      order: 3
+      
+    - code: "education"
+      label:
+        fr: "Éducation"
+        en: "Education"
+      icon: "📚"
+      order: 4
+      
+    - code: "finance"
+      label:
+        fr: "Finance / Banque"
+        en: "Finance / Banking"
+      icon: "💰"
+      order: 5
+      
+    - code: "retail"
+      label:
+        fr: "Commerce / Vente"
+        en: "Retail / Sales"
+      icon: "🛒"
+      order: 6
+      
+    - code: "logistics"
+      label:
+        fr: "Logistique / Transport"
+        en: "Logistics / Transport"
+      icon: "🚚"
+      order: 7
+      
+    - code: "hospitality"
+      label:
+        fr: "Hôtellerie / Restauration"
+        en: "Hospitality / Catering"
+      icon: "🍽️"
+      order: 8
+      
+    - code: "industry"
+      label:
+        fr: "Industrie"
+        en: "Industry"
+      icon: "🏭"
+      order: 9
+      
+    - code: "other"
+      label:
+        fr: "Autre"
+        en: "Other"
+      icon: "📦"
+      order: 10
+
+# ========================================
+# NIVEAUX D'EXPÉRIENCE
+# ========================================
+experience_levels:
+  collection: "referentials"
+  key: "experience_levels"
+  version: "1.0"
+  items:
+    - code: "junior"
+      label:
+        fr: "Junior (0-2 ans)"
+        en: "Junior (0-2 years)"
+      min_years: 0
+      max_years: 2
+      order: 1
+      
+    - code: "intermediate"
+      label:
+        fr: "Intermédiaire (3-5 ans)"
+        en: "Intermediate (3-5 years)"
+      min_years: 3
+      max_years: 5
+      order: 2
+      
+    - code: "senior"
+      label:
+        fr: "Senior (6-10 ans)"
+        en: "Senior (6-10 years)"
+      min_years: 6
+      max_years: 10
+      order: 3
+      
+    - code: "expert"
+      label:
+        fr: "Expert (10+ ans)"
+        en: "Expert (10+ years)"
+      min_years: 10
+      max_years: null
+      order: 4
+
+# ========================================
+# NIVEAUX D'ÉTUDES
+# ========================================
+education_levels:
+  collection: "referentials"
+  key: "education_levels"
+  version: "1.0"
+  items:
+    - code: "no_diploma"
+      label:
+        fr: "Sans diplôme"
+        en: "No Diploma"
+      order: 1
+      
+    - code: "bep_cap"
+      label:
+        fr: "BEP / CAP"
+        en: "Vocational Certificate"
+      order: 2
+      
+    - code: "bac"
+      label:
+        fr: "Baccalauréat"
+        en: "High School Diploma"
+      order: 3
+      
+    - code: "bac_plus_2"
+      label:
+        fr: "Bac+2 (BTS/DUT)"
+        en: "Associate Degree"
+      order: 4
+      
+    - code: "bac_plus_3"
+      label:
+        fr: "Bac+3 (Licence)"
+        en: "Bachelor's Degree"
+      order: 5
+      
+    - code: "bac_plus_5"
+      label:
+        fr: "Bac+5 (Master)"
+        en: "Master's Degree"
+      order: 6
+      
+    - code: "bac_plus_8"
+      label:
+        fr: "Bac+8 (Doctorat)"
+        en: "PhD"
+      order: 7
+
+# ========================================
+# TYPES DE DOCUMENTS
+# ========================================
+document_types:
+  collection: "referentials"
+  key: "document_types"
+  version: "1.0"
+  items:
+    - code: "cv"
+      label:
+        fr: "CV"
+        en: "Resume"
+      category: "candidate"
+      max_size_mb: 5
+      allowed_extensions: ["pdf", "doc", "docx"]
+      order: 1
+      
+    - code: "cover_letter"
+      label:
+        fr: "Lettre de motivation"
+        en: "Cover Letter"
+      category: "candidate"
+      max_size_mb: 5
+      allowed_extensions: ["pdf", "doc", "docx"]
+      order: 2
+      
+    - code: "id_card"
+      label:
+        fr: "Pièce d'identité"
+        en: "ID Card"
+      category: "identity"
+      max_size_mb: 5
+      allowed_extensions: ["pdf", "jpg", "jpeg", "png"]
+      order: 3
+      
+    - code: "diploma"
+      label:
+        fr: "Diplôme"
+        en: "Diploma"
+      category: "education"
+      max_size_mb: 5
+      allowed_extensions: ["pdf", "jpg", "jpeg", "png"]
+      order: 4
+      
+    - code: "contract"
+      label:
+        fr: "Contrat"
+        en: "Contract"
+      category: "legal"
+      max_size_mb: 10
+      allowed_extensions: ["pdf", "doc", "docx"]
+      order: 5
+      
+    - code: "payslip"
+      label:
+        fr: "Bulletin de salaire"
+        en: "Payslip"
+      category: "financial"
+      max_size_mb: 5
+      allowed_extensions: ["pdf"]
+      order: 6
+
+# ========================================
+# PAYS / LOCALISATIONS
+# ========================================
+countries:
+  collection: "referentials"
+  key: "countries"
+  version: "1.0"
+  items:
+    - code: "GA"
+      label:
+        fr: "Gabon"
+        en: "Gabon"
+      phone_prefix: "+241"
+      currency: "XAF"
+      is_default: true
+      order: 1
+      
+    - code: "FR"
+      label:
+        fr: "France"
+        en: "France"
+      phone_prefix: "+33"
+      currency: "EUR"
+      order: 2
+      
+    - code: "CM"
+      label:
+        fr: "Cameroun"
+        en: "Cameroon"
+      phone_prefix: "+237"
+      currency: "XAF"
+      order: 3
+      
+    - code: "CI"
+      label:
+        fr: "Côte d'Ivoire"
+        en: "Ivory Coast"
+      phone_prefix: "+225"
+      currency: "XOF"
+      order: 4
+      
+    - code: "SN"
+      label:
+        fr: "Sénégal"
+        en: "Senegal"
+      phone_prefix: "+221"
+      currency: "XOF"
+      order: 5
+
+# ========================================
+# VILLES GABON
+# ========================================
+cities_gabon:
+  collection: "referentials"
+  key: "cities_gabon"
+  version: "1.0"
+  country: "GA"
+  items:
+    - code: "libreville"
+      label:
+        fr: "Libreville"
+        en: "Libreville"
+      region: "Estuaire"
+      is_capital: true
+      order: 1
+      
+    - code: "port_gentil"
+      label:
+        fr: "Port-Gentil"
+        en: "Port-Gentil"
+      region: "Ogooué-Maritime"
+      order: 2
+      
+    - code: "franceville"
+      label:
+        fr: "Franceville"
+        en: "Franceville"
+      region: "Haut-Ogooué"
+      order: 3
+      
+    - code: "oyem"
+      label:
+        fr: "Oyem"
+        en: "Oyem"
+      region: "Woleu-Ntem"
+      order: 4
+      
+    - code: "moanda"
+      label:
+        fr: "Moanda"
+        en: "Moanda"
+      region: "Haut-Ogooué"
+      order: 5
+      
+    - code: "lambarene"
+      label:
+        fr: "Lambaréné"
+        en: "Lambarene"
+      region: "Moyen-Ogooué"
+      order: 6
+
+# ========================================
+# STATUTS DE CANDIDATURE
+# ========================================
+application_statuses:
+  collection: "referentials"
+  key: "application_statuses"
+  version: "1.0"
+  items:
+    - code: "submitted"
+      label:
+        fr: "Soumise"
+        en: "Submitted"
+      color: "blue"
+      description: "Candidature soumise"
+      order: 1
+      
+    - code: "under_review"
+      label:
+        fr: "En cours d'examen"
+        en: "Under Review"
+      color: "yellow"
+      description: "Candidature en cours d'examen"
+      order: 2
+      
+    - code: "shortlisted"
+      label:
+        fr: "Présélectionnée"
+        en: "Shortlisted"
+      color: "purple"
+      description: "Candidature présélectionnée"
+      order: 3
+      
+    - code: "interview_scheduled"
+      label:
+        fr: "Entretien programmé"
+        en: "Interview Scheduled"
+      color: "blue"
+      description: "Entretien programmé"
+      order: 4
+      
+    - code: "accepted"
+      label:
+        fr: "Acceptée"
+        en: "Accepted"
+      color: "green"
+      description: "Candidature acceptée"
+      order: 5
+      
+    - code: "rejected"
+      label:
+        fr: "Rejetée"
+        en: "Rejected"
+      color: "red"
+      description: "Candidature rejetée"
+      order: 6
+      
+    - code: "withdrawn"
+      label:
+        fr: "Retirée"
+        en: "Withdrawn"
+      color: "gray"
+      description: "Candidature retirée par le candidat"
+      order: 7
+
+# ========================================
+# LANGUES
+# ========================================
+languages:
+  collection: "referentials"
+  key: "languages"
+  version: "1.0"
+  items:
+    - code: "fr"
+      label:
+        fr: "Français"
+        en: "French"
+      native_name: "Français"
+      order: 1
+      
+    - code: "en"
+      label:
+        fr: "Anglais"
+        en: "English"
+      native_name: "English"
+      order: 2
+      
+    - code: "es"
+      label:
+        fr: "Espagnol"
+        en: "Spanish"
+      native_name: "Español"
+      order: 3
+      
+    - code: "de"
+      label:
+        fr: "Allemand"
+        en: "German"
+      native_name: "Deutsch"
+      order: 4
+      
+    - code: "pt"
+      label:
+        fr: "Portugais"
+        en: "Portuguese"
+      native_name: "Português"
+      order: 5
+
+# ========================================
+# NIVEAUX DE LANGUE
+# ========================================
+language_levels:
+  collection: "referentials"
+  key: "language_levels"
+  version: "1.0"
+  items:
+    - code: "beginner"
+      label:
+        fr: "Débutant"
+        en: "Beginner"
+      description: "A1-A2"
+      order: 1
+      
+    - code: "intermediate"
+      label:
+        fr: "Intermédiaire"
+        en: "Intermediate"
+      description: "B1-B2"
+      order: 2
+      
+    - code: "advanced"
+      label:
+        fr: "Avancé"
+        en: "Advanced"
+      description: "C1"
+      order: 3
+      
+    - code: "fluent"
+      label:
+        fr: "Courant"
+        en: "Fluent"
+      description: "C2"
+      order: 4
+      
+    - code: "native"
+      label:
+        fr: "Langue maternelle"
+        en: "Native"
+      description: "Natif"
+      order: 5
