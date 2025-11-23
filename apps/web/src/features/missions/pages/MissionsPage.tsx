@@ -51,7 +51,7 @@ export default function MissionsPage() {
   }
 
   const handleDelete = (mission: Mission) => {
-    if (window.confirm(`Supprimer la mission "${mission.titre}" ?`)) {
+    if (window.confirm(`Supprimer la mission "${mission.title}" ?`)) {
       toast.error("Suppression à implémenter")
     }
   }
@@ -60,7 +60,7 @@ export default function MissionsPage() {
   const renderColumns = MissionsPageConfig.columns.map((col) => ({
     ...col,
     render:
-      col.key === "date_debut" || col.key === "date_fin"
+      col.key === "start_date" || col.key === "end_date"
         ? (date: string) => (date ? new Date(date).toLocaleDateString("fr-FR") : "-")
         : undefined,
   }))
