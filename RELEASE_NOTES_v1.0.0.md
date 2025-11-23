@@ -343,8 +343,8 @@ Cette release marque la **première version stable et production-ready** de la p
 - Hot Reload : Activé
 
 ### Emergent Preview (Staging)
-- URL : `https://configdriven-app.preview.emergentagent.com`
-- API : `https://configdriven-app.preview.emergentagent.com/api`
+- URL : `https://config-nav-sidebar.preview.emergentagent.com`
+- API : `https://config-nav-sidebar.preview.emergentagent.com/api`
 - HTTPS : Forcé
 - Mixed Content : Résolu ✅
 
