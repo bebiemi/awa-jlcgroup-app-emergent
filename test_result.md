@@ -226,3 +226,112 @@ curl -X POST http://localhost:8001/api/auth/local/login \
 - **Après:** ✅ Connexion fonctionnelle → Application opérationnelle
 
 ---
+
+---
+
+## 🔧 Alignement et Unification des Scripts IAM - TERMINÉ ✅
+
+**Date:** 23 Novembre 2025 20:30  
+**Statut:** ✅ COMPLÉTÉ
+
+### Objectif
+Créer un script unifié qui réinitialise les profils système avec les permissions et bundles appropriés, et aligner tous les scripts d'initialisation.
+
+### Solution Implémentée
+
+#### 1. Nouveau Script Unifié ✅
+**Fichier:** `/app/scripts/init_db_unified.py`
+
+**Fonctionnalités:**
+- ✅ 182 permissions atomiques
+- ✅ 6 bundles de permissions
+- ✅ 7 profils système avec permissions ET bundles
+- ✅ Création/mise à jour du compte super_admin
+- ✅ Corrections automatiques (password → password_hash, provider, activation)
+- ✅ Idempotent (peut être exécuté plusieurs fois)
+
+**Profils Système Créés:**
+
+| Code | Nom | Permissions | Bundles | Description |
+|------|-----|-------------|---------|-------------|
+| `super_admin` | Super Administrateur | 182 (toutes) | - | Accès complet |
+| `admin` | Administrateur | 31 | 5 bundles | users.manage, missions.full_access, config.manage, admin.access, entreprises.manage |
+| `commercial` | Commercial | 15 | 2 bundles | missions.full_access, entreprises.manage |
+| `company_admin` | Admin Société | 5 | - | Gestion de sa propre société |
+| `interim_user` | Intérimaire | 9 | - | Candidat/Intérimaire |
+| `hr_manager` | Responsable RH | 6 | - | Gestion RH et candidatures |
+| `read_only` | Lecture Seule | 4 | - | Consultation uniquement |
+
+#### 2. Documentation Créée ✅
+**Fichier:** `/app/scripts/README_SCRIPTS_IAM.md`
+
+Contient:
+- Guide d'utilisation du script unifié
+- Comparaison des scripts
+- Workflow recommandé
+- Section dépannage
+- Vérifications post-installation
+
+#### 3. Alignement des Scripts
+
+**Scripts Obsolètes (conservés pour référence):**
+- ⚠️ `reset_local_db_with_superadmin.py` - Remplacé par init_db_unified.py
+- ⚠️ `reset_local_db_with_160_permissions.py` - Permissions incomplètes
+- ⚠️ `reset_db_with_permissions_and_bundles.py` - Ne mettait pas à jour les profils
+
+**Script Principal:**
+- ✅ `init_db_unified.py` - Script unifié et complet
+
+**Scripts Utilitaires (toujours valides):**
+- ✅ `fix_user_password_field.py` - Correction des champs utilisateurs
+
+### Test d'Exécution
+
+```bash
+python3 init_db_unified.py
+```
+
+**Résultats:**
+- ✅ 182 permissions atomiques créées
+- ✅ 6 bundles créés
+- ✅ 10 profils système mis à jour (7 nouveaux + 3 anciens préservés)
+- ✅ Compte admin créé/mis à jour
+- ✅ Tous les utilisateurs corrigés automatiquement
+
+### Vérification en Base de Données
+
+```javascript
+// Profils avec bundles
+db.profiles.find({code: "admin"}, {bundles: 1, permissions: 1})
+→ bundles: ["users.manage", "missions.full_access", ...]
+→ permissions: 31 (résolues depuis les bundles)
+
+// Profils avec permissions directes
+db.profiles.find({code: "interim_user"}, {permissions: 1})
+→ permissions: ["missions.read", "applications.create.own", ...]
+```
+
+### Avantages du Script Unifié
+
+1. **Un seul script à maintenir** au lieu de 3
+2. **Profils système automatiquement à jour** avec bundles
+3. **Corrections automatiques** des problèmes utilisateurs
+4. **Idempotent** - peut être relancé sans risque
+5. **Documentation intégrée** avec liste complète des profils
+
+### Migration
+
+**Avant (3 scripts différents):**
+```bash
+# Incohérent - différentes versions
+python3 reset_local_db_with_160_permissions.py
+python3 reset_db_with_permissions_and_bundles.py
+python3 reset_local_db_with_superadmin.py
+```
+
+**Maintenant (1 script):**
+```bash
+python3 init_db_unified.py
+```
+
+---
