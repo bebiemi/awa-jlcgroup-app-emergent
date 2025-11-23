@@ -206,7 +206,12 @@ async def verify_and_align_users(fix=False, activate_admins=False):
     elif not fix and issues_by_user:
         print("\n💡 Pour appliquer les corrections, exécutez:")
         print("   python3 verify_and_align_users.py --fix")
-        if any('inactive_admin' in [i['type'] for issues in issues_by_user.values() for i in issues]):
+        has_inactive_admins = any(
+            issue['type'] == 'inactive_admin' 
+            for issues in issues_by_user.values() 
+            for issue in issues
+        )
+        if has_inactive_admins:
             print("   python3 verify_and_align_users.py --fix --activate-admins")
     
     # Vérification finale
