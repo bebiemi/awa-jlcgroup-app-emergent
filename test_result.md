@@ -147,3 +147,82 @@ Permissions: * (toutes)
 **Auteur:** E1 Agent  
 **Date:** 23 Novembre 2025  
 **Statut global:** ✅ SUCCÈS
+
+---
+
+## 🚨 Bug P0 - Erreur 401 sur /api/auth/local/login - RÉSOLU ✅
+
+**Date:** 23 Novembre 2025 19:58  
+**Priorité:** P0 (Critique - Bloque la connexion)  
+**Statut:** ✅ RÉSOLU
+
+### Symptômes
+- Erreur HTTP 401 "Incorrect username or password" lors de la connexion
+- Impossible de se connecter même avec les bons identifiants
+
+### Cause Racine
+1. **Champ `password` au lieu de `password_hash`:** Le script legacy créait les utilisateurs avec un champ `password` alors que le code backend cherche `password_hash`
+2. **Champ `provider` manquant:** Les utilisateurs n'avaient pas le champ `provider: "local"` requis pour l'authentification locale
+3. **Compte inactif:** Le compte `adminbe` avait `status: null` au lieu de `status: "active"`
+
+### Solution Appliquée
+
+#### 1. Correction en Base de Données
+```javascript
+// Renommer password → password_hash
+db.users.updateMany(
+  {password: {$exists: true}},
+  {
+    $rename: {"password": "password_hash"},
+    $set: {"provider": "local", "updated_at": new Date().toISOString()}
+  }
+)
+
+// Activer les comptes super_admin
+db.users.updateMany(
+  {roles: "super_admin"},
+  {$set: {status: "active", is_active: true, is_verified: true}}
+)
+```
+
+#### 2. Scripts Créés/Modifiés
+- **Créé:** `/app/scripts/fix_user_password_field.py` - Script de correction automatique
+- **Modifié:** `/app/scripts/reset_db_with_permissions_and_bundles.py` - Ajout du champ `provider: "local"`
+
+### Tests de Validation
+
+#### ✅ Test API (curl)
+```bash
+# Compte adminbe
+curl -X POST http://localhost:8001/api/auth/local/login \
+  -d '{"username":"adminbe","password":"Awana2025!"}'
+→ ✅ SUCCÈS - Token reçu
+
+# Compte admin
+curl -X POST http://localhost:8001/api/auth/local/login \
+  -d '{"username":"admin","password":"Awana2025!"}'
+→ ✅ SUCCÈS - Token reçu
+```
+
+#### ✅ Test Frontend (Playwright)
+- Connexion avec `adminbe` / `Awana2025!`
+- Redirection vers `/admin` (dashboard)
+- ✅ **CONNEXION RÉUSSIE**
+
+### Comptes Fonctionnels
+
+| Username | Email | Password | Roles | Statut |
+|----------|-------|----------|-------|--------|
+| `admin` | admin@awana-group.com | `Awana2025!` | super_admin | ✅ Actif |
+| `adminbe` | adminbe@awana-group.com | `Awana2025!` | super_admin | ✅ Actif |
+| `commercial1` | commercial1@jlc.ga | `Azerty123456!!` | commercial | ✅ Actif |
+
+### Prévention
+- Le script `/app/scripts/reset_db_with_permissions_and_bundles.py` utilise maintenant les bons champs dès la création
+- Le script `/app/scripts/fix_user_password_field.py` peut être exécuté pour corriger ce problème s'il se reproduit
+
+### Impact
+- **Avant:** ❌ Impossible de se connecter → Application inutilisable
+- **Après:** ✅ Connexion fonctionnelle → Application opérationnelle
+
+---
