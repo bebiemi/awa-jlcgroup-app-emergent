@@ -33,11 +33,11 @@ export const MissionsPageConfig = {
   },
 
   columns: [
-    { key: "titre", label: "Mission", sortable: true },
-    { key: "entreprise_nom", label: "Entreprise", sortable: true },
-    { key: "interimaire_nom", label: "Intérimaire", sortable: true },
-    { key: "date_debut", label: "Début", sortable: true },
-    { key: "date_fin", label: "Fin", sortable: true },
+    { key: "title", label: "Mission", sortable: true },
+    { key: "job_type", label: "Type de poste", sortable: true },
+    { key: "location", label: "Localisation", sortable: true },
+    { key: "start_date", label: "Début", sortable: true },
+    { key: "end_date", label: "Fin", sortable: true },
     { key: "status", label: "Statut", badge: true },
   ],
 
