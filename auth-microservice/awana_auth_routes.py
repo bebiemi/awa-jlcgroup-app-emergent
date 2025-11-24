@@ -895,6 +895,66 @@ async def local_login(
                     )
                     
                     logger.info(f"Local user {user.email} logged in (database user)")
+                    
+                    # Load user permissions from profiles
+                    user_permissions = set()
+                    profile_ids = user_doc.get("profile_ids", []) or user_doc.get("profiles", [])
+                    
+                    if profile_ids:
+                        logger.info(f"Loading permissions for {len(profile_ids)} profile(s)...")
+                        
+                        for profile_id in profile_ids:
+                            # Find profile by ID or code
+                            profile_doc = await db.profiles.find_one(
+                                {"$or": [{"id": profile_id}, {"code": profile_id}]},
+                                {"_id": 0, "permissions": 1, "bundles": 1}
+                            )
+                            
+                            if profile_doc:
+                                # Add direct permissions
+                                direct_perms = profile_doc.get("permissions", [])
+                                if direct_perms == "*":
+                                    # Wildcard - get all permissions
+                                    all_perms = await db.permissions.find({}, {"_id": 0, "code": 1}).to_list(1000)
+                                    user_permissions.update([p["code"] for p in all_perms])
+                                elif isinstance(direct_perms, list):
+                                    user_permissions.update(direct_perms)
+                                
+                                # Add permissions from bundles
+                                bundles = profile_doc.get("bundles", [])
+                                if bundles:
+                                    # Check permission_bundles collection (config-driven)
+                                    async for bundle in db.permission_bundles.find(
+                                        {"code": {"$in": bundles}},
+                                        {"_id": 0, "permissions": 1}
+                                    ):
+                                        bundle_perms = bundle.get("permissions", [])
+                                        user_permissions.update(bundle_perms)
+                                    
+                                    # Check capability_bundles collection (legacy)
+                                    async for bundle in db.capability_bundles.find(
+                                        {"$or": [{"id": {"$in": bundles}}, {"code": {"$in": bundles}}]},
+                                        {"_id": 0, "permissions": 1, "permission_ids": 1}
+                                    ):
+                                        if "permissions" in bundle:
+                                            user_permissions.update(bundle.get("permissions", []))
+                                        elif "permission_ids" in bundle:
+                                            # Resolve IDs to codes
+                                            perm_ids = bundle.get("permission_ids", [])
+                                            async for perm in db.permissions.find(
+                                                {"id": {"$in": perm_ids}},
+                                                {"_id": 0, "code": 1}
+                                            ):
+                                                user_permissions.add(perm["code"])
+                        
+                        # Update user object with permissions
+                        user.permissions = list(user_permissions)
+                        user.profile_ids = profile_ids
+                        logger.info(f"✅ Loaded {len(user_permissions)} permissions for {user.email}")
+                    else:
+                        logger.warning(f"⚠️ No profiles assigned to user {user.email}")
+                        user.permissions = []
+                        user.profile_ids = []
             
             if not user:
                 # Neither admin nor valid database user
