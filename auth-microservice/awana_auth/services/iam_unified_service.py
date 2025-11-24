@@ -35,44 +35,82 @@ class IAMUnifiedService:
     async def get_user_all_permissions(self, user_id: str) -> List[dict]:
         """
         Récupère TOUTES les permissions d'un utilisateur depuis toutes les sources
+        Support du système config-driven (permissions codes) et ancien système (permission_ids)
         
         Sources consolidées :
-        1. Profiles métier (profile_ids → profiles.permission_ids)
-        2. Rôles IAM (roles → iam_roles.permissions)  
-        3. Groupes IAM (group_ids → groups → profiles/roles)
+        1. Profiles métier (profile_ids → profiles.permissions/permission_ids)
+        2. Bundles dans les profils (permission_bundles + capability_bundles)
+        3. Groupes IAM (group_ids → groups → profiles)
         
         Returns:
             List[dict]: Liste de permissions avec code, label, description
         """
         try:
-            user = await self.users_collection.find_one({"id": user_id})
+            user = await self.users_collection.find_one({"id": user_id}, {"_id": 0})
             if not user:
                 logger.warning(f"User {user_id} not found")
                 return []
             
             all_permission_codes = set()
             
-            # ===== SOURCE 1: Profiles Métier =====
-            profile_ids = user.get("profile_ids", [])
-            profile_iam_role_ids = []  # Pour stocker les rôles IAM des profils
+            # ===== SOURCE 1: Profiles Métier (Config-Driven Support) =====
+            profile_ids = user.get("profile_ids", []) or user.get("profiles", [])
             
             if profile_ids:
-                profiles_cursor = self.profiles_collection.find(
-                    {"id": {"$in": profile_ids}},
-                    {"permission_ids": 1, "iam_role_ids": 1}
-                )
-                
-                async for profile in profiles_cursor:
-                    # Permissions directes du profil
-                    permission_ids = profile.get("permission_ids", [])
-                    all_permission_codes.update(permission_ids)
+                for profile_id in profile_ids:
+                    # Find profile by ID or code
+                    profile_doc = await self.profiles_collection.find_one(
+                        {"$or": [{"id": profile_id}, {"code": profile_id}]},
+                        {"_id": 0, "permissions": 1, "bundles": 1, "permission_ids": 1}
+                    )
                     
-                    # Rôles IAM du profil (modèle hybride)
-                    profile_roles = profile.get("iam_role_ids", [])
-                    profile_iam_role_ids.extend(profile_roles)
+                    if profile_doc:
+                        # Add direct permissions (new format: codes)
+                        direct_perms = profile_doc.get("permissions", [])
+                        if direct_perms == "*":
+                            # Wildcard - get all permissions
+                            all_perms = await self.iam_permissions_collection.find({}, {"_id": 0, "code": 1}).to_list(1000)
+                            all_permission_codes.update([p["code"] for p in all_perms])
+                        elif isinstance(direct_perms, list) and direct_perms:
+                            all_permission_codes.update(direct_perms)
+                        
+                        # Legacy format: permission_ids (UUIDs)
+                        if "permission_ids" in profile_doc and profile_doc["permission_ids"]:
+                            perm_ids = profile_doc["permission_ids"]
+                            async for perm in self.iam_permissions_collection.find(
+                                {"id": {"$in": perm_ids}},
+                                {"_id": 0, "code": 1}
+                            ):
+                                all_permission_codes.add(perm["code"])
+                        
+                        # Add permissions from bundles
+                        bundles = profile_doc.get("bundles", [])
+                        if bundles:
+                            # Check permission_bundles collection (config-driven)
+                            async for bundle in self.db.permission_bundles.find(
+                                {"code": {"$in": bundles}},
+                                {"_id": 0, "permissions": 1}
+                            ):
+                                bundle_perms = bundle.get("permissions", [])
+                                all_permission_codes.update(bundle_perms)
+                            
+                            # Check capability_bundles collection (legacy)
+                            async for bundle in self.db.capability_bundles.find(
+                                {"$or": [{"id": {"$in": bundles}}, {"code": {"$in": bundles}}]},
+                                {"_id": 0, "permissions": 1, "permission_ids": 1}
+                            ):
+                                if "permissions" in bundle:
+                                    all_permission_codes.update(bundle.get("permissions", []))
+                                elif "permission_ids" in bundle:
+                                    # Resolve IDs to codes
+                                    perm_ids = bundle.get("permission_ids", [])
+                                    async for perm in self.iam_permissions_collection.find(
+                                        {"id": {"$in": perm_ids}},
+                                        {"_id": 0, "code": 1}
+                                    ):
+                                        all_permission_codes.add(perm["code"])
                 
                 logger.debug(f"User {user_id} - Permissions from profiles: {len(all_permission_codes)}")
-                logger.debug(f"User {user_id} - IAM roles from profiles: {len(profile_iam_role_ids)}")
             
             # ===== SOURCE 2: Rôles IAM =====
             user_roles = user.get("roles", [])
