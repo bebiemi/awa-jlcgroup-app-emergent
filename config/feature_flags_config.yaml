@@ -1,0 +1,402 @@
+# ========================================
+# Configuration des Feature Flags
+# ========================================
+# Ce fichier définit tous les feature flags de l'application
+# pour activer/désactiver des fonctionnalités dynamiquement
+#
+# Version: 1.0
+# Dernière mise à jour: 2025-11-23
+# ========================================
+
+# ========================================
+# FEATURES PRINCIPALES
+# ========================================
+
+# Système de badges pour nouveaux profils
+badge_new_user:
+  enabled: true
+  key: "profiles.badge_new_user"
+  name: "Badge Nouveau Utilisateur"
+  description: "Affiche un badge NOUVEAU sur les profils récemment créés"
+  category: "profiles"
+  config:
+    expiration_days: 7
+    expiration_mode: "creation_date"  # creation_date, first_view, both
+    badge_text:
+      fr: "NOUVEAU"
+      en: "NEW"
+  rollout:
+    percentage: 100  # % d'utilisateurs concernés
+    enabled_for_roles: ["*"]  # * = tous les rôles
+  metadata:
+    owner: "Product Team"
+    created_at: "2025-11-23"
+    updated_at: "2025-11-23"
+
+# Matching IA candidats/missions
+ai_matching:
+  enabled: false
+  key: "features.ai_matching"
+  name: "Matching IA"
+  description: "Matching automatique candidats/missions par IA"
+  category: "matching"
+  config:
+    algorithm: "similarity_score"
+    threshold: 0.75
+    max_suggestions: 10
+  rollout:
+    percentage: 0
+    enabled_for_roles: ["admin", "commercial"]
+  metadata:
+    owner: "Tech Team"
+    created_at: "2025-11-23"
+    updated_at: "2025-11-23"
+    requires_external_service: true
+
+# Notifications temps réel
+realtime_notifications:
+  enabled: true
+  key: "features.realtime_notifications"
+  name: "Notifications Temps Réel"
+  description: "Notifications push en temps réel via WebSocket"
+  category: "notifications"
+  config:
+    websocket_url: "ws://localhost:8001/ws/notifications"
+    retry_attempts: 3
+    reconnect_interval: 5000
+  rollout:
+    percentage: 100
+    enabled_for_roles: ["*"]
+  metadata:
+    owner: "Tech Team"
+    created_at: "2025-11-23"
+    updated_at: "2025-11-23"
+
+# Signature électronique
+electronic_signature:
+  enabled: false
+  key: "features.electronic_signature"
+  name: "Signature Électronique"
+  description: "Signature électronique de documents"
+  category: "documents"
+  config:
+    provider: "docusign"  # docusign, yousign, etc.
+    api_version: "v1"
+  rollout:
+    percentage: 0
+    enabled_for_roles: ["admin", "hr_manager"]
+  metadata:
+    owner: "Legal Team"
+    created_at: "2025-11-23"
+    updated_at: "2025-11-23"
+    requires_external_service: true
+    requires_config: ["SIGNATURE_API_KEY", "SIGNATURE_API_SECRET"]
+
+# Chat intégré
+integrated_chat:
+  enabled: false
+  key: "features.integrated_chat"
+  name: "Chat Intégré"
+  description: "Chat intégré entre recruteurs et candidats"
+  category: "communication"
+  config:
+    max_message_length: 500
+    file_upload_enabled: true
+    file_max_size_mb: 5
+  rollout:
+    percentage: 0
+    enabled_for_roles: ["commercial", "company_admin", "interim_user"]
+  metadata:
+    owner: "Product Team"
+    created_at: "2025-11-23"
+    updated_at: "2025-11-23"
+
+# Tableau de bord analytics avancé
+advanced_analytics:
+  enabled: false
+  key: "features.advanced_analytics"
+  name: "Analytics Avancé"
+  description: "Tableau de bord analytics avec graphiques avancés"
+  category: "analytics"
+  config:
+    refresh_interval: 300  # secondes
+    chart_types: ["line", "bar", "pie", "heatmap"]
+    export_formats: ["pdf", "excel", "csv"]
+  rollout:
+    percentage: 0
+    enabled_for_roles: ["admin", "super_admin"]
+  metadata:
+    owner: "Product Team"
+    created_at: "2025-11-23"
+    updated_at: "2025-11-23"
+
+# Génération automatique CV
+cv_auto_generation:
+  enabled: false
+  key: "features.cv_auto_generation"
+  name: "Génération Auto CV"
+  description: "Génération automatique de CV à partir du profil"
+  category: "profiles"
+  config:
+    templates: ["modern", "classic", "creative"]
+    output_format: "pdf"
+    include_photo: true
+  rollout:
+    percentage: 0
+    enabled_for_roles: ["interim_user"]
+  metadata:
+    owner: "Product Team"
+    created_at: "2025-11-23"
+    updated_at: "2025-11-23"
+
+# Mode sombre
+dark_mode:
+  enabled: true
+  key: "features.dark_mode"
+  name: "Mode Sombre"
+  description: "Thème sombre pour l'interface"
+  category: "ui"
+  config:
+    auto_detect: true
+    default_theme: "light"
+  rollout:
+    percentage: 100
+    enabled_for_roles: ["*"]
+  metadata:
+    owner: "Design Team"
+    created_at: "2025-11-23"
+    updated_at: "2025-11-23"
+
+# Exportation de données
+data_export:
+  enabled: true
+  key: "features.data_export"
+  name: "Export de Données"
+  description: "Export des données en différents formats"
+  category: "data"
+  config:
+    formats: ["csv", "excel", "pdf"]
+    max_rows: 10000
+    async_for_large_exports: true
+  rollout:
+    percentage: 100
+    enabled_for_roles: ["admin", "super_admin", "hr_manager"]
+  metadata:
+    owner: "Tech Team"
+    created_at: "2025-11-23"
+    updated_at: "2025-11-23"
+
+# Importation en masse
+bulk_import:
+  enabled: true
+  key: "features.bulk_import"
+  name: "Import en Masse"
+  description: "Import de données en masse via fichiers"
+  category: "data"
+  config:
+    formats: ["csv", "excel"]
+    max_rows: 5000
+    validation_strict: true
+    preview_before_import: true
+  rollout:
+    percentage: 100
+    enabled_for_roles: ["admin", "super_admin"]
+  metadata:
+    owner: "Tech Team"
+    created_at: "2025-11-23"
+    updated_at: "2025-11-23"
+
+# Notifications email
+email_notifications:
+  enabled: true
+  key: "features.email_notifications"
+  name: "Notifications Email"
+  description: "Notifications par email pour événements importants"
+  category: "notifications"
+  config:
+    send_immediately: false
+    batch_interval: 3600  # secondes
+    unsubscribe_enabled: true
+    templates:
+      - "application_received"
+      - "application_status_changed"
+      - "mission_assigned"
+      - "contract_signed"
+  rollout:
+    percentage: 100
+    enabled_for_roles: ["*"]
+  metadata:
+    owner: "Product Team"
+    created_at: "2025-11-23"
+    updated_at: "2025-11-23"
+
+# Système de tags personnalisés
+custom_tags:
+  enabled: true
+  key: "features.custom_tags"
+  name: "Tags Personnalisés"
+  description: "Système de tags personnalisables pour missions et profils"
+  category: "organization"
+  config:
+    max_tags_per_item: 10
+    tag_max_length: 30
+    predefined_tags:
+      missions:
+        - "urgent"
+        - "prioritaire"
+        - "long_terme"
+        - "formation_requise"
+      profiles:
+        - "disponible_immédiatement"
+        - "bilingue"
+        - "expérimenté"
+        - "recommandé"
+  rollout:
+    percentage: 100
+    enabled_for_roles: ["admin", "commercial", "hr_manager"]
+  metadata:
+    owner: "Product Team"
+    created_at: "2025-11-23"
+    updated_at: "2025-11-23"
+
+# Système de favoris
+favorites_system:
+  enabled: true
+  key: "features.favorites"
+  name: "Système de Favoris"
+  description: "Marquer missions et profils comme favoris"
+  category: "organization"
+  config:
+    max_favorites: 50
+    entities: ["missions", "profiles", "companies"]
+  rollout:
+    percentage: 100
+    enabled_for_roles: ["*"]
+  metadata:
+    owner: "Product Team"
+    created_at: "2025-11-23"
+    updated_at: "2025-11-23"
+
+# Commentaires et notes internes
+internal_notes:
+  enabled: true
+  key: "features.internal_notes"
+  name: "Notes Internes"
+  description: "Ajout de commentaires et notes internes sur candidatures"
+  category: "collaboration"
+  config:
+    max_note_length: 1000
+    attachments_enabled: true
+    mention_users: true
+  rollout:
+    percentage: 100
+    enabled_for_roles: ["admin", "commercial", "hr_manager", "company_admin"]
+  metadata:
+    owner: "Product Team"
+    created_at: "2025-11-23"
+    updated_at: "2025-11-23"
+
+# Audit trail
+audit_trail:
+  enabled: true
+  key: "features.audit_trail"
+  name: "Historique d'Audit"
+  description: "Traçabilité complète des actions utilisateurs"
+  category: "security"
+  config:
+    retention_days: 365
+    log_level: "info"  # debug, info, warning, error
+    sensitive_data_masking: true
+  rollout:
+    percentage: 100
+    enabled_for_roles: ["admin", "super_admin"]
+  metadata:
+    owner: "Security Team"
+    created_at: "2025-11-23"
+    updated_at: "2025-11-23"
+
+# MFA (Authentification multi-facteurs)
+mfa:
+  enabled: false
+  key: "features.mfa"
+  name: "Authentification Multi-Facteurs"
+  description: "Sécurité renforcée avec MFA"
+  category: "security"
+  config:
+    methods: ["totp", "sms", "email"]
+    mandatory_for_roles: ["admin", "super_admin"]
+    grace_period_days: 7
+  rollout:
+    percentage: 0
+    enabled_for_roles: ["admin", "super_admin"]
+  metadata:
+    owner: "Security Team"
+    created_at: "2025-11-23"
+    updated_at: "2025-11-23"
+    requires_external_service: true
+
+# API publique
+public_api:
+  enabled: false
+  key: "features.public_api"
+  name: "API Publique"
+  description: "API REST publique pour intégrations tierces"
+  category: "integration"
+  config:
+    version: "v1"
+    rate_limit: 1000  # requêtes/heure
+    authentication: "oauth2"
+    documentation_url: "/api/docs"
+  rollout:
+    percentage: 0
+    enabled_for_roles: ["admin"]
+  metadata:
+    owner: "Tech Team"
+    created_at: "2025-11-23"
+    updated_at: "2025-11-23"
+
+# ========================================
+# FEATURES EXPÉRIMENTALES (Beta)
+# ========================================
+
+# Recommandations IA
+ai_recommendations:
+  enabled: false
+  key: "features.beta.ai_recommendations"
+  name: "Recommandations IA (Beta)"
+  description: "Recommandations de missions basées sur l'IA"
+  category: "beta"
+  config:
+    model: "collaborative_filtering"
+    update_frequency: "daily"
+  rollout:
+    percentage: 10
+    enabled_for_roles: ["interim_user"]
+    beta_testers_only: true
+  metadata:
+    owner: "Data Science Team"
+    created_at: "2025-11-23"
+    updated_at: "2025-11-23"
+    is_beta: true
+
+# Visioconférence intégrée
+video_interviews:
+  enabled: false
+  key: "features.beta.video_interviews"
+  name: "Entretiens Vidéo (Beta)"
+  description: "Système de visioconférence intégré"
+  category: "beta"
+  config:
+    provider: "jitsi"  # jitsi, zoom, teams
+    max_duration_minutes: 60
+    recording_enabled: false
+  rollout:
+    percentage: 5
+    enabled_for_roles: ["commercial", "hr_manager"]
+    beta_testers_only: true
+  metadata:
+    owner: "Product Team"
+    created_at: "2025-11-23"
+    updated_at: "2025-11-23"
+    is_beta: true
+    requires_external_service: true
