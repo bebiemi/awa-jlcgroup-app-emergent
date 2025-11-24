@@ -74,10 +74,14 @@ class Permission(BaseModel):
     
     # Metadata
     is_system: bool = False  # Protected system permission
+    is_atomic: bool = True  # Atomic permission (vs bundle)
     category: str = "general"  # For UI grouping
     
-    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    created_at: Optional[str] = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    updated_at: Optional[str] = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    
+    class Config:
+        extra = "ignore"  # Ignore extra fields from DB
     
     @field_validator('code')
     @classmethod
