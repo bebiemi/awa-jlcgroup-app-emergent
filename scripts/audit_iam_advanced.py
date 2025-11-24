@@ -376,7 +376,7 @@ class IAMExpertAuditor:
                 'expected': f"require_permission('{suggestion['permission']}')",
                 'action': f"Remplacer get_current_user par require_permission('{suggestion['permission']}')",
                 'justification': 'Routes de modification doivent avoir permissions granulaires',
-                'impact': 'SÉCURITÉ - Contrôle d'accès insuffisant'
+                'impact': 'SECURITE - Controle acces insuffisant'
             })
         
         # Issue 6: Vérification de rôle hardcodée
