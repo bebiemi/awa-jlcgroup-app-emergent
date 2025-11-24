@@ -177,37 +177,71 @@ async def get_profile_effective_permissions(
     """
     Récupère toutes les permissions effectives d'un profil
     Inclut les permissions directes + permissions des bundles
+    Supporte ancien format (codes) et nouveau format (IDs)
     """
     profiles_collection = db.profiles
+    permissions_collection = db.permissions
     
     profile = await profiles_collection.find_one({"id": profile_id}, {"_id": 0})
     if not profile:
         raise HTTPException(status_code=404, detail="Profile not found")
     
-    # Permissions directes
-    direct_permission_ids = set(profile.get("permission_ids", []))
+    # === Support des deux formats ===
+    # Nouveau format : permission_ids (UUIDs)
+    # Ancien format : permissions (codes)
+    
+    direct_permission_codes = set()
+    
+    # Nouveau format avec IDs
+    if "permission_ids" in profile and profile["permission_ids"]:
+        direct_ids = profile["permission_ids"]
+        async for perm in permissions_collection.find(
+            {"id": {"$in": direct_ids}},
+            {"_id": 0, "code": 1}
+        ):
+            direct_permission_codes.add(perm["code"])
+    
+    # Ancien format avec codes
+    if "permissions" in profile and profile["permissions"]:
+        legacy_perms = profile["permissions"]
+        if legacy_perms == "*":  # Wildcard = toutes les permissions
+            async for perm in permissions_collection.find({}, {"_id": 0, "code": 1}):
+                direct_permission_codes.add(perm["code"])
+        else:
+            direct_permission_codes.update(legacy_perms)
     
     # Permissions des bundles
-    bundle_permission_ids = set()
-    capability_bundle_ids = profile.get("capability_bundle_ids", [])
+    bundle_permission_codes = set()
     
-    if capability_bundle_ids:
+    # Support des deux formats pour les bundles
+    bundle_refs = profile.get("capability_bundle_ids", []) or profile.get("bundles", [])
+    
+    if bundle_refs:
         bundles_collection = db.capability_bundles
+        # Chercher par ID ou par code
         async for bundle in bundles_collection.find(
-            {"id": {"$in": capability_bundle_ids}},
-            {"_id": 0, "permission_ids": 1}
+            {"$or": [{"id": {"$in": bundle_refs}}, {"code": {"$in": bundle_refs}}]},
+            {"_id": 0, "permission_ids": 1, "permissions": 1}
         ):
-            bundle_permission_ids.update(bundle.get("permission_ids", []))
+            # Nouveau format
+            if "permission_ids" in bundle:
+                async for perm in permissions_collection.find(
+                    {"id": {"$in": bundle["permission_ids"]}},
+                    {"_id": 0, "code": 1}
+                ):
+                    bundle_permission_codes.add(perm["code"])
+            # Ancien format
+            if "permissions" in bundle:
+                bundle_permission_codes.update(bundle["permissions"])
     
     # Toutes les permissions effectives (union)
-    all_permission_ids = direct_permission_ids | bundle_permission_ids
+    all_permission_codes = direct_permission_codes | bundle_permission_codes
     
-    # Récupérer les détails des permissions
-    permissions_collection = db.permissions
+    # Récupérer les détails complets des permissions
     permissions = []
-    if all_permission_ids:
+    if all_permission_codes:
         async for perm in permissions_collection.find(
-            {"id": {"$in": list(all_permission_ids)}},
+            {"code": {"$in": list(all_permission_codes)}},
             {"_id": 0}
         ):
             permissions.append(perm)
@@ -216,11 +250,13 @@ async def get_profile_effective_permissions(
         "profile_id": profile_id,
         "profile_code": profile.get("code"),
         "profile_name": profile.get("name"),
-        "direct_permission_count": len(direct_permission_ids),
-        "bundle_permission_count": len(bundle_permission_ids),
-        "total_effective_permissions": len(all_permission_ids),
+        "direct_permission_count": len(direct_permission_codes),
+        "bundle_permission_count": len(bundle_permission_codes),
+        "total_effective_permissions": len(all_permission_codes),
         "permissions": permissions,
-        "capability_bundle_ids": capability_bundle_ids
+        "capability_bundle_ids": bundle_refs,
+        "direct_permissions": list(direct_permission_codes),
+        "bundle_permissions": list(bundle_permission_codes)
     }
 
 
