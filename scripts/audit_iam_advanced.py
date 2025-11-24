@@ -316,8 +316,8 @@ class IAMExpertAuditor:
                 'expected': f"require_permission('{suggestion['permission']}')",
                 'scope_expected': suggestion['scope'],
                 'action': f"Ajouter: Depends(require_permission('{suggestion['permission']}', scope='{suggestion['scope']}'))",
-                'justification': 'Endpoint critique exposé sans protection',
-                'impact': 'SÉCURITÉ - Accès non autorisé possible'
+                'justification': 'Endpoint critique expose sans protection',
+                'impact': 'SECURITE - Acces non autorise possible'
             })
         
         # Issue 2: Permission hardcodée
