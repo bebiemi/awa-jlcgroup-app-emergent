@@ -170,6 +170,7 @@ class TokenPayload(BaseModel):
     email: str
     roles: List[str] = Field(default_factory=list)
     permissions: List[str] = Field(default_factory=list)  # IAM permission codes
+    profile_ids: List[str] = Field(default_factory=list)  # IAM profile IDs
     session_id: str
     exp: datetime
     iat: datetime
