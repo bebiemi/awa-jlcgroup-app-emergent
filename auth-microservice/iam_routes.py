@@ -794,7 +794,7 @@ async def assign_groups_to_user(
     return {"success": True, "message": "Groups assigned"}
 
 
-@router.get("/users/{user_id}/permissions", response_model=UserPermissionsResponse)
+@router.get("/users/{user_id}/permissions")
 async def get_user_permissions(
     user_id: str,
     current_user: User = Depends(get_current_user),
