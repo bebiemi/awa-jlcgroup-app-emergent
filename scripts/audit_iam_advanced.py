@@ -360,8 +360,8 @@ class IAMExpertAuditor:
                 'current': f"Permission sans scope: {iam['permissions']}",
                 'expected': f"scope='{suggestion['scope']}'",
                 'action': f"Ajouter: scope='{suggestion['scope']}'",
-                'justification': 'Le scope permet de filtrer les données (own/all/company)',
-                'impact': 'SÉCURITÉ - Données potentiellement exposées'
+                'justification': 'Le scope permet de filtrer les donnees (own/all/company)',
+                'impact': 'SECURITE - Donnees potentiellement exposees'
             })
         
         # Issue 5: Auth-only sur route de modification
