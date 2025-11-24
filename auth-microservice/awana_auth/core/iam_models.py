@@ -116,10 +116,11 @@ class Permission(BaseModel):
         if v.strip() == '*':
             return v.strip()
         
-        pattern = re.compile(r'^[a-z0-9_]+$')
+        # Allow dots for composite actions/resources (e.g., "grouping.manage")
+        pattern = re.compile(r'^[a-z0-9_.]+$')
         if not pattern.match(v):
             raise ValueError(
-                f"Valeur invalide '{v}'. Caractères autorisés: a-z, 0-9, underscore (_), ou '*' pour wildcard"
+                f"Valeur invalide '{v}'. Caractères autorisés: a-z, 0-9, underscore (_), point (.), ou '*' pour wildcard"
             )
         
         return v.strip().lower()
