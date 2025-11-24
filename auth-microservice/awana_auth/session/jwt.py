@@ -35,9 +35,15 @@ class JWTManager:
         else:
             expire = datetime.now(timezone.utc) + self.access_token_expire
         
-        # Resolve user permissions via IAM
+        # Resolve user permissions via IAM or use pre-loaded permissions
         permissions = []
-        if self.iam_service:
+        
+        # First, check if permissions are already loaded in the user object (from login)
+        if hasattr(user, 'permissions') and user.permissions:
+            permissions = user.permissions
+            logger.info(f"Using pre-loaded {len(permissions)} permissions for user {user.id}")
+        elif self.iam_service:
+            # Fallback to IAM service if permissions not pre-loaded
             try:
                 user_perms = await self.iam_service.get_user_permissions(user.id)
                 # Extract permission codes from Permission objects
@@ -47,7 +53,7 @@ class JWTManager:
                 logger.error(f"Failed to resolve permissions for user {user.id}: {e}")
                 # Continue without permissions rather than failing login
         else:
-            logger.warning("IAM service not available, token will not contain permissions")
+            logger.warning("No permissions available for token")
         
         payload = TokenPayload(
             sub=user.id,
