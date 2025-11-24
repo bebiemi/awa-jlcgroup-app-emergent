@@ -52,6 +52,7 @@ class IAMUnifiedService:
                 return []
             
             all_permission_codes = set()
+            profile_iam_role_ids = []  # Pour stocker les rôles IAM des profils (modèle hybride)
             
             # ===== SOURCE 1: Profiles Métier (Config-Driven Support) =====
             profile_ids = user.get("profile_ids", []) or user.get("profiles", [])
