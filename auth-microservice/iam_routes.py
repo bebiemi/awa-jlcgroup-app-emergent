@@ -132,15 +132,29 @@ async def list_profiles(
         direct_count = len(profile_data.get("permission_ids", []))
         bundle_count = 0
         
-        capability_bundle_ids = profile_data.get("capability_bundle_ids", [])
-        if capability_bundle_ids:
-            # Récupérer les permissions de tous les bundles
+        bundle_refs = profile_data.get("capability_bundle_ids", []) or profile_data.get("bundles", [])
+        if bundle_refs:
+            # Récupérer les permissions de tous les bundles (deux collections)
             bundle_perms = set()
+            
+            # capability_bundles (nouveau)
             async for bundle in bundles_collection.find(
-                {"id": {"$in": capability_bundle_ids}},
-                {"_id": 0, "permission_ids": 1}
+                {"$or": [{"id": {"$in": bundle_refs}}, {"code": {"$in": bundle_refs}}]},
+                {"_id": 0, "permission_ids": 1, "permissions": 1}
             ):
-                bundle_perms.update(bundle.get("permission_ids", []))
+                if "permission_ids" in bundle:
+                    bundle_perms.update(bundle.get("permission_ids", []))
+                elif "permissions" in bundle:
+                    bundle_perms.update(bundle.get("permissions", []))
+            
+            # permission_bundles (config-driven)
+            permission_bundles_collection = db.permission_bundles
+            async for bundle in permission_bundles_collection.find(
+                {"code": {"$in": bundle_refs}},
+                {"_id": 0, "permissions": 1}
+            ):
+                bundle_perms.update(bundle.get("permissions", []))
+            
             bundle_count = len(bundle_perms)
         
         # Ajouter les champs calculés
