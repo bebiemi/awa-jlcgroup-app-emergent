@@ -55,16 +55,23 @@ class JWTManager:
         else:
             logger.warning("No permissions available for token")
         
-        payload = TokenPayload(
-            sub=user.id,
-            email=user.email,
-            roles=user.roles,
-            permissions=permissions,
-            session_id=session_id,
-            exp=expire,
-            iat=datetime.now(timezone.utc),
-            type="access"
-        )
+        # Build payload with additional fields
+        payload_data = {
+            "sub": user.id,
+            "email": user.email,
+            "roles": user.roles,
+            "permissions": permissions,
+            "session_id": session_id,
+            "exp": expire,
+            "iat": datetime.now(timezone.utc),
+            "type": "access"
+        }
+        
+        # Add profile_ids if available
+        if hasattr(user, 'profile_ids') and user.profile_ids:
+            payload_data["profile_ids"] = user.profile_ids
+        
+        payload = TokenPayload(**payload_data)
         
         to_encode = payload.model_dump()
         to_encode["exp"] = expire.timestamp()
