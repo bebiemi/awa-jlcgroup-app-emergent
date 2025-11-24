@@ -212,6 +212,9 @@ async def get_my_profile(
                 "updated_at": datetime.now(timezone.utc).isoformat()
             }
             await db.collaborator_profiles.insert_one(profile)
+            
+            # Reload profile without _id
+            profile = await db.collaborator_profiles.find_one({"user_id": current_user.id}, {"_id": 0})
         
         # Add is_verified from user to profile response
         profile["is_verified"] = current_user.is_verified
