@@ -804,8 +804,9 @@ async def get_user_permissions(
     Get all permissions for a user with support for config-driven IAM
     Supports both old format (permission_ids) and new format (permissions codes)
     """
-    # Users can only see their own permissions unless admin
-    if user_id != current_user.id and "admin" not in current_user.roles:
+    # Users can only see their own permissions unless admin or super_admin
+    is_admin = any(role in current_user.roles for role in ["admin", "super_admin"])
+    if user_id != current_user.id and not is_admin:
         raise HTTPException(status_code=403, detail="Not authorized")
     
     # Get user
