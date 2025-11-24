@@ -1,0 +1,8501 @@
+[
+  {
+    "path": "/send",
+    "method": "POST",
+    "file": "email_verification_routes.py",
+    "line": 60,
+    "function": "send_verification",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/verify",
+    "method": "POST",
+    "file": "email_verification_routes.py",
+    "line": 120,
+    "function": "verify_email",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/status",
+    "method": "GET",
+    "file": "email_verification_routes.py",
+    "line": 186,
+    "function": "get_verification_status",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/resend",
+    "method": "POST",
+    "file": "email_verification_routes.py",
+    "line": 233,
+    "function": "resend_verification",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/settings",
+    "method": "GET",
+    "file": "email_settings_routes.py",
+    "line": 25,
+    "function": "get_email_settings",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "emails.read_config"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": true,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/settings",
+    "method": "PUT",
+    "file": "email_settings_routes.py",
+    "line": 65,
+    "function": "update_email_settings",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "emails.configure"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": true,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/settings/test",
+    "method": "POST",
+    "file": "email_settings_routes.py",
+    "line": 118,
+    "function": "test_email_config",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "emails.test"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/settings",
+    "method": "DELETE",
+    "file": "email_settings_routes.py",
+    "line": 171,
+    "function": "delete_email_settings",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "emails.configure"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": true,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/user/{user_id}",
+    "method": "GET",
+    "file": "iam_audit_routes.py",
+    "line": 52,
+    "function": "get_user_audit_trail",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:user_id",
+      "query:start_date",
+      "query:end_date"
+    ],
+    "category": "users",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/actions/{action_type}",
+    "method": "GET",
+    "file": "iam_audit_routes.py",
+    "line": 85,
+    "function": "get_actions_by_type",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:action_type",
+      "path:action_type",
+      "query:start_date"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/failed-actions",
+    "method": "GET",
+    "file": "iam_audit_routes.py",
+    "line": 121,
+    "function": "get_failed_actions",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/security-alerts",
+    "method": "GET",
+    "file": "iam_audit_routes.py",
+    "line": 143,
+    "function": "get_security_alerts",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/search",
+    "method": "POST",
+    "file": "iam_audit_routes.py",
+    "line": 160,
+    "function": "search_audit_trail",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/statistics",
+    "method": "GET",
+    "file": "iam_audit_routes.py",
+    "line": 193,
+    "function": "get_audit_statistics",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "query:start_date",
+      "query:end_date"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/compliance-report",
+    "method": "GET",
+    "file": "iam_audit_routes.py",
+    "line": 226,
+    "function": "generate_compliance_report",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/cleanup",
+    "method": "POST",
+    "file": "iam_audit_routes.py",
+    "line": 269,
+    "function": "cleanup_old_audit_entries",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:count",
+      "path:days_to_keep"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/action-types",
+    "method": "GET",
+    "file": "iam_audit_routes.py",
+    "line": 308,
+    "function": "get_available_action_types",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/severity-levels",
+    "method": "GET",
+    "file": "iam_audit_routes.py",
+    "line": 334,
+    "function": "get_severity_levels",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/recommended",
+    "method": "GET",
+    "file": "mission_routes.py",
+    "line": 315,
+    "function": "get_recommended_missions",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/batch-matching",
+    "method": "POST",
+    "file": "mission_routes.py",
+    "line": 393,
+    "function": "batch_calculate_matching",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{mission_id}",
+    "method": "GET",
+    "file": "mission_routes.py",
+    "line": 443,
+    "function": "get_mission",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:mission_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{mission_id}",
+    "method": "PUT",
+    "file": "mission_routes.py",
+    "line": 507,
+    "function": "update_mission",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:mission_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{mission_id}",
+    "method": "DELETE",
+    "file": "mission_routes.py",
+    "line": 572,
+    "function": "delete_mission",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:mission_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{mission_id}/publish",
+    "method": "POST",
+    "file": "mission_routes.py",
+    "line": 623,
+    "function": "publish_mission",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:mission_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{mission_id}/apply",
+    "method": "POST",
+    "file": "mission_routes.py",
+    "line": 675,
+    "function": "apply_to_mission",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:mission_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{mission_id}/applications",
+    "method": "GET",
+    "file": "mission_routes.py",
+    "line": 748,
+    "function": "get_mission_applications",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:mission_id",
+      "query:application_status"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/applications/my-applications",
+    "method": "GET",
+    "file": "mission_routes.py",
+    "line": 848,
+    "function": "get_my_applications",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:application_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/applications/{application_id}",
+    "method": "PUT",
+    "file": "mission_routes.py",
+    "line": 863,
+    "function": "update_application",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:application_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/applications/{application_id}/shortlist",
+    "method": "POST",
+    "file": "mission_routes.py",
+    "line": 960,
+    "function": "shortlist_application",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:application_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/applications/{application_id}/upload-medical",
+    "method": "POST",
+    "file": "mission_routes.py",
+    "line": 995,
+    "function": "upload_medical_document",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:application_id",
+      "query:notes"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{mission_id}/stats",
+    "method": "GET",
+    "file": "mission_routes.py",
+    "line": 1043,
+    "function": "get_mission_stats",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:mission_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{mission_id}/matching",
+    "method": "GET",
+    "file": "mission_routes.py",
+    "line": 1084,
+    "function": "get_mission_matching_score",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:mission_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/applications/me/{application_id}",
+    "method": "PATCH",
+    "file": "mission_routes.py",
+    "line": 1134,
+    "function": "update_my_application",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:application_id",
+      "query:additional_info"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/applications/me/{application_id}/cancel",
+    "method": "POST",
+    "file": "mission_routes.py",
+    "line": 1185,
+    "function": "cancel_my_application",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:application_id",
+      "query:cancellation_reason"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/applications/{application_id}/history",
+    "method": "GET",
+    "file": "mission_routes.py",
+    "line": 1251,
+    "function": "get_application_history",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:application_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/applications/{application_id}/timeline-stats",
+    "method": "GET",
+    "file": "mission_routes.py",
+    "line": 1302,
+    "function": "get_application_timeline_stats",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:application_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/applications/my-applications/with-history",
+    "method": "GET",
+    "file": "mission_routes.py",
+    "line": 1359,
+    "function": "get_my_applications_with_history",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/admin/backfill-application-history",
+    "method": "POST",
+    "file": "mission_routes.py",
+    "line": 1416,
+    "function": "backfill_application_history",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "applications.manage"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "admin",
+    "is_critical": true,
+    "is_public": false
+  },
+  {
+    "path": "/me",
+    "method": "GET",
+    "file": "presence_routes.py",
+    "line": 25,
+    "function": "get_my_presence",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/me",
+    "method": "PATCH",
+    "file": "presence_routes.py",
+    "line": 42,
+    "function": "update_my_presence",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/activity",
+    "method": "POST",
+    "file": "presence_routes.py",
+    "line": 98,
+    "function": "update_activity",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/online",
+    "method": "GET",
+    "file": "presence_routes.py",
+    "line": 133,
+    "function": "get_online_users",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{user_id}",
+    "method": "GET",
+    "file": "presence_routes.py",
+    "line": 193,
+    "function": "get_user_presence",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:user_id"
+    ],
+    "category": "users",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/tickets",
+    "method": "POST",
+    "file": "support_routes.py",
+    "line": 93,
+    "function": "create_ticket",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/tickets",
+    "method": "GET",
+    "file": "support_routes.py",
+    "line": 160,
+    "function": "list_tickets",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:ticket_id",
+      "query:status_filter",
+      "query:category"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/tickets/{ticket_id}",
+    "method": "GET",
+    "file": "support_routes.py",
+    "line": 182,
+    "function": "get_ticket",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:ticket_id",
+      "path:ticket_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/tickets/{ticket_id}/messages",
+    "method": "POST",
+    "file": "support_routes.py",
+    "line": 204,
+    "function": "add_message",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:ticket_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/tickets/{ticket_id}/messages",
+    "method": "GET",
+    "file": "support_routes.py",
+    "line": 269,
+    "function": "list_messages",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:ticket_id",
+      "path:ticket_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/tickets/{ticket_id}/close",
+    "method": "PATCH",
+    "file": "support_routes.py",
+    "line": 298,
+    "function": "close_ticket",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:ticket_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/admin/tickets",
+    "method": "GET",
+    "file": "support_routes.py",
+    "line": 349,
+    "function": "admin_list_tickets",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": "admin"
+    },
+    "params": [
+      "query:status_filter",
+      "query:category",
+      "query:priority",
+      "query:assigned_to"
+    ],
+    "category": "admin",
+    "is_critical": true,
+    "is_public": false
+  },
+  {
+    "path": "/admin/tickets/{ticket_id}",
+    "method": "PATCH",
+    "file": "support_routes.py",
+    "line": 386,
+    "function": "admin_update_ticket",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": "admin"
+    },
+    "params": [
+      "path:ticket_id"
+    ],
+    "category": "admin",
+    "is_critical": true,
+    "is_public": false
+  },
+  {
+    "path": "/admin/tickets/{ticket_id}/messages",
+    "method": "POST",
+    "file": "support_routes.py",
+    "line": 461,
+    "function": "admin_add_message",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": "admin"
+    },
+    "params": [
+      "path:ticket_id"
+    ],
+    "category": "admin",
+    "is_critical": true,
+    "is_public": false
+  },
+  {
+    "path": "/stats",
+    "method": "GET",
+    "file": "validation_routes.py",
+    "line": 106,
+    "function": "get_validation_stats",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "validations.manage"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/my-validation",
+    "method": "GET",
+    "file": "validation_routes.py",
+    "line": 136,
+    "function": "get_my_validation",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "validations.manage"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:validation_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{validation_id}",
+    "method": "GET",
+    "file": "validation_routes.py",
+    "line": 153,
+    "function": "get_validation",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "validations.manage"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:validation_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{validation_id}/approve",
+    "method": "POST",
+    "file": "validation_routes.py",
+    "line": 184,
+    "function": "approve_validation",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "validations.manage"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:validation_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{validation_id}/reject",
+    "method": "POST",
+    "file": "validation_routes.py",
+    "line": 279,
+    "function": "reject_validation",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "validations.manage"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:validation_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{validation_id}/check-representant",
+    "method": "GET",
+    "file": "validation_routes.py",
+    "line": 332,
+    "function": "check_representant_endpoint",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "validations.manage"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:validation_id",
+      "path:user_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/representant/{user_id}/details",
+    "method": "GET",
+    "file": "validation_routes.py",
+    "line": 352,
+    "function": "get_representant_details_endpoint",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "validations.manage"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:user_id",
+      "path:validation_id"
+    ],
+    "category": "users",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{validation_id}/attach-to-existing",
+    "method": "POST",
+    "file": "validation_routes.py",
+    "line": 373,
+    "function": "attach_to_existing_representant",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "entreprises.link_existing"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": true,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:validation_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{validation_id}/assign",
+    "method": "POST",
+    "file": "validation_routes.py",
+    "line": 548,
+    "function": "assign_validation",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "validations.manage"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:validation_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{validation_id}/add-country",
+    "method": "POST",
+    "file": "validation_routes.py",
+    "line": 595,
+    "function": "add_country_from_validation",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "validations.manage"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:validation_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/fields",
+    "method": "POST",
+    "file": "entreprise_form_config_routes.py",
+    "line": 89,
+    "function": "create_form_field",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "forms.enterprise.manage"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": true,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/fields/public",
+    "method": "GET",
+    "file": "entreprise_form_config_routes.py",
+    "line": 125,
+    "function": "get_public_form_fields",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/fields",
+    "method": "GET",
+    "file": "entreprise_form_config_routes.py",
+    "line": 153,
+    "function": "get_form_fields",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "query:category",
+      "query:is_active"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/fields/{field_id}",
+    "method": "GET",
+    "file": "entreprise_form_config_routes.py",
+    "line": 187,
+    "function": "get_form_field",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "forms.enterprise.update"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": true,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:field_id",
+      "path:field_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/fields/{field_id}",
+    "method": "PATCH",
+    "file": "entreprise_form_config_routes.py",
+    "line": 207,
+    "function": "update_form_field",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "forms.enterprise.update"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": true,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:field_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/fields/{field_id}",
+    "method": "DELETE",
+    "file": "entreprise_form_config_routes.py",
+    "line": 251,
+    "function": "delete_form_field",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "forms.enterprise.manage"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": true,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:field_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/fields/reorder",
+    "method": "POST",
+    "file": "entreprise_form_config_routes.py",
+    "line": 282,
+    "function": "reorder_fields",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "forms.enterprise.update"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": true,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:role"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/fields/for-role/{role}",
+    "method": "GET",
+    "file": "entreprise_form_config_routes.py",
+    "line": 307,
+    "function": "get_fields_for_role",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:role"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/me",
+    "method": "GET",
+    "file": "profile_routes.py",
+    "line": 86,
+    "function": "get_my_profile",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/me",
+    "method": "PUT",
+    "file": "profile_routes.py",
+    "line": 225,
+    "function": "update_my_profile",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/documents",
+    "method": "POST",
+    "file": "profile_routes.py",
+    "line": 309,
+    "function": "upload_document",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:mime_type",
+      "path:file_ext"
+    ],
+    "category": "documents",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/documents",
+    "method": "GET",
+    "file": "profile_routes.py",
+    "line": 381,
+    "function": "get_my_documents",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:document_id"
+    ],
+    "category": "documents",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/documents/{document_id}",
+    "method": "DELETE",
+    "file": "profile_routes.py",
+    "line": 395,
+    "function": "delete_document",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:document_id",
+      "path:e"
+    ],
+    "category": "documents",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{experience_id}",
+    "method": "GET",
+    "file": "professional_experiences_routes.py",
+    "line": 240,
+    "function": "get_experience",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:experience_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{experience_id}",
+    "method": "PUT",
+    "file": "professional_experiences_routes.py",
+    "line": 292,
+    "function": "update_experience",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:experience_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{experience_id}",
+    "method": "DELETE",
+    "file": "professional_experiences_routes.py",
+    "line": 372,
+    "function": "delete_experience",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:experience_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/upload",
+    "method": "POST",
+    "file": "documents_routes_v2.py",
+    "line": 62,
+    "function": "upload_document",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "documents.create"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "query:description",
+      "query:tags",
+      "query:retention_period_days"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/",
+    "method": "GET",
+    "file": "documents_routes_v2.py",
+    "line": 166,
+    "function": "list_documents",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "documents.read"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "query:category",
+      "query:status_filter"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{document_id}",
+    "method": "GET",
+    "file": "documents_routes_v2.py",
+    "line": 217,
+    "function": "get_document",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "documents.read"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:document_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{document_id}",
+    "method": "DELETE",
+    "file": "documents_routes_v2.py",
+    "line": 256,
+    "function": "delete_document",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "documents.delete"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:document_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/upload",
+    "method": "POST",
+    "file": "documents_routes.py",
+    "line": 124,
+    "function": "upload_document",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "documents.create"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "query:description",
+      "query:tags",
+      "query:retention_period_days"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/",
+    "method": "GET",
+    "file": "documents_routes.py",
+    "line": 228,
+    "function": "list_documents",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "documents.read"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:document_id",
+      "query:category",
+      "query:status_filter"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{document_id}",
+    "method": "GET",
+    "file": "documents_routes.py",
+    "line": 250,
+    "function": "get_document",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "documents.read"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:document_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{document_id}",
+    "method": "PATCH",
+    "file": "documents_routes.py",
+    "line": 296,
+    "function": "update_document",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "documents.update"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": true,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:document_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{document_id}",
+    "method": "DELETE",
+    "file": "documents_routes.py",
+    "line": 350,
+    "function": "delete_document",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "documents.delete"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:document_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{document_id}/download",
+    "method": "GET",
+    "file": "documents_routes.py",
+    "line": 381,
+    "function": "download_document",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "documents.download"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:document_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/admin/all",
+    "method": "GET",
+    "file": "documents_routes.py",
+    "line": 444,
+    "function": "admin_list_documents",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "documents.read.all"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": true,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:document_id",
+      "query:user_id",
+      "query:category",
+      "query:status_filter"
+    ],
+    "category": "admin",
+    "is_critical": true,
+    "is_public": false
+  },
+  {
+    "path": "/admin/{document_id}/verify",
+    "method": "PATCH",
+    "file": "documents_routes.py",
+    "line": 470,
+    "function": "admin_verify_document",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "documents.verify"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": true,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:document_id"
+    ],
+    "category": "admin",
+    "is_critical": true,
+    "is_public": false
+  },
+  {
+    "path": "/cache/stats",
+    "method": "GET",
+    "file": "iam_advanced_routes.py",
+    "line": 56,
+    "function": "get_cache_stats",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:user_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/cache/invalidate/user/{user_id}",
+    "method": "POST",
+    "file": "iam_advanced_routes.py",
+    "line": 70,
+    "function": "invalidate_user_cache",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:user_id"
+    ],
+    "category": "users",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/cache/invalidate/all",
+    "method": "POST",
+    "file": "iam_advanced_routes.py",
+    "line": 98,
+    "function": "invalidate_all_cache",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/cache/health",
+    "method": "GET",
+    "file": "iam_advanced_routes.py",
+    "line": 122,
+    "function": "cache_health_check",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/temp-permissions/grant",
+    "method": "POST",
+    "file": "iam_advanced_routes.py",
+    "line": 135,
+    "function": "grant_temporary_permission",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/temp-permissions/user/{user_id}",
+    "method": "GET",
+    "file": "iam_advanced_routes.py",
+    "line": 185,
+    "function": "get_user_temporary_permissions",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:user_id",
+      "path:temp_perm_id"
+    ],
+    "category": "users",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/temp-permissions/{temp_perm_id}/revoke",
+    "method": "POST",
+    "file": "iam_advanced_routes.py",
+    "line": 208,
+    "function": "revoke_temporary_permission",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:temp_perm_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/temp-permissions/expiring-soon",
+    "method": "GET",
+    "file": "iam_advanced_routes.py",
+    "line": 248,
+    "function": "get_expiring_soon",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/temp-permissions/statistics",
+    "method": "GET",
+    "file": "iam_advanced_routes.py",
+    "line": 264,
+    "function": "get_temp_permissions_statistics",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:user_id",
+      "query:start_date",
+      "query:end_date"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/audit/user/{user_id}",
+    "method": "GET",
+    "file": "iam_advanced_routes.py",
+    "line": 278,
+    "function": "get_user_audit_trail",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:user_id",
+      "path:action",
+      "query:start_date",
+      "query:end_date"
+    ],
+    "category": "users",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/audit/action/{action}",
+    "method": "GET",
+    "file": "iam_advanced_routes.py",
+    "line": 305,
+    "function": "get_audit_by_action",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:action",
+      "path:action",
+      "query:start_date"
+    ],
+    "category": "audit",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/audit/search",
+    "method": "POST",
+    "file": "iam_advanced_routes.py",
+    "line": 334,
+    "function": "search_audit_trail",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "audit",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/audit/security-alerts",
+    "method": "GET",
+    "file": "iam_advanced_routes.py",
+    "line": 357,
+    "function": "get_security_alerts",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "query:start_date",
+      "query:end_date"
+    ],
+    "category": "audit",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/audit/statistics",
+    "method": "GET",
+    "file": "iam_advanced_routes.py",
+    "line": 373,
+    "function": "get_audit_statistics",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "query:start_date",
+      "query:end_date"
+    ],
+    "category": "audit",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/audit/compliance-report",
+    "method": "GET",
+    "file": "iam_advanced_routes.py",
+    "line": 394,
+    "function": "generate_compliance_report",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "audit",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/audit/failed-actions",
+    "method": "GET",
+    "file": "iam_advanced_routes.py",
+    "line": 415,
+    "function": "get_failed_actions",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "audit",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/permissions",
+    "method": "GET",
+    "file": "security_routes.py",
+    "line": 25,
+    "function": "get_permissions",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "users.manage"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:profile_id",
+      "query:module"
+    ],
+    "category": "other",
+    "is_critical": true,
+    "is_public": false
+  },
+  {
+    "path": "/profiles",
+    "method": "GET",
+    "file": "security_routes.py",
+    "line": 42,
+    "function": "get_profiles",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "users.manage"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:profile_id"
+    ],
+    "category": "profiles",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/profiles/{profile_id}",
+    "method": "GET",
+    "file": "security_routes.py",
+    "line": 52,
+    "function": "get_profile",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "users.manage"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:profile_id"
+    ],
+    "category": "profiles",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/profiles",
+    "method": "POST",
+    "file": "security_routes.py",
+    "line": 65,
+    "function": "create_profile",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "users.manage"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:profile_id"
+    ],
+    "category": "profiles",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/profiles/{profile_id}",
+    "method": "PUT",
+    "file": "security_routes.py",
+    "line": 89,
+    "function": "update_profile",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "users.manage"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:profile_id",
+      "path:profile_id"
+    ],
+    "category": "profiles",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/profiles/{profile_id}",
+    "method": "DELETE",
+    "file": "security_routes.py",
+    "line": 117,
+    "function": "delete_profile",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "users.manage"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:profile_id",
+      "path:groups_with_profile"
+    ],
+    "category": "profiles",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/groups",
+    "method": "GET",
+    "file": "security_routes.py",
+    "line": 146,
+    "function": "get_groups",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "users.manage"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:group_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/groups/{group_id}",
+    "method": "GET",
+    "file": "security_routes.py",
+    "line": 156,
+    "function": "get_group",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "users.manage"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:group_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/groups",
+    "method": "POST",
+    "file": "security_routes.py",
+    "line": 169,
+    "function": "create_group",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "users.manage"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/groups/{group_id}",
+    "method": "PUT",
+    "file": "security_routes.py",
+    "line": 199,
+    "function": "update_group",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "users.manage"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:group_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/groups/{group_id}",
+    "method": "DELETE",
+    "file": "security_routes.py",
+    "line": 230,
+    "function": "delete_group",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "users.manage"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:group_id",
+      "path:group_id",
+      "path:user_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/groups/{group_id}/members/{user_id}",
+    "method": "POST",
+    "file": "security_routes.py",
+    "line": 245,
+    "function": "add_member_to_group",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "users.manage"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:group_id",
+      "path:user_id",
+      "path:group_id",
+      "path:user_id"
+    ],
+    "category": "users",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/groups/{group_id}/members/{user_id}",
+    "method": "DELETE",
+    "file": "security_routes.py",
+    "line": 272,
+    "function": "remove_member_from_group",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "users.manage"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:group_id",
+      "path:user_id"
+    ],
+    "category": "users",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/users",
+    "method": "POST",
+    "file": "security_routes.py",
+    "line": 300,
+    "function": "create_user",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "users.manage"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:username"
+    ],
+    "category": "users",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/check/me",
+    "method": "GET",
+    "file": "iam_expiration_routes.py",
+    "line": 40,
+    "function": "check_my_expirations",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/check/{user_id}",
+    "method": "GET",
+    "file": "iam_expiration_routes.py",
+    "line": 70,
+    "function": "check_user_expirations",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "users.manage"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:user_id"
+    ],
+    "category": "users",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/check/all",
+    "method": "GET",
+    "file": "iam_expiration_routes.py",
+    "line": 107,
+    "function": "check_all_expirations",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "users.manage"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/process",
+    "method": "POST",
+    "file": "iam_expiration_routes.py",
+    "line": 141,
+    "function": "process_expirations",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "users.manage"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/notify",
+    "method": "POST",
+    "file": "iam_expiration_routes.py",
+    "line": 164,
+    "function": "send_expiration_notifications",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "users.manage"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/stats",
+    "method": "GET",
+    "file": "iam_expiration_routes.py",
+    "line": 187,
+    "function": "get_expiration_stats",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "users.manage"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/downgrade/{user_id}/{profile_id}",
+    "method": "POST",
+    "file": "iam_expiration_routes.py",
+    "line": 218,
+    "function": "manual_downgrade_profile",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "users.manage"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:user_id",
+      "path:profile_id"
+    ],
+    "category": "users",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{role_code}",
+    "method": "GET",
+    "file": "role_visibility_routes.py",
+    "line": 55,
+    "function": "get_role",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "users.manage"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:role_code",
+      "path:role_code",
+      "path:role_code"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{role_code}/visibility",
+    "method": "PATCH",
+    "file": "role_visibility_routes.py",
+    "line": 81,
+    "function": "update_role_visibility",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "users.manage"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:role_code",
+      "path:role_code"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/visibility/stats",
+    "method": "GET",
+    "file": "role_visibility_routes.py",
+    "line": 140,
+    "function": "get_visibility_stats",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "users.manage"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/users/{user_id}/permissions",
+    "method": "GET",
+    "file": "iam_unified_routes.py",
+    "line": 44,
+    "function": "get_user_permissions_unified",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:user_id"
+    ],
+    "category": "users",
+    "is_critical": true,
+    "is_public": false
+  },
+  {
+    "path": "/check-permission",
+    "method": "POST",
+    "file": "iam_unified_routes.py",
+    "line": 96,
+    "function": "check_user_permission",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/users/{user_id}/roles-details",
+    "method": "GET",
+    "file": "iam_unified_routes.py",
+    "line": 134,
+    "function": "get_user_roles_details",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:user_id",
+      "path:e"
+    ],
+    "category": "users",
+    "is_critical": true,
+    "is_public": false
+  },
+  {
+    "path": "/users/{user_id}/sync-legacy-roles",
+    "method": "POST",
+    "file": "iam_unified_routes.py",
+    "line": 168,
+    "function": "sync_user_legacy_roles",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": "admin"
+    },
+    "params": [
+      "path:user_id",
+      "path:e"
+    ],
+    "category": "users",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{user_id}",
+    "method": "GET",
+    "file": "user_detail_routes.py",
+    "line": 45,
+    "function": "get_user_detail",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:user_id"
+    ],
+    "category": "users",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{user_id}/documents",
+    "method": "GET",
+    "file": "user_detail_routes.py",
+    "line": 120,
+    "function": "list_user_documents",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:user_id",
+      "path:user_id",
+      "path:doc_id"
+    ],
+    "category": "users",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{user_id}/documents/{doc_id}/verify",
+    "method": "PATCH",
+    "file": "user_detail_routes.py",
+    "line": 139,
+    "function": "verify_document",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:user_id",
+      "path:doc_id"
+    ],
+    "category": "users",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{user_id}/documents/{doc_id}",
+    "method": "DELETE",
+    "file": "user_detail_routes.py",
+    "line": 177,
+    "function": "delete_document",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:user_id",
+      "path:doc_id",
+      "path:user_id"
+    ],
+    "category": "users",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{user_id}/documents",
+    "method": "POST",
+    "file": "user_detail_routes.py",
+    "line": 206,
+    "function": "upload_document",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:user_id",
+      "path:doc_id"
+    ],
+    "category": "users",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{user_id}/groups",
+    "method": "GET",
+    "file": "user_detail_routes.py",
+    "line": 253,
+    "function": "get_user_groups",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:user_id",
+      "path:user_id"
+    ],
+    "category": "users",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{user_id}/groups",
+    "method": "POST",
+    "file": "user_detail_routes.py",
+    "line": 279,
+    "function": "assign_group",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:user_id"
+    ],
+    "category": "users",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{user_id}/groups/{group_id}",
+    "method": "DELETE",
+    "file": "user_detail_routes.py",
+    "line": 318,
+    "function": "remove_group",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:user_id",
+      "path:group_id"
+    ],
+    "category": "users",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{user_id}/profiles",
+    "method": "GET",
+    "file": "user_detail_routes.py",
+    "line": 354,
+    "function": "get_user_profiles",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:user_id",
+      "path:user_id"
+    ],
+    "category": "users",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{user_id}/profiles",
+    "method": "POST",
+    "file": "user_detail_routes.py",
+    "line": 380,
+    "function": "assign_profile",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:user_id"
+    ],
+    "category": "users",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{user_id}/profiles/{profile_id}",
+    "method": "DELETE",
+    "file": "user_detail_routes.py",
+    "line": 419,
+    "function": "remove_profile",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:user_id",
+      "path:profile_id"
+    ],
+    "category": "users",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{user_id}/activity",
+    "method": "GET",
+    "file": "user_detail_routes.py",
+    "line": 455,
+    "function": "get_user_activity",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:user_id"
+    ],
+    "category": "users",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{user_id}/reset-password",
+    "method": "POST",
+    "file": "user_detail_routes.py",
+    "line": 486,
+    "function": "reset_password",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:user_id"
+    ],
+    "category": "users",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{user_id}/password/admin-update",
+    "method": "POST",
+    "file": "user_detail_routes.py",
+    "line": 516,
+    "function": "admin_update_password",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:user_id"
+    ],
+    "category": "users",
+    "is_critical": true,
+    "is_public": false
+  },
+  {
+    "path": "/{user_id}/reset-mfa",
+    "method": "POST",
+    "file": "user_detail_routes.py",
+    "line": 624,
+    "function": "reset_mfa",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:user_id"
+    ],
+    "category": "users",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{user_id}/notify",
+    "method": "POST",
+    "file": "user_detail_routes.py",
+    "line": 659,
+    "function": "send_notification",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:user_id"
+    ],
+    "category": "users",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/stats",
+    "method": "GET",
+    "file": "iam_cache_routes.py",
+    "line": 19,
+    "function": "get_cache_stats",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "iam.permissions.read"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/health",
+    "method": "GET",
+    "file": "iam_cache_routes.py",
+    "line": 38,
+    "function": "check_cache_health",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "iam.permissions.read"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:user_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": true
+  },
+  {
+    "path": "/invalidate/user/{user_id}",
+    "method": "POST",
+    "file": "iam_cache_routes.py",
+    "line": 57,
+    "function": "invalidate_user_cache",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "iam.permissions.update"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": true,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:user_id",
+      "path:user_id"
+    ],
+    "category": "users",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/invalidate/all-users",
+    "method": "POST",
+    "file": "iam_cache_routes.py",
+    "line": 83,
+    "function": "invalidate_all_users_cache",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "iam.permissions.update"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": true,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/clear",
+    "method": "DELETE",
+    "file": "iam_cache_routes.py",
+    "line": 109,
+    "function": "clear_all_cache",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "admin.access"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{template_id}",
+    "method": "GET",
+    "file": "email_template_routes.py",
+    "line": 52,
+    "function": "get_template",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "emails.manage_templates"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:template_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{template_id}",
+    "method": "PUT",
+    "file": "email_template_routes.py",
+    "line": 115,
+    "function": "update_template",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "emails.manage_templates"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:template_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{template_id}",
+    "method": "DELETE",
+    "file": "email_template_routes.py",
+    "line": 176,
+    "function": "delete_template",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "emails.manage_templates"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:template_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{template_id}/preview",
+    "method": "POST",
+    "file": "email_template_routes.py",
+    "line": 208,
+    "function": "preview_template",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "emails.manage_templates"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:template_id",
+      "path:key"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/init-defaults",
+    "method": "POST",
+    "file": "email_template_routes.py",
+    "line": 241,
+    "function": "initialize_default_templates",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "emails.manage_templates"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:version_to"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/forms",
+    "method": "POST",
+    "file": "form_config_routes.py",
+    "line": 45,
+    "function": "create_form_schema",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/forms",
+    "method": "GET",
+    "file": "form_config_routes.py",
+    "line": 105,
+    "function": "list_form_schemas",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:form_type",
+      "query:form_type"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/forms/{form_type}",
+    "method": "GET",
+    "file": "form_config_routes.py",
+    "line": 129,
+    "function": "get_form_schema",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:form_type",
+      "path:form_type",
+      "path:form_type"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/forms/{form_type}",
+    "method": "DELETE",
+    "file": "form_config_routes.py",
+    "line": 147,
+    "function": "delete_form_schema",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:form_type",
+      "path:form_type",
+      "path:form_type"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/workflows",
+    "method": "POST",
+    "file": "form_config_routes.py",
+    "line": 180,
+    "function": "create_workflow_config",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/workflows",
+    "method": "GET",
+    "file": "form_config_routes.py",
+    "line": 240,
+    "function": "list_workflow_configs",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:entity_type",
+      "query:entity_type"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/workflows/{entity_type}",
+    "method": "GET",
+    "file": "form_config_routes.py",
+    "line": 264,
+    "function": "get_workflow_config",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:entity_type",
+      "path:entity_type"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/references",
+    "method": "POST",
+    "file": "form_config_routes.py",
+    "line": 284,
+    "function": "create_reference_data",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/references",
+    "method": "GET",
+    "file": "form_config_routes.py",
+    "line": 343,
+    "function": "list_reference_data",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:reference_type",
+      "query:reference_type"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/references/{reference_type}",
+    "method": "GET",
+    "file": "form_config_routes.py",
+    "line": 367,
+    "function": "get_reference_data",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:reference_type",
+      "path:reference_type"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/permissions",
+    "method": "GET",
+    "file": "iam_routes.py",
+    "line": 33,
+    "function": "list_permissions",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "iam.permissions.read"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": true,
+    "is_public": false
+  },
+  {
+    "path": "/permissions",
+    "method": "POST",
+    "file": "iam_routes.py",
+    "line": 49,
+    "function": "create_permission",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "iam.permissions.create"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": true,
+    "is_public": false
+  },
+  {
+    "path": "/permissions/{permission_id}",
+    "method": "DELETE",
+    "file": "iam_routes.py",
+    "line": 81,
+    "function": "delete_permission",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "iam.permissions.delete"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:permission_id",
+      "path:permission_id"
+    ],
+    "category": "other",
+    "is_critical": true,
+    "is_public": false
+  },
+  {
+    "path": "/profiles",
+    "method": "GET",
+    "file": "iam_routes.py",
+    "line": 119,
+    "function": "list_profiles",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "profiles",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/profiles/{profile_id}",
+    "method": "GET",
+    "file": "iam_routes.py",
+    "line": 169,
+    "function": "get_profile",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:profile_id",
+      "path:profile_id"
+    ],
+    "category": "profiles",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/profiles/{profile_id}/effective-permissions",
+    "method": "GET",
+    "file": "iam_routes.py",
+    "line": 185,
+    "function": "get_profile_effective_permissions",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:profile_id"
+    ],
+    "category": "profiles",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/profiles",
+    "method": "POST",
+    "file": "iam_routes.py",
+    "line": 288,
+    "function": "create_profile",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "iam.profiles.create"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:perm_id"
+    ],
+    "category": "profiles",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/profiles/{profile_id}",
+    "method": "PUT",
+    "file": "iam_routes.py",
+    "line": 332,
+    "function": "update_profile",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "iam.profiles.update"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": true,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:profile_id"
+    ],
+    "category": "profiles",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/profiles/{profile_id}",
+    "method": "DELETE",
+    "file": "iam_routes.py",
+    "line": 381,
+    "function": "delete_profile",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "iam.profiles.delete"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:profile_id"
+    ],
+    "category": "profiles",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/groups",
+    "method": "GET",
+    "file": "iam_routes.py",
+    "line": 451,
+    "function": "list_groups",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:group_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/groups/{group_id}",
+    "method": "GET",
+    "file": "iam_routes.py",
+    "line": 467,
+    "function": "get_group",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "iam.groups.create"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:group_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/groups",
+    "method": "POST",
+    "file": "iam_routes.py",
+    "line": 483,
+    "function": "create_group",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "iam.groups.create"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:prof_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/groups/{group_id}",
+    "method": "PUT",
+    "file": "iam_routes.py",
+    "line": 527,
+    "function": "update_group",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "iam.groups.update"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": true,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:group_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/groups/{group_id}",
+    "method": "DELETE",
+    "file": "iam_routes.py",
+    "line": 565,
+    "function": "delete_group",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "iam.groups.delete"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:group_id",
+      "path:group_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/groups/{group_id}/profiles/{profile_id}",
+    "method": "POST",
+    "file": "iam_routes.py",
+    "line": 599,
+    "function": "assign_profile_to_group",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "iam.groups.update"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": true,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:group_id",
+      "path:profile_id"
+    ],
+    "category": "profiles",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/groups/{group_id}/profiles/{profile_id}",
+    "method": "DELETE",
+    "file": "iam_routes.py",
+    "line": 660,
+    "function": "remove_profile_from_group",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "iam.groups.update"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": true,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:group_id",
+      "path:profile_id",
+      "path:profile_id",
+      "path:group_id"
+    ],
+    "category": "profiles",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/users/{user_id}/profiles",
+    "method": "POST",
+    "file": "iam_routes.py",
+    "line": 709,
+    "function": "assign_profiles_to_user",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "iam.users.assign"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": true,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:user_id"
+    ],
+    "category": "users",
+    "is_critical": true,
+    "is_public": false
+  },
+  {
+    "path": "/users/{user_id}/groups",
+    "method": "POST",
+    "file": "iam_routes.py",
+    "line": 753,
+    "function": "assign_groups_to_user",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "iam.users.assign"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": true,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:user_id"
+    ],
+    "category": "users",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/users/{user_id}/permissions",
+    "method": "GET",
+    "file": "iam_routes.py",
+    "line": 797,
+    "function": "get_user_permissions",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:user_id"
+    ],
+    "category": "users",
+    "is_critical": true,
+    "is_public": false
+  },
+  {
+    "path": "/check-permission",
+    "method": "POST",
+    "file": "iam_routes.py",
+    "line": 891,
+    "function": "check_permission",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/bulk-block",
+    "method": "POST",
+    "file": "bulk_operations_routes.py",
+    "line": 49,
+    "function": "bulk_block_users",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "users.update"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": true,
+      "policy": null,
+      "role_check": "super_admin"
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/bulk-unblock",
+    "method": "POST",
+    "file": "bulk_operations_routes.py",
+    "line": 106,
+    "function": "bulk_unblock_users",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "users.update"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": true,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/bulk-archive",
+    "method": "POST",
+    "file": "bulk_operations_routes.py",
+    "line": 155,
+    "function": "bulk_archive_users",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "users.update"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": true,
+      "policy": null,
+      "role_check": "super_admin"
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/bulk-delete",
+    "method": "POST",
+    "file": "bulk_operations_routes.py",
+    "line": 212,
+    "function": "bulk_delete_users",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "users.delete"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": "super_admin"
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/export-csv",
+    "method": "POST",
+    "file": "bulk_operations_routes.py",
+    "line": 278,
+    "function": "export_users_csv",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "users.read"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": true,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/bulk-import",
+    "method": "POST",
+    "file": "bulk_operations_routes.py",
+    "line": 317,
+    "function": "bulk_import_users",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "users.create"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/tree",
+    "method": "GET",
+    "file": "location_routes.py",
+    "line": 49,
+    "function": "get_location_tree",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:location_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{location_id}",
+    "method": "GET",
+    "file": "location_routes.py",
+    "line": 71,
+    "function": "get_location",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "locations.manage"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:location_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{location_id}",
+    "method": "PUT",
+    "file": "location_routes.py",
+    "line": 132,
+    "function": "update_location",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "locations.manage"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:location_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{location_id}",
+    "method": "DELETE",
+    "file": "location_routes.py",
+    "line": 164,
+    "function": "delete_location",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "locations.manage"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:location_id",
+      "path:children",
+      "path:location_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{location_id}/visibility",
+    "method": "PATCH",
+    "file": "location_routes.py",
+    "line": 189,
+    "function": "toggle_location_visibility",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "locations.manage"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:location_id",
+      "path:is_visible",
+      "path:parent_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/children/{parent_id}",
+    "method": "GET",
+    "file": "location_routes.py",
+    "line": 217,
+    "function": "get_location_children",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:parent_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{bundle_id}",
+    "method": "GET",
+    "file": "iam_bundles_routes.py",
+    "line": 69,
+    "function": "get_bundle",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "iam:manage"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": true,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:bundle_id",
+      "path:bundle_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{bundle_id}",
+    "method": "PUT",
+    "file": "iam_bundles_routes.py",
+    "line": 127,
+    "function": "update_bundle",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "iam:manage"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": true,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:bundle_id",
+      "path:bundle_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{bundle_id}",
+    "method": "DELETE",
+    "file": "iam_bundles_routes.py",
+    "line": 177,
+    "function": "delete_bundle",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "iam:manage"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": true,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:bundle_id",
+      "path:bundle_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/",
+    "method": "POST",
+    "file": "besoin_routes.py",
+    "line": 91,
+    "function": "create_besoin",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/",
+    "method": "GET",
+    "file": "besoin_routes.py",
+    "line": 206,
+    "function": "list_besoins",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "query:status_filter",
+      "query:entreprise_id",
+      "query:search"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{besoin_id}",
+    "method": "GET",
+    "file": "besoin_routes.py",
+    "line": 292,
+    "function": "get_besoin",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:besoin_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{besoin_id}",
+    "method": "PATCH",
+    "file": "besoin_routes.py",
+    "line": 330,
+    "function": "update_besoin",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:besoin_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{besoin_id}/submit",
+    "method": "POST",
+    "file": "besoin_routes.py",
+    "line": 420,
+    "function": "submit_besoin",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:besoin_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{besoin_id}/status",
+    "method": "POST",
+    "file": "besoin_routes.py",
+    "line": 522,
+    "function": "update_besoin_status",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:besoin_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{besoin_id}/comments",
+    "method": "POST",
+    "file": "besoin_routes.py",
+    "line": 645,
+    "function": "add_comment",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:besoin_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{besoin_id}/comments",
+    "method": "GET",
+    "file": "besoin_routes.py",
+    "line": 735,
+    "function": "get_comments",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:besoin_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{besoin_id}/jlc-analysis",
+    "method": "PATCH",
+    "file": "besoin_routes.py",
+    "line": 777,
+    "function": "update_jlc_analysis",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:besoin_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{besoin_id}/convert-to-mission",
+    "method": "POST",
+    "file": "besoin_routes.py",
+    "line": 837,
+    "function": "convert_to_mission",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:besoin_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{besoin_id}/audit",
+    "method": "GET",
+    "file": "besoin_routes.py",
+    "line": 983,
+    "function": "get_besoin_audit_trail",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:besoin_id"
+    ],
+    "category": "audit",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/me",
+    "method": "GET",
+    "file": "contract_routes.py",
+    "line": 37,
+    "function": "get_my_contracts",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": "interim"
+    },
+    "params": [
+      "query:status_filter"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/active",
+    "method": "GET",
+    "file": "contract_routes.py",
+    "line": 167,
+    "function": "get_active_contract",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": "interim"
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{contract_id}",
+    "method": "GET",
+    "file": "contract_routes.py",
+    "line": 258,
+    "function": "get_contract_details",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:contract_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/stats",
+    "method": "GET",
+    "file": "retention_management_routes.py",
+    "line": 58,
+    "function": "get_retention_stats",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/execute",
+    "method": "POST",
+    "file": "retention_management_routes.py",
+    "line": 126,
+    "function": "execute_retention_workflow",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:actor_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/users/in-workflow",
+    "method": "GET",
+    "file": "retention_management_routes.py",
+    "line": 151,
+    "function": "get_users_in_workflow",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "users",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/notifications",
+    "method": "GET",
+    "file": "retention_management_routes.py",
+    "line": 221,
+    "function": "get_retention_notifications",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/config",
+    "method": "GET",
+    "file": "retention_management_routes.py",
+    "line": 241,
+    "function": "get_retention_config",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "config",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/config",
+    "method": "PUT",
+    "file": "retention_management_routes.py",
+    "line": 282,
+    "function": "update_retention_config",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "config",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{country_id}",
+    "method": "GET",
+    "file": "country_config_routes.py",
+    "line": 128,
+    "function": "get_country",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:country_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/init-default",
+    "method": "POST",
+    "file": "country_config_routes.py",
+    "line": 143,
+    "function": "init_default_countries",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{country_id}",
+    "method": "PATCH",
+    "file": "country_config_routes.py",
+    "line": 213,
+    "function": "update_country",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:country_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{country_id}/set-default",
+    "method": "PATCH",
+    "file": "country_config_routes.py",
+    "line": 248,
+    "function": "set_default_country",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:country_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{country_id}",
+    "method": "DELETE",
+    "file": "country_config_routes.py",
+    "line": 281,
+    "function": "delete_country",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:country_id",
+      "path:cities_count"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{country_id}/cities",
+    "method": "GET",
+    "file": "country_config_routes.py",
+    "line": 323,
+    "function": "get_cities",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:country_id",
+      "path:country_id",
+      "query:search"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{country_id}/cities",
+    "method": "POST",
+    "file": "country_config_routes.py",
+    "line": 343,
+    "function": "create_city",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:country_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/cities/{city_id}",
+    "method": "DELETE",
+    "file": "country_config_routes.py",
+    "line": 388,
+    "function": "delete_city",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:city_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/snapshot",
+    "method": "POST",
+    "file": "version_routes.py",
+    "line": 17,
+    "function": "create_snapshot",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "config.manage"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/list",
+    "method": "GET",
+    "file": "version_routes.py",
+    "line": 87,
+    "function": "list_versions",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{version_id}",
+    "method": "GET",
+    "file": "version_routes.py",
+    "line": 121,
+    "function": "get_version_details",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "config.manage"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:version_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/rollback",
+    "method": "POST",
+    "file": "version_routes.py",
+    "line": 140,
+    "function": "rollback_to_version",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "config.manage"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/compare/{version_id_from}/{version_id_to}",
+    "method": "GET",
+    "file": "version_routes.py",
+    "line": 277,
+    "function": "compare_versions",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:version_id_from",
+      "path:version_id_to"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/entraid/login",
+    "method": "POST",
+    "file": "awana_auth_routes.py",
+    "line": 411,
+    "function": "entraid_login",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": "openid profile email User.Read offline_access",
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/entraid/callback",
+    "method": "POST",
+    "file": "awana_auth_routes.py",
+    "line": 449,
+    "function": "entraid_callback",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/entraid/token",
+    "method": "POST",
+    "file": "awana_auth_routes.py",
+    "line": 586,
+    "function": "entraid_token_login",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/local/login",
+    "method": "POST",
+    "file": "awana_auth_routes.py",
+    "line": 793,
+    "function": "local_login",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/local/login/complete",
+    "method": "POST",
+    "file": "awana_auth_routes.py",
+    "line": 1141,
+    "function": "complete_login_after_mfa",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/local/register",
+    "method": "POST",
+    "file": "awana_auth_routes.py",
+    "line": 1247,
+    "function": "local_register",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/logout",
+    "method": "POST",
+    "file": "awana_auth_routes.py",
+    "line": 1469,
+    "function": "logout",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/promote-to-interimaire/{user_id}",
+    "method": "POST",
+    "file": "awana_auth_routes.py",
+    "line": 1507,
+    "function": "promote_candidat_to_interimaire",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "users.manage"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:user_id"
+    ],
+    "category": "users",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/refresh",
+    "method": "POST",
+    "file": "awana_auth_routes.py",
+    "line": 1619,
+    "function": "refresh_token",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/me",
+    "method": "GET",
+    "file": "awana_auth_routes.py",
+    "line": 1691,
+    "function": "get_current_user_info",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "admin.dashboard"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/admin/stats",
+    "method": "GET",
+    "file": "awana_auth_routes.py",
+    "line": 1702,
+    "function": "get_admin_stats",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "admin.dashboard"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "admin",
+    "is_critical": true,
+    "is_public": false
+  },
+  {
+    "path": "/{user_id}",
+    "method": "GET",
+    "file": "awana_auth_routes.py",
+    "line": 1822,
+    "function": "get_user",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "users.read"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": true,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:user_id",
+      "path:user_id"
+    ],
+    "category": "users",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{user_id}",
+    "method": "PUT",
+    "file": "awana_auth_routes.py",
+    "line": 1840,
+    "function": "update_user",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "users.edit"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": true,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:user_id"
+    ],
+    "category": "users",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{user_id}",
+    "method": "DELETE",
+    "file": "awana_auth_routes.py",
+    "line": 1911,
+    "function": "delete_user",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "users.delete"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:user_id"
+    ],
+    "category": "users",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/admin/users/{user_id}/mfa/reset",
+    "method": "POST",
+    "file": "awana_auth_routes.py",
+    "line": 1970,
+    "function": "reset_user_mfa",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "users.reset_mfa"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:user_id"
+    ],
+    "category": "users",
+    "is_critical": true,
+    "is_public": false
+  },
+  {
+    "path": "/{user_id}/roles",
+    "method": "POST",
+    "file": "awana_auth_routes.py",
+    "line": 2062,
+    "function": "assign_role_to_user",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "users.manage"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:user_id"
+    ],
+    "category": "users",
+    "is_critical": true,
+    "is_public": false
+  },
+  {
+    "path": "/{user_id}/roles/{role_name}",
+    "method": "DELETE",
+    "file": "awana_auth_routes.py",
+    "line": 2115,
+    "function": "revoke_role_from_user",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "users.manage"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:user_id",
+      "path:role_name"
+    ],
+    "category": "users",
+    "is_critical": true,
+    "is_public": false
+  },
+  {
+    "path": "/users",
+    "method": "GET",
+    "file": "awana_auth_routes.py",
+    "line": 2164,
+    "function": "list_users",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "users.read"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": true,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "query:search",
+      "query:status",
+      "query:role",
+      "query:sort_by",
+      "query:sort_order"
+    ],
+    "category": "users",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/users/{user_id}/status",
+    "method": "PATCH",
+    "file": "awana_auth_routes.py",
+    "line": 2327,
+    "function": "update_user_status",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "users.manage_status"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:user_id"
+    ],
+    "category": "users",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/users/{user_id}",
+    "method": "PATCH",
+    "file": "awana_auth_routes.py",
+    "line": 2399,
+    "function": "update_user",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "users.edit"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": true,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:user_id"
+    ],
+    "category": "users",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/forgot-password",
+    "method": "POST",
+    "file": "awana_auth_routes.py",
+    "line": 2529,
+    "function": "forgot_password",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/reset-password",
+    "method": "POST",
+    "file": "awana_auth_routes.py",
+    "line": 2599,
+    "function": "reset_password",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{user_id}/mark-as-viewed",
+    "method": "POST",
+    "file": "awana_auth_routes.py",
+    "line": 2715,
+    "function": "mark_user_as_viewed",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "users.read"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": true,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:user_id",
+      "path:user_id"
+    ],
+    "category": "users",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/",
+    "method": "POST",
+    "file": "invitation_routes.py",
+    "line": 99,
+    "function": "create_invitation",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "entreprises.invite_user"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": true,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/bulk",
+    "method": "POST",
+    "file": "invitation_routes.py",
+    "line": 182,
+    "function": "create_bulk_invitations",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "entreprises.invite_user"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": true,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:email"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{token}",
+    "method": "GET",
+    "file": "invitation_routes.py",
+    "line": 266,
+    "function": "get_invitation_by_token",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:token"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{token}/accept",
+    "method": "POST",
+    "file": "invitation_routes.py",
+    "line": 322,
+    "function": "accept_invitation",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:token"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/",
+    "method": "GET",
+    "file": "invitation_routes.py",
+    "line": 430,
+    "function": "list_invitations",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "entreprises.manage"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "query:entreprise_id",
+      "query:status"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/me",
+    "method": "GET",
+    "file": "entreprise_routes.py",
+    "line": 87,
+    "function": "get_my_entreprise",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{entreprise_id}",
+    "method": "GET",
+    "file": "entreprise_routes.py",
+    "line": 126,
+    "function": "get_entreprise",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "entreprises.read"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:entreprise_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/",
+    "method": "GET",
+    "file": "entreprise_routes.py",
+    "line": 189,
+    "function": "list_entreprises",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "entreprises.read"
+      ],
+      "scope": "admin",
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "query:status"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/",
+    "method": "POST",
+    "file": "entreprise_routes.py",
+    "line": 230,
+    "function": "create_entreprise",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "entreprises.create"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/me",
+    "method": "PATCH",
+    "file": "entreprise_routes.py",
+    "line": 268,
+    "function": "update_my_entreprise",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "entreprises.edit"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{entreprise_id}",
+    "method": "PATCH",
+    "file": "entreprise_routes.py",
+    "line": 342,
+    "function": "update_entreprise",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "entreprises.edit"
+      ],
+      "scope": "admin",
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:entreprise_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{entreprise_id}",
+    "method": "DELETE",
+    "file": "entreprise_routes.py",
+    "line": 412,
+    "function": "delete_entreprise",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "entreprises.delete"
+      ],
+      "scope": "admin",
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:entreprise_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/login",
+    "method": "POST",
+    "file": "google_auth_routes.py",
+    "line": 197,
+    "function": "google_login",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/callback",
+    "method": "POST",
+    "file": "google_auth_routes.py",
+    "line": 248,
+    "function": "google_callback",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/status",
+    "method": "GET",
+    "file": "google_auth_routes.py",
+    "line": 482,
+    "function": "google_oauth_status",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/complete-registration",
+    "method": "POST",
+    "file": "google_auth_routes.py",
+    "line": 503,
+    "function": "complete_google_registration",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:e"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/stats",
+    "method": "GET",
+    "file": "retention_policies_routes.py",
+    "line": 117,
+    "function": "get_retention_stats",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{policy_id}",
+    "method": "GET",
+    "file": "retention_policies_routes.py",
+    "line": 159,
+    "function": "get_retention_policy",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:policy_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{policy_id}",
+    "method": "PUT",
+    "file": "retention_policies_routes.py",
+    "line": 247,
+    "function": "update_retention_policy",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:policy_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{policy_id}",
+    "method": "DELETE",
+    "file": "retention_policies_routes.py",
+    "line": 327,
+    "function": "delete_retention_policy",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:policy_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/initialize-defaults",
+    "method": "POST",
+    "file": "retention_policies_routes.py",
+    "line": 375,
+    "function": "initialize_default_policies",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/upload",
+    "method": "POST",
+    "file": "document_routes.py",
+    "line": 40,
+    "function": "upload_document",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "query:application_id",
+      "query:mission_id",
+      "query:description"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{document_id}/download",
+    "method": "GET",
+    "file": "document_routes.py",
+    "line": 139,
+    "function": "download_document",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:document_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/application/{application_id}",
+    "method": "GET",
+    "file": "document_routes.py",
+    "line": 179,
+    "function": "get_application_documents",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:application_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{document_id}",
+    "method": "DELETE",
+    "file": "document_routes.py",
+    "line": 234,
+    "function": "delete_document",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:document_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/roles",
+    "method": "GET",
+    "file": "iam_role_assignment_routes.py",
+    "line": 61,
+    "function": "list_iam_roles",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "rbac.read_roles"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": true,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": true,
+    "is_public": false
+  },
+  {
+    "path": "/roles/{role_id}",
+    "method": "GET",
+    "file": "iam_role_assignment_routes.py",
+    "line": 92,
+    "function": "get_iam_role",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "rbac.read_roles"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": true,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:role_id",
+      "path:role_id",
+      "path:profile_id"
+    ],
+    "category": "other",
+    "is_critical": true,
+    "is_public": false
+  },
+  {
+    "path": "/profiles/{profile_id}/roles",
+    "method": "POST",
+    "file": "iam_role_assignment_routes.py",
+    "line": 119,
+    "function": "assign_roles_to_profile",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "rbac.manage_profile_roles"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": true,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:profile_id",
+      "path:profile_id",
+      "path:role_id"
+    ],
+    "category": "profiles",
+    "is_critical": true,
+    "is_public": false
+  },
+  {
+    "path": "/profiles/{profile_id}/roles/{role_id}",
+    "method": "DELETE",
+    "file": "iam_role_assignment_routes.py",
+    "line": 186,
+    "function": "remove_role_from_profile",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "rbac.manage_profile_roles"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": true,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:profile_id",
+      "path:role_id",
+      "path:profile_id",
+      "path:role_id"
+    ],
+    "category": "profiles",
+    "is_critical": true,
+    "is_public": false
+  },
+  {
+    "path": "/profiles/{profile_id}/roles",
+    "method": "GET",
+    "file": "iam_role_assignment_routes.py",
+    "line": 245,
+    "function": "get_profile_roles",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "rbac.read_profiles"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": true,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:profile_id",
+      "path:profile_id"
+    ],
+    "category": "profiles",
+    "is_critical": true,
+    "is_public": false
+  },
+  {
+    "path": "/groups/{group_id}/roles",
+    "method": "POST",
+    "file": "iam_role_assignment_routes.py",
+    "line": 288,
+    "function": "assign_roles_to_group",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "rbac.manage_group_roles"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": true,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:group_id",
+      "path:group_id",
+      "path:role_id"
+    ],
+    "category": "other",
+    "is_critical": true,
+    "is_public": false
+  },
+  {
+    "path": "/groups/{group_id}/roles/{role_id}",
+    "method": "DELETE",
+    "file": "iam_role_assignment_routes.py",
+    "line": 355,
+    "function": "remove_role_from_group",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "rbac.manage_group_roles"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": true,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:group_id",
+      "path:role_id",
+      "path:group_id",
+      "path:role_id"
+    ],
+    "category": "other",
+    "is_critical": true,
+    "is_public": false
+  },
+  {
+    "path": "/groups/{group_id}/roles",
+    "method": "GET",
+    "file": "iam_role_assignment_routes.py",
+    "line": 414,
+    "function": "get_group_roles",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "rbac.read_groups"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": true,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:group_id",
+      "path:group_id"
+    ],
+    "category": "other",
+    "is_critical": true,
+    "is_public": false
+  },
+  {
+    "path": "/value",
+    "method": "GET",
+    "file": "app_config_routes.py",
+    "line": 52,
+    "function": "get_config_value",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{key}",
+    "method": "PATCH",
+    "file": "app_config_routes.py",
+    "line": 106,
+    "function": "update_config",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:key"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{key}",
+    "method": "DELETE",
+    "file": "app_config_routes.py",
+    "line": 145,
+    "function": "delete_config",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:key"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/categories",
+    "method": "GET",
+    "file": "app_config_routes.py",
+    "line": 170,
+    "function": "get_categories",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/verify",
+    "method": "GET",
+    "file": "email_domain_routes.py",
+    "line": 27,
+    "function": "verify_email_domain",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "security.email_domains.read"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:domain_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{domain_id}",
+    "method": "GET",
+    "file": "email_domain_routes.py",
+    "line": 54,
+    "function": "get_email_domain",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "security.email_domains.read"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:domain_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{domain_id}",
+    "method": "PUT",
+    "file": "email_domain_routes.py",
+    "line": 105,
+    "function": "update_email_domain",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "security.email_domains.manage"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:domain_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{domain_id}",
+    "method": "DELETE",
+    "file": "email_domain_routes.py",
+    "line": 137,
+    "function": "delete_email_domain",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "security.email_domains.manage"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:domain_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/active/list",
+    "method": "GET",
+    "file": "email_domain_routes.py",
+    "line": 156,
+    "function": "get_active_domains_list",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/document-types",
+    "method": "GET",
+    "file": "system_references_routes.py",
+    "line": 15,
+    "function": "get_document_types",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/categories/{category}",
+    "method": "GET",
+    "file": "system_references_routes.py",
+    "line": 47,
+    "function": "get_references_by_category",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:category",
+      "path:category"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/categories",
+    "method": "GET",
+    "file": "system_references_routes.py",
+    "line": 76,
+    "function": "list_categories",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/manual-verify",
+    "method": "POST",
+    "file": "admin_email_verification_routes.py",
+    "line": 30,
+    "function": "manual_verify_user",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/verification-status/{user_id}",
+    "method": "GET",
+    "file": "admin_email_verification_routes.py",
+    "line": 106,
+    "function": "get_user_verification_status",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:user_id"
+    ],
+    "category": "users",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/references",
+    "method": "GET",
+    "file": "configuration_routes.py",
+    "line": 23,
+    "function": "get_references",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "query:category",
+      "query:parent_id",
+      "query:is_active"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/all",
+    "method": "GET",
+    "file": "configuration_routes.py",
+    "line": 66,
+    "function": "get_all_config",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/references",
+    "method": "POST",
+    "file": "configuration_routes.py",
+    "line": 152,
+    "function": "create_reference",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "references.manage"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/references/{ref_id}",
+    "method": "PATCH",
+    "file": "configuration_routes.py",
+    "line": 191,
+    "function": "update_reference",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "references.manage"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:ref_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/references/{ref_id}",
+    "method": "DELETE",
+    "file": "configuration_routes.py",
+    "line": 232,
+    "function": "delete_reference",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "references.manage"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:ref_id",
+      "path:users_count"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/settings",
+    "method": "GET",
+    "file": "configuration_routes.py",
+    "line": 274,
+    "function": "get_settings",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "config.manage"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "query:category",
+      "query:is_public"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/settings",
+    "method": "POST",
+    "file": "configuration_routes.py",
+    "line": 302,
+    "function": "create_setting",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "config.manage"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:key"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/settings/{key}",
+    "method": "PATCH",
+    "file": "configuration_routes.py",
+    "line": 327,
+    "function": "update_setting",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "config.manage"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:key",
+      "query:rule_type"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/rules",
+    "method": "GET",
+    "file": "configuration_routes.py",
+    "line": 354,
+    "function": "get_business_rules",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "rules.manage"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "query:rule_type",
+      "query:is_active"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/rules",
+    "method": "POST",
+    "file": "configuration_routes.py",
+    "line": 379,
+    "function": "create_business_rule",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "rules.manage"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/cache/clear",
+    "method": "POST",
+    "file": "configuration_routes.py",
+    "line": 399,
+    "function": "clear_cache",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "config.manage"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/request",
+    "method": "POST",
+    "file": "entreprise_grouping_routes.py",
+    "line": 37,
+    "function": "create_grouping_request",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "entreprises.group_request"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": true,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/my-requests",
+    "method": "GET",
+    "file": "entreprise_grouping_routes.py",
+    "line": 143,
+    "function": "get_my_grouping_requests",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "query:status_filter"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{request_id}",
+    "method": "GET",
+    "file": "entreprise_grouping_routes.py",
+    "line": 190,
+    "function": "get_grouping_request",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:request_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{request_id}/approve",
+    "method": "POST",
+    "file": "entreprise_grouping_routes.py",
+    "line": 229,
+    "function": "approve_grouping_request",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "entreprises.group_approve"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": true,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:request_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{request_id}/reject",
+    "method": "POST",
+    "file": "entreprise_grouping_routes.py",
+    "line": 335,
+    "function": "reject_grouping_request",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "entreprises.group_approve"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": true,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:request_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/history",
+    "method": "GET",
+    "file": "email_history_routes.py",
+    "line": 16,
+    "function": "get_email_history",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "emails.read_history"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": true,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "query:status_filter",
+      "query:sent_by"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/history/stats",
+    "method": "GET",
+    "file": "email_history_routes.py",
+    "line": 75,
+    "function": "get_email_stats",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "emails.read_history"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": true,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/history",
+    "method": "DELETE",
+    "file": "email_history_routes.py",
+    "line": 112,
+    "function": "clear_email_history",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "emails.read_history"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": true,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:older_than_days"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/check/{flag_key}",
+    "method": "GET",
+    "file": "feature_flag_routes.py",
+    "line": 24,
+    "function": "check_feature_flag",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:flag_key"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{flag_id}",
+    "method": "PATCH",
+    "file": "feature_flag_routes.py",
+    "line": 110,
+    "function": "update_feature_flag",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "flags.manage"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:flag_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{flag_id}",
+    "method": "DELETE",
+    "file": "feature_flag_routes.py",
+    "line": 142,
+    "function": "delete_feature_flag",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "flags.manage"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:flag_id",
+      "path:flag_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{flag_id}/rollout",
+    "method": "POST",
+    "file": "feature_flag_routes.py",
+    "line": 171,
+    "function": "apply_rollout",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "flags.manage"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:flag_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{flag_id}/history",
+    "method": "GET",
+    "file": "feature_flag_routes.py",
+    "line": 204,
+    "function": "get_flag_history",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:flag_id",
+      "query:target_type"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/audit/all",
+    "method": "GET",
+    "file": "feature_flag_routes.py",
+    "line": 229,
+    "function": "get_all_audit_events",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": "admin"
+    },
+    "params": [
+      "query:target_type"
+    ],
+    "category": "audit",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/export",
+    "method": "GET",
+    "file": "feature_flag_routes.py",
+    "line": 261,
+    "function": "export_feature_flags",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "flags.manage"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/import",
+    "method": "POST",
+    "file": "feature_flag_routes.py",
+    "line": 308,
+    "function": "import_feature_flags",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "flags.manage"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/config",
+    "method": "GET",
+    "file": "email_routes.py",
+    "line": 24,
+    "function": "get_email_config",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "emails.configure"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": true,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "config",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/test",
+    "method": "POST",
+    "file": "email_routes.py",
+    "line": 48,
+    "function": "send_test_email",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "emails.test"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/test-rollback-notification",
+    "method": "POST",
+    "file": "email_routes.py",
+    "line": 122,
+    "function": "send_test_rollback_notification",
+    "iam": {
+      "type": "single_permission",
+      "permissions": [
+        "emails.test"
+      ],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/status",
+    "method": "GET",
+    "file": "email_routes.py",
+    "line": 164,
+    "function": "get_email_status",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": "admin"
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/",
+    "method": "GET",
+    "file": "notification_routes.py",
+    "line": 28,
+    "function": "get_notifications",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:notification_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{notification_id}/read",
+    "method": "POST",
+    "file": "notification_routes.py",
+    "line": 52,
+    "function": "mark_notification_as_read",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:notification_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/mark-all-read",
+    "method": "POST",
+    "file": "notification_routes.py",
+    "line": 73,
+    "function": "mark_all_notifications_as_read",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:count"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/user/{user_id}",
+    "method": "GET",
+    "file": "temporary_permissions_routes.py",
+    "line": 91,
+    "function": "get_user_temporary_permissions",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:user_id",
+      "path:user_id"
+    ],
+    "category": "users",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/active/{user_id}",
+    "method": "GET",
+    "file": "temporary_permissions_routes.py",
+    "line": 120,
+    "function": "get_active_temporary_permissions",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:user_id",
+      "path:temp_perm_id"
+    ],
+    "category": "users",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{temp_perm_id}/extend",
+    "method": "POST",
+    "file": "temporary_permissions_routes.py",
+    "line": 140,
+    "function": "extend_temporary_permission",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": "admin"
+    },
+    "params": [
+      "path:temp_perm_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{temp_perm_id}/revoke",
+    "method": "POST",
+    "file": "temporary_permissions_routes.py",
+    "line": 177,
+    "function": "revoke_temporary_permission",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": "admin"
+    },
+    "params": [
+      "path:temp_perm_id"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/expiring-soon",
+    "method": "GET",
+    "file": "temporary_permissions_routes.py",
+    "line": 214,
+    "function": "get_expiring_permissions",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": "admin"
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/statistics",
+    "method": "GET",
+    "file": "temporary_permissions_routes.py",
+    "line": 235,
+    "function": "get_temp_permissions_statistics",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": "admin"
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/cleanup",
+    "method": "POST",
+    "file": "temporary_permissions_routes.py",
+    "line": 255,
+    "function": "cleanup_expired_permissions",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": "admin"
+    },
+    "params": [
+      "path:count"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{user_id}/archive",
+    "method": "PATCH",
+    "file": "user_archive_routes.py",
+    "line": 46,
+    "function": "archive_user",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:user_id"
+    ],
+    "category": "users",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{user_id}/restore",
+    "method": "PATCH",
+    "file": "user_archive_routes.py",
+    "line": 129,
+    "function": "restore_user",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:user_id"
+    ],
+    "category": "users",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/purge/expired",
+    "method": "DELETE",
+    "file": "user_archive_routes.py",
+    "line": 202,
+    "function": "purge_expired_users",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/config/retention",
+    "method": "GET",
+    "file": "user_archive_routes.py",
+    "line": 267,
+    "function": "get_retention_config",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "config",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/config/retention",
+    "method": "PUT",
+    "file": "user_archive_routes.py",
+    "line": 298,
+    "function": "update_retention_config",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "config",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/status",
+    "method": "GET",
+    "file": "mfa_routes.py",
+    "line": 86,
+    "function": "get_mfa_status",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/setup/totp",
+    "method": "POST",
+    "file": "mfa_routes.py",
+    "line": 104,
+    "function": "setup_totp",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/setup/totp/verify",
+    "method": "POST",
+    "file": "mfa_routes.py",
+    "line": 157,
+    "function": "verify_totp_setup",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/setup/email",
+    "method": "POST",
+    "file": "mfa_routes.py",
+    "line": 244,
+    "function": "setup_email_otp",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:otp"
+    ],
+    "category": "emails",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/setup/sms",
+    "method": "POST",
+    "file": "mfa_routes.py",
+    "line": 289,
+    "function": "setup_sms_otp",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/setup/sms/verify",
+    "method": "POST",
+    "file": "mfa_routes.py",
+    "line": 341,
+    "function": "verify_sms_setup",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/backup-codes/regenerate",
+    "method": "POST",
+    "file": "mfa_routes.py",
+    "line": 401,
+    "function": "regenerate_backup_codes",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/method/{method}",
+    "method": "DELETE",
+    "file": "mfa_routes.py",
+    "line": 445,
+    "function": "disable_mfa_method",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:method",
+      "path:method",
+      "path:method"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/verify",
+    "method": "POST",
+    "file": "mfa_routes.py",
+    "line": 475,
+    "function": "verify_mfa",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/me",
+    "method": "GET",
+    "file": "validation_routes.py",
+    "line": 48,
+    "function": "get_my_validation",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "query:status_filter",
+      "query:type_filter"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/admin",
+    "method": "GET",
+    "file": "validation_routes.py",
+    "line": 66,
+    "function": "list_validations",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "query:status_filter",
+      "query:type_filter"
+    ],
+    "category": "admin",
+    "is_critical": true,
+    "is_public": false
+  },
+  {
+    "path": "/admin/{validation_id}/approve",
+    "method": "POST",
+    "file": "validation_routes.py",
+    "line": 97,
+    "function": "approve_validation",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:validation_id"
+    ],
+    "category": "admin",
+    "is_critical": true,
+    "is_public": false
+  },
+  {
+    "path": "/admin/{validation_id}/reject",
+    "method": "POST",
+    "file": "validation_routes.py",
+    "line": 186,
+    "function": "reject_validation",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:validation_id"
+    ],
+    "category": "admin",
+    "is_critical": true,
+    "is_public": false
+  },
+  {
+    "path": "/me",
+    "method": "GET",
+    "file": "profile_routes.py",
+    "line": 46,
+    "function": "get_my_profile",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/me",
+    "method": "POST",
+    "file": "profile_routes.py",
+    "line": 64,
+    "function": "create_my_profile",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/me",
+    "method": "PUT",
+    "file": "profile_routes.py",
+    "line": 115,
+    "function": "update_my_profile",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/me/avatar",
+    "method": "POST",
+    "file": "profile_routes.py",
+    "line": 209,
+    "function": "upload_avatar",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/{user_id}",
+    "method": "GET",
+    "file": "profile_routes.py",
+    "line": 275,
+    "function": "get_user_profile",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": "admin"
+    },
+    "params": [
+      "path:user_id"
+    ],
+    "category": "users",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/dashboard/kpis",
+    "method": "GET",
+    "file": "admin_routes.py",
+    "line": 16,
+    "function": "get_dashboard_kpis",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/users/{user_id}/audit",
+    "method": "GET",
+    "file": "admin_routes.py",
+    "line": 82,
+    "function": "get_user_audit_trail",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:user_id"
+    ],
+    "category": "users",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/mark-read",
+    "method": "POST",
+    "file": "notification_routes.py",
+    "line": 65,
+    "function": "mark_notifications_read",
+    "iam": {
+      "type": "auth_only",
+      "permissions": [],
+      "scope": null,
+      "auth_required": true,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [
+      "path:count"
+    ],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/health",
+    "method": "GET",
+    "file": "server.py",
+    "line": 119,
+    "function": "health_check",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": true
+  },
+  {
+    "path": "/api/health",
+    "method": "GET",
+    "file": "server.py",
+    "line": 129,
+    "function": "api_health",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  },
+  {
+    "path": "/",
+    "method": "GET",
+    "file": "server.py",
+    "line": 139,
+    "function": "root",
+    "iam": {
+      "type": "none",
+      "permissions": [],
+      "scope": null,
+      "auth_required": false,
+      "hardcoded": false,
+      "policy": null,
+      "role_check": null
+    },
+    "params": [],
+    "category": "other",
+    "is_critical": false,
+    "is_public": false
+  }
+]
