@@ -42,8 +42,15 @@ class ConfigManager:
         """
         self.env = env or os.getenv("APP_ENV", "local")
         # Détecter si on est dans Docker (WORKDIR=/app) ou en local
-        default_config_dir = "/app/config" if os.path.exists("/app/config") else "/app/auth-microservice/config"
-        self.config_dir = Path(config_dir or default_config_dir)
+        # Chercher d'abord dans auth-microservice/config, puis /app/config
+        if config_dir:
+            self.config_dir = Path(config_dir)
+        elif os.path.exists("/app/auth-microservice/config/base.yaml"):
+            self.config_dir = Path("/app/auth-microservice/config")
+        elif os.path.exists("/app/config/base.yaml"):
+            self.config_dir = Path("/app/config")
+        else:
+            self.config_dir = Path("/app/auth-microservice/config")
         self._config: Dict[str, Any] = {}
         self._secrets: Dict[str, Any] = {}
         self._required_vars: List[str] = []
