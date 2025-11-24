@@ -800,13 +800,91 @@ async def get_user_permissions(
     current_user: User = Depends(get_current_user),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
-    """Get all permissions for a user"""
+    """
+    Get all permissions for a user with support for config-driven IAM
+    Supports both old format (permission_ids) and new format (permissions codes)
+    """
     # Users can only see their own permissions unless admin
     if user_id != current_user.id and "admin" not in current_user.roles:
         raise HTTPException(status_code=403, detail="Not authorized")
     
-    iam_service = IAMService(db)
-    return await iam_service.get_user_permissions(user_id)
+    # Get user
+    user = await db.users.find_one({"id": user_id}, {"_id": 0})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Collect all permissions from user's profiles
+    all_permission_codes = set()
+    profile_permissions = []
+    
+    profile_ids = user.get("profile_ids", []) or user.get("profiles", [])
+    
+    if profile_ids:
+        for profile_id in profile_ids:
+            # Find profile by ID or code
+            profile_doc = await db.profiles.find_one(
+                {"$or": [{"id": profile_id}, {"code": profile_id}]},
+                {"_id": 0}
+            )
+            
+            if profile_doc:
+                profile_perms = set()
+                
+                # Add direct permissions
+                direct_perms = profile_doc.get("permissions", [])
+                if direct_perms == "*":
+                    # Wildcard - get all permissions
+                    all_perms = await db.permissions.find({}, {"_id": 0, "code": 1}).to_list(1000)
+                    profile_perms.update([p["code"] for p in all_perms])
+                elif isinstance(direct_perms, list):
+                    profile_perms.update(direct_perms)
+                
+                # Add permissions from bundles
+                bundles = profile_doc.get("bundles", [])
+                if bundles:
+                    # Check permission_bundles collection (config-driven)
+                    async for bundle in db.permission_bundles.find(
+                        {"code": {"$in": bundles}},
+                        {"_id": 0, "permissions": 1}
+                    ):
+                        bundle_perms = bundle.get("permissions", [])
+                        profile_perms.update(bundle_perms)
+                    
+                    # Check capability_bundles collection (legacy)
+                    async for bundle in db.capability_bundles.find(
+                        {"$or": [{"id": {"$in": bundles}}, {"code": {"$in": bundles}}]},
+                        {"_id": 0, "permissions": 1, "permission_ids": 1}
+                    ):
+                        if "permissions" in bundle:
+                            profile_perms.update(bundle.get("permissions", []))
+                        elif "permission_ids" in bundle:
+                            # Resolve IDs to codes
+                            perm_ids = bundle.get("permission_ids", [])
+                            async for perm in db.permissions.find(
+                                {"id": {"$in": perm_ids}},
+                                {"_id": 0, "code": 1}
+                            ):
+                                profile_perms.add(perm["code"])
+                
+                all_permission_codes.update(profile_perms)
+                profile_permissions.extend(list(profile_perms))
+    
+    # Get full permission details
+    all_permissions = []
+    if all_permission_codes:
+        async for perm in db.permissions.find(
+            {"code": {"$in": list(all_permission_codes)}},
+            {"_id": 0}
+        ):
+            all_permissions.append(perm)
+    
+    return {
+        "user_id": user_id,
+        "total_permissions": len(all_permission_codes),
+        "direct_permissions": [],  # Not tracking direct user permissions for now
+        "profile_permissions": profile_permissions,
+        "all_permissions": all_permissions
+    }
 
 
 @router.post("/check-permission", response_model=PermissionCheckResponse)
