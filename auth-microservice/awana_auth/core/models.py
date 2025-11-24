@@ -61,6 +61,7 @@ class User(BaseModel):
     # IAM - Profiles and Groups
     profile_ids: List[str] = Field(default_factory=list)
     group_ids: List[str] = Field(default_factory=list)
+    permissions: List[str] = Field(default_factory=list)  # Effective permission codes from profiles/groups
     
     # Company/Entreprise association
     company_id: Optional[str] = None
