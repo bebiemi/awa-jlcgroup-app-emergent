@@ -217,9 +217,12 @@ async def get_profile_effective_permissions(
     bundle_refs = profile.get("capability_bundle_ids", []) or profile.get("bundles", [])
     
     if bundle_refs:
-        bundles_collection = db.capability_bundles
-        # Chercher par ID ou par code
-        async for bundle in bundles_collection.find(
+        # Chercher dans les deux collections de bundles
+        bundles_collection_new = db.capability_bundles
+        bundles_collection_old = db.permission_bundles
+        
+        # Chercher dans capability_bundles (nouveau format)
+        async for bundle in bundles_collection_new.find(
             {"$or": [{"id": {"$in": bundle_refs}}, {"code": {"$in": bundle_refs}}]},
             {"_id": 0, "permission_ids": 1, "permissions": 1}
         ):
@@ -231,6 +234,14 @@ async def get_profile_effective_permissions(
                 ):
                     bundle_permission_codes.add(perm["code"])
             # Ancien format
+            if "permissions" in bundle:
+                bundle_permission_codes.update(bundle["permissions"])
+        
+        # Chercher dans permission_bundles (format config-driven)
+        async for bundle in bundles_collection_old.find(
+            {"code": {"$in": bundle_refs}},
+            {"_id": 0, "permissions": 1}
+        ):
             if "permissions" in bundle:
                 bundle_permission_codes.update(bundle["permissions"])
     
