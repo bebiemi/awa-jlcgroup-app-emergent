@@ -41,7 +41,7 @@ async def list_permissions(
     
     cursor = permissions_collection.find({}, {"_id": 0})
     async for perm in cursor:
-        permissions.append(Permission(**perm))
+        permissions.append(Permission.model_validate(perm))
     
     return permissions
 
