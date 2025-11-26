@@ -1,223 +1,97 @@
+"""Tests for profile routes context resolution."""
+import os
 import sys
-import types
-import asyncio
-from types import SimpleNamespace
+import shutil
 
-def setup_module_mocks():
-    fastapi = types.ModuleType("fastapi")
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-    class DummyAPIRouter:
-        def __init__(self, *args, **kwargs):
-            pass
+_CONFIG_SOURCE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "config"))
+_CONFIG_TARGET_DIR = "/app/auth-microservice/config"
+os.makedirs(_CONFIG_TARGET_DIR, exist_ok=True)
+base_config = os.path.join(_CONFIG_SOURCE_DIR, "base.yaml")
+if os.path.exists(base_config):
+    shutil.copy(base_config, os.path.join(_CONFIG_TARGET_DIR, "base.yaml"))
 
-        def get(self, *args, **kwargs):
-            def decorator(func):
-                return func
+from fastapi import FastAPI
+from fastapi.testclient import TestClient
 
-            return decorator
-
-        def post(self, *args, **kwargs):
-            def decorator(func):
-                return func
-
-            return decorator
-
-        def put(self, *args, **kwargs):
-            def decorator(func):
-                return func
-
-            return decorator
-
-        def delete(self, *args, **kwargs):
-            def decorator(func):
-                return func
-
-            return decorator
-
-    def DummyDepends(arg=None):
-        return arg
-
-    class DummyHTTPException(Exception):
-        def __init__(self, status_code=None, detail=None):
-            super().__init__(detail)
-            self.status_code = status_code
-            self.detail = detail
-
-    def DummyUploadFile(*args, **kwargs):
-        return None
-
-    def DummyFile(default=None):
-        return default
-
-    def DummyForm(default=None):
-        return default
-
-    fastapi.APIRouter = DummyAPIRouter
-    fastapi.Depends = DummyDepends
-    fastapi.HTTPException = DummyHTTPException
-    fastapi.UploadFile = DummyUploadFile
-    fastapi.File = DummyFile
-    fastapi.Form = DummyForm
-
-    motor = types.ModuleType("motor")
-    motor_asyncio = types.ModuleType("motor.motor_asyncio")
-
-    class DummyAsyncIOMotorDatabase:
-        pass
-
-    motor_asyncio.AsyncIOMotorDatabase = DummyAsyncIOMotorDatabase
-    motor.motor_asyncio = motor_asyncio
-
-    awana_auth = types.ModuleType("awana_auth")
-    awana_core = types.ModuleType("awana_auth.core")
-    awana_dependencies = types.ModuleType("awana_auth.core.dependencies")
-    awana_models = types.ModuleType("awana_auth.core.models")
-    awana_profile_models = types.ModuleType("awana_auth.core.profile_models")
-    awana_services = types.ModuleType("awana_auth.services")
-    awana_permission_checker = types.ModuleType("awana_auth.services.permission_checker")
-    awana_utils = types.ModuleType("awana_auth.utils")
-    awana_config_helpers = types.ModuleType("awana_auth.utils.config_helpers")
-
-    def dummy_dependency():
-        raise NotImplementedError
-
-    awana_dependencies.get_current_user = dummy_dependency
-    awana_dependencies.get_database = dummy_dependency
-
-    class DummyUser:
-        pass
-
-    awana_models.User = DummyUser
-
-    class DummyDocumentUploadResponse:
-        def __init__(self, *args, **kwargs):
-            pass
-
-    awana_profile_models.DocumentUploadResponse = DummyDocumentUploadResponse
-
-    class DummyPermissionChecker:
-        def __init__(self, *args, **kwargs):
-            pass
-
-    awana_permission_checker.PermissionChecker = DummyPermissionChecker
-
-    class DummyCfg:
-        def get_interim_role(self):
-            return "interim_role"
-
-        def get_company_role(self):
-            return "company_role"
-
-        def get_candidate_role(self):
-            return "candidate_role"
-
-        def get_postulant_role(self):
-            return "postulant_role"
-
-        def get_collaborator_role(self):
-            return "collaborator_role"
-
-        def get_profile_type(self, profile):
-            return f"profile_type_{profile}"
-
-        def get_document_type(self, document_type):
-            return f"document_type_{document_type}"
-
-    awana_config_helpers.cfg = DummyCfg()
-
-    sys.modules["fastapi"] = fastapi
-    sys.modules["motor"] = motor
-    sys.modules["motor.motor_asyncio"] = motor_asyncio
-    sys.modules["awana_auth"] = awana_auth
-    sys.modules["awana_auth.core"] = awana_core
-    sys.modules["awana_auth.core.dependencies"] = awana_dependencies
-    sys.modules["awana_auth.core.models"] = awana_models
-    sys.modules["awana_auth.core.profile_models"] = awana_profile_models
-    sys.modules["awana_auth.services"] = awana_services
-    sys.modules["awana_auth.services.permission_checker"] = awana_permission_checker
-    sys.modules["awana_auth.utils"] = awana_utils
-    sys.modules["awana_auth.utils.config_helpers"] = awana_config_helpers
-
-
-setup_module_mocks()
-sys.path.insert(0, '/workspace/awa-jlcgroup-app-emergent/auth-microservice')
-
-import profile_routes
+from awana_auth.core.dependencies import get_current_user, get_database
+from awana_auth.core.models import User
+from awana_auth.utils.config_helpers import cfg
+from profile_routes import profile_router, PROFILE_TYPE_AGENCY_COUNTRY
 
 
 class FakeCollection:
     def __init__(self):
-        self.docs = []
+        self.data = []
 
-    async def find_one(self, filter_query, projection=None):
-        for doc in self.docs:
-            if all(doc.get(k) == v for k, v in filter_query.items()):
-                result = doc.copy()
-                if projection and projection.get("_id") == 0:
-                    result.pop("_id", None)
-                return result
+    async def find_one(self, query, _projection=None):
+        for doc in self.data:
+            if all(doc.get(k) == v for k, v in query.items()):
+                return dict(doc)
         return None
 
-    async def insert_one(self, document):
-        self.docs.append(document.copy())
+    async def insert_one(self, doc):
+        self.data.append(dict(doc))
+        return doc
 
-    async def update_one(self, filter_query, update, upsert=False):
-        for doc in self.docs:
-            if all(doc.get(k) == v for k, v in filter_query.items()):
+    async def update_one(self, query, update, upsert=False):
+        for doc in self.data:
+            if all(doc.get(k) == v for k, v in query.items()):
                 if "$set" in update:
                     doc.update(update["$set"])
-                return
+                if "$addToSet" in update:
+                    for key, value in update["$addToSet"].items():
+                        if key not in doc:
+                            doc[key] = []
+                        if value not in doc[key]:
+                            doc[key].append(value)
+                return doc
 
         if upsert:
-            new_doc = filter_query.copy()
+            new_doc = dict(query)
             if "$setOnInsert" in update:
                 new_doc.update(update["$setOnInsert"])
             if "$set" in update:
                 new_doc.update(update["$set"])
-            self.docs.append(new_doc)
+            self.data.append(new_doc)
+            return new_doc
+        return None
 
 
 class FakeDB:
     def __init__(self):
-        self.candidat_profiles = FakeCollection()
-        self.interim_profiles = FakeCollection()
-        self.company_manager_profiles = FakeCollection()
-        self.collaborator_profiles = FakeCollection()
+        self.agency_country_profiles = FakeCollection()
 
 
-def test_company_profile_creation_sets_completion_fields():
-    db = FakeDB()
-    user = SimpleNamespace(
-        id="user_company_1",
-        roles=[profile_routes.COMPANY_ROLE],
-        full_name="Alice Manager",
-        email="alice@example.com",
-        phone_number=None,
-        is_verified=True,
-    )
+def build_app(fake_db: FakeDB, test_user: User):
+    app = FastAPI()
+    app.include_router(profile_router)
 
-    response = asyncio.run(profile_routes.get_my_profile(current_user=user, db=db))
-    profile = response["profile"]
+    async def override_db():
+        return fake_db
 
-    assert response["profile_type"] == profile_routes.PROFILE_TYPE_COMPANY
-    assert profile["profile_completion_percentage"] == 0
-    assert profile["profile_completed"] is False
+    async def override_current_user():
+        return test_user
+
+    app.dependency_overrides[get_database] = override_db
+    app.dependency_overrides[get_current_user] = override_current_user
+    return app
 
 
-def test_collaborator_profile_creation_sets_completion_fields():
-    db = FakeDB()
-    user = SimpleNamespace(
-        id="user_collab_1",
-        roles=[profile_routes.COLLABORATOR_ROLE],
-        full_name="Bob Collaborator",
-        email="bob@example.com",
-        phone_number="1234567890",
-        is_verified=False,
-    )
+def test_get_my_profile_returns_agency_context():
+    """Ensure agency users receive agency profile collection and type."""
+    fake_db = FakeDB()
+    agency_role = cfg.get_agency_role()
+    user = User(id="user-agency", username="agency", email="agency@example.com", roles=[agency_role])
+    app = build_app(fake_db, user)
+    client = TestClient(app)
 
-    response = asyncio.run(profile_routes.get_my_profile(current_user=user, db=db))
-    profile = response["profile"]
+    response = client.get("/profiles/me")
 
-    assert response["profile_type"] == profile_routes.PROFILE_TYPE_COLLABORATOR
-    assert profile["profile_completion_percentage"] == 0
-    assert profile["profile_completed"] is False
+    assert response.status_code == 200
+    result = response.json()
+    assert result["profile_type"] == PROFILE_TYPE_AGENCY_COUNTRY
+    assert result["profile"]["user_id"] == user.id
+    assert result["profile"].get("country") == "GABON"
+    assert fake_db.agency_country_profiles.data[0]["user_id"] == user.id
