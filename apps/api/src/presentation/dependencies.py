@@ -3,6 +3,7 @@ from fastapi import Depends, HTTPException, status, Request
 from motor.motor_asyncio import AsyncIOMotorDatabase
 import httpx
 import logging
+import os
 
 
 AUTH_SERVICE_URL = os.getenv("AUTH_SERVICE_URL", "http://localhost:8000").rstrip("/")
@@ -37,12 +38,22 @@ async def get_current_user(request: Request, db: AsyncIOMotorDatabase = Depends(
             )
 
             if response.status_code != 200:
+                response_body = response.text
+                if len(response_body) > 500:
+                    response_body = response_body[:500] + "...(truncated)"
                 logger.warning(
-                    "Auth service responded with status %s for /me", response.status_code
+                    "Auth service responded with status %s for /me: %s",
+                    response.status_code,
+                    response_body,
                 )
+                if 500 <= response.status_code < 600:
+                    raise HTTPException(
+                        status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                        detail="Authentication service unavailable (upstream error)",
+                    )
                 raise HTTPException(
                     status_code=status.HTTP_401_UNAUTHORIZED,
-                    detail="Invalid or expired token"
+                    detail="Invalid or expired token",
                 )
 
             user_data = response.json()
@@ -52,7 +63,7 @@ async def get_current_user(request: Request, db: AsyncIOMotorDatabase = Depends(
         logger.error(f"Failed to verify token with auth service: {e}")
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail="Authentication service unavailable"
+            detail="Authentication service unavailable",
         )
 
 
