@@ -1,13 +1,17 @@
 import React from 'react';
 import { useGetTemplatesQuery, useInitDefaultTemplatesMutation } from '../api/emailTemplatesApi';
 import { usePermissions } from '@/hooks/usePermission';
+import { IAMPermissions } from '@/constants/iamConstants';
 
 export const EmailTemplatesPage: React.FC = () => {
   const { data, isLoading } = useGetTemplatesQuery({});
   const [initDefaults, { isLoading: isInitializing }] = useInitDefaultTemplatesMutation();
-  const { permissions } = usePermissions(['emails.manage_templates', 'emails.read_config'])
-  const canRead = permissions['emails.read_config'] || permissions['emails.manage_templates']
-  const canManage = permissions['emails.manage_templates']
+  const { permissions } = usePermissions([
+    IAMPermissions.EMAILS_MANAGE_TEMPLATES,
+    IAMPermissions.EMAILS_READ_CONFIG,
+  ])
+  const canRead = permissions[IAMPermissions.EMAILS_READ_CONFIG] || permissions[IAMPermissions.EMAILS_MANAGE_TEMPLATES]
+  const canManage = permissions[IAMPermissions.EMAILS_MANAGE_TEMPLATES]
 
   const handleInitDefaults = async () => {
     if (!canManage) return

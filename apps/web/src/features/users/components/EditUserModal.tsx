@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 import { XMarkIcon, ShieldCheckIcon } from '@heroicons/react/24/outline'
 import { useUpdateUserMutation, usersApi, type User } from '@/features/users/api/usersApi'
-import { 
-  useListProfilesQuery, 
+import {
+  useListProfilesQuery,
   useListGroupsQuery,
   useAssignProfilesToUserMutation,
   useAssignGroupsToUserMutation,
@@ -11,6 +11,7 @@ import {
 import { useAppDispatch } from '@/store/hooks'
 import { toast } from 'react-hot-toast'
 import { usePermissions } from '@/hooks/usePermission'
+import { IAMPermissions, getRoleColor, getRoleLabel } from '@/constants/iamConstants'
 
 interface EditUserModalProps {
   user: User
@@ -23,7 +24,7 @@ export default function EditUserModal({ user, isOpen, onClose }: EditUserModalPr
   const [updateUser, { isLoading: isUpdating }] = useUpdateUserMutation()
   const [assignProfiles, { isLoading: isAssigningProfiles }] = useAssignProfilesToUserMutation()
   const [assignGroups, { isLoading: isAssigningGroups }] = useAssignGroupsToUserMutation()
-  const { permissions } = usePermissions(['users.edit', 'users.manage'])
+  const { permissions } = usePermissions([IAMPermissions.USERS_EDIT, IAMPermissions.USERS_MANAGE])
   
   // Fetch available profiles and groups
   const { data: profiles = [] } = useListProfilesQuery()
@@ -303,9 +304,9 @@ export default function EditUserModal({ user, isOpen, onClose }: EditUserModalPr
                           {userPermissions.computed_roles.map((role: string) => (
                             <span
                               key={role}
-                              className="inline-flex items-center px-2 py-1 bg-purple-100 text-purple-800 text-xs font-medium rounded"
+                              className={`inline-flex items-center px-2 py-1 text-xs font-medium rounded ${getRoleColor(role)}`}
                             >
-                              {role}
+                              {getRoleLabel(role)}
                             </span>
                           ))}
                         </div>

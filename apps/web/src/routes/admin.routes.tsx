@@ -23,6 +23,7 @@ import { BesoinsPage } from '@/features/besoins'
 import { MissionsPage } from '@/features/missions'
 import CreateMissionPage from '@/features/missions/pages/CreateMissionPage'
 import { AppRoute } from './types'
+import { IAMPermissions } from '@/constants/iamConstants'
 
 export const adminRoutes: AppRoute[] = [
   {
@@ -117,18 +118,18 @@ export const adminRoutes: AppRoute[] = [
   {
     path: '/admin/email-settings',
     element: <EmailSettingsPage />,
-    requiredPermissions: ['emails.configure', 'admin.access'],
+    requiredPermissions: [IAMPermissions.EMAILS_CONFIGURE, 'admin.access'],
     requireAllPermissions: true,
   },
   {
     path: '/admin/email-history',
     element: <EmailHistoryPage />,
-    requiredPermissions: ['emails.read_history'],
+    requiredPermissions: [IAMPermissions.EMAILS_READ_HISTORY],
   },
   {
     path: '/admin/email-templates',
     element: <EmailTemplatesPage />,
-    requiredPermissions: ['emails.manage_templates'],
+    requiredPermissions: [IAMPermissions.EMAILS_MANAGE_TEMPLATES],
   },
   {
     path: '/admin/retention-config',

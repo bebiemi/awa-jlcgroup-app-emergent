@@ -12,6 +12,8 @@ import sys
 # Ajouter le chemin parent pour les imports
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from awana_auth.utils.config_helpers import ConfigHelper
+
 
 async def seed_mission_references():
     """Créer les référentiels pour le workflow missions"""
@@ -24,12 +26,37 @@ async def seed_mission_references():
     
     print("🚀 Démarrage de la migration des référentiels missions...")
     
+    # Rôles et statuts issus de la configuration
+    company_role = ConfigHelper.get_company_role() or "company"
+    agency_role = ConfigHelper.get_agency_role() or "agency"
+    mission_draft = ConfigHelper.get_mission_status("draft") or "draft"
+    mission_published = ConfigHelper.get_mission_status("published") or "published"
+    mission_in_progress = ConfigHelper.get_mission_status("in_progress") or "in_progress"
+    mission_completed = ConfigHelper.get_mission_status("completed") or "completed"
+    mission_cancelled = ConfigHelper.get_mission_status("cancelled") or "cancelled"
+
+    application_pending = ConfigHelper.get_application_status("pending") or "pending"
+    application_interview_scheduled = ConfigHelper.get_application_status("interview_scheduled") or "interview_scheduled"
+    application_interview_completed = ConfigHelper.get_application_status("interview_completed") or "interview_completed"
+    application_selected = ConfigHelper.get_application_status("selected") or "selected"
+    application_medical_pending = ConfigHelper.get_application_status("medical_pending") or "medical_pending"
+    application_medical_approved = ConfigHelper.get_application_status("medical_approved") or "medical_approved"
+    application_medical_rejected = ConfigHelper.get_application_status("medical_rejected") or "medical_rejected"
+    application_contract_pending = ConfigHelper.get_application_status("contract_pending") or "contract_pending"
+    application_contract_signed = ConfigHelper.get_application_status("contract_signed") or "contract_signed"
+    application_rejected = ConfigHelper.get_application_status("rejected") or "rejected"
+
+    contract_cdi = ConfigHelper.get_contract_type("cdi") or "cdi"
+    contract_cdd = ConfigHelper.get_contract_type("cdd") or "cdd"
+    contract_interim = ConfigHelper.get_contract_type("interim") or "interim"
+    contract_stage = ConfigHelper.get_contract_type("stage") or "stage"
+
     # ==================== STATUTS DE MISSION ====================
     mission_statuses = [
         {
             "id": str(uuid.uuid4()),
             "category": "mission_statuses",
-            "code": "draft",
+            "code": mission_draft,
             "label_fr": "Brouillon",
             "label_en": "Draft",
             "description": "Mission en cours de création, non publiée",
@@ -48,7 +75,7 @@ async def seed_mission_references():
         {
             "id": str(uuid.uuid4()),
             "category": "mission_statuses",
-            "code": "published",
+            "code": mission_published,
             "label_fr": "Publiée",
             "label_en": "Published",
             "description": "Mission visible et ouverte aux candidatures",
@@ -67,7 +94,7 @@ async def seed_mission_references():
         {
             "id": str(uuid.uuid4()),
             "category": "mission_statuses",
-            "code": "in_progress",
+            "code": mission_in_progress,
             "label_fr": "En cours",
             "label_en": "In Progress",
             "description": "Mission démarrée avec un candidat",
@@ -86,7 +113,7 @@ async def seed_mission_references():
         {
             "id": str(uuid.uuid4()),
             "category": "mission_statuses",
-            "code": "completed",
+            "code": mission_completed,
             "label_fr": "Terminée",
             "label_en": "Completed",
             "description": "Mission terminée avec succès",
@@ -105,7 +132,7 @@ async def seed_mission_references():
         {
             "id": str(uuid.uuid4()),
             "category": "mission_statuses",
-            "code": "cancelled",
+            "code": mission_cancelled,
             "label_fr": "Annulée",
             "label_en": "Cancelled",
             "description": "Mission annulée",
@@ -133,7 +160,7 @@ async def seed_mission_references():
         {
             "id": str(uuid.uuid4()),
             "category": "application_statuses",
-            "code": "pending",
+            "code": application_pending,
             "label_fr": "En attente",
             "label_en": "Pending",
             "description": "Candidature soumise, en attente de traitement",
@@ -141,8 +168,8 @@ async def seed_mission_references():
             "metadata": {
                 "color": "#F59E0B",
                 "icon": "clock",
-                "next_possible_statuses": ["interview_scheduled", "rejected"],
-                "requires_action_from": "company"
+                "next_possible_statuses": [application_interview_scheduled, application_rejected],
+                "requires_action_from": company_role
             },
             "is_active": True,
             "is_system": True,
@@ -152,7 +179,7 @@ async def seed_mission_references():
         {
             "id": str(uuid.uuid4()),
             "category": "application_statuses",
-            "code": "interview_scheduled",
+            "code": application_interview_scheduled,
             "label_fr": "Entretien programmé",
             "label_en": "Interview Scheduled",
             "description": "Entretien planifié avec le candidat",
@@ -160,8 +187,8 @@ async def seed_mission_references():
             "metadata": {
                 "color": "#3B82F6",
                 "icon": "calendar",
-                "next_possible_statuses": ["interview_completed"],
-                "requires_action_from": "company"
+                "next_possible_statuses": [application_interview_completed],
+                "requires_action_from": company_role
             },
             "is_active": True,
             "is_system": True,
@@ -171,7 +198,7 @@ async def seed_mission_references():
         {
             "id": str(uuid.uuid4()),
             "category": "application_statuses",
-            "code": "interview_completed",
+            "code": application_interview_completed,
             "label_fr": "Entretien effectué",
             "label_en": "Interview Completed",
             "description": "Entretien réalisé, décision en attente",
@@ -179,8 +206,8 @@ async def seed_mission_references():
             "metadata": {
                 "color": "#6366F1",
                 "icon": "check",
-                "next_possible_statuses": ["selected", "rejected"],
-                "requires_action_from": "company"
+                "next_possible_statuses": [application_selected, application_rejected],
+                "requires_action_from": company_role
             },
             "is_active": True,
             "is_system": True,
@@ -190,7 +217,7 @@ async def seed_mission_references():
         {
             "id": str(uuid.uuid4()),
             "category": "application_statuses",
-            "code": "selected",
+            "code": application_selected,
             "label_fr": "Sélectionné",
             "label_en": "Selected",
             "description": "Candidat sélectionné par l'entreprise",
@@ -198,8 +225,8 @@ async def seed_mission_references():
             "metadata": {
                 "color": "#10B981",
                 "icon": "user-check",
-                "next_possible_statuses": ["medical_pending"],
-                "requires_action_from": "agency"
+                "next_possible_statuses": [application_medical_pending],
+                "requires_action_from": agency_role
             },
             "is_active": True,
             "is_system": True,
@@ -209,7 +236,7 @@ async def seed_mission_references():
         {
             "id": str(uuid.uuid4()),
             "category": "application_statuses",
-            "code": "medical_pending",
+            "code": application_medical_pending,
             "label_fr": "Visite médicale en attente",
             "label_en": "Medical Pending",
             "description": "En attente de la visite médicale",
@@ -217,8 +244,8 @@ async def seed_mission_references():
             "metadata": {
                 "color": "#F59E0B",
                 "icon": "document-medical",
-                "next_possible_statuses": ["medical_approved", "medical_rejected"],
-                "requires_action_from": "agency",
+                "next_possible_statuses": [application_medical_approved, application_medical_rejected],
+                "requires_action_from": agency_role,
                 "requires_document_upload": True
             },
             "is_active": True,
@@ -229,7 +256,7 @@ async def seed_mission_references():
         {
             "id": str(uuid.uuid4()),
             "category": "application_statuses",
-            "code": "medical_approved",
+            "code": application_medical_approved,
             "label_fr": "Visite médicale validée",
             "label_en": "Medical Approved",
             "description": "Candidat déclaré apte médicalement",
@@ -237,8 +264,8 @@ async def seed_mission_references():
             "metadata": {
                 "color": "#10B981",
                 "icon": "shield-check",
-                "next_possible_statuses": ["contract_pending"],
-                "requires_action_from": "agency"
+                "next_possible_statuses": [application_contract_pending],
+                "requires_action_from": agency_role
             },
             "is_active": True,
             "is_system": True,
@@ -248,7 +275,7 @@ async def seed_mission_references():
         {
             "id": str(uuid.uuid4()),
             "category": "application_statuses",
-            "code": "medical_rejected",
+            "code": application_medical_rejected,
             "label_fr": "Visite médicale refusée",
             "label_en": "Medical Rejected",
             "description": "Candidat déclaré inapte médicalement",
@@ -267,7 +294,7 @@ async def seed_mission_references():
         {
             "id": str(uuid.uuid4()),
             "category": "application_statuses",
-            "code": "contract_pending",
+            "code": application_contract_pending,
             "label_fr": "Contrat en attente",
             "label_en": "Contract Pending",
             "description": "En attente de signature du contrat",
@@ -275,8 +302,8 @@ async def seed_mission_references():
             "metadata": {
                 "color": "#F59E0B",
                 "icon": "document-text",
-                "next_possible_statuses": ["contract_signed"],
-                "requires_action_from": "agency",
+                "next_possible_statuses": [application_contract_signed],
+                "requires_action_from": agency_role,
                 "requires_document_upload": True
             },
             "is_active": True,
@@ -287,7 +314,7 @@ async def seed_mission_references():
         {
             "id": str(uuid.uuid4()),
             "category": "application_statuses",
-            "code": "contract_signed",
+            "code": application_contract_signed,
             "label_fr": "Contrat signé",
             "label_en": "Contract Signed",
             "description": "Contrat signé, processus terminé",
@@ -306,7 +333,7 @@ async def seed_mission_references():
         {
             "id": str(uuid.uuid4()),
             "category": "application_statuses",
-            "code": "rejected",
+            "code": application_rejected,
             "label_fr": "Refusée",
             "label_en": "Rejected",
             "description": "Candidature rejetée",
@@ -333,7 +360,7 @@ async def seed_mission_references():
         {
             "id": str(uuid.uuid4()),
             "category": "contract_types",
-            "code": "cdi",
+            "code": contract_cdi,
             "label_fr": "CDI",
             "label_en": "Permanent Contract",
             "description": "Contrat à Durée Indéterminée",
@@ -350,7 +377,7 @@ async def seed_mission_references():
         {
             "id": str(uuid.uuid4()),
             "category": "contract_types",
-            "code": "cdd",
+            "code": contract_cdd,
             "label_fr": "CDD",
             "label_en": "Fixed-term Contract",
             "description": "Contrat à Durée Déterminée",
@@ -367,7 +394,7 @@ async def seed_mission_references():
         {
             "id": str(uuid.uuid4()),
             "category": "contract_types",
-            "code": "interim",
+            "code": contract_interim,
             "label_fr": "Intérim",
             "label_en": "Temporary Work",
             "description": "Mission d'intérim",
@@ -384,7 +411,7 @@ async def seed_mission_references():
         {
             "id": str(uuid.uuid4()),
             "category": "contract_types",
-            "code": "stage",
+            "code": contract_stage,
             "label_fr": "Stage",
             "label_en": "Internship",
             "description": "Convention de stage",

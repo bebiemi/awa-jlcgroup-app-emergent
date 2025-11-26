@@ -22,6 +22,8 @@ import EntityListTemplate from '@/templates/EntityListTemplate'
 import { usePermissions } from '@/hooks/usePermission'
 import type { EntityListConfig } from '@/templates/EntityListTemplate'
 import { CloudArrowUpIcon, PlusIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline'
+import { useRoles, useUserStatuses } from '@/hooks/useAppConfig'
+import { getRoleLabel } from '@/constants/iamConstants'
 
 export default function UsersPage() {
   const navigate = useNavigate()
@@ -33,6 +35,9 @@ export default function UsersPage() {
     'users.manage_status',
     'users.reset_mfa',
   ])
+
+  const roles = useRoles()
+  const userStatuses = useUserStatuses()
   
   // États locaux pour les filtres et recherche
   const [page, setPage] = useState(1)
@@ -54,6 +59,48 @@ export default function UsersPage() {
   const [selectedUser, setSelectedUser] = useState<any>(null)
   const [activeModal, setActiveModal] = useState<string | null>(null)
 
+  const roleOptions = Array.from(
+    new Set(
+      [
+        roles.super_admin,
+        roles.admin,
+        roles.company,
+        roles.interim,
+        roles.agency,
+        roles.commercial,
+        roles.validator,
+      ].filter(Boolean)
+    )
+  ).map((role) => ({
+    value: role,
+    label: getRoleLabel(role),
+  }))
+
+  const statusLabelMap: Record<string, string> = {
+    [userStatuses.active]: 'Actif',
+    [userStatuses.pending]: 'En attente',
+    [userStatuses.suspended]: 'Suspendu',
+    [userStatuses.deleted]: 'Archivé',
+    [userStatuses.blocked]: 'Bloqué',
+    [userStatuses.archived]: 'Archivé',
+  }
+
+  const statusOptions = Array.from(
+    new Set(
+      [
+        userStatuses.active,
+        userStatuses.pending,
+        userStatuses.suspended,
+        userStatuses.deleted,
+        userStatuses.blocked,
+        userStatuses.archived,
+      ].filter(Boolean)
+    )
+  ).map((status) => ({
+    value: status,
+    label: statusLabelMap[status] || status,
+  }))
+
   // Ouvrir une modale
   const openModal = (modalName: string, user: any) => {
     setSelectedUser(user)
@@ -67,26 +114,28 @@ export default function UsersPage() {
   }
 
   // Rendu des colonnes avec badges pour le statut
-  const renderColumns = UsersPageConfig.columns.map((col) => ({
-    ...col,
-    render: col.key === 'status' 
-      ? (value: string) => {
-          const statusColors: Record<string, string> = {
-            active: 'bg-green-100 text-green-800',
-            pending: 'bg-yellow-100 text-yellow-800',
-            suspended: 'bg-red-100 text-red-800',
-            deleted: 'bg-gray-100 text-gray-800',
+    const renderColumns = UsersPageConfig.columns.map((col) => ({
+      ...col,
+      render: col.key === 'status'
+        ? (value: string) => {
+            const statusColors: Record<string, string> = {
+              [userStatuses.active]: 'bg-green-100 text-green-800',
+              [userStatuses.pending]: 'bg-yellow-100 text-yellow-800',
+              [userStatuses.suspended]: 'bg-red-100 text-red-800',
+              [userStatuses.deleted]: 'bg-gray-100 text-gray-800',
+              [userStatuses.blocked]: 'bg-orange-100 text-orange-800',
+              [userStatuses.archived]: 'bg-gray-100 text-gray-800',
+            }
+            return (
+              <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusColors[value] || 'bg-gray-100 text-gray-800'}`}>
+                {value}
+              </span>
+            )
           }
-          return (
-            <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusColors[value] || 'bg-gray-100 text-gray-800'}`}>
-              {value}
-            </span>
-          )
-        }
-      : col.key === 'created_at'
+        : col.key === 'created_at'
       ? (value: string) => new Date(value).toLocaleDateString('fr-FR')
       : undefined
-  }))
+    }))
 
   // Configuration adaptée pour EntityListTemplate
   const templateConfig: EntityListConfig = {
@@ -115,24 +164,13 @@ export default function UsersPage() {
         key: 'status',
         label: 'Statut',
         type: 'select',
-        options: [
-          { value: 'active', label: 'Actif' },
-          { value: 'pending', label: 'En attente' },
-          { value: 'suspended', label: 'Suspendu' },
-          { value: 'deleted', label: 'Archivé' },
-        ],
+        options: statusOptions,
       },
       {
         key: 'role',
         label: 'Rôle',
         type: 'select',
-        options: [
-          { value: 'admin', label: 'Admin' },
-          { value: 'super_admin', label: 'Super Admin' },
-          { value: 'company', label: 'Entreprise' },
-          { value: 'candidat', label: 'Candidat' },
-          { value: 'interim', label: 'Intérimaire' },
-        ],
+        options: roleOptions,
       },
     ],
     

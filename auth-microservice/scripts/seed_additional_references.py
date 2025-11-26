@@ -12,6 +12,8 @@ import sys
 # Ajouter le chemin parent pour les imports
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from awana_auth.utils.config_helpers import ConfigHelper as cfg
+
 
 async def seed_additional_references():
     """Créer les référentiels supplémentaires"""
@@ -25,11 +27,20 @@ async def seed_additional_references():
     print("🚀 Démarrage de la migration des référentiels supplémentaires...")
     
     # ==================== RÔLES ====================
+    roles_codes = {
+        "admin": cfg.get_admin_role() or "admin",
+        "super_admin": cfg.get_super_admin_role() or "super_admin",
+        "company": cfg.get_company_role() or "company",
+        "agency": cfg.get_agency_role() or "agency",
+        "commercial": cfg.get_commercial_role() or "commercial",
+        "interim": cfg.get_interim_role() or "interim",
+    }
+
     roles = [
         {
             "id": str(uuid.uuid4()),
             "category": "roles",
-            "code": "admin",
+            "code": roles_codes["admin"],
             "label_fr": "Administrateur",
             "label_en": "Administrator",
             "description": "Administrateur système avec tous les droits",
@@ -47,7 +58,7 @@ async def seed_additional_references():
         {
             "id": str(uuid.uuid4()),
             "category": "roles",
-            "code": "super_admin",
+            "code": roles_codes["super_admin"],
             "label_fr": "Super Administrateur",
             "label_en": "Super Administrator",
             "description": "Super administrateur avec droits étendus",
@@ -65,7 +76,7 @@ async def seed_additional_references():
         {
             "id": str(uuid.uuid4()),
             "category": "roles",
-            "code": "company",
+            "code": roles_codes["company"],
             "label_fr": "Entreprise",
             "label_en": "Company",
             "description": "Entreprise cliente cherchant des ressources",
@@ -83,7 +94,7 @@ async def seed_additional_references():
         {
             "id": str(uuid.uuid4()),
             "category": "roles",
-            "code": "agency",
+            "code": roles_codes["agency"],
             "label_fr": "Agence",
             "label_en": "Agency",
             "description": "Agence d'intérim gérant les candidats",
@@ -101,7 +112,7 @@ async def seed_additional_references():
         {
             "id": str(uuid.uuid4()),
             "category": "roles",
-            "code": "commercial",
+            "code": roles_codes["commercial"],
             "label_fr": "Commercial",
             "label_en": "Sales",
             "description": "Commercial gérant les missions",
@@ -119,7 +130,7 @@ async def seed_additional_references():
         {
             "id": str(uuid.uuid4()),
             "category": "roles",
-            "code": "interim",
+            "code": roles_codes["interim"],
             "label_fr": "Intérimaire",
             "label_en": "Temporary Worker",
             "description": "Candidat cherchant des missions",

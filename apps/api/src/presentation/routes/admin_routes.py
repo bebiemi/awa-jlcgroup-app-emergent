@@ -1,7 +1,13 @@
 """Admin routes for KPIs and statistics"""
 from fastapi import APIRouter, Depends, HTTPException, status
 from motor.motor_asyncio import AsyncIOMotorDatabase
-from src.presentation.dependencies import get_database, require_admin
+from src.presentation.dependencies import (
+    get_all_profile_type_values,
+    get_database,
+    get_profile_types_from_config,
+    get_validation_workflow_config,
+    require_admin,
+)
 from src.domain.entities.validation import ValidationStatus, ValidationType
 from src.infrastructure.repositories.validation_repository import ValidationRepository
 from src.infrastructure.repositories.profile_repository import ProfileRepository
@@ -22,35 +28,76 @@ async def get_dashboard_kpis(
     validation_repo = ValidationRepository(db)
     profile_repo = ProfileRepository(db)
 
+    validation_config = get_validation_workflow_config()
+    validation_statuses = validation_config.get("statuses", {})
+    validation_types = validation_config.get("types", {})
+
+    def _as_status(value: str):
+        if isinstance(value, ValidationStatus):
+            return value
+        if value in ValidationStatus._value2member_map_:
+            return ValidationStatus(value)
+        return value
+
+    def _as_validation_type(value: str):
+        if isinstance(value, ValidationType):
+            return value
+        if value in ValidationType._value2member_map_:
+            return ValidationType(value)
+        return value
+
     # Count validations by status
-    pending_count = await validation_repo.count_by_status(ValidationStatus.PENDING)
-    approved_count = await validation_repo.count_by_status(ValidationStatus.APPROVED)
-    rejected_count = await validation_repo.count_by_status(ValidationStatus.REJECTED)
+    pending_status_value = validation_statuses.get("pending", ValidationStatus.PENDING.value)
+    approved_status_value = validation_statuses.get("approved", ValidationStatus.APPROVED.value)
+    rejected_status_value = validation_statuses.get("rejected", ValidationStatus.REJECTED.value)
+
+    pending_count = await validation_repo.count_by_status(_as_status(pending_status_value))
+    approved_count = await validation_repo.count_by_status(_as_status(approved_status_value))
+    rejected_count = await validation_repo.count_by_status(_as_status(rejected_status_value))
 
     # Count pending by type
+    interim_type_value = validation_types.get("interim", ValidationType.INTERIM.value)
+    company_type_value = validation_types.get("company", ValidationType.COMPANY.value)
+
     pending_interim, _ = await validation_repo.list(
-        status=ValidationStatus.PENDING,
-        validation_type=ValidationType.INTERIM,
+        status=_as_status(pending_status_value),
+        validation_type=_as_validation_type(interim_type_value),
         skip=0,
         limit=0
     )
     pending_company, _ = await validation_repo.list(
-        status=ValidationStatus.PENDING,
-        validation_type=ValidationType.COMPANY,
+        status=_as_status(pending_status_value),
+        validation_type=_as_validation_type(company_type_value),
         skip=0,
         limit=0
     )
 
     # Count profiles by type
-    admin_profiles = await profile_repo.list_by_type(ProfileType.ADMIN, skip=0, limit=1000)
-    agency_profiles = await profile_repo.list_by_type(ProfileType.AGENCY, skip=0, limit=1000)
-    company_profiles = await profile_repo.list_by_type(ProfileType.COMPANY, skip=0, limit=1000)
-    interim_profiles = await profile_repo.list_by_type(ProfileType.INTERIM, skip=0, limit=1000)
+    profile_types = get_profile_types_from_config()
+    profile_values = get_all_profile_type_values()
+
+    def _as_profile_type(profile_value: str):
+        if profile_value in ProfileType._value2member_map_:
+            return ProfileType(profile_value)
+        return profile_value
+
+    admin_profiles = await profile_repo.list_by_type(
+        _as_profile_type(profile_types.get("admin", ProfileType.ADMIN.value)), skip=0, limit=1000
+    )
+    agency_profiles = await profile_repo.list_by_type(
+        _as_profile_type(profile_types.get("agency", ProfileType.AGENCY.value)), skip=0, limit=1000
+    )
+    company_profiles = await profile_repo.list_by_type(
+        _as_profile_type(profile_types.get("company", ProfileType.COMPANY.value)), skip=0, limit=1000
+    )
+    interim_profiles = await profile_repo.list_by_type(
+        _as_profile_type(profile_types.get("interim", ProfileType.INTERIM.value)), skip=0, limit=1000
+    )
 
     # Get recent rejections (last 7 days)
     seven_days_ago = datetime.utcnow() - timedelta(days=7)
     rejected_recent, _ = await validation_repo.list(
-        status=ValidationStatus.REJECTED,
+        status=_as_status(rejected_status_value),
         skip=0,
         limit=1000
     )
@@ -73,7 +120,11 @@ async def get_dashboard_kpis(
             "agency": len(agency_profiles),
             "company": len(company_profiles),
             "interim": len(interim_profiles),
-            "total": len(admin_profiles) + len(agency_profiles) + len(company_profiles) + len(interim_profiles)
+            "total": sum(
+                len(bucket)
+                for bucket in [admin_profiles, agency_profiles, company_profiles, interim_profiles]
+            ),
+            "all_codes": profile_values,
         },
         "active_users": approved_count
     }

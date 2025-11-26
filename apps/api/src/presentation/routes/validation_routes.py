@@ -34,6 +34,34 @@ router = APIRouter(prefix="/validations", tags=["Validations"])
 VALIDATION_CONFIG = get_validation_workflow_config()
 
 
+def _resolve_config_value(raw: str, configured: dict[str, str], enum_cls):
+    """Return the configured value, enum member, or raw string for a given key/value."""
+    if raw in configured:
+        return configured[raw]
+
+    if raw in configured.values():
+        return raw
+
+    if raw in enum_cls._value2member_map_:
+        return enum_cls(raw)
+
+    return raw
+
+
+def _normalize_status_filter(raw: Optional[str]) -> Optional[ValidationStatus]:
+    if raw is None:
+        return None
+    resolved = _resolve_config_value(raw, VALIDATION_CONFIG["statuses"], ValidationStatus)
+    return resolved
+
+
+def _normalize_type_filter(raw: Optional[str]) -> Optional[ValidationType]:
+    if raw is None:
+        return None
+    resolved = _resolve_config_value(raw, VALIDATION_CONFIG["types"], ValidationType)
+    return resolved
+
+
 def _enum_value(value):
     return value.value if hasattr(value, "value") else str(value)
 
@@ -75,8 +103,8 @@ async def get_my_validation(
 
 @router.get("/admin", response_model=ValidationListResponse)
 async def list_validations(
-    status_filter: Optional[ValidationStatus] = Query(None, alias="status"),
-    type_filter: Optional[ValidationType] = Query(None, alias="type"),
+    status_filter: Optional[str] = Query(None, alias="status"),
+    type_filter: Optional[str] = Query(None, alias="type"),
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
     current_user=Depends(require_validator),
@@ -87,8 +115,8 @@ async def list_validations(
 
     skip = (page - 1) * page_size
     validations, total = await repo.list(
-        status=status_filter,
-        validation_type=type_filter,
+        status=_normalize_status_filter(status_filter),
+        validation_type=_normalize_type_filter(type_filter),
         skip=skip,
         limit=page_size
     )
@@ -129,8 +157,17 @@ async def approve_validation(
     # Check if already processed
     current_status = _enum_value(validation.status)
     approve_transition = VALIDATION_CONFIG["transitions"].get("approve", {})
-    allowed_from = approve_transition.get("from", [ValidationStatus.PENDING.value])
-    target_status = approve_transition.get("to", ValidationStatus.APPROVED.value)
+    configured_statuses = VALIDATION_CONFIG["statuses"]
+
+    allowed_from = [
+        _resolve_config_value(value, configured_statuses, ValidationStatus)
+        for value in approve_transition.get("from", [ValidationStatus.PENDING.value])
+    ]
+    target_status = _resolve_config_value(
+        approve_transition.get("to", ValidationStatus.APPROVED.value),
+        configured_statuses,
+        ValidationStatus,
+    )
 
     if current_status not in allowed_from:
         raise HTTPException(
@@ -223,8 +260,17 @@ async def reject_validation(
     # Check if already processed
     current_status = _enum_value(validation.status)
     reject_transition = VALIDATION_CONFIG["transitions"].get("reject", {})
-    allowed_from = reject_transition.get("from", [ValidationStatus.PENDING.value])
-    target_status = reject_transition.get("to", ValidationStatus.REJECTED.value)
+    configured_statuses = VALIDATION_CONFIG["statuses"]
+
+    allowed_from = [
+        _resolve_config_value(value, configured_statuses, ValidationStatus)
+        for value in reject_transition.get("from", [ValidationStatus.PENDING.value])
+    ]
+    target_status = _resolve_config_value(
+        reject_transition.get("to", ValidationStatus.REJECTED.value),
+        configured_statuses,
+        ValidationStatus,
+    )
 
     if current_status not in allowed_from:
         raise HTTPException(
