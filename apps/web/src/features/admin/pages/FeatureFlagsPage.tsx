@@ -21,6 +21,7 @@ import {
   type CreateFeatureFlagRequest,
 } from '../api/featureFlagApi'
 import { usePermissions } from '@/hooks/usePermission'
+import { useRoles } from '@/hooks/useAppConfig'
 
 export default function FeatureFlagsPage() {
   const { t } = useTranslation()
@@ -56,6 +57,8 @@ export default function FeatureFlagsPage() {
     include_inactive: includeInactive,
     type_filter: typeFilter,
   })
+
+  const roles = useRoles()
 
   const [createFlag] = useCreateFeatureFlagMutation()
   const [updateFlag] = useUpdateFeatureFlagMutation()
@@ -567,7 +570,7 @@ export default function FeatureFlagsPage() {
                     className="w-full rounded-lg border-gray-300"
                     placeholder={
                       formData.type === 'ROLE'
-                        ? 'admin'
+                        ? roles.admin ?? 'admin'
                         : formData.type === 'USER'
                         ? 'user_uuid'
                         : 'production'

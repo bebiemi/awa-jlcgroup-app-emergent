@@ -35,13 +35,14 @@
 - **Contrats intérim configurables** : `auth-microservice/contract_routes.py` utilise le rôle intérim issu de la configuration et les statuts d'application configurés (`contract_signed`/`contract_pending`) pour filtrer les contrats et détecter les contrats actifs sans chaînes inline.
 - **Modèles de validation/location alignés sur la config** : `awana_auth/core/location_models.py` utilise désormais les statuts/roles de validation issus de `ConfigHelper` (avec fallback sur les valeurs historiques) et centralise les imports pour préparer la consommation des codes configurés.
 - **Configuration exposée sans clés inline** : `auth-microservice/configuration_routes.py` renvoie les rôles et statuts utilisateur directement depuis la configuration via `ConfigHelper`, éliminant les clés `admin`/`super_admin`/`interim`/`company` en dur dans la réponse.
+- **Référentiels missions paramétrables** : `auth-microservice/scripts/seed_mission_references.py` lit désormais les statuts de mission/candidature et les rôles d'action (company/agency) via `ConfigHelper`, supprimant les chaînes inline dans les transitions et métadonnées.
+- **Feature flags côté admin alignés IAM** : `apps/web/src/features/admin/pages/FeatureFlagsPage.tsx` utilise `useRoles()` pour préremplir la cible par rôle au lieu de la chaîne `admin` en dur.
 
 ## Actions prioritaires restantes
 1. **Externaliser les rôles/statuts auth** : déplacer les comparaisons en dur dans `apps/api/**/awana_auth_routes.py` vers la configuration (`config/base.yaml`).
 2. **Centraliser les permissions mission** : consommer des listes de rôles configurées dans `apps/api/**/mission_routes.py` pour la création/publication/édition/lecture globale.
-3. **Finaliser la paramétrisation des validations** : poursuivre la bascule vers la configuration (transitions restantes côté `apps/api/**/validation_routes.py` si nécessaire).
-4. **Automatiser l'audit en CI** : exécuter `scripts/audit_hardcoded_values.py` sur chaque PR et échouer en cas de nouvelles occurrences.
-5. **Préparer l'exposition mobile** : stabiliser un contrat API v1, ajouter pagination/filtrage systématiques, timeouts et rate limiting pour la résilience.
+3. **Automatiser l'audit en CI** : exécuter `scripts/audit_hardcoded_values.py` sur chaque PR et échouer en cas de nouvelles occurrences.
+4. **Préparer l'exposition mobile** : stabiliser un contrat API v1, ajouter pagination/filtrage systématiques, timeouts et rate limiting pour la résilience.
 
 ## Commandes utiles
 ```bash

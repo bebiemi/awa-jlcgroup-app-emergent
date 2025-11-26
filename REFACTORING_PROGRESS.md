@@ -1,8 +1,8 @@
 # 📊 Progression de la Refactorisation IAM
 
-## ✅ Fichiers Refactorés (31 fichiers)
+## ✅ Fichiers Refactorés (33 fichiers)
 
-### Frontend (13 fichiers)
+### Frontend (14 fichiers)
 1. ✅ **ValidationsPage.tsx** - 15+ occurrences refactorées
    - Import: `ValidationTypes`, `UserRoles`, `getRoleLabel`
    - Remplacements: candidat, interim, company, collaborateur, admin, super_admin
@@ -54,7 +54,11 @@
     - `ProfileType` s'appuie sur `IAMProfiles`/`UserRoles` au lieu de littéraux
     - `ValidationType` réutilise le type exporté par `iamConstants.ts`
 
-### Backend (18 fichiers)
+14. ✅ **FeatureFlagsPage.tsx** - Formulaire aligné sur les rôles configurés
+    - Le placeholder de ciblage par rôle réutilise `useRoles()` (fallback configuré)
+    - Évite la chaîne inline `admin` dans les formulaires de création/édition
+
+### Backend (19 fichiers)
 1. ✅ **initialize_candidat_iam.py** - 17 occurrences refactorées
    - Import: `IAMGroups`, `IAMProfiles`, `IAMPermissions`
    - Tous les codes hardcodés remplacés par constantes
@@ -126,30 +130,31 @@
     - Les routes `/config/all` lisent les rôles et statuts utilisateur via `ConfigHelper` pour éviter les clés codées en dur
     - Prépare les réponses front à s'aligner automatiquement sur les valeurs configurées
 
+19. ✅ **scripts/seed_mission_references.py** - Référentiels mission pilotés par la config
+    - Les statuts de mission/candidature et rôles d'action sont lus via `ConfigHelper`
+    - Supprime les chaînes inline `company`/`agency` et aligne les transitions sur les codes configurés
+
 ---
 
 ## 🔄 Fichiers Restants à Refactorer
 
-### Frontend Prioritaires (~7 fichiers)
+### Frontend Prioritaires (~6 fichiers)
 - [ ] **EditUserModal.tsx** (1 occurrence)
 - [x] **ValidationsList.tsx** (2 occurrences)
 - [ ] **Breadcrumb.tsx**
-- [ ] **FeatureFlagsPage.tsx**
 - [ ] **EmailSettingsPage.tsx**
 - [ ] **MissionDetailPage.tsx**
 - [ ] **ProfilesManagementPage.tsx** - Déjà propre
 - [ ] **IAMControlPage.tsx** - Déjà propre
-- [ ] **features/admin/pages/FeatureFlagsPage.tsx**
 - [ ] **features/admin/pages/EmailSettingsPage.tsx**
 - [ ] **features/missions/pages/MissionDetailPage.tsx**
 - [ ] **ProfilesManagementPage.tsx** - Déjà propre
 - [ ] **IAMControlPage.tsx** - Déjà propre
 
-### Backend Prioritaires (~7 fichiers)
+### Backend Prioritaires (~2 fichiers)
 - [ ] **scripts/initialize_iam_system.py** (GROS fichier - ~13KB)
 - [ ] **scripts/update_iam_permissions.py**
 - [x] **scripts/diagnose_login.py** (1 occurrence)
-- [ ] **scripts/seed_mission_references.py** (4 occurrences)
 - [ ] **scripts/seed_additional_references.py** (2 occurrences)
 - [ ] **scripts/add_missing_references.py** (2 occurrences)
 - [ ] **awana_auth/core/reference_models.py** (1 occurrence)
@@ -160,13 +165,13 @@
 ## 📈 Statistiques
 
 ### Total
-- **Fichiers refactorés**: 31 / ~34 (~91%)
+- **Fichiers refactorés**: 33 / ~34 (~97%)
 - **Occurrences éliminées**: ~100 + statuts/types centralisés dans `validation_routes.py`
 - **Tests de sync**: ✅ 100% passés
 
 ### Par Catégorie
-- **Frontend**: 13 fichiers refactorés / ~7 restants
-- **Backend**: 18 fichiers refactorés / ~3 restants
+- **Frontend**: 14 fichiers refactorés / ~6 restants
+- **Backend**: 19 fichiers refactorés / ~2 restants
 
 ---
 
