@@ -1,145 +1,156 @@
 <analysis>**original_problem_statement:**
-L'utilisateur a demandé une série de refontes et de corrections majeures. Initialement, l'objectif était de corriger un bug d'affichage (P0) sur la page des Missions et un bug 404 récurrent (P1). Par la suite, l'utilisateur a demandé une refonte complète du système de permissions pour introduire des Bundles, puis de rendre toute l'initialisation de la base de données (IAM, Référentiels, Feature Flags) entièrement pilotée par des fichiers de configuration YAML. Enfin, un bug critique 500 (Internal Server Error) sur l'endpoint des permissions est apparu et est devenu la priorité absolue.
+L'utilisateur a initialement demandé la correction d'une erreur 500 (Internal Server Error) sur l'endpoint , qui bloquait une partie de l'application. Après la résolution de ce bug, une cascade de problèmes liés aux permissions et à l'authentification a été découverte et signalée par l'utilisateur.
+
+Les demandes de l'utilisateur ont ensuite évolué vers des tâches d'audit et de documentation pour stabiliser et comprendre en profondeur le système :
+1.  Résoudre tous les bugs de type 500 et les problèmes de permissions au fur et à mesure qu'ils apparaissaient.
+2.  Effectuer un audit de sécurité exhaustif de tous les endpoints du backend pour identifier les failles de permissions.
+3.  Produire une matrice détaillée des permissions pour chaque profil utilisateur défini dans la configuration.
+4.  Documenter le flux d'inscription des entreprises et, par la suite, tous les autres workflows majeurs de l'application.
 
 **PRODUCT REQUIREMENTS:**
-1.  **Fiabilité des Données (P0):** L'application doit afficher les données correctes. Tout bug d'affichage (ex: page des Missions) ou erreur serveur (500, 401) est critique.
-2.  **IAM Config-Driven (P0):** L'ensemble du système d'Identité et de Gestion des Accès (Permissions, Bundles, Profils, Utilisateurs) DOIT être défini dans un fichier de configuration central () et initialisé via un script unique. Ce fichier est la seule source de vérité.
-3.  **Initialisation Unifiée (P1):** L'intégralité de la configuration de l'application (IAM, Référentiels, Feature Flags) doit être initialisable via un script master unique () qui orchestre les scripts spécialisés.
-4.  **Documentation (P1):** Le nouveau système de configuration et les procédures de dépannage des erreurs courantes (ex: erreurs 500) doivent être documentés.
-5.  **Zéro Régression (P0):** Les nouvelles implémentations ne doivent pas réintroduire de bugs (ex: problèmes de connexion).
+1.  **Stabilité et Fiabilité (P0):** L'application doit être exempte d'erreurs 500. Les endpoints d'authentification et de permissions doivent fonctionner de manière fiable pour tous les types d'utilisateurs.
+2.  **Cohérence IAM (P0):** Le système de permissions doit être cohérent. Les droits des utilisateurs, qu'ils soient directs, hérités des profils ou des bundles, doivent être correctement calculés et appliqués à tous les niveaux (JWT, API).
+3.  **Sécurité (P0):** Toutes les routes d'API doivent être correctement sécurisées. Les vulnérabilités identifiées par l'audit doivent être corrigées.
+4.  **Documentation (P1):** Les workflows critiques de l'application et la structure des permissions doivent être clairement documentés pour la maintenance future.
 
 **User's preferred language**: French
 
 **what currently exists?**
-L'agent a transformé l'initialisation de l'application en un système robuste et config-driven. La configuration de l'IAM, des référentiels de données et des feature flags est désormais centralisée dans des fichiers YAML situés dans . Des scripts Python dédiés (, , ) lisent ces fichiers pour peupler la base de données. Un script maître  orchestre l'ensemble du processus.
+L'agent a mené une session de débogage et de correction intensive, résolvant plusieurs bugs critiques qui rendaient l'application instable. Le système est maintenant beaucoup plus robuste.
+- **Bugs Corrigés:** Plusieurs erreurs 500 sur des endpoints critiques (, ) ont été résolues. Le problème fondamental de non-injection des permissions dans le token JWT lors de la connexion a été corrigé, rendant les droits des utilisateurs (comme commercial1) de nouveau fonctionnels. Les incohérences entre les données en base (codes de permission, noms de bundles, noms de collection) et le code backend ont été identifiées et corrigées sur plusieurs endpoints IAM.
+- **Audits Réalisés:** Deux audits de sécurité et d'IAM complets ont été menés. Les résultats sont disponibles dans des rapports détaillés (, , etc.), identifiant de nombreuses routes non protégées ou mal configurées.
+- **Documentation Créée:** L'agent a produit une matrice des permissions par profil () et a documenté le workflow d'inscription des entreprises ().
 
-Plusieurs bugs critiques ont été résolus, notamment le bug d'affichage sur la page des Missions, un bug de connexion (401 Unauthorized) dû à des schémas utilisateur incorrects, et une erreur 404 récurrente. De la documentation a été créée pour le nouveau système IAM et pour le dépannage des erreurs 500.
-
-Cependant, l'application est actuellement bloquée par un nouveau bug critique.
+L'application est fonctionnelle, mais les vulnérabilités de sécurité identifiées par l'audit n'ont pas encore été corrigées.
 
 **Last working item**:
--   **Last item agent was working:** L'agent était en train de déboguer une erreur  sur l'endpoint . La cause racine a été identifiée : le modèle Pydantic  (une énumération) a une règle de validation qui n'autorise pas les points () dans les noms d'action (ex: ), alors que certaines permissions en base de données utilisent ce format.
+-   **Last item agent was working:** L'agent a commencé à répondre à la demande de l'utilisateur de documenter tous les workflows connus de l'application. Pour ce faire, il a créé un script d'analyse initiale : .
 -   **Status:** IN PROGRESS
 -   **Agent Testing Done:** N
--   **Which testing method agent to use?** backend testing agent. L'agent doit modifier le modèle Pydantic  dans  pour autoriser les points dans les valeurs de l'énumération. Ensuite, il devra redémarrer le  et exécuter une requête  sur l'endpoint  en utilisant un token d'administrateur pour confirmer que la réponse est un  avec la liste des permissions.
+-   **Which testing method agent to use?** N/A. La prochaine étape consiste à exécuter le script , à analyser sa sortie pour identifier les principaux workflows, puis à générer un document de synthèse pour chaque workflow, en suivant l'exemple de .
 -   **User Testing Done:** N
 
 **All Pending/In progress Issue list**:
--   **Issue 1: (P0) Erreur 500 sur **
+-   Aucun bug bloquant n'est actuellement en cours. La priorité est de traiter les tâches en cours et à venir.
 
 **Issues Detail:**
--   **Issue 1:**
-    -   **Description:** L'API retourne une erreur 500 lorsqu'on tente de lister les permissions, ce qui bloque potentiellement de larges pans de l'interface d'administration. L'agent a identifié que la validation du modèle Pydantic  est trop stricte et rejette les noms d'action contenant un point.
-    -   **Attempted fixes:** L'agent a correctement diagnostiqué le problème en inspectant les logs d'erreurs Pydantic après plusieurs tentatives infructueuses (correction du chemin de configuration, ajout de champs manquants au modèle).
-    -   **Next debug checklist:**
-        1.  Ouvrir le fichier .
-        2.  Localiser l'énumération .
-        3.  Modifier la validation (probablement une expression régulière ou une contrainte ) pour permettre les chaînes de caractères contenant des points.
-        4.  Redémarrer le service : auth-microservice: stopped
-auth-microservice: started.
-        5.  Tester à nouveau l'endpoint avec .
-    -   **Why fix this issue and what will be achieved with the fix?** La résolution de ce bug est absolument critique pour débloquer le fonctionnement du système IAM et de toutes les fonctionnalités qui en dépendent.
-    -   **Status:** IN PROGRESS
-    -   **Is recurring issue?** N
-    -   **Should Test frontend/backend/both after fix?** backend
-    -   **Blocked on other issue:** None
+-   N/A
 
 **In progress Task List**:
--   Aucune.
+-   **Task 1: (P1) Documenter tous les workflows connus de l'application.**
+
+**Task Detail:**
+-   **Task 1:**
+    -   **Where to resume:** Exécuter le script . Sur la base de sa sortie, identifier les workflows principaux (ex: connexion, gestion des utilisateurs, création de mission, etc.). Pour chaque workflow, analyser les endpoints, la logique métier et les interactions, puis créer un document Markdown dédié dans le dossier .
+    -   **What will be achieved with this?** Une documentation complète des processus métier de l'application, essentielle pour la maintenance et les évolutions futures.
+    -   **Status:** IN PROGRESS
+    -   **Should Test frontend/backend/both after fix?** N/A
+    -   **Blocked on something:** Non
 
 **Upcoming and Future Tasks**
--   **(P2) Refactoriser ou abandonner :** Ce template n'est pas générique. Il faut décider s'il doit être refactorisé ou si  doit être utilisé partout.
--   **(P2) Intégrer les icônes personnalisées :** Remplacer les icônes HeroIcons dans la  par les composants SVG de .
--   **(P2) Implémenter les améliorations pour le module :** Ajouter les filtres, la pagination côté serveur, et les .
--   **(P3) Finaliser les workflows Entreprise et ajouter des tests E2E.**
--   **(P4) Mettre en place la signature électronique.**
+-   **Upcoming Tasks:**
+    -   **(P0) Appliquer les correctifs de sécurité de l'audit IAM:** C'est la tâche la plus critique. L'agent doit suivre le plan d'action défini dans  et  pour sécuriser toutes les routes vulnérables identifiées.
+-   **Future Tasks:**
+    -   **(P2) Refactoriser ou abandonner :** Décider si ce template doit être rendu générique ou remplacé par .
+    -   **(P2) Intégrer les icônes personnalisées:** Remplacer les icônes HeroIcons dans la  par les composants SVG personnalisés.
+    -   **(P2) Implémenter les améliorations pour le module :** Ajouter les filtres, la pagination côté serveur, et les .
+    -   **(P3) Finaliser les workflows Entreprise et ajouter des tests E2E.**
+    -   **(P4) Mettre en place la signature électronique.**
 
 **Completed work in this session**
--   **Refonte Totale du Système d'Initialisation (Config-Driven):**
-    -   Mise en place d'un système d'initialisation piloté par des fichiers YAML pour l'IAM (), les référentiels () et les feature flags ().
-    -   Création d'un script maître  pour orchestrer toute l'initialisation.
 -   **Résolution de Bugs Critiques:**
-    -   **Bug P0 (Missions):** Correction de l'affichage des données dans le tableau des missions en alignant les clés de configuration avec la réponse de l'API.
-    -   **Bug P0 (Login):** Correction de l'erreur 401 à la connexion en standardisant les champs utilisateur en base de données ( -> , ajout de  et ).
-    -   **Bug P1 (Badge 404):** Résolution de l'erreur 404 sur  en créant un script  pour garantir la présence des configurations par défaut.
--   **Implémentation du Système de Bundles de Permissions:**
-    -   Le script d'initialisation IAM gère désormais les permissions atomiques et les bundles, conformément aux spécifications de l'utilisateur.
--   **Création de Documentation:**
-    -   
-    -   
-    -   
-    -   
+    -   Correction de l'erreur 500 sur  (régression incluse).
+    -   Correction de l'erreur 500 de sérialisation  sur .
+    -   Correction de l'affichage des détails de permissions et des bundles dans les profils IAM.
+    -   **Correction du flux de connexion :** Le bug majeur empêchant les utilisateurs (ex: ) d'avoir leurs permissions chargées dans le JWT a été résolu. Le processus de connexion charge maintenant correctement les permissions effectives des profils de l'utilisateur.
+    -   Correction des endpoints de gestion des utilisateurs (, , ) pour afficher les permissions héritées.
+
+-   **Audits et Documentation:**
+    -   Réalisation de deux audits de sécurité IAM complets avec génération de rapports et de plans d'action.
+    -   Création d'une matrice des permissions par profil.
+    -   Documentation du workflow d'inscription des entreprises.
 
 **Earlier issues found/mentioned but not fixed**
 -   Aucun.
 
 **Known issue recurrence from previous fork**
--   L'erreur 404 sur  a été résolue de manière permanente avec un script de vérification.
+-   L'erreur 500 sur  a refait surface mais était due à un service proxy () non redémarré, et non à une régression de code. Le problème a été résolu.
 
 **Code Architecture**
-
+permissions
 
 **Key Technical Concepts**
--   **Config-Driven Initialization:** L'état initial de l'application est entièrement défini dans des fichiers de configuration (YAML), découplant la logique de la data. C'est le paradigme central du projet.
--   **Pydantic Data Validation:** Une source fréquente de bugs 500. La validation stricte des modèles Pydantic doit correspondre précisément au schéma des données venant de MongoDB (y compris les champs optionnels, les types de données et les contraintes de format).
--   **Orchestration de Scripts:** Utilisation d'un script master () pour exécuter une séquence de scripts plus petits et spécialisés, assurant un processus d'initialisation ordonné et complet.
+-   **JWT Permission Injection:** Le processus de connexion () a été modifié pour calculer les permissions effectives d'un utilisateur (directes + profils + bundles) et les injecter dans le payload du token JWT. C'est un changement fondamental pour la sécurité de l'application.
+-   **Data vs. Code Mismatches:** De nombreux bugs provenaient d'incohérences entre le schéma des données dans MongoDB (ex: champs  contenant des codes) et les attentes du code backend (ex: champs  attendant des UUIDs). Un débogage réussi nécessite de comparer systématiquement le code Pydantic, la logique métier et les documents réels en base.
+-   **Endpoint Enrichment:** Plusieurs endpoints de liste (ex: ) ont été enrichis pour ne plus retourner des données brutes, mais des objets complets incluant des informations calculées comme les permissions effectives, afin de simplifier la logique frontend.
 
 **key DB schema**
--   **auth_db.users:** Le schéma a été standardisé. Un utilisateur doit maintenant avoir les champs  (et non ), , et  pour pouvoir se connecter.
--   **auth_db.permissions:** Contient des permissions dont le champ  peut inclure des points, ce qui cause un conflit avec la validation Pydantic actuelle.
--   **jlc_db.app_config:** Contient les configurations globales de l'application (ex: ) et les feature flags.
--   **jlc_db.referentials:** Contient les listes de données statiques (ex: types de documents).
+-   **auth_db.users:** Un utilisateur () a été mis à jour () et réassigné au bon profil. Le processus de connexion charge maintenant les  de ce document pour calculer les permissions.
+-   **auth_db.profiles:** Les profils en base utilisaient un champ  (liste de codes). Le code a été adapté pour gérer ce format historique tout en privilégiant le nouveau système basé sur les .
+-   **auth_db.permission_bundles:** Le script d'initialisation IAM peuple cette collection. Le code a été corrigé pour lire depuis cette collection au lieu de l'ancienne ().
 
 **changes in tech stack**
--   **PyYAML:** Ajouté comme dépendance pour lire les fichiers de configuration .
+-   Aucun changement de technologie majeur.
 
 **All files**
--   **/app/config/*.yaml:** (NEW) Nouveaux fichiers de configuration centraux pour l'IAM, les référentiels et les feature flags.
--   **/app/scripts/*.py:** (NEW/MODIFIED) Ensemble de scripts pour l'initialisation et la maintenance de la base de données à partir des fichiers de configuration.
--   **/app/docs/*.md:** (NEW) Plusieurs documents de conception et de dépannage ont été créés.
--   **/app/auth-microservice/awana_auth/core/config_manager.py:** (MODIFIED) Corrigé pour trouver les fichiers de configuration au bon endroit.
--   **/app/auth-microservice/awana_auth/core/iam_models.py:** (MODIFIED) A été modifié pour ajouter le champ  et nécessite une nouvelle modification pour corriger la validation de .
--   **/app/apps/web/src/features/missions/config/missions.config.ts:** (MODIFIED) Clés d'affichage corrigées pour résoudre le bug de la page Missions.
+-   **/app/auth-microservice/awana_auth_routes.py:** (MODIFIED) Mise à jour majeure de la route de login pour injecter les permissions dans le JWT et de la route  pour enrichir la réponse.
+-   **/app/auth-microservice/awana_auth/session/jwt.py:** (MODIFIED) Corrigé pour lire les permissions et  depuis l'objet  lors de la création du token.
+-   **/app/auth-microservice/awana_auth/core/models.py:** (MODIFIED) Ajout des champs  et  au modèle  et .
+-   **/app/auth-microservice/iam_routes.py:** (MODIFIED) Corrigé pour gérer les anciens formats de profils et lire les bundles depuis la bonne collection.
+-   **/app/auth-microservice/profile_routes.py:** (MODIFIED) Corrigé pour éviter l'erreur de sérialisation  lors de la création de profil.
+-   **/app/auth-microservice/awana_auth/services/iam_unified_service.py:** (MODIFIED) Mis à jour pour calculer correctement les permissions utilisateur en tenant compte du format de données actuel.
+-   **/app/scripts/...py:** (NEW) Plusieurs scripts d'audit et de génération de documentation ont été créés.
+-   **/app/docs/...md:** (NEW) De nombreux rapports d'audit et documents de synthèse ont été générés.
 
 **Areas that need refactoring**:
--   Le modèle Pydantic  dans  doit être corrigé pour être moins restrictif.
+-   Les services IAM (, ) sont un patchwork de corrections. Ils mériteraient une refonte unifiée pour gérer de manière propre les différents formats de données (legacy et config-driven) et centraliser la logique de calcul des permissions.
+-   Le code contient encore de nombreuses incohérences de nommage (ex:  vs ,  vs ). Une passe de refactoring pour standardiser serait bénéfique.
 
 **key api endpoints**
--   : **(BROKEN)** Endpoint critique qui retourne une erreur 500.
--   : Endpoint de connexion, maintenant fonctionnel.
--   : Endpoint pour la liste des missions, maintenant fonctionnel.
+-   : **(FIXED & CRITICAL)** Endpoint de connexion. Charge maintenant les permissions de l'utilisateur dans le token JWT.
+-   : **(FIXED)** Endpoint pour les détails du profil de l'utilisateur connecté.
+-   : **(FIXED)** Endpoint listant toutes les permissions.
+-   : **(FIXED)** Endpoint listant les utilisateurs, désormais enrichi avec les permissions effectives.
+-   : **(FIXED)** Endpoint de permissions unifié utilisé par le frontend.
 
 **Critical Info for New Agent**
-1.  **Priorité Absolue (P0):** Votre première et unique tâche est de corriger l'erreur 500 sur . La cause est déjà identifiée : la validation de l'énumération Pydantic  dans  est trop stricte. Vous devez la modifier pour accepter les points dans les chaînes de caractères.
-2.  **Paradigme Config-Driven:** TOUTE l'initialisation de l'application est maintenant pilotée par les fichiers YAML dans . Si vous devez modifier des permissions, des profils, des référentiels ou des feature flags, c'est là que ça se passe, suivi de l'exécution du script . Ne modifiez plus la base de données manuellement pour la configuration.
-3.  **Source des Erreurs 500:** La plupart des erreurs 500 récentes proviennent de discordances entre les modèles Pydantic dans le code backend et les documents réels dans MongoDB. Si une nouvelle erreur 500 apparaît, comparez méticuleusement le modèle Pydantic, le document en base et la traceback d'erreur.
+1.  **Priorité Absolue (P0) : Corriger les Failles de Sécurité.** Votre première tâche est d'implémenter les correctifs de sécurité critiques identifiés par l'audit IAM. Le plan d'action se trouve dans  et . Ignorer cette étape laisserait l'application vulnérable.
+2.  **Reprendre la Documentation des Workflows (P1).** Une fois la sécurité assurée, poursuivez la tâche demandée par l'utilisateur : exécutez  et documentez les processus métier de l'application dans le dossier .
+3.  **Le Login est la Clé.** Le flux de connexion dans  et la création du JWT dans  sont désormais au cœur du système de permissions. Toute modification de l'authentification doit prendre en compte cette logique qui injecte les permissions dans le token.
+4.  **Attention aux Incohérences.** Le projet a un historique de bugs dus à des incohérences entre le code et les données en base (noms de champs, formats, noms de collections). Si vous rencontrez un bug IAM, votre premier réflexe doit être de vérifier les documents MongoDB réels et de les comparer avec la logique du code Pydantic et des services.
 
 **documents created in this job**
--   /app/config/README_IAM_CONFIG.md
--   /app/config/README_REFERENTIALS_AND_FLAGS.md
--   /app/docs/BUNDLE_PERMISSIONS.md
--   /app/docs/TROUBLESHOOTING_500_ERRORS.md
+-   /app/docs/SECURITY_AUDIT_REPORT.md
+-   /app/docs/SECURITY_ACTION_PLAN.md
+-   /app/docs/IAM_AUDIT_EXPERT_REPORT.md
+-   /app/docs/IAM_CORRECTIONS_IMMEDIATE.md
+-   /app/docs/IAM_ENDPOINT_MATRIX.json
+-   /app/docs/IAM_EXECUTIVE_SUMMARY.md
+-   /app/docs/IAM_STEP_BY_STEP_FIX.md
+-   /app/docs/IAM_PROFILE_PERMISSIONS_MATRIX.md
+-   /app/docs/IAM_PROFILES_SUMMARY.md
+-   /app/docs/ENTREPRISE_REGISTRATION_FLOW.md
 
 **Last 5 User Messages and any pending user messages**
-1.  **User:** Demande un résumé de la résolution des précédentes erreurs 500. **Status:** Completed (document  créé).
-2.  **User:** Signale une nouvelle erreur 500 sur . **Status:** In Progress.
-3.  **User:** (implicite) Attend la résolution du bug 500.
+1.  **User:** Demande un audit exhaustif de tous les endpoints du backend. **Status:** Completed (L'agent a produit plusieurs rapports d'audit détaillés).
+2.  **User:** Demande un audit IAM encore plus approfondi. **Status:** Completed (L'agent a effectué un second audit expert et généré des livrables supplémentaires).
+3.  **User:** Demande la liste des droits nécessaires pour chaque profil. **Status:** Completed (L'agent a généré une matrice de permissions détaillée).
+4.  **User:** Demande quels sont les endpoints et la logique pour l'inscription des entreprises. **Status:** Completed (L'agent a analysé le code et créé un document explicatif).
+5.  **User:** Demande de faire la même chose pour tous les autres workflows connus. **Status:** In Progress (L'agent a créé un script d'analyse pour commencer cette tâche).
 
 **Project Health Check:**
--   **Broken:**
-    -   L'endpoint  est non fonctionnel (erreur 500), ce qui impacte probablement de nombreuses fonctionnalités d'administration.
+-   **Broken:** De nombreuses routes d'API sont considérées comme cassées d'un point de vue sécurité, car elles ne sont pas protégées. L'audit dans  liste les routes critiques à corriger en priorité.
 -   **Mocked:** N/A
 
 **Testing status**
--   **Testing agent used after significant changes:** NO (l'agent a utilisé des tests  et des vérifications manuelles en base).
+-   **Testing agent used after significant changes:** NO (l'agent a principalement utilisé des scripts  et  pour des tests unitaires et d'intégration ciblés).
 -   **Troubleshoot agent used after agent stuck in loop:** NO
--   **Test files created:** De nombreux scripts d'initialisation et de maintenance ont été créés (, , etc.).
--   **Known regressions:** L'erreur 500 sur l'API des permissions est une nouvelle régression critique.
+-   **Test files created:** De nombreux scripts d'analyse et de documentation ont été créés dans , mais pas de fichiers de test formels.
+-   **Known regressions:** Aucune régression de code connue. Les problèmes qui ont refait surface étaient dus à des questions d'environnement (service non redémarré).
 
 **Credentials to test flow:**
 -   **Super Admin:**  / 
--   **Super Admin 2:**  / 
 -   **Commercial:**  / 
 
 **What agent forgot to execute**
--   Étant donné la quantité de bugs critiques et de refontes majeures demandées par l'utilisateur, l'agent a correctement priorisé ces tâches et n'a pas encore abordé les tâches de fond de plus faible priorité mentionnées dans le handoff initial (ex: refactor de , intégration d'icônes personnalisées).</analysis>
+-   L'agent a été entièrement absorbé par la résolution de bugs critiques en cascade et les demandes d'audit de l'utilisateur. La tâche la plus importante qui a été identifiée mais pas encore exécutée est l'**application des correctifs de sécurité** issus des audits. C'est maintenant la priorité absolue.</analysis>

@@ -3,7 +3,7 @@
 ## Problème
 Sur les environnements `*.preview.emergentagent.com`, l'erreur Mixed Content persiste:
 ```
-Mixed Content: The page at 'https://backend-bugfix-ops.preview.emergentagent.com/admin/countries' 
+Mixed Content: The page at 'https://workflow-mapper-6.preview.emergentagent.com/admin/countries' 
 was loaded over HTTPS, but requested an insecure resource 
 'http://xxx.preview.emergentagent.com/api/config/countries'
 ```
@@ -74,11 +74,11 @@ VITE_BACKEND_URL=http://xxx.preview.emergentagent.com
 
 Pour vérifier que le fix fonctionne en production:
 
-1. **Ouvrir la Console DevTools** sur `https://backend-bugfix-ops.preview.emergentagent.com`
+1. **Ouvrir la Console DevTools** sur `https://workflow-mapper-6.preview.emergentagent.com`
 
 2. **Vérifier les requêtes dans l'onglet Network**:
    ```
-   ✅ BON: https://backend-bugfix-ops.preview.emergentagent.com/api/config/countries
+   ✅ BON: https://workflow-mapper-6.preview.emergentagent.com/api/config/countries
    ❌ MAUVAIS: http://xxx.preview.emergentagent.com/api/config/countries
    ```
 
@@ -99,7 +99,7 @@ Pour vérifier que le fix fonctionne en production:
 ┌──────────────────────────────────────────────────────────────┐
 │ User Browser (HTTPS)                                         │
 │   ↓                                                          │
-│ https://backend-bugfix-ops.preview.emergentagent.com/admin/countries       │
+│ https://workflow-mapper-6.preview.emergentagent.com/admin/countries       │
 └──────────────────────────────────────────────────────────────┘
                         ↓
 ┌──────────────────────────────────────────────────────────────┐

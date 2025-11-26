@@ -343,8 +343,8 @@ Cette release marque la **première version stable et production-ready** de la p
 - Hot Reload : Activé
 
 ### Emergent Preview (Staging)
-- URL : `https://backend-bugfix-ops.preview.emergentagent.com`
-- API : `https://backend-bugfix-ops.preview.emergentagent.com/api`
+- URL : `https://workflow-mapper-6.preview.emergentagent.com`
+- API : `https://workflow-mapper-6.preview.emergentagent.com/api`
 - HTTPS : Forcé
 - Mixed Content : Résolu ✅
 

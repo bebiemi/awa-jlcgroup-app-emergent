@@ -19,7 +19,7 @@
 
 **Symptôme :**
 ```
-GET https://backend-bugfix-ops.preview.emergentagent.com/ net::ERR_HTTP_RESPONSE_CODE_FAILURE 502 (Bad Gateway)
+GET https://workflow-mapper-6.preview.emergentagent.com/ net::ERR_HTTP_RESPONSE_CODE_FAILURE 502 (Bad Gateway)
 ```
 
 **Cause Racine :**
