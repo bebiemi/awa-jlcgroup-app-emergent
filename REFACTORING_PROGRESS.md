@@ -142,10 +142,11 @@
 - [ ] **ProfilesManagementPage.tsx** - Déjà propre
 - [ ] **IAMControlPage.tsx** - Déjà propre
 
-### Backend Prioritaires (~8 fichiers)
+### Backend Prioritaires (~10 fichiers)
 - [ ] **scripts/initialize_iam_system.py** (GROS fichier - ~13KB)
 - [ ] **scripts/update_iam_permissions.py**
 - [x] **scripts/diagnose_login.py** (1 occurrence)
+- [ ] **contract_routes.py** (2 occurrences)
 - [ ] **configuration_routes.py** (2 occurrences)
 - [ ] **scripts/seed_mission_references.py** (4 occurrences)
 - [ ] **scripts/seed_additional_references.py** (2 occurrences)
