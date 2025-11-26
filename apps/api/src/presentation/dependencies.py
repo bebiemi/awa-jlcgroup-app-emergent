@@ -1,10 +1,10 @@
 """Dependency injection for routes"""
 from fastapi import Depends, HTTPException, status, Request
 from motor.motor_asyncio import AsyncIOMotorDatabase
-from typing import Optional
 import httpx
-import os
 import logging
+
+from src.infrastructure.config import get_settings
 
 logger = logging.getLogger(__name__)
 
@@ -26,7 +26,8 @@ async def get_current_user(request: Request, db: AsyncIOMotorDatabase = Depends(
     token = auth_header.replace("Bearer ", "")
 
     # Verify token with auth-microservice
-    auth_service_url = os.getenv('AUTH_SERVICE_URL', 'http://localhost:8000')
+    settings = get_settings()
+    auth_service_url = settings.auth_service_url
 
     try:
         async with httpx.AsyncClient() as client:

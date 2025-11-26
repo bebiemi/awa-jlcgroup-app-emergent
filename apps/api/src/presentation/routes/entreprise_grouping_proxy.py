@@ -2,14 +2,15 @@
 Entreprise Grouping Proxy Routes
 Proxy les requêtes de regroupement d'entreprises vers le microservice auth
 """
-from fastapi import APIRouter, Depends, Request, HTTPException
+from fastapi import APIRouter, Request, HTTPException
 from fastapi.responses import JSONResponse
 import httpx
-import os
+
+from src.infrastructure.config import get_settings
 
 grouping_proxy_router = APIRouter(prefix="/entreprises/grouping", tags=["Entreprise Grouping Proxy"])
 
-AUTH_SERVICE_URL = os.getenv("AUTH_SERVICE_URL", "http://localhost:8001")
+AUTH_SERVICE_URL = get_settings().auth_service_url
 
 
 @grouping_proxy_router.post("/request")

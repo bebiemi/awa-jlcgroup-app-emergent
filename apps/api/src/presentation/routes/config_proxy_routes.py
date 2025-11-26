@@ -2,17 +2,18 @@
 Config Proxy Routes
 Forwards /api/config/* requests to auth-microservice
 """
-from fastapi import APIRouter, Request, HTTPException
-from fastapi.responses import Response
-import httpx
-import os
 import logging
+
+from fastapi import APIRouter, HTTPException, Request, Response
+import httpx
+
+from src.infrastructure.config import get_settings
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
-AUTH_SERVICE_URL = os.getenv('AUTH_SERVICE_URL', 'http://localhost:8000')
+AUTH_SERVICE_URL = get_settings().auth_service_url
 
 
 async def proxy_config_request(endpoint_path: str, request: Request):
