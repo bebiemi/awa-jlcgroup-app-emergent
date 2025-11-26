@@ -8,8 +8,9 @@
 ## Travaux déjà effectués
 - **Centralisation des statuts/types de validation** : `auth-microservice/validation_routes.py` lit désormais les statuts (`pending`, `approved`, `rejected`) et types (`interim`, `company`, `collaborator`) via `cfg.get_validation_status` / `cfg.get_validation_type`, couvrant les statistiques, les flux d'approbation/rejet et les contrôles spécifiques aux entreprises.
 - **Dé-hardcodage du flux candidat → intérimaire** : `auth-microservice/awana_auth_routes.py` s’appuie sur `IAMGroups`, `IAMProfiles`, `UserRoles` et `get_validation_type_for_role` pour éviter les chaînes `candidat`/`grp.*` codées en dur (création des validations, promotion interimaire, mise à jour des rôles).
-- **Documentation de progression mise à jour** : `REFACTORING_PROGRESS.md` reflète 7 fichiers refactorés (~20% du périmètre) dont la refonte des validations.
+- **Documentation de progression mise à jour** : `REFACTORING_PROGRESS.md` reflète 8 fichiers refactorés (~23% du périmètre) dont la refonte des validations et l'attribution de profils IAM.
 - **Contrôles d'accès référentiels alignés IAM** : `auth-microservice/system_references_routes.py` n’utilise plus les rôles `admin`/`super_admin` en dur et s'appuie sur `cfg.get_admin_role` / `cfg.get_super_admin_role` pour sécuriser l'accès public aux référentiels.
+- **Attribution de profils IAM sans valeurs en dur** : `auth-microservice/security_routes.py` mappe désormais les rôles issus de la configuration (`cfg`) vers les profils `IAMProfiles`, supprimant les chaînes inline `admin`/`super_admin`/`interim`/`company`/`commercial` lors de la création d'utilisateurs.
 
 ## Actions prioritaires restantes
 1. **Externaliser les rôles/statuts auth** : déplacer les comparaisons en dur dans `apps/api/**/awana_auth_routes.py` vers la configuration (`config/base.yaml`).

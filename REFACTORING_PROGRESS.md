@@ -1,6 +1,6 @@
 # 📊 Progression de la Refactorisation IAM
 
-## ✅ Fichiers Refactorés (7 fichiers)
+## ✅ Fichiers Refactorés (8 fichiers)
 
 ### Frontend (3 fichiers)
 1. ✅ **ValidationsPage.tsx** - 15+ occurrences refactorées
@@ -15,7 +15,7 @@
    - Import: `ValidationTypes`
    - Remplacements: 'candidat' → ValidationTypes.CANDIDAT, 'company' → ValidationTypes.COMPANY
 
-### Backend (3 fichiers)
+### Backend (4 fichiers)
 4. ✅ **initialize_candidat_iam.py** - 17 occurrences refactorées
    - Import: `IAMGroups`, `IAMProfiles`, `IAMPermissions`
    - Tous les codes hardcodés remplacés par constantes
@@ -32,6 +32,10 @@
 7. ✅ **system_references_routes.py** - Rôles admin/super_admin pilotés par la config
    - Utilise `cfg.get_admin_role` / `cfg.get_super_admin_role` pour les contrôles d'accès publics
    - Mutualise la vérification via `_ensure_admin_or_manage_permission`
+
+8. ✅ **security_routes.py** - Attribution automatique des profils pilotée par la config
+   - Mappe les rôles issus de `cfg` vers les profils IAM (`IAMProfiles`)
+   - Supprime les chaînes en dur `admin`/`super_admin`/`interim`/`company`/`commercial` dans la création d'utilisateurs
 
 ---
 
@@ -57,7 +61,7 @@
 - [ ] **ProfilesManagementPage.tsx** - Déjà propre
 - [ ] **IAMControlPage.tsx** - Déjà propre
 
-### Backend Prioritaires (~12 fichiers)
+### Backend Prioritaires (~11 fichiers)
 - [ ] **scripts/initialize_iam_system.py** (GROS fichier - ~13KB)
 - [ ] **scripts/migrate_users_to_iam.py**
 - [ ] **scripts/update_iam_permissions.py**
@@ -78,13 +82,13 @@
 ## 📈 Statistiques
 
 ### Total
-- **Fichiers refactorés**: 7 / ~34 (~20.5%)
-- **Occurrences éliminées**: ~50 + statuts/types centralisés dans `validation_routes.py`
+- **Fichiers refactorés**: 8 / ~34 (~23.5%)
+- **Occurrences éliminées**: ~55 + statuts/types centralisés dans `validation_routes.py`
 - **Tests de sync**: ✅ 100% passés
 
 ### Par Catégorie
 - **Frontend**: 3 fichiers refactorés / ~21 restants
-- **Backend**: 3 fichiers refactorés / ~12 restants
+- **Backend**: 4 fichiers refactorés / ~11 restants
 
 ---
 
