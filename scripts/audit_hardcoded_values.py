@@ -2,11 +2,12 @@
 """
 Script d'audit complet pour identifier toutes les valeurs en dur dans le codebase
 """
+import argparse
 import os
 import re
-from pathlib import Path
-from typing import List, Dict, Set
 from dataclasses import dataclass
+from pathlib import Path
+from typing import Dict, List, Set
 from collections import defaultdict
 
 @dataclass
@@ -22,9 +23,9 @@ class HardcodedValue:
 
 class HardcodedValuesAuditor:
     """Auditeur de valeurs en dur"""
-    
-    def __init__(self, root_dir: str = "/app"):
-        self.root_dir = Path(root_dir)
+
+    def __init__(self, root_dir: Path):
+        self.root_dir = Path(root_dir).resolve()
         self.findings: List[HardcodedValue] = []
         
         # Patterns à rechercher
@@ -156,7 +157,14 @@ class HardcodedValuesAuditor:
             if re.search(pattern, line):
                 return True
         return False
-    
+
+    def safe_relative_path(self, file_path: Path) -> str:
+        """Retourne le chemin relatif par rapport à root_dir, même hors racine"""
+        try:
+            return str(file_path.resolve().relative_to(self.root_dir))
+        except ValueError:
+            return str(file_path)
+
     def scan_file(self, file_path: Path):
         """Scanner un fichier pour les valeurs en dur"""
         if self.should_skip_file(file_path):
@@ -179,8 +187,10 @@ class HardcodedValuesAuditor:
                             # Déterminer la sévérité
                             severity = self.determine_severity(category, line)
                             
+                            relative_path = self.safe_relative_path(file_path)
+
                             self.findings.append(HardcodedValue(
-                                file_path=str(file_path.relative_to(self.root_dir)),
+                                file_path=relative_path,
                                 line_number=line_num,
                                 line_content=line.strip(),
                                 value=match.group(),
@@ -470,27 +480,30 @@ class HardcodedValuesAuditor:
 
 def main():
     """Point d'entrée principal"""
-    auditor = HardcodedValuesAuditor()
+
+    args = parse_args()
+    auditor = HardcodedValuesAuditor(root_dir=args.root_dir)
     auditor.run_audit()
-    
+
     # Générer le rapport texte
     report = auditor.generate_report()
     print(report)
-    
+
     # Sauvegarder le rapport Markdown
     md_report = auditor.generate_markdown_report()
-    output_file = Path("/app/docs/AUDIT_VALEURS_EN_DUR.md")
+    output_file = args.markdown_output.resolve()
+    output_file.parent.mkdir(parents=True, exist_ok=True)
     with open(output_file, 'w', encoding='utf-8') as f:
         f.write(md_report)
-    
+
     print(f"📄 Rapport détaillé sauvegardé: {output_file}")
     print("")
-    
+
     # Statistiques finales
     by_severity = defaultdict(int)
     for finding in auditor.findings:
         by_severity[finding.severity] += 1
-    
+
     print("=" * 80)
     print("📊 STATISTIQUES FINALES")
     print("=" * 80)
@@ -500,6 +513,57 @@ def main():
     print(f"🟢 BASSE: {by_severity['low']}")
     print(f"📊 TOTAL: {len(auditor.findings)}")
     print("=" * 80)
+
+    # Gestion du seuil autorisé
+    if args.max_occurrences is not None:
+        if len(auditor.findings) > args.max_occurrences:
+            print(
+                f"❌ Nombre d'occurrences ({len(auditor.findings)}) "
+                f"dépasse le seuil autorisé ({args.max_occurrences})."
+            )
+            raise SystemExit(1)
+
+        print(
+            f"✅ Seuil respecté ({len(auditor.findings)}/"
+            f"{args.max_occurrences})."
+        )
+    else:
+        print("ℹ️ Aucun seuil fourni ; exécution informative uniquement.")
+
+
+def parse_args() -> argparse.Namespace:
+    """Parser les arguments de la ligne de commande"""
+
+    default_root = Path(__file__).resolve().parent.parent
+    default_output = default_root / "docs" / "AUDIT_VALEURS_EN_DUR.md"
+    env_max = os.environ.get("AUDIT_MAX_OCCURRENCES")
+
+    parser = argparse.ArgumentParser(
+        description="Audit des valeurs en dur dans le codebase"
+    )
+    parser.add_argument(
+        "--root-dir",
+        type=Path,
+        default=default_root,
+        help="Répertoire racine du projet (par défaut: racine du dépôt)",
+    )
+    parser.add_argument(
+        "--markdown-output",
+        type=Path,
+        default=default_output,
+        help="Chemin de sortie du rapport Markdown",
+    )
+    parser.add_argument(
+        "--max-occurrences",
+        type=int,
+        default=int(env_max) if env_max else None,
+        help=(
+            "Nombre maximal d'occurrences autorisées avant échec. "
+            "Peut aussi être défini via la variable AUDIT_MAX_OCCURRENCES"
+        ),
+    )
+
+    return parser.parse_args()
 
 
 if __name__ == "__main__":

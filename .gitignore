@@ -1,6 +1,9 @@
 # Environment files
 *.env
 *.env.*
+
+# Rapports générés automatiquement
+audit_reports/
 !.env.example
 
 # Node modules
