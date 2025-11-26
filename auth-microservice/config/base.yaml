@@ -232,6 +232,7 @@ workflows:
   
   # Validation Workflow Configuration
   validation:
+    default_status: "pending"
     # Validation Statuses
     statuses:
       pending: "pending"
@@ -264,6 +265,15 @@ workflows:
       assign_validator:
         - "admin"
         - "super_admin"
+    transitions:
+      approve:
+        from:
+          - "pending"
+        to: "approved"
+      reject:
+        from:
+          - "pending"
+        to: "rejected"
 
 # Profiles Configuration
 profiles:
