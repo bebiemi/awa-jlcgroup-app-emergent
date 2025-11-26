@@ -569,12 +569,20 @@ async def assign_validation(
             detail="Validator not found"
         )
     
-    # Check if validator has admin or commercial role
-    validator_roles = validator.get("roles", [])
-    if not any(role in validator_roles for role in [cfg.get_admin_role(), cfg.get_super_admin_role(), cfg.get_commercial_role()]):
+    # Check if validator has an allowed validator role from configuration
+    allowed_validator_roles = [role for role in (cfg.get_validator_roles() or []) if role]
+    if not allowed_validator_roles:
+        allowed_validator_roles = [
+            role
+            for role in [cfg.get_admin_role(), cfg.get_super_admin_role(), cfg.get_commercial_role()]
+            if role
+        ]
+
+    validator_roles = set(validator.get("roles", []))
+    if not any(role in validator_roles for role in allowed_validator_roles):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="User does not have validator role (admin, super_admin, or commercial)"
+            detail=f"User does not have validator role ({', '.join(allowed_validator_roles)})"
         )
     
     # Update validation

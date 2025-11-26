@@ -67,6 +67,7 @@
 3. ✅ **validation_routes.py** - Statuts/types de validation centralisés
    - Utilise `cfg.get_validation_status` et `cfg.get_validation_type`
    - Remplace les valeurs en dur dans les stats et transitions d'approbation/rejet
+   - L'assignation d'un validateur consomme `cfg.get_validator_roles()` (fallback admin/super_admin/commercial)
 
 4. ✅ **system_references_routes.py** - Rôles admin/super_admin pilotés par la config
    - Utilise `cfg.get_admin_role` / `cfg.get_super_admin_role` pour les contrôles d'accès publics
@@ -145,7 +146,7 @@
 ## 📈 Statistiques
 
 ### Total
-- **Fichiers refactorés**: 26 / ~34 (~76%)
+- **Fichiers refactorés**: 27 / ~34 (~79%)
 - **Occurrences éliminées**: ~100 + statuts/types centralisés dans `validation_routes.py`
 - **Tests de sync**: ✅ 100% passés
 

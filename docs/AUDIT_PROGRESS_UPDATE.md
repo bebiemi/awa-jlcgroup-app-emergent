@@ -8,6 +8,7 @@
 
 ## Travaux déjà effectués
 - **Centralisation des statuts/types de validation** : `auth-microservice/validation_routes.py` lit désormais les statuts (`pending`, `approved`, `rejected`) et types (`interim`, `company`, `collaborator`) via `cfg.get_validation_status` / `cfg.get_validation_type`, couvrant les statistiques, les flux d'approbation/rejet et les contrôles spécifiques aux entreprises.
+- **Assignation de validations pilotée par la config** : l'attribution d'un validateur dans `auth-microservice/validation_routes.py` s'appuie maintenant sur `cfg.get_validator_roles()` (avec fallback admin/super_admin/commercial), supprimant les listes en dur.
 - **Dé-hardcodage du flux candidat → intérimaire** : `auth-microservice/awana_auth_routes.py` s’appuie sur `IAMGroups`, `IAMProfiles`, `UserRoles` et `get_validation_type_for_role` pour éviter les chaînes `candidat`/`grp.*` codées en dur (création des validations, promotion interimaire, mise à jour des rôles).
 - **Frontends auth alignés sur la config** : `LoginPage.tsx`, `GoogleCallback.tsx`, `LoginModal.tsx` et `MfaVerificationPage.tsx` redirigent selon les rôles issus de `useRoles`/`UserRoles`, sans dépendre de chaînes `admin`/`super_admin`/`interim`/`company`/`agency` en dur.
 - **Création utilisateur admin sans rôles inline** : `CreateUserPage.tsx` construit la liste des rôles proposés à partir de la configuration (admin/super_admin/interim/company/agency).
@@ -33,7 +34,7 @@
 ## Actions prioritaires restantes
 1. **Externaliser les rôles/statuts auth** : déplacer les comparaisons en dur dans `apps/api/**/awana_auth_routes.py` vers la configuration (`config/base.yaml`).
 2. **Centraliser les permissions mission** : consommer des listes de rôles configurées dans `apps/api/**/mission_routes.py` pour la création/publication/édition/lecture globale.
-3. **Finaliser la paramétrisation des validations** : s'assurer que les statuts/types restants et les rôles validateurs sont tous lus depuis la config dans `apps/api/**/validation_routes.py`.
+3. **Finaliser la paramétrisation des validations** : poursuivre la bascule vers la configuration (transitions restantes côté `apps/api/**/validation_routes.py` si nécessaire).
 4. **Automatiser l'audit en CI** : exécuter `scripts/audit_hardcoded_values.py` sur chaque PR et échouer en cas de nouvelles occurrences.
 5. **Préparer l'exposition mobile** : stabiliser un contrat API v1, ajouter pagination/filtrage systématiques, timeouts et rate limiting pour la résilience.
 
