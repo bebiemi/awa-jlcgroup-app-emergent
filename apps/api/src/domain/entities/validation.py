@@ -25,8 +25,8 @@ class AccountValidation(BaseModel):
     user_id: str
     user_email: Optional[str] = None
     user_name: Optional[str] = None
-    validation_type: ValidationType
-    status: ValidationStatus = ValidationStatus.PENDING
+    validation_type: ValidationType | str
+    status: ValidationStatus | str = ValidationStatus.PENDING
     comment: Optional[str] = None
     reviewed_by: Optional[str] = None
     reviewed_by_email: Optional[str] = None

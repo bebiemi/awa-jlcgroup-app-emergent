@@ -13,19 +13,35 @@ import {
   ArrowRightOnRectangleIcon
 } from '@heroicons/react/24/outline'
 import LoginModal from '@/components/LoginModal'
+import { useRoles } from '@/hooks/useAppConfig'
+import { UserRoles } from '@/constants/iamConstants'
 
 export default function LandingPage() {
   const [showLoginModal, setShowLoginModal] = useState(false)
   const { isAuthenticated, user } = useAppSelector((state) => state.auth)
   const navigate = useNavigate()
+  const roles = useRoles()
 
   // Get dashboard path based on user role
   const getDashboardPath = () => {
     if (!user) return '/profile'
-    if (user.roles.includes('admin') || user.roles.includes('super_admin')) return '/admin'
-    if (user.roles.includes('interim')) return '/interimaire'
-    if (user.roles.includes('company')) return '/entreprise'
-    if (user.roles.includes('agency')) return '/agence'
+
+    const resolvedRoles = {
+      admin: roles?.admin || UserRoles.ADMIN,
+      superAdmin: roles?.super_admin || UserRoles.SUPER_ADMIN,
+      interim: roles?.interim || UserRoles.INTERIM,
+      company: roles?.company || UserRoles.COMPANY,
+      agency: roles?.agency || 'agency',
+      commercial: roles?.commercial || 'commercial',
+    }
+
+    const hasRole = (role?: string) => Boolean(role && user.roles.includes(role))
+
+    if (hasRole(resolvedRoles.commercial)) return '/commercial'
+    if (hasRole(resolvedRoles.admin) || hasRole(resolvedRoles.superAdmin)) return '/admin'
+    if (hasRole(resolvedRoles.interim)) return '/interimaire'
+    if (hasRole(resolvedRoles.company)) return '/entreprise'
+    if (hasRole(resolvedRoles.agency)) return '/agence'
     return '/profile'
   }
   

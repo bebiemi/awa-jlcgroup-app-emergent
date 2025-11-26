@@ -1,3 +1,5 @@
+import { IAMProfiles, UserRoles, type ValidationType as IAMValidationType } from '@/constants/iamConstants'
+
 // User types
 export interface User {
   id: string
@@ -12,7 +14,10 @@ export interface User {
 }
 
 // Profile types
-export type ProfileType = 'admin' | 'agency' | 'company' | 'interim'
+export type ProfileType =
+  | typeof IAMProfiles[keyof typeof IAMProfiles]
+  | typeof UserRoles[keyof typeof UserRoles]
+  | 'agency'
 
 export interface AgencyProfile {
   agency_name?: string
@@ -56,7 +61,7 @@ export interface Profile {
 }
 
 // Validation types
-export type ValidationType = 'company' | 'interim'
+export type ValidationType = IAMValidationType
 export type ValidationStatus = 'pending' | 'approved' | 'rejected'
 
 export interface AccountValidation {
