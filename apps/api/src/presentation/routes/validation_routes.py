@@ -5,6 +5,7 @@ from typing import Optional
 from src.presentation.dependencies import (
     get_database,
     get_current_user,
+    get_validation_workflow_config,
     require_validator,
 )
 from src.application.dtos.validation_dtos import (
@@ -30,6 +31,7 @@ import math
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/validations", tags=["Validations"])
+VALIDATION_CONFIG = get_validation_workflow_config()
 
 
 def _enum_value(value):
@@ -126,14 +128,18 @@ async def approve_validation(
 
     # Check if already processed
     current_status = _enum_value(validation.status)
-    if current_status != ValidationStatus.PENDING.value:
+    approve_transition = VALIDATION_CONFIG["transitions"].get("approve", {})
+    allowed_from = approve_transition.get("from", [ValidationStatus.PENDING.value])
+    target_status = approve_transition.get("to", ValidationStatus.APPROVED.value)
+
+    if current_status not in allowed_from:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Validation already processed",
         )
 
     # Update validation
-    validation.status = ValidationStatus.APPROVED.value
+    validation.status = ValidationStatus(target_status) if target_status in ValidationStatus._value2member_map_ else target_status
     validation.comment = request_data.comment
     validation.reviewed_by = current_user['id']
     validation.reviewed_by_email = current_user.get('email')
@@ -216,14 +222,18 @@ async def reject_validation(
 
     # Check if already processed
     current_status = _enum_value(validation.status)
-    if current_status != ValidationStatus.PENDING.value:
+    reject_transition = VALIDATION_CONFIG["transitions"].get("reject", {})
+    allowed_from = reject_transition.get("from", [ValidationStatus.PENDING.value])
+    target_status = reject_transition.get("to", ValidationStatus.REJECTED.value)
+
+    if current_status not in allowed_from:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Validation already processed",
         )
 
     # Update validation
-    validation.status = ValidationStatus.REJECTED.value
+    validation.status = ValidationStatus(target_status) if target_status in ValidationStatus._value2member_map_ else target_status
     validation.comment = request_data.comment
     validation.reviewed_by = current_user['id']
     validation.reviewed_by_email = current_user.get('email')
