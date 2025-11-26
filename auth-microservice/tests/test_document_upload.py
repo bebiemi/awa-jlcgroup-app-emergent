@@ -119,8 +119,45 @@ startxref
             files=files,
             headers=auth_headers_candidat
         )
-        
+
         assert response.status_code == 422  # Unprocessable Entity
+
+    def test_document_type_validation(self, client, auth_headers_candidat):
+        """Test that only allowed document types are accepted"""
+        pdf_content = b"%PDF-1.4 minimal"
+
+        valid_files = {
+            'file': ('valid.pdf', BytesIO(pdf_content), 'application/pdf')
+        }
+        valid_data = {
+            'document_type': 'cv'
+        }
+
+        valid_response = client.post(
+            "/profiles/documents",
+            files=valid_files,
+            data=valid_data,
+            headers=auth_headers_candidat
+        )
+
+        assert valid_response.status_code == 200
+
+        invalid_files = {
+            'file': ('invalid.pdf', BytesIO(pdf_content), 'application/pdf')
+        }
+        invalid_data = {
+            'document_type': 'unknown_type'
+        }
+
+        invalid_response = client.post(
+            "/profiles/documents",
+            files=invalid_files,
+            data=invalid_data,
+            headers=auth_headers_candidat
+        )
+
+        assert invalid_response.status_code == 400
+        assert "document type" in invalid_response.json()["detail"].lower()
 
 
 class TestDocumentRetrieval:
