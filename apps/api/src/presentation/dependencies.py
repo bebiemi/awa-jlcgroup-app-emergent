@@ -7,6 +7,7 @@ import os
 from functools import lru_cache
 from pathlib import Path
 from typing import Any, Iterable
+from src.domain.entities.profile import ProfileType
 from src.domain.entities.validation import ValidationStatus, ValidationType
 import yaml
 
@@ -46,6 +47,12 @@ DEFAULT_VALIDATION_TYPES = {
 DEFAULT_VALIDATION_TRANSITIONS = {
     "approve": {"from": [DEFAULT_VALIDATION_STATUSES["pending"]], "to": DEFAULT_VALIDATION_STATUSES["approved"]},
     "reject": {"from": [DEFAULT_VALIDATION_STATUSES["pending"]], "to": DEFAULT_VALIDATION_STATUSES["rejected"]},
+}
+DEFAULT_PROFILE_TYPES = {
+    "admin": ProfileType.ADMIN.value,
+    "agency": ProfileType.AGENCY.value,
+    "company": ProfileType.COMPANY.value,
+    "interim": ProfileType.INTERIM.value,
 }
 
 
@@ -198,6 +205,38 @@ def get_validation_workflow_config() -> dict[str, Any]:
             },
         },
     }
+
+
+@lru_cache()
+def get_profile_types_from_config() -> dict[str, str]:
+    """Read profile types from configuration (profiles.types)."""
+    config_path = Path(
+        os.getenv(
+            "AUTH_CONFIG_PATH",
+            Path(__file__).resolve().parents[4] / "auth-microservice/config/base.yaml",
+        )
+    )
+    config = _read_config_file(config_path)
+    configured_types = _get_dict(config, ["profiles", "types"]) or {}
+    return {**DEFAULT_PROFILE_TYPES, **{k: v for k, v in configured_types.items() if isinstance(v, str)}}
+
+
+@lru_cache()
+def get_all_profile_type_values() -> list[str]:
+    """Return the configured profile codes including explicit lists."""
+    config_path = Path(
+        os.getenv(
+            "AUTH_CONFIG_PATH",
+            Path(__file__).resolve().parents[4] / "auth-microservice/config/base.yaml",
+        )
+    )
+    config = _read_config_file(config_path)
+    configured_types = _get_dict(config, ["profiles", "types"]) or {}
+    explicit_all = _get_list(config, ["profiles", "types", "all"]) or []
+
+    merged = _dedupe_preserve_order(list(configured_types.values()) + explicit_all)
+    fallback = _dedupe_preserve_order(list(DEFAULT_PROFILE_TYPES.values()))
+    return merged or fallback
 
 
 async def get_current_user(request: Request, db: AsyncIOMotorDatabase = Depends(get_database)):

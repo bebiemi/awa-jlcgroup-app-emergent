@@ -1,6 +1,6 @@
 # 📊 Progression de la Refactorisation IAM
 
-## ✅ Fichiers Refactorés (27 fichiers)
+## ✅ Fichiers Refactorés (28 fichiers)
 
 ### Frontend (13 fichiers)
 1. ✅ **ValidationsPage.tsx** - 15+ occurrences refactorées
@@ -54,7 +54,7 @@
     - `ProfileType` s'appuie sur `IAMProfiles`/`UserRoles` au lieu de littéraux
     - `ValidationType` réutilise le type exporté par `iamConstants.ts`
 
-### Backend (14 fichiers)
+### Backend (15 fichiers)
 1. ✅ **initialize_candidat_iam.py** - 17 occurrences refactorées
    - Import: `IAMGroups`, `IAMProfiles`, `IAMPermissions`
    - Tous les codes hardcodés remplacés par constantes
@@ -109,6 +109,11 @@
 14. ✅ **mission_routes.py** - Restrictions de re-candidature alignées sur les statuts référentiels
     - Les contrôles de re-candidature utilisent `ApplicationStatus.REJECTED`/`REJECTED_INITIAL` au lieu de chaînes inline
 
+15. ✅ **admin_routes.py** - KPIs admin calculés via statuts/types/profils configurés
+    - Les compteurs pending/approved/rejected lisent les statuts du workflow de validation depuis la configuration
+    - Les filtres par type de validation et les totaux de profils consomment les codes de config (fallback enum)
+    - Expose la liste des codes de profils configurés pour faciliter le suivi dashboard
+
 ---
 
 ## 🔄 Fichiers Restants à Refactorer
@@ -146,13 +151,13 @@
 ## 📈 Statistiques
 
 ### Total
-- **Fichiers refactorés**: 27 / ~34 (~79%)
+- **Fichiers refactorés**: 28 / ~34 (~82%)
 - **Occurrences éliminées**: ~100 + statuts/types centralisés dans `validation_routes.py`
 - **Tests de sync**: ✅ 100% passés
 
 ### Par Catégorie
 - **Frontend**: 13 fichiers refactorés / ~7 restants
-- **Backend**: 14 fichiers refactorés / ~5 restants
+- **Backend**: 15 fichiers refactorés / ~4 restants
 
 ---
 

@@ -14,7 +14,7 @@
 - **Création utilisateur admin sans rôles inline** : `CreateUserPage.tsx` construit la liste des rôles proposés à partir de la configuration (admin/super_admin/interim/company/agency).
 - **Constantes IAM synchronisées** : `apps/web/src/constants/iamConstants.ts` inclut désormais les valeurs `POSTULANT` pour refléter les constantes backend (`iam_constants.py`).
 - **ValidationsList.tsx alignée sur la config** : les filtres « En attente/Approuvées/Refusées » consomment désormais les statuts issus de la configuration/référentiels au lieu des chaînes `pending/approved/rejected` en dur.
-- **Documentation de progression mise à jour** : `REFACTORING_PROGRESS.md` reflète 27 fichiers refactorés (~78% du périmètre) dont les flux auth frontend (pages + modal), la création d'utilisateur, la page profil, les filtres de validations alignés sur la config et le typage partagé.
+- **Documentation de progression mise à jour** : `REFACTORING_PROGRESS.md` reflète 28 fichiers refactorés (~82% du périmètre) dont les flux auth frontend (pages + modal), la création d'utilisateur, la page profil, les filtres de validations alignés sur la config et le typage partagé.
 
 - **Re-candidature mission sans statuts en dur** : `auth-microservice/mission_routes.py` vérifie désormais les statuts de rejet via `ApplicationStatus.REJECTED`/`REJECTED_INITIAL` pour éviter les chaînes inline dans les contrôles de re-application.
 
@@ -30,6 +30,7 @@
 - **Permissions temporaires/IAM sans chaînes admin** : `auth-microservice/temporary_permissions_routes.py` et `auth-microservice/iam_routes.py` utilisent `cfg.get_admin_role`/`cfg.get_super_admin_role` pour sécuriser l'accès aux permissions, évitant les comparaisons en dur.
 - **Migration IAM pilotée par la config** : `auth-microservice/scripts/migrate_users_to_iam.py` s'appuie désormais sur `ConfigHelper` pour traduire les rôles configurés en profils cibles, en filtrant automatiquement les rôles inconnus.
 - **Diagnostic login aligné IAM** : `auth-microservice/scripts/diagnose_login.py` vérifie désormais le groupe candidat via `IAMGroups.CANDIDAT` au lieu de la chaîne `grp.candidat` en dur.
+- **KPIs admin sans statuts/profils en dur** : `apps/api/src/presentation/routes/admin_routes.py` lit les statuts/types de validation et les profils depuis la configuration pour calculer les compteurs et totaux, avec fallback enum si nécessaire. Les dépôts validation/profil acceptent désormais les valeurs brutes issues de la config.
 
 ## Actions prioritaires restantes
 1. **Externaliser les rôles/statuts auth** : déplacer les comparaisons en dur dans `apps/api/**/awana_auth_routes.py` vers la configuration (`config/base.yaml`).
