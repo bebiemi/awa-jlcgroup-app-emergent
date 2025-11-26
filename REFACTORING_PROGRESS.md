@@ -1,6 +1,6 @@
 # 📊 Progression de la Refactorisation IAM
 
-## ✅ Fichiers Refactorés (5 fichiers)
+## ✅ Fichiers Refactorés (7 fichiers)
 
 ### Frontend (3 fichiers)
 1. ✅ **ValidationsPage.tsx** - 15+ occurrences refactorées
@@ -15,7 +15,7 @@
    - Import: `ValidationTypes`
    - Remplacements: 'candidat' → ValidationTypes.CANDIDAT, 'company' → ValidationTypes.COMPANY
 
-### Backend (2 fichiers)
+### Backend (3 fichiers)
 4. ✅ **initialize_candidat_iam.py** - 17 occurrences refactorées
    - Import: `IAMGroups`, `IAMProfiles`, `IAMPermissions`
    - Tous les codes hardcodés remplacés par constantes
@@ -23,6 +23,15 @@
 
 5. ✅ **awana_auth_routes.py** - Partiellement refactoré (déjà fait avant)
    - Import: `IAMGroups`, `IAMProfiles`, `UserRoles`, `ValidationTypes`
+   - Rôle/validation « candidat » et codes de groupes intérimaires désormais issus des constantes IAM
+
+6. ✅ **validation_routes.py** - Statuts/types de validation centralisés
+   - Utilise `cfg.get_validation_status` et `cfg.get_validation_type`
+   - Remplace les valeurs en dur dans les stats et transitions d'approbation/rejet
+
+7. ✅ **system_references_routes.py** - Rôles admin/super_admin pilotés par la config
+   - Utilise `cfg.get_admin_role` / `cfg.get_super_admin_role` pour les contrôles d'accès publics
+   - Mutualise la vérification via `_ensure_admin_or_manage_permission`
 
 ---
 
@@ -69,13 +78,13 @@
 ## 📈 Statistiques
 
 ### Total
-- **Fichiers refactorés**: 5 / ~34 (14.7%)
-- **Occurrences éliminées**: ~44
+- **Fichiers refactorés**: 7 / ~34 (~20.5%)
+- **Occurrences éliminées**: ~50 + statuts/types centralisés dans `validation_routes.py`
 - **Tests de sync**: ✅ 100% passés
 
 ### Par Catégorie
 - **Frontend**: 3 fichiers refactorés / ~21 restants
-- **Backend**: 2 fichiers refactorés / ~13 restants
+- **Backend**: 3 fichiers refactorés / ~12 restants
 
 ---
 
@@ -125,5 +134,5 @@ grep -r '"candidat"\|"interim"\|"company"' /app/auth-microservice --include="*.p
 
 ---
 
-**Dernière mise à jour**: 2025-01-10  
-**Statut**: 🔄 En progression (14.7% complété)
+**Dernière mise à jour**: 2025-11-26 (ajout system_references)
+**Statut**: 🔄 En progression (~20% complété)
