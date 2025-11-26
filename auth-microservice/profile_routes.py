@@ -226,6 +226,15 @@ async def get_my_profile(
             }
             await profile_collection.insert_one(profile)
 
+            completion = calculate_profile_completion(profile, PROFILE_TYPE_COMPANY)
+            await profile_collection.update_one(
+                {"user_id": current_user.id},
+                {"$set": {
+                    "profile_completion_percentage": completion,
+                    "profile_completed": completion >= 80
+                }}
+            )
+
             # Reload profile without _id
             profile = await profile_collection.find_one({"user_id": current_user.id}, {"_id": 0})
 
@@ -263,6 +272,15 @@ async def get_my_profile(
                 "updated_at": datetime.now(timezone.utc).isoformat()
             }
             await profile_collection.insert_one(profile)
+
+            completion = calculate_profile_completion(profile, PROFILE_TYPE_COLLABORATOR)
+            await profile_collection.update_one(
+                {"user_id": current_user.id},
+                {"$set": {
+                    "profile_completion_percentage": completion,
+                    "profile_completed": completion >= 80
+                }}
+            )
 
             # Reload profile without _id
             profile = await profile_collection.find_one({"user_id": current_user.id}, {"_id": 0})
@@ -350,6 +368,10 @@ async def upload_document(
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """Upload a document (CV, diploma, certificate, etc.)"""
+    allowed_document_types = cfg.get_all_document_types()
+    if document_type not in allowed_document_types:
+        raise HTTPException(status_code=400, detail="Document type not allowed")
+
     # Validate file size
     file_content = await file.read()
     file_size = len(file_content)
