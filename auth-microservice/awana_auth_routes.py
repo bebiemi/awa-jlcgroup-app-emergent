@@ -366,6 +366,9 @@ async def create_user_profile_if_not_exists(
         "updated_at": datetime.now(timezone.utc).isoformat()
     }
     
+    admin_role = cfg.get_admin_role()
+    super_admin_role = cfg.get_super_admin_role()
+
     # Add role-specific fields
     if profile_type == 'interim':
         profile.update({
@@ -396,7 +399,7 @@ async def create_user_profile_if_not_exists(
             "website": None,
             "description": None
         })
-    elif profile_type in ['admin', 'super_admin']:
+    elif profile_type in [admin_role, super_admin_role]:
         profile.update({
             "department": "Administration",
             "position": "Administrator"
@@ -1741,7 +1744,7 @@ async def get_admin_stats(
         total_users = await db.users.count_documents({})
         active_users = await db.users.count_documents({"status": cfg.get_active_status()})
         pending_users = await db.users.count_documents({"status": cfg.get_pending_status()})
-        suspended_users = await db.users.count_documents({"status": "suspended"})
+        suspended_users = await db.users.count_documents({"status": cfg.get_suspended_status()})
         
         # Users by role
         admin_users = await db.users.count_documents({"roles": cfg.get_admin_role()})
@@ -1829,10 +1832,11 @@ async def get_all_users(
     
     if provider:
         query["provider"] = provider.value
-    
+
     # Filter out super-admins unless caller is super-admin AND explicitly requests them
-    is_super_admin = "super_admin" in current_user.roles
-    
+    super_admin_role = cfg.get_super_admin_role()
+    is_super_admin = cfg.user_has_role(current_user.roles, super_admin_role)
+
     if not is_super_admin or not include_super_admin:
         # Get hidden roles from system_references
         hidden_roles = await db.system_references.find(
@@ -1970,7 +1974,7 @@ async def delete_user(
         {"id": user_id},
         {
             "$set": {
-                "status": "archived",
+                "status": cfg.get_archived_status(),
                 "archived_at": datetime.now(timezone.utc),
                 "updated_at": datetime.now(timezone.utc)
             }
@@ -2228,24 +2232,25 @@ async def list_users(
             query["status"] = status
         
         # Filter out super-admins unless caller is super-admin AND explicitly requests them
-        is_super_admin = "super_admin" in current_user.roles
-        
+        super_admin_role = cfg.get_super_admin_role()
+        is_super_admin = cfg.user_has_role(current_user.roles, super_admin_role)
+
         # Build roles filter with both role filter and hidden roles exclusion
         roles_conditions = []
-        
+
         # Add role filter if specified
         if role:
             roles_conditions.append(role)
-        
+
         if not is_super_admin or not include_super_admin:
             # Get hidden roles from system_references
             hidden_roles = await db.system_references.find(
                 {"category": "roles", "is_hidden_from_admins": True},
                 {"_id": 0, "code": 1}
             ).to_list(length=None)
-            
+
             hidden_role_codes = [r["code"] for r in hidden_roles]
-            
+
             if hidden_role_codes:
                 # Combine role filter with hidden roles exclusion
                 if role:

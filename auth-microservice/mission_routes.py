@@ -35,6 +35,8 @@ MISSION_CREATE_ROLES = cfg.get_mission_permission_roles("create") or []
 MISSION_PUBLISH_ROLES = cfg.get_mission_permission_roles("publish") or []
 MISSION_VIEW_ALL_ROLES = cfg.get_mission_permission_roles("view_all") or []
 MISSION_EDIT_ROLES = cfg.get_mission_permission_roles("edit") or []
+APPLICATION_MANAGE_ROLES = cfg.get_application_permission_roles("manage") or []
+APPLICATION_UPDATE_ROLES = cfg.get_application_permission_roles("update") or APPLICATION_MANAGE_ROLES
 
 
 def _has_required_role(user_roles: List[str], allowed_roles: List[str]) -> bool:
@@ -965,14 +967,8 @@ async def update_application(
     
     # Vérifier permissions
     user_roles = current_user.get("roles", [])
-    normalized_roles = [r.lower() for r in user_roles]
-    admin_role = (cfg.get_admin_role() or "").lower()
-    super_admin_role = (cfg.get_super_admin_role() or "").lower()
-    commercial_role = (cfg.get_commercial_role() or "").lower()
 
-    can_update = admin_role in normalized_roles or super_admin_role in normalized_roles or commercial_role in normalized_roles
-    
-    if not can_update:
+    if not _has_required_role(user_roles, APPLICATION_UPDATE_ROLES):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Permission insuffisante"

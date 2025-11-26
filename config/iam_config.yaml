@@ -1517,6 +1517,45 @@ user_validation_rules:
   # Champs legacy à renommer
   field_migrations:
     password: "password_hash"
+
+# ========================================
+# WORKFLOWS DE VALIDATION
+# ========================================
+workflows:
+  validation:
+    statuses:
+      pending: "pending"
+      approved: "approved"
+      rejected: "rejected"
+      all:
+        - "pending"
+        - "approved"
+        - "rejected"
+
+    types:
+      interim: "interim"
+      company: "company"
+      collaborator: "collaborator"
+      all:
+        - "interim"
+        - "company"
+        - "collaborator"
+
+    permissions:
+      validator_roles:
+        - "admin"
+        - "super_admin"
+        - "commercial"
+
+    transitions:
+      approve:
+        from:
+          - "pending"
+        to: "approved"
+      reject:
+        from:
+          - "pending"
+        to: "rejected"
     
   # Champs à supprimer (obsolètes)
   deprecated_fields:

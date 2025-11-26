@@ -233,6 +233,11 @@ workflows:
         - "super_admin"
         - "commercial"
         - "company"
+      update:
+        - "admin"
+        - "super_admin"
+        - "commercial"
+        - "company"
       view_own:
         - "interim"
   
