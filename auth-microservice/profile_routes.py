@@ -50,6 +50,22 @@ ALLOWED_MIME_TYPES = [
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 
+def get_profile_context(current_user: User, db: AsyncIOMotorDatabase):
+    """Return the profile collection and configured profile type for the current user."""
+    if INTERIM_ROLE in current_user.roles or CANDIDATE_ROLE in current_user.roles or POSTULANT_ROLE in current_user.roles:
+        profile_type = PROFILE_TYPE_INTERIM
+        if CANDIDATE_ROLE in current_user.roles:
+            profile_type = PROFILE_TYPE_CANDIDATE
+        elif POSTULANT_ROLE in current_user.roles:
+            profile_type = PROFILE_TYPE_POSTULANT
+        return db.interim_profiles, profile_type
+
+    if COMPANY_ROLE in current_user.roles:
+        return db.company_manager_profiles, PROFILE_TYPE_COMPANY
+
+    return db.collaborator_profiles, PROFILE_TYPE_COLLABORATOR
+
+
 def calculate_profile_completion(profile_data: dict, profile_type: str) -> int:
     """Calculate profile completion percentage based on filled fields"""
     # Use same logic for interim, candidat, and postulant profiles
@@ -103,10 +119,12 @@ async def get_my_profile(
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """Get current user's profile based on their role"""
+    profile_collection, profile_type_to_return = get_profile_context(current_user, db)
+
     # Determine profile collection based on role
     # Support for interim, candidat, and postulant roles
     if INTERIM_ROLE in current_user.roles or CANDIDATE_ROLE in current_user.roles or POSTULANT_ROLE in current_user.roles:
-        profile = await db.interim_profiles.find_one({"user_id": current_user.id}, {"_id": 0})
+        profile = await profile_collection.find_one({"user_id": current_user.id}, {"_id": 0})
         
         # Parse full_name into first_name and last_name if available
         first_name = None
@@ -139,14 +157,14 @@ async def get_my_profile(
                 "updated_at": datetime.now(timezone.utc).isoformat()
             }
             # Calculate initial completion
-            completion = calculate_profile_completion(profile, PROFILE_TYPE_INTERIM)
+            completion = calculate_profile_completion(profile, profile_type_to_return)
             profile["profile_completion_percentage"] = completion
             profile["profile_completed"] = completion >= 80
             
-            await db.interim_profiles.insert_one(profile)
-            
+            await profile_collection.insert_one(profile)
+
             # Reload profile without _id
-            profile = await db.interim_profiles.find_one({"user_id": current_user.id}, {"_id": 0})
+            profile = await profile_collection.find_one({"user_id": current_user.id}, {"_id": 0})
         else:
             # Ensure basic user info is synced from user object if missing in profile
             needs_update = False
@@ -167,16 +185,16 @@ async def get_my_profile(
             
             if needs_update:
                 updates["updated_at"] = datetime.now(timezone.utc).isoformat()
-                await db.interim_profiles.update_one(
+                await profile_collection.update_one(
                     {"user_id": current_user.id},
                     {"$set": updates}
                 )
                 # Reload profile with updates
-                profile = await db.interim_profiles.find_one({"user_id": current_user.id}, {"_id": 0})
-                
+                profile = await profile_collection.find_one({"user_id": current_user.id}, {"_id": 0})
+
                 # Recalculate completion with synced data
-                completion = calculate_profile_completion(profile, PROFILE_TYPE_INTERIM)
-                await db.interim_profiles.update_one(
+                completion = calculate_profile_completion(profile, profile_type_to_return)
+                await profile_collection.update_one(
                     {"user_id": current_user.id},
                     {"$set": {
                         "profile_completion_percentage": completion,
@@ -186,20 +204,13 @@ async def get_my_profile(
                 profile["profile_completion_percentage"] = completion
                 profile["profile_completed"] = completion >= 80
 
-        # Determine profile_type to return based on actual user role
-        profile_type_to_return = PROFILE_TYPE_INTERIM
-        if CANDIDATE_ROLE in current_user.roles:
-            profile_type_to_return = PROFILE_TYPE_CANDIDATE
-        elif POSTULANT_ROLE in current_user.roles:
-            profile_type_to_return = PROFILE_TYPE_POSTULANT
-        
         # Add is_verified from user to profile response for email verification status consistency
         profile["is_verified"] = current_user.is_verified
         
         return {"profile_type": profile_type_to_return, "profile": profile}
     
     elif COMPANY_ROLE in current_user.roles:
-        profile = await db.company_manager_profiles.find_one({"user_id": current_user.id}, {"_id": 0})
+        profile = await profile_collection.find_one({"user_id": current_user.id}, {"_id": 0})
         if not profile:
             profile = {
                 "user_id": current_user.id,
@@ -207,10 +218,10 @@ async def get_my_profile(
                 "profile_completed": False,
                 "updated_at": datetime.now(timezone.utc).isoformat()
             }
-            await db.company_manager_profiles.insert_one(profile)
-            
+            await profile_collection.insert_one(profile)
+
             # Reload profile without _id
-            profile = await db.company_manager_profiles.find_one({"user_id": current_user.id}, {"_id": 0})
+            profile = await profile_collection.find_one({"user_id": current_user.id}, {"_id": 0})
         
         # Add is_verified from user to profile response
         profile["is_verified"] = current_user.is_verified
@@ -219,16 +230,16 @@ async def get_my_profile(
     
     else:
         # Collaborator or other roles
-        profile = await db.collaborator_profiles.find_one({"user_id": current_user.id}, {"_id": 0})
+        profile = await profile_collection.find_one({"user_id": current_user.id}, {"_id": 0})
         if not profile:
             profile = {
                 "user_id": current_user.id,
                 "updated_at": datetime.now(timezone.utc).isoformat()
             }
-            await db.collaborator_profiles.insert_one(profile)
-            
+            await profile_collection.insert_one(profile)
+
             # Reload profile without _id
-            profile = await db.collaborator_profiles.find_one({"user_id": current_user.id}, {"_id": 0})
+            profile = await profile_collection.find_one({"user_id": current_user.id}, {"_id": 0})
         
         # Add is_verified from user to profile response
         profile["is_verified"] = current_user.is_verified
@@ -277,22 +288,7 @@ async def update_my_profile(
                     }
                     await db.system_references.insert_one(new_skill_ref)
     
-    # Determine collection based on role
-    if INTERIM_ROLE in current_user.roles or CANDIDATE_ROLE in current_user.roles or POSTULANT_ROLE in current_user.roles:
-        collection = db.interim_profiles
-        # Use actual role for profile_type
-        if CANDIDATE_ROLE in current_user.roles:
-            profile_type = PROFILE_TYPE_CANDIDATE
-        elif POSTULANT_ROLE in current_user.roles:
-            profile_type = PROFILE_TYPE_POSTULANT
-        else:
-            profile_type = PROFILE_TYPE_INTERIM
-    elif COMPANY_ROLE in current_user.roles:
-        collection = db.company_manager_profiles
-        profile_type = PROFILE_TYPE_COMPANY
-    else:
-        collection = db.collaborator_profiles
-        profile_type = PROFILE_TYPE_COLLABORATOR
+    collection, profile_type = get_profile_context(current_user, db)
     
     # Update profile
     await collection.update_one(
@@ -365,12 +361,7 @@ async def upload_document(
     await db.documents.insert_one(document)
     
     # Update profile with document ID
-    if INTERIM_ROLE in current_user.roles or CANDIDATE_ROLE in current_user.roles or POSTULANT_ROLE in current_user.roles:
-        collection = db.interim_profiles
-    elif COMPANY_ROLE in current_user.roles:
-        collection = db.company_manager_profiles
-    else:
-        collection = db.collaborator_profiles
+    collection, _ = get_profile_context(current_user, db)
 
     if document_type == DOCUMENT_TYPE_CV:
         await collection.update_one(
@@ -433,12 +424,7 @@ async def delete_document(
     await db.documents.delete_one({"id": document_id})
     
     # Remove from profile
-    if INTERIM_ROLE in current_user.roles or CANDIDATE_ROLE in current_user.roles or POSTULANT_ROLE in current_user.roles:
-        collection = db.interim_profiles
-    elif COMPANY_ROLE in current_user.roles:
-        collection = db.company_manager_profiles
-    else:
-        collection = db.collaborator_profiles
+    collection, _ = get_profile_context(current_user, db)
 
     if document["type"] == DOCUMENT_TYPE_CV:
         await collection.update_one(
