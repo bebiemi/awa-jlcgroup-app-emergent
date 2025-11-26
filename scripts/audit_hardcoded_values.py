@@ -3,6 +3,7 @@
 Script d'audit complet pour identifier toutes les valeurs en dur dans le codebase
 """
 import argparse
+import json
 import os
 import re
 from dataclasses import dataclass
@@ -514,6 +515,18 @@ def main():
     print(f"📊 TOTAL: {len(auditor.findings)}")
     print("=" * 80)
 
+    stats = {
+        "total": len(auditor.findings),
+        "by_severity": dict(by_severity),
+    }
+
+    if args.stats_output:
+        stats_path = args.stats_output.resolve()
+        stats_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(stats_path, "w", encoding="utf-8") as f:
+            json.dump(stats, f, indent=2, ensure_ascii=False)
+        print(f"📈 Statistiques sauvegardées: {stats_path}")
+
     # Gestion du seuil autorisé
     if args.max_occurrences is not None:
         if len(auditor.findings) > args.max_occurrences:
@@ -560,6 +573,15 @@ def parse_args() -> argparse.Namespace:
         help=(
             "Nombre maximal d'occurrences autorisées avant échec. "
             "Peut aussi être défini via la variable AUDIT_MAX_OCCURRENCES"
+        ),
+    )
+    parser.add_argument(
+        "--stats-output",
+        type=Path,
+        default=None,
+        help=(
+            "Chemin de sortie du fichier JSON contenant les statistiques "
+            "(total + répartition par sévérité)."
         ),
     )
 

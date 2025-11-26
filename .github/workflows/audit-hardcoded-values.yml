@@ -12,6 +12,7 @@ permissions:
 env:
   PYTHON_VERSION: "3.11"
   AUDIT_MAX_OCCURRENCES: 2040
+  AUDIT_NEW_OCCURRENCES_THRESHOLD: 0
 
 jobs:
   audit-hardcoded-values:
@@ -21,6 +22,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -32,7 +35,39 @@ jobs:
           python scripts/audit_hardcoded_values.py \
             --root-dir . \
             --markdown-output audit_reports/AUDIT_VALEURS_EN_DUR.md \
+            --stats-output audit_reports/stats.json \
             --max-occurrences "${AUDIT_MAX_OCCURRENCES}"
+
+      - name: Run audit on base branch
+        if: github.event_name == 'pull_request'
+        run: |
+          git fetch origin "${{ github.event.pull_request.base.ref }}" --depth=1
+          git worktree add --force /tmp/base "${{ github.event.pull_request.base.ref }}"
+          pushd /tmp/base
+          python scripts/audit_hardcoded_values.py \
+            --root-dir . \
+            --markdown-output audit_reports/AUDIT_VALEURS_EN_DUR.md \
+            --stats-output audit_reports/stats.json \
+            --max-occurrences "${AUDIT_MAX_OCCURRENCES}"
+          popd
+
+      - name: Compare occurrences with base branch
+        if: github.event_name == 'pull_request'
+        run: |
+          base_total=$(jq '.total' /tmp/base/audit_reports/stats.json)
+          pr_total=$(jq '.total' audit_reports/stats.json)
+          diff=$((pr_total - base_total))
+
+          echo "Base (main): ${base_total} occurrences"
+          echo "PR: ${pr_total} occurrences"
+          echo "Delta: ${diff}"
+
+          if [ "$diff" -gt "${AUDIT_NEW_OCCURRENCES_THRESHOLD}" ]; then
+            echo "❌ Le nombre d'occurrences a augmenté de ${diff} (seuil: ${AUDIT_NEW_OCCURRENCES_THRESHOLD})."
+            exit 1
+          fi
+
+          echo "✅ Pas de nouvelles occurrences au-delà du seuil configuré (${AUDIT_NEW_OCCURRENCES_THRESHOLD})."
 
       - name: Upload audit report
         uses: actions/upload-artifact@v4
