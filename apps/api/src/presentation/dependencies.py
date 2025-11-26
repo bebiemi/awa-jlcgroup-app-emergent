@@ -32,15 +32,20 @@ DEFAULT_VALIDATOR_ROLES = [
     DEFAULT_SECURITY_ROLES["super_admin"],
     DEFAULT_SECURITY_ROLES["commercial"],
 ]
+
+DEFAULT_ADMIN_ROLES = ["admin", "super_admin"]
+
 DEFAULT_VALIDATION_STATUSES = {
     "pending": ValidationStatus.PENDING.value,
     "approved": ValidationStatus.APPROVED.value,
     "rejected": ValidationStatus.REJECTED.value,
 }
+
 DEFAULT_VALIDATION_TYPES = {
     "company": ValidationType.COMPANY.value,
     "interim": ValidationType.INTERIM.value,
 }
+
 DEFAULT_VALIDATION_TRANSITIONS = {
     "approve": {"from": [DEFAULT_VALIDATION_STATUSES["pending"]], "to": DEFAULT_VALIDATION_STATUSES["approved"]},
     "reject": {"from": [DEFAULT_VALIDATION_STATUSES["pending"]], "to": DEFAULT_VALIDATION_STATUSES["rejected"]},
