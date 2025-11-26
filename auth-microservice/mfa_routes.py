@@ -8,6 +8,8 @@ from typing import List
 from datetime import datetime, timezone
 import secrets
 
+from message_catalog import MFA_MESSAGES
+
 from awana_auth.core.models import (
     User, SetupTOTPRequest, VerifyTOTPSetupRequest, SetupEmailOTPRequest,
     SetupSMSOTPRequest, VerifySMSSetupRequest, VerifyMFARequest,
@@ -117,7 +119,7 @@ async def setup_totp(
     if not await check_mfa_rate_limit(db, current_user.id, "setup_totp"):
         raise HTTPException(
             status_code=status.HTTP_429_TOO_MANY_REQUESTS,
-            detail="Trop de tentatives. Veuillez réessayer dans 15 minutes."
+            detail=MFA_MESSAGES["rate_limit"],
         )
     
     # Generate TOTP secret
@@ -169,11 +171,11 @@ async def verify_totp_setup(
     
     # Security: Rate limiting
     if not await check_mfa_rate_limit(db, current_user.id, "verify_totp_setup"):
-        await log_mfa_event(db, current_user.id, "verify_totp_setup", False, "totp", 
+        await log_mfa_event(db, current_user.id, "verify_totp_setup", False, "totp",
                           request.client.host if request.client else None)
         raise HTTPException(
             status_code=status.HTTP_429_TOO_MANY_REQUESTS,
-            detail="Trop de tentatives. Veuillez réessayer dans 15 minutes."
+            detail=MFA_MESSAGES["rate_limit"],
         )
     
     # Get pending setup
@@ -182,7 +184,7 @@ async def verify_totp_setup(
     if not pending or not pending.get('totp_secret'):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Aucune configuration TOTP en attente"
+            detail=MFA_MESSAGES["totp_pending_missing"],
         )
     
     # Check expiration
@@ -190,7 +192,7 @@ async def verify_totp_setup(
         await db['mfa_pending_setups'].delete_one({'user_id': current_user.id})
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Configuration expirée. Veuillez recommencer."
+            detail=MFA_MESSAGES["totp_expired"],
         )
     
     # Verify code
@@ -200,7 +202,7 @@ async def verify_totp_setup(
                           request.client.host if request.client else None)
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Code invalide"
+            detail=MFA_MESSAGES["invalid_code"],
         )
     
     # Generate backup codes
@@ -235,7 +237,7 @@ async def verify_totp_setup(
         success=True,
         method="totp",
         backup_codes=plain_codes,
-        message="TOTP activé avec succès. Conservez vos codes de secours en lieu sûr."
+        message=MFA_MESSAGES["totp_success"],
     )
 
 
@@ -257,7 +259,7 @@ async def setup_email_otp(
     if not await check_mfa_rate_limit(db, current_user.id, "setup_email"):
         raise HTTPException(
             status_code=status.HTTP_429_TOO_MANY_REQUESTS,
-            detail="Trop de tentatives. Veuillez réessayer dans 15 minutes."
+            detail=MFA_MESSAGES["rate_limit"],
         )
     
     # Generate OTP
@@ -280,7 +282,7 @@ async def setup_email_otp(
     return MFASetupResponse(
         success=True,
         method="email",
-        message=f"Email OTP activé. Un code a été envoyé à {current_user.email}"
+        message=MFA_MESSAGES["email_success"].format(email=current_user.email),
     )
 
 
@@ -303,7 +305,7 @@ async def setup_sms_otp(
     if not await check_mfa_rate_limit(db, current_user.id, "setup_sms"):
         raise HTTPException(
             status_code=status.HTTP_429_TOO_MANY_REQUESTS,
-            detail="Trop de tentatives. Veuillez réessayer dans 15 minutes."
+            detail=MFA_MESSAGES["rate_limit"],
         )
     
     # Generate OTP
@@ -334,7 +336,7 @@ async def setup_sms_otp(
     return MFASetupResponse(
         success=True,
         method="sms",
-        message=f"Un code de vérification a été envoyé au {data.phone_number}"
+        message=MFA_MESSAGES["sms_sent"].format(phone_number=data.phone_number),
     )
 
 
@@ -354,7 +356,7 @@ async def verify_sms_setup(
                           request.client.host if request.client else None)
         raise HTTPException(
             status_code=status.HTTP_429_TOO_MANY_REQUESTS,
-            detail="Trop de tentatives. Veuillez réessayer dans 15 minutes."
+            detail=MFA_MESSAGES["rate_limit"],
         )
     
     # Verify OTP
@@ -363,7 +365,7 @@ async def verify_sms_setup(
                           request.client.host if request.client else None)
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Code invalide ou expiré"
+            detail=MFA_MESSAGES["sms_invalid"],
         )
     
     # Get pending phone number
@@ -373,7 +375,7 @@ async def verify_sms_setup(
     if not phone_number:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Numéro de téléphone non trouvé"
+            detail=MFA_MESSAGES["phone_missing"],
         )
     
     # Update user phone number
@@ -392,7 +394,7 @@ async def verify_sms_setup(
     return MFASetupResponse(
         success=True,
         method="sms",
-        message="SMS OTP activé avec succès"
+        message=MFA_MESSAGES["sms_success"],
     )
 
 

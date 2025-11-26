@@ -13,6 +13,7 @@ from awana_auth.core.dependencies import get_database, get_current_user
 from awana_auth.dependencies.permission_dependencies import require_permission
 from pydantic import BaseModel
 from awana_auth.utils.config_helpers import cfg
+from message_catalog import VALIDATION_MESSAGES
 from services.representant_detection_service import (
     check_validation_representant,
     get_representant_details
@@ -172,7 +173,7 @@ async def get_validation(
     if not validation:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Validation not found"
+            detail=VALIDATION_MESSAGES["not_found"]
         )
     
     # Enrichir avec les détails du représentant existant si applicable
@@ -201,13 +202,13 @@ async def approve_validation(
     if not validation:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Validation not found"
+            detail=VALIDATION_MESSAGES["not_found"]
         )
-    
+
     if validation["status"] != VALIDATION_STATUS_PENDING:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Validation already processed"
+            detail=VALIDATION_MESSAGES["already_processed"]
         )
     
     # Get profile ID if company validation
@@ -296,13 +297,13 @@ async def reject_validation(
     if not validation:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Validation not found"
+            detail=VALIDATION_MESSAGES["not_found"]
         )
-    
+
     if validation["status"] != VALIDATION_STATUS_PENDING:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Validation already processed"
+            detail=VALIDATION_MESSAGES["already_processed"]
         )
     
     # Update user status to suspended
@@ -406,7 +407,7 @@ async def attach_to_existing_representant(
     if not validation:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Validation not found"
+            detail=VALIDATION_MESSAGES["not_found"]
         )
     
     # Vérifier que c'est une validation company
@@ -566,7 +567,7 @@ async def assign_validation(
     if not validator:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Validator not found"
+            detail=VALIDATION_MESSAGES["validator_missing"]
         )
     
     # Check if validator has an allowed validator role from configuration
@@ -582,7 +583,9 @@ async def assign_validation(
     if not any(role in validator_roles for role in allowed_validator_roles):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"User does not have validator role ({', '.join(allowed_validator_roles)})"
+            detail=VALIDATION_MESSAGES["validator_role_missing"].format(
+                roles=", ".join(allowed_validator_roles)
+            )
         )
     
     # Update validation
@@ -599,7 +602,7 @@ async def assign_validation(
     if result.matched_count == 0:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Validation not found"
+            detail=VALIDATION_MESSAGES["not_found"]
         )
     
     return {
@@ -619,7 +622,7 @@ async def add_country_from_validation(
     if not validation:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Validation not found"
+            detail=VALIDATION_MESSAGES["not_found"]
         )
     
     if not validation.get("missing_country"):

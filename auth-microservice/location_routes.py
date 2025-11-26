@@ -13,6 +13,7 @@ from awana_auth.core.location_models import (
 from awana_auth.core.models import User
 from awana_auth.core.dependencies import get_database
 from awana_auth.dependencies.permission_dependencies import require_permission
+from message_catalog import LOCATION_MESSAGES
 
 location_router = APIRouter(prefix="/locations", tags=["Locations"])
 
@@ -78,7 +79,7 @@ async def get_location(
     if not location:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Location not found"
+            detail=LOCATION_MESSAGES["not_found"]
         )
     return Location(**location)
 
@@ -96,7 +97,7 @@ async def create_location(
         if not parent:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail="Parent location not found"
+                detail=LOCATION_MESSAGES["parent_not_found"]
             )
     
     # Check for duplicate name at same level
@@ -109,7 +110,7 @@ async def create_location(
     if existing:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Location with name '{location_data.name}' already exists at this level"
+            detail=LOCATION_MESSAGES["duplicate"].format(name=location_data.name)
         )
     
     # Determine if required based on type
@@ -141,7 +142,7 @@ async def update_location(
     if not existing:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Location not found"
+            detail=LOCATION_MESSAGES["not_found"]
         )
     
     # Only update provided fields
@@ -173,14 +174,14 @@ async def delete_location(
     if children > 0:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Cannot delete location with {children} children. Delete children first."
+            detail=LOCATION_MESSAGES["children_block_delete"].format(children=children)
         )
     
     result = await db.locations.delete_one({"id": location_id})
     if result.deleted_count == 0:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Location not found"
+            detail=LOCATION_MESSAGES["not_found"]
         )
     
     return {"success": True, "message": "Location deleted successfully"}
@@ -205,7 +206,7 @@ async def toggle_location_visibility(
     if result.matched_count == 0:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Location not found"
+            detail=LOCATION_MESSAGES["not_found"]
         )
     
     return {
