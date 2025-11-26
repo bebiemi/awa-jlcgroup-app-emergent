@@ -2,7 +2,11 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Query, Request
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from typing import Optional
-from src.presentation.dependencies import get_database, get_current_user, require_admin
+from src.presentation.dependencies import (
+    get_database,
+    get_current_user,
+    require_validator,
+)
 from src.application.dtos.validation_dtos import (
     ValidationResponse,
     ApproveValidationRequest,
@@ -26,6 +30,10 @@ import math
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/validations", tags=["Validations"])
+
+
+def _enum_value(value):
+    return value.value if hasattr(value, "value") else str(value)
 
 
 def validation_to_response(validation: AccountValidation) -> ValidationResponse:
@@ -69,7 +77,7 @@ async def list_validations(
     type_filter: Optional[ValidationType] = Query(None, alias="type"),
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
-    current_user=Depends(require_admin),
+    current_user=Depends(require_validator),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """List validations (admin only)"""
@@ -99,7 +107,7 @@ async def approve_validation(
     validation_id: str,
     request_data: ApproveValidationRequest,
     request: Request,
-    current_user=Depends(require_admin),
+    current_user=Depends(require_validator),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """Approve a validation (admin only)"""
@@ -117,14 +125,15 @@ async def approve_validation(
         )
 
     # Check if already processed
-    if validation.status != ValidationStatus.PENDING:
+    current_status = _enum_value(validation.status)
+    if current_status != ValidationStatus.PENDING.value:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Validation already processed"
+            detail="Validation already processed",
         )
 
     # Update validation
-    validation.status = ValidationStatus.APPROVED
+    validation.status = ValidationStatus.APPROVED.value
     validation.comment = request_data.comment
     validation.reviewed_by = current_user['id']
     validation.reviewed_by_email = current_user.get('email')
@@ -137,7 +146,7 @@ async def approve_validation(
         user_id=validation.user_id,
         channel=NotificationChannel.INAPP,
         title="Compte approuvé ✅",
-        body=f"Félicitations! Votre compte {validation.validation_type.value} a été approuvé.",
+        body=f"Félicitations! Votre compte {_enum_value(validation.validation_type)} a été approuvé.",
         priority=NotificationPriority.HIGH,
         action_url="/profile"
     )
@@ -150,7 +159,7 @@ async def approve_validation(
         <body>
             <h2>Compte Approuvé</h2>
             <p>Bonjour {validation.user_name or 'Cher utilisateur'},</p>
-            <p>Votre compte <strong>{validation.validation_type.value}</strong> a été approuvé par notre équipe.</p>
+            <p>Votre compte <strong>{_enum_value(validation.validation_type)}</strong> a été approuvé par notre équipe.</p>
             <p>Vous pouvez maintenant accéder à toutes les fonctionnalités de la plateforme JLC Group.</p>
             {f'<p>Commentaire: {request_data.comment}</p>' if request_data.comment else ''}
             <p>Cordialement,<br>L'équipe JLC Group</p>
@@ -171,7 +180,7 @@ async def approve_validation(
         entity="validation",
         entity_id=validation.id,
         metadata={
-            "validation_type": validation.validation_type.value,
+            "validation_type": _enum_value(validation.validation_type),
             "user_id": validation.user_id,
             "comment": request_data.comment
         }
@@ -188,7 +197,7 @@ async def reject_validation(
     validation_id: str,
     request_data: RejectValidationRequest,
     request: Request,
-    current_user=Depends(require_admin),
+    current_user=Depends(require_validator),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """Reject a validation (admin only)"""
@@ -206,14 +215,15 @@ async def reject_validation(
         )
 
     # Check if already processed
-    if validation.status != ValidationStatus.PENDING:
+    current_status = _enum_value(validation.status)
+    if current_status != ValidationStatus.PENDING.value:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Validation already processed"
+            detail="Validation already processed",
         )
 
     # Update validation
-    validation.status = ValidationStatus.REJECTED
+    validation.status = ValidationStatus.REJECTED.value
     validation.comment = request_data.comment
     validation.reviewed_by = current_user['id']
     validation.reviewed_by_email = current_user.get('email')
@@ -226,7 +236,7 @@ async def reject_validation(
         user_id=validation.user_id,
         channel=NotificationChannel.INAPP,
         title="Compte refusé ❌",
-        body=f"Votre demande de compte {validation.validation_type.value} a été refusée. Raison: {request_data.comment}",
+        body=f"Votre demande de compte {_enum_value(validation.validation_type)} a été refusée. Raison: {request_data.comment}",
         priority=NotificationPriority.HIGH,
         action_url="/profile"
     )
@@ -239,7 +249,7 @@ async def reject_validation(
         <body>
             <h2>Compte Refusé</h2>
             <p>Bonjour {validation.user_name or 'Cher utilisateur'},</p>
-            <p>Nous regrettons de vous informer que votre demande de compte <strong>{validation.validation_type.value}</strong> a été refusée.</p>
+            <p>Nous regrettons de vous informer que votre demande de compte <strong>{_enum_value(validation.validation_type)}</strong> a été refusée.</p>
             <p><strong>Raison:</strong> {request_data.comment}</p>
             <p>Si vous pensez qu'il s'agit d'une erreur, veuillez nous contacter.</p>
             <p>Cordialement,<br>L'équipe JLC Group</p>
@@ -260,7 +270,7 @@ async def reject_validation(
         entity="validation",
         entity_id=validation.id,
         metadata={
-            "validation_type": validation.validation_type.value,
+            "validation_type": _enum_value(validation.validation_type),
             "user_id": validation.user_id,
             "comment": request_data.comment
         }
