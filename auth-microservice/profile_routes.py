@@ -18,6 +18,20 @@ from awana_auth.utils.config_helpers import cfg
 
 profile_router = APIRouter(prefix="/profiles", tags=["Profiles"])
 
+INTERIM_ROLE = cfg.get_interim_role()
+COMPANY_ROLE = cfg.get_company_role()
+CANDIDATE_ROLE = cfg.get_candidate_role()
+POSTULANT_ROLE = cfg.get_postulant_role()
+COLLABORATOR_ROLE = cfg.get_collaborator_role()
+
+PROFILE_TYPE_INTERIM = cfg.get_profile_type("interim")
+PROFILE_TYPE_COMPANY = cfg.get_profile_type("company")
+PROFILE_TYPE_CANDIDATE = cfg.get_profile_type("candidat")
+PROFILE_TYPE_POSTULANT = cfg.get_profile_type("postulant")
+PROFILE_TYPE_COLLABORATOR = cfg.get_profile_type("collaborator")
+
+DOCUMENT_TYPE_CV = cfg.get_document_type("cv")
+
 # Upload configuration
 UPLOAD_DIR = "/app/uploads"
 MAX_FILE_SIZE = 5 * 1024 * 1024  # 5MB
@@ -39,7 +53,7 @@ os.makedirs(UPLOAD_DIR, exist_ok=True)
 def calculate_profile_completion(profile_data: dict, profile_type: str) -> int:
     """Calculate profile completion percentage based on filled fields"""
     # Use same logic for interim, candidat, and postulant profiles
-    if profile_type in ["interim", "candidat", "postulant"]:
+    if profile_type in [PROFILE_TYPE_INTERIM, PROFILE_TYPE_CANDIDATE, PROFILE_TYPE_POSTULANT]:
         total_fields = 20  # Augmenté pour inclure les champs de base
         filled = 0
         
@@ -73,7 +87,7 @@ def calculate_profile_completion(profile_data: dict, profile_type: str) -> int:
         
         return int((filled / total_fields) * 100)
     
-    elif profile_type == "company":
+    elif profile_type == PROFILE_TYPE_COMPANY:
         total_fields = 2
         filled = 0
         if profile_data.get("job_title"): filled += 1
@@ -91,7 +105,13 @@ async def get_my_profile(
     """Get current user's profile based on their role"""
     # Determine profile collection based on role
     # Support for interim, candidat, and postulant roles
-    if cfg.get_interim_role() in current_user.roles or 'candidat' in current_user.roles or 'postulant' in current_user.roles:
+    if INTERIM_ROLE in current_user.roles or CANDIDATE_ROLE in current_user.roles or POSTULANT_ROLE in current_user.roles:
+        profile_type_to_return = PROFILE_TYPE_INTERIM
+        if CANDIDATE_ROLE in current_user.roles:
+            profile_type_to_return = PROFILE_TYPE_CANDIDATE
+        elif POSTULANT_ROLE in current_user.roles:
+            profile_type_to_return = PROFILE_TYPE_POSTULANT
+
         profile = await db.interim_profiles.find_one({"user_id": current_user.id}, {"_id": 0})
         
         # Parse full_name into first_name and last_name if available
@@ -125,7 +145,7 @@ async def get_my_profile(
                 "updated_at": datetime.now(timezone.utc).isoformat()
             }
             # Calculate initial completion
-            completion = calculate_profile_completion(profile, cfg.get_interim_role())
+            completion = calculate_profile_completion(profile, profile_type_to_return)
             profile["profile_completion_percentage"] = completion
             profile["profile_completed"] = completion >= 80
             
@@ -161,7 +181,7 @@ async def get_my_profile(
                 profile = await db.interim_profiles.find_one({"user_id": current_user.id}, {"_id": 0})
                 
                 # Recalculate completion with synced data
-                completion = calculate_profile_completion(profile, cfg.get_interim_role())
+                completion = calculate_profile_completion(profile, profile_type_to_return)
                 await db.interim_profiles.update_one(
                     {"user_id": current_user.id},
                     {"$set": {
@@ -171,20 +191,13 @@ async def get_my_profile(
                 )
                 profile["profile_completion_percentage"] = completion
                 profile["profile_completed"] = completion >= 80
-        
-        # Determine profile_type to return based on actual user role
-        profile_type_to_return = cfg.get_interim_role()
-        if 'candidat' in current_user.roles:
-            profile_type_to_return = 'candidat'
-        elif 'postulant' in current_user.roles:
-            profile_type_to_return = 'postulant'
-        
+
         # Add is_verified from user to profile response for email verification status consistency
         profile["is_verified"] = current_user.is_verified
         
         return {"profile_type": profile_type_to_return, "profile": profile}
     
-    elif cfg.get_company_role() in current_user.roles:
+    elif COMPANY_ROLE in current_user.roles:
         profile = await db.company_manager_profiles.find_one({"user_id": current_user.id}, {"_id": 0})
         if not profile:
             profile = {
@@ -201,7 +214,7 @@ async def get_my_profile(
         # Add is_verified from user to profile response
         profile["is_verified"] = current_user.is_verified
         
-        return {"profile_type": cfg.get_company_role(), "profile": profile}
+        return {"profile_type": PROFILE_TYPE_COMPANY, "profile": profile}
     
     else:
         # Collaborator or other roles
@@ -219,7 +232,7 @@ async def get_my_profile(
         # Add is_verified from user to profile response
         profile["is_verified"] = current_user.is_verified
         
-        return {"profile_type": "collaborator", "profile": profile}
+        return {"profile_type": PROFILE_TYPE_COLLABORATOR, "profile": profile}
 
 
 @profile_router.put("/me")
@@ -264,21 +277,21 @@ async def update_my_profile(
                     await db.system_references.insert_one(new_skill_ref)
     
     # Determine collection based on role
-    if cfg.get_interim_role() in current_user.roles or 'candidat' in current_user.roles or 'postulant' in current_user.roles:
+    if INTERIM_ROLE in current_user.roles or CANDIDATE_ROLE in current_user.roles or POSTULANT_ROLE in current_user.roles:
         collection = db.interim_profiles
         # Use actual role for profile_type
-        if 'candidat' in current_user.roles:
-            profile_type = 'candidat'
-        elif 'postulant' in current_user.roles:
-            profile_type = 'postulant'
+        if CANDIDATE_ROLE in current_user.roles:
+            profile_type = PROFILE_TYPE_CANDIDATE
+        elif POSTULANT_ROLE in current_user.roles:
+            profile_type = PROFILE_TYPE_POSTULANT
         else:
-            profile_type = cfg.get_interim_role()
-    elif cfg.get_company_role() in current_user.roles:
+            profile_type = PROFILE_TYPE_INTERIM
+    elif COMPANY_ROLE in current_user.roles:
         collection = db.company_manager_profiles
-        profile_type = cfg.get_company_role()
+        profile_type = PROFILE_TYPE_COMPANY
     else:
         collection = db.collaborator_profiles
-        profile_type = "collaborator"
+        profile_type = PROFILE_TYPE_COLLABORATOR
     
     # Update profile
     await collection.update_one(
@@ -351,14 +364,14 @@ async def upload_document(
     await db.documents.insert_one(document)
     
     # Update profile with document ID
-    if cfg.get_interim_role() in current_user.roles or 'candidat' in current_user.roles or 'postulant' in current_user.roles:
+    if INTERIM_ROLE in current_user.roles or CANDIDATE_ROLE in current_user.roles or POSTULANT_ROLE in current_user.roles:
         collection = db.interim_profiles
-    elif cfg.get_company_role() in current_user.roles:
+    elif COMPANY_ROLE in current_user.roles:
         collection = db.company_manager_profiles
     else:
         collection = db.collaborator_profiles
-    
-    if document_type == "cv":
+
+    if document_type == DOCUMENT_TYPE_CV:
         await collection.update_one(
             {"user_id": current_user.id},
             {"$set": {"cv_document_id": document["id"]}}
@@ -419,14 +432,14 @@ async def delete_document(
     await db.documents.delete_one({"id": document_id})
     
     # Remove from profile
-    if cfg.get_interim_role() in current_user.roles or 'candidat' in current_user.roles or 'postulant' in current_user.roles:
+    if INTERIM_ROLE in current_user.roles or CANDIDATE_ROLE in current_user.roles or POSTULANT_ROLE in current_user.roles:
         collection = db.interim_profiles
-    elif cfg.get_company_role() in current_user.roles:
+    elif COMPANY_ROLE in current_user.roles:
         collection = db.company_manager_profiles
     else:
         collection = db.collaborator_profiles
-    
-    if document["type"] == "cv":
+
+    if document["type"] == DOCUMENT_TYPE_CV:
         await collection.update_one(
             {"user_id": current_user.id},
             {"$unset": {"cv_document_id": ""}}
