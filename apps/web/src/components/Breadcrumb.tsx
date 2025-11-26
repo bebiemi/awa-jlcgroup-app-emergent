@@ -4,8 +4,9 @@
  */
 
 import { Link, useLocation } from 'react-router-dom'
+import { useMemo } from 'react'
 import { ChevronRightIcon, HomeIcon } from '@heroicons/react/24/outline'
-import { useBreadcrumb } from '@/hooks/useNavigationConfig'
+import { useBreadcrumb, useNavigationConfig } from '@/hooks/useNavigationConfig'
 
 interface BreadcrumbProps {
   className?: string
@@ -15,6 +16,16 @@ interface BreadcrumbProps {
 export default function Breadcrumb({ className = '', showHome = true }: BreadcrumbProps) {
   const location = useLocation()
   const breadcrumbPath = useBreadcrumb(location.pathname)
+  const { context, rawConfig } = useNavigationConfig()
+
+  const contextRoot = useMemo(() => {
+    return Object.values(rawConfig).find(
+      (item) => item.contexts.includes(context) && !item.parentId && item.order === 1
+    )
+  }, [context, rawConfig])
+
+  const homePath = contextRoot?.path || '/'
+  const homeLabel = contextRoot?.label || 'Accueil'
   
   // Si pas de breadcrumb ou juste un élément, ne rien afficher
   if (breadcrumbPath.length === 0 || (breadcrumbPath.length === 1 && !showHome)) {
@@ -26,9 +37,9 @@ export default function Breadcrumb({ className = '', showHome = true }: Breadcru
       {showHome && (
         <>
           <Link
-            to="/"
+            to={homePath}
             className="text-gray-500 hover:text-gray-700 transition-colors"
-            aria-label="Accueil"
+            aria-label={homeLabel}
           >
             <HomeIcon className="h-4 w-4" />
           </Link>

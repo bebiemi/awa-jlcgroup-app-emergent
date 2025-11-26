@@ -4,6 +4,8 @@ import { useCompleteMfaLoginMutation } from '../api/mfaApi'
 import toast from 'react-hot-toast'
 import Button from '@/components/Button'
 import { ShieldCheckIcon, ArrowPathIcon, KeyIcon } from '@heroicons/react/24/outline'
+import { useRoles } from '@/hooks/useAppConfig'
+import { UserRoles } from '@/constants/iamConstants'
 
 interface MfaVerificationPageProps {
   sessionId: string
@@ -17,6 +19,7 @@ export default function MfaVerificationPage({ sessionId, mfaMethod, onBack }: Mf
   const [completeMfaLogin, { isLoading }] = useCompleteMfaLoginMutation()
   const [attemptsRemaining, setAttemptsRemaining] = useState(3)
   const navigate = useNavigate()
+  const roles = useRoles()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -54,16 +57,33 @@ export default function MfaVerificationPage({ sessionId, mfaMethod, onBack }: Mf
 
         // Redirect to appropriate dashboard based on user role
         const userRoles = result.user?.roles || []
+        const resolvedRoles = {
+          commercial: roles.commercial || 'commercial',
+          admin: roles.admin || UserRoles.ADMIN,
+          superAdmin: roles.super_admin || UserRoles.SUPER_ADMIN,
+          interim: roles.interim || UserRoles.INTERIM,
+          company: roles.company || UserRoles.COMPANY,
+          agency: roles.agency || 'agency',
+          postulant: UserRoles.POSTULANT,
+          candidat: UserRoles.CANDIDAT,
+        }
+
+        const hasRole = (role?: string) => Boolean(role && userRoles.includes(role))
+
         let dashboardPath = '/profile'
 
-        if (userRoles.includes('admin') || userRoles.includes('super_admin')) {
+        if (hasRole(resolvedRoles.commercial)) {
+          dashboardPath = '/commercial'
+        } else if (hasRole(resolvedRoles.admin) || hasRole(resolvedRoles.superAdmin)) {
           dashboardPath = '/admin'
-        } else if (userRoles.includes('interim')) {
+        } else if (hasRole(resolvedRoles.interim)) {
           dashboardPath = '/interimaire'
-        } else if (userRoles.includes('company')) {
+        } else if (hasRole(resolvedRoles.company)) {
           dashboardPath = '/entreprise'
-        } else if (userRoles.includes('agency')) {
+        } else if (hasRole(resolvedRoles.agency)) {
           dashboardPath = '/agence'
+        } else if (hasRole(resolvedRoles.postulant) || hasRole(resolvedRoles.candidat)) {
+          dashboardPath = '/postulant'
         }
 
         navigate(dashboardPath, { replace: true })

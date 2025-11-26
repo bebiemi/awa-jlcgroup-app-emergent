@@ -15,6 +15,8 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from datetime import datetime, timezone
 import uuid
 
+from awana_auth.utils.config_helpers import ConfigHelper as cfg
+
 # MongoDB connection
 MONGO_URL = os.getenv("MONGO_URL", "mongodb://localhost:27017")
 
@@ -298,18 +300,20 @@ async def update_permissions():
             print(f"  🔄 Updated: {perm_data['code']}")
             updated_count += 1
     
-    # Update Admin profile with all new permissions
+    # Update Admin profile with all new permissions (config-driven code)
     all_permissions = await db.permissions.find({}).to_list(length=None)
     all_permission_ids = [p["id"] for p in all_permissions]
-    
+
+    admin_profile_code = cfg.get_admin_role() or "admin"
+
     await db.profiles.update_one(
-        {"code": "admin"},
+        {"code": admin_profile_code},
         {"$set": {
             "permission_ids": all_permission_ids,
             "updated_at": datetime.now(timezone.utc).isoformat()
         }}
     )
-    print(f"\n✅ Updated Admin profile with all {len(all_permission_ids)} permissions")
+    print(f"\n✅ Updated Admin profile ({admin_profile_code}) with all {len(all_permission_ids)} permissions")
     
     print(f"\n📊 Summary:")
     print(f"  - Added: {added_count} new permissions")

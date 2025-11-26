@@ -13,12 +13,21 @@ from awana_auth.core.dependencies import get_database, get_current_user
 from awana_auth.dependencies.permission_dependencies import require_permission
 from pydantic import BaseModel
 from awana_auth.utils.config_helpers import cfg
+from message_catalog import VALIDATION_MESSAGES
 from services.representant_detection_service import (
     check_validation_representant,
     get_representant_details
 )
 
 validation_router = APIRouter(prefix="/validations", tags=["Validations"])
+
+# Centralized validation config values
+VALIDATION_STATUS_PENDING = cfg.get_validation_status("pending")
+VALIDATION_STATUS_APPROVED = cfg.get_validation_status("approved")
+VALIDATION_STATUS_REJECTED = cfg.get_validation_status("rejected")
+VALIDATION_TYPE_INTERIM = cfg.get_validation_type("interim")
+VALIDATION_TYPE_COMPANY = cfg.get_validation_type("company")
+VALIDATION_TYPE_COLLABORATOR = cfg.get_validation_type("collaborator")
 
 
 class ValidationApproval(BaseModel):
@@ -109,18 +118,18 @@ async def get_validation_stats(
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """Get validation statistics"""
-    total_pending = await db.validations.count_documents({"status": cfg.get_pending_status()})
-    pending_interim = await db.validations.count_documents({"status": cfg.get_pending_status(), "validation_type": cfg.get_interim_role()})
-    pending_company = await db.validations.count_documents({"status": cfg.get_pending_status(), "validation_type": cfg.get_company_role()})
-    pending_collaborator = await db.validations.count_documents({"status": cfg.get_pending_status(), "validation_type": "collaborator"})
+    total_pending = await db.validations.count_documents({"status": VALIDATION_STATUS_PENDING})
+    pending_interim = await db.validations.count_documents({"status": VALIDATION_STATUS_PENDING, "validation_type": VALIDATION_TYPE_INTERIM})
+    pending_company = await db.validations.count_documents({"status": VALIDATION_STATUS_PENDING, "validation_type": VALIDATION_TYPE_COMPANY})
+    pending_collaborator = await db.validations.count_documents({"status": VALIDATION_STATUS_PENDING, "validation_type": VALIDATION_TYPE_COLLABORATOR})
     
     with_warnings = await db.validations.count_documents({
-        "status": cfg.get_pending_status(),
+        "status": VALIDATION_STATUS_PENDING,
         "has_location_warning": True
     })
-    
-    total_approved = await db.validations.count_documents({"status": "approved"})
-    total_rejected = await db.validations.count_documents({"status": "rejected"})
+
+    total_approved = await db.validations.count_documents({"status": VALIDATION_STATUS_APPROVED})
+    total_rejected = await db.validations.count_documents({"status": VALIDATION_STATUS_REJECTED})
     
     return {
         "total_pending": total_pending,
@@ -164,7 +173,7 @@ async def get_validation(
     if not validation:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Validation not found"
+            detail=VALIDATION_MESSAGES["not_found"]
         )
     
     # Enrichir avec les détails du représentant existant si applicable
@@ -193,18 +202,18 @@ async def approve_validation(
     if not validation:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Validation not found"
+            detail=VALIDATION_MESSAGES["not_found"]
         )
-    
-    if validation["status"] != cfg.get_pending_status():
+
+    if validation["status"] != VALIDATION_STATUS_PENDING:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Validation already processed"
+            detail=VALIDATION_MESSAGES["already_processed"]
         )
     
     # Get profile ID if company validation
     profile_id = None
-    if validation["validation_type"] == "company":
+    if validation["validation_type"] == VALIDATION_TYPE_COMPANY:
         company_profile = await db.profiles.find_one({"code": "company_admin"})
         if company_profile:
             profile_id = company_profile["id"]
@@ -225,7 +234,7 @@ async def approve_validation(
     )
     
     # If company validation, create company profile automatically
-    if validation["validation_type"] == "company":
+    if validation["validation_type"] == VALIDATION_TYPE_COMPANY:
         user = await db.users.find_one({"id": validation["user_id"]}, {"_id": 0})
         
         # Check if profile already exists
@@ -261,7 +270,7 @@ async def approve_validation(
         {"id": validation_id},
         {
             "$set": {
-                "status": "approved",
+                "status": VALIDATION_STATUS_APPROVED,
                 "validated_by": current_user.id,
                 "validated_at": datetime.now(timezone.utc).isoformat(),
                 "notes": approval.notes,
@@ -288,13 +297,13 @@ async def reject_validation(
     if not validation:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Validation not found"
+            detail=VALIDATION_MESSAGES["not_found"]
         )
-    
-    if validation["status"] != cfg.get_pending_status():
+
+    if validation["status"] != VALIDATION_STATUS_PENDING:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Validation already processed"
+            detail=VALIDATION_MESSAGES["already_processed"]
         )
     
     # Update user status to suspended
@@ -313,7 +322,7 @@ async def reject_validation(
         {"id": validation_id},
         {
             "$set": {
-                "status": "rejected",
+                "status": VALIDATION_STATUS_REJECTED,
                 "validated_by": current_user.id,
                 "validated_at": datetime.now(timezone.utc).isoformat(),
                 "rejection_reason": rejection.rejection_reason,
@@ -398,14 +407,14 @@ async def attach_to_existing_representant(
     if not validation:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Validation not found"
+            detail=VALIDATION_MESSAGES["not_found"]
         )
     
     # Vérifier que c'est une validation company
-    if validation["validation_type"] != "company":
+    if validation["validation_type"] != VALIDATION_TYPE_COMPANY:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Le rattachement ne s'applique qu'aux validations de type 'company'"
+            detail=f"Le rattachement ne s'applique qu'aux validations de type '{VALIDATION_TYPE_COMPANY}'"
         )
     
     # Vérifier qu'il y a bien un représentant existant détecté
@@ -524,8 +533,8 @@ async def attach_to_existing_representant(
         {"id": validation_id},
         {
             "$set": {
-                "status": "approved",
-                "rattachement_status": "approved",
+                "status": VALIDATION_STATUS_APPROVED,
+                "rattachement_status": VALIDATION_STATUS_APPROVED,
                 "rattachement_to_entreprise_id": target_entreprise["id"],
                 "contact_confirmation": True,
                 "validated_by": current_user.id,
@@ -558,15 +567,25 @@ async def assign_validation(
     if not validator:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Validator not found"
+            detail=VALIDATION_MESSAGES["validator_missing"]
         )
     
-    # Check if validator has admin or commercial role
-    validator_roles = validator.get("roles", [])
-    if not any(role in validator_roles for role in [cfg.get_admin_role(), cfg.get_super_admin_role(), cfg.get_commercial_role()]):
+    # Check if validator has an allowed validator role from configuration
+    allowed_validator_roles = [role for role in (cfg.get_validator_roles() or []) if role]
+    if not allowed_validator_roles:
+        allowed_validator_roles = [
+            role
+            for role in [cfg.get_admin_role(), cfg.get_super_admin_role(), cfg.get_commercial_role()]
+            if role
+        ]
+
+    validator_roles = set(validator.get("roles", []))
+    if not any(role in validator_roles for role in allowed_validator_roles):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="User does not have validator role (admin, super_admin, or commercial)"
+            detail=VALIDATION_MESSAGES["validator_role_missing"].format(
+                roles=", ".join(allowed_validator_roles)
+            )
         )
     
     # Update validation
@@ -583,7 +602,7 @@ async def assign_validation(
     if result.matched_count == 0:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Validation not found"
+            detail=VALIDATION_MESSAGES["not_found"]
         )
     
     return {
@@ -603,7 +622,7 @@ async def add_country_from_validation(
     if not validation:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Validation not found"
+            detail=VALIDATION_MESSAGES["not_found"]
         )
     
     if not validation.get("missing_country"):

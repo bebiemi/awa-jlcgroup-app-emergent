@@ -14,6 +14,7 @@ from awana_auth.core.dependencies import get_database, get_current_user
 from awana_auth.core.models import User
 from awana_auth.dependencies.permission_dependencies import require_permission
 from awana_auth.services.iam_service import IAMService
+from message_catalog import INVITATION_MESSAGES
 
 router = APIRouter(prefix="/invitations", tags=["Invitations"])
 
@@ -116,7 +117,7 @@ async def create_invitation(
     if not entreprise:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Entreprise non trouvée"
+            detail=INVITATION_MESSAGES["company_not_found"],
         )
     
     # Vérifier que l'utilisateur n'existe pas déjà avec cet email
@@ -124,7 +125,7 @@ async def create_invitation(
     if existing_user:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            detail="Un utilisateur avec cet email existe déjà"
+            detail=INVITATION_MESSAGES["user_exists"],
         )
     
     # Vérifier qu'il n'y a pas d'invitation en attente pour cet email/entreprise
@@ -137,7 +138,7 @@ async def create_invitation(
     if existing_invitation:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            detail="Une invitation est déjà en attente pour cet email"
+            detail=INVITATION_MESSAGES["invitation_pending"],
         )
     
     # Générer le token sécurisé
@@ -199,7 +200,7 @@ async def create_bulk_invitations(
     if not entreprise:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Entreprise non trouvée"
+            detail=INVITATION_MESSAGES["company_not_found"],
         )
     
     created_invitations = []
