@@ -1,6 +1,6 @@
 # 📊 Progression de la Refactorisation IAM
 
-## ✅ Fichiers Refactorés (29 fichiers)
+## ✅ Fichiers Refactorés (30 fichiers)
 
 ### Frontend (13 fichiers)
 1. ✅ **ValidationsPage.tsx** - 15+ occurrences refactorées
@@ -54,7 +54,7 @@
     - `ProfileType` s'appuie sur `IAMProfiles`/`UserRoles` au lieu de littéraux
     - `ValidationType` réutilise le type exporté par `iamConstants.ts`
 
-### Backend (16 fichiers)
+### Backend (17 fichiers)
 1. ✅ **initialize_candidat_iam.py** - 17 occurrences refactorées
    - Import: `IAMGroups`, `IAMProfiles`, `IAMPermissions`
    - Tous les codes hardcodés remplacés par constantes
@@ -119,6 +119,9 @@
     - Les vérifications d'accès intérim utilisent le rôle configuré (fallback `interim`)
     - Les filtres/contrôles de contrats consomment les statuts d'application `contract_signed`/`contract_pending` depuis la configuration
     - Supprime les chaînes inline dans les requêtes MongoDB et la détection de contrats actifs
+17. ✅ **awana_auth/core/location_models.py** - Statuts/roles de validation pilotés par la config
+    - Les enums `ValidationStatus` et `ValidatorRole` utilisent les valeurs issues de `ConfigHelper` (fallback sur les valeurs historiques)
+    - Centralise les imports manquants et prépare les modèles de localisation à consommer les codes configurés
 
 ---
 
@@ -148,7 +151,6 @@
 - [ ] **scripts/seed_mission_references.py** (4 occurrences)
 - [ ] **scripts/seed_additional_references.py** (2 occurrences)
 - [ ] **scripts/add_missing_references.py** (2 occurrences)
-- [ ] **awana_auth/core/location_models.py** (1 occurrence)
 - [ ] **awana_auth/core/reference_models.py** (1 occurrence)
 - [ ] **awana_auth/core/version_models.py** (1 occurrence)
 
@@ -157,13 +159,13 @@
 ## 📈 Statistiques
 
 ### Total
-- **Fichiers refactorés**: 29 / ~34 (~85%)
+- **Fichiers refactorés**: 30 / ~34 (~88%)
 - **Occurrences éliminées**: ~100 + statuts/types centralisés dans `validation_routes.py`
 - **Tests de sync**: ✅ 100% passés
 
 ### Par Catégorie
 - **Frontend**: 13 fichiers refactorés / ~7 restants
-- **Backend**: 16 fichiers refactorés / ~3 restants
+- **Backend**: 17 fichiers refactorés / ~4 restants
 
 ---
 
@@ -211,5 +213,5 @@ grep -r '"candidat"\|"interim"\|"company"' /app/auth-microservice --include="*.p
 
 ---
 
-**Dernière mise à jour**: 2025-11-28 (Contrats alignés sur statuts/rôles configurés)
-**Statut**: 🔄 En progression (~70% complété)
+**Dernière mise à jour**: 2025-11-28 (Statuts/roles de validation alignés dans les modèles de localisation)
+**Statut**: 🔄 En progression (~75% complété)

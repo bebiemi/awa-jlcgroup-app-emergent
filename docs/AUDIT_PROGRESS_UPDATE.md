@@ -33,6 +33,7 @@
 - **Diagnostic login aligné IAM** : `auth-microservice/scripts/diagnose_login.py` vérifie désormais le groupe candidat via `IAMGroups.CANDIDAT` au lieu de la chaîne `grp.candidat` en dur.
 - **KPIs admin sans statuts/profils en dur** : `apps/api/src/presentation/routes/admin_routes.py` lit les statuts/types de validation et les profils depuis la configuration pour calculer les compteurs et totaux, avec fallback enum si nécessaire. Les dépôts validation/profil acceptent désormais les valeurs brutes issues de la config.
 - **Contrats intérim configurables** : `auth-microservice/contract_routes.py` utilise le rôle intérim issu de la configuration et les statuts d'application configurés (`contract_signed`/`contract_pending`) pour filtrer les contrats et détecter les contrats actifs sans chaînes inline.
+- **Modèles de validation/location alignés sur la config** : `awana_auth/core/location_models.py` utilise désormais les statuts/roles de validation issus de `ConfigHelper` (avec fallback sur les valeurs historiques) et centralise les imports pour préparer la consommation des codes configurés.
 
 ## Actions prioritaires restantes
 1. **Externaliser les rôles/statuts auth** : déplacer les comparaisons en dur dans `apps/api/**/awana_auth_routes.py` vers la configuration (`config/base.yaml`).
