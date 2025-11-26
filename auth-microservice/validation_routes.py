@@ -212,7 +212,7 @@ async def approve_validation(
     
     # Get profile ID if company validation
     profile_id = None
-    if validation["validation_type"] == "company":
+    if validation["validation_type"] == VALIDATION_TYPE_COMPANY:
         company_profile = await db.profiles.find_one({"code": "company_admin"})
         if company_profile:
             profile_id = company_profile["id"]
@@ -233,7 +233,7 @@ async def approve_validation(
     )
     
     # If company validation, create company profile automatically
-    if validation["validation_type"] == "company":
+    if validation["validation_type"] == VALIDATION_TYPE_COMPANY:
         user = await db.users.find_one({"id": validation["user_id"]}, {"_id": 0})
         
         # Check if profile already exists
@@ -410,10 +410,10 @@ async def attach_to_existing_representant(
         )
     
     # Vérifier que c'est une validation company
-    if validation["validation_type"] != "company":
+    if validation["validation_type"] != VALIDATION_TYPE_COMPANY:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Le rattachement ne s'applique qu'aux validations de type 'company'"
+            detail=f"Le rattachement ne s'applique qu'aux validations de type '{VALIDATION_TYPE_COMPANY}'"
         )
     
     # Vérifier qu'il y a bien un représentant existant détecté
