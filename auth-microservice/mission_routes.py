@@ -30,6 +30,19 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api/missions", tags=["missions"])
 
+# Mission permission roles (from configuration)
+MISSION_CREATE_ROLES = cfg.get_mission_permission_roles("create") or []
+MISSION_PUBLISH_ROLES = cfg.get_mission_permission_roles("publish") or []
+MISSION_VIEW_ALL_ROLES = cfg.get_mission_permission_roles("view_all") or []
+MISSION_EDIT_ROLES = cfg.get_mission_permission_roles("edit") or []
+
+
+def _has_required_role(user_roles: List[str], allowed_roles: List[str]) -> bool:
+    """Check if the user has at least one required role (case-insensitive)."""
+    normalized_user_roles = {role.lower() for role in (user_roles or [])}
+    normalized_allowed_roles = {role.lower() for role in (allowed_roles or [])}
+    return bool(normalized_user_roles.intersection(normalized_allowed_roles))
+
 
 # ==================== VALIDATION HELPERS ====================
 
@@ -215,6 +228,12 @@ async def create_mission(
     """
     user_id = current_user.id
     user_company_id = getattr(current_user, 'company_id', None)
+
+    if not _has_required_role(current_user.roles, MISSION_CREATE_ROLES):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Vous n'avez pas le rôle requis pour créer une mission"
+        )
     
     # Vérifier la permission de création
     can_create = await check_resource_permission(
@@ -300,13 +319,13 @@ async def get_missions(
     
     # Appliquer le filtrage IAM basé sur les permissions
     iam_filter = await get_resource_filter(
-        iam_service, 
-        user_id, 
-        user_company_id, 
-        "missions", 
+        iam_service,
+        user_id,
+        user_company_id,
+        "missions",
         "read"
     )
-    
+
     # Vérifier la permission missions.browse (candidats)
     browse_result = await iam_service.user_has_permission(user_id, "missions.browse")
     
@@ -319,7 +338,7 @@ async def get_missions(
     
     # Construire la query
     query = {}
-    
+
     if iam_filter is None:
         # Cas missions.browse : missions publiées uniquement
         query["status"] = MissionStatus.PUBLISHED
@@ -327,6 +346,13 @@ async def get_missions(
         # Cas .own : filtrer par company_id
         query.update(iam_filter)
     # Sinon (iam_filter == {}) : cas .all, pas de filtre
+    else:
+        # Cas .all : vérifier que le rôle autorise la consultation globale
+        if not _has_required_role(current_user.roles, MISSION_VIEW_ALL_ROLES):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Vous n'avez pas le rôle requis pour voir toutes les missions"
+            )
     
     # Appliquer les filtres supplémentaires de l'API
     if mission_status:
@@ -576,7 +602,13 @@ async def update_mission(
     user_id = current_user.id
     user_company_id = getattr(current_user, 'company_id', None)
     mission_company_id = mission.get("company_id")
-    
+
+    if not _has_required_role(current_user.roles, MISSION_EDIT_ROLES):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Vous n'avez pas le rôle requis pour modifier cette mission"
+        )
+
     # Vérifier la permission de mise à jour
     can_update = await check_resource_permission(
         iam_service,
@@ -677,16 +709,22 @@ async def publish_mission(
     Rend la mission visible aux intérimaires
     """
     mission = await db.missions.find_one({"id": mission_id})
-    
+
     if not mission:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Mission non trouvée"
         )
-    
+
     # IAM: Check permissions
     checker = PermissionChecker(db)
-    
+
+    if not _has_required_role(current_user.get("roles", []), MISSION_PUBLISH_ROLES):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Vous n'avez pas le rôle requis pour publier une mission"
+        )
+
     can_publish = await checker.user_has_any_permission(
         current_user.get("id"),
         ["missions.publish", "missions.manage"]
