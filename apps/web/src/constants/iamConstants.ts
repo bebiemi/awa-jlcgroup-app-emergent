@@ -9,6 +9,7 @@
 // ============================================
 export const IAMGroups = {
   CANDIDAT: 'grp.candidat',
+  POSTULANT: 'grp.postulant',
   INTERIMAIRE: 'grp.interimaire',
   COMPANY: 'grp.company',
   COLLABORATEUR: 'grp.collaborateur',
@@ -21,6 +22,7 @@ export const IAMGroups = {
 // ============================================
 export const IAMProfiles = {
   CANDIDAT: 'role.candidat',
+  POSTULANT: 'role.postulant',
   INTERIM_USER: 'role.interim_user',
   COMPANY_ADMIN: 'role.company_admin',
   COLLABORATEUR: 'role.collaborateur',
@@ -61,6 +63,7 @@ export const IAMPermissions = {
   ADMIN_DASHBOARD: 'admin.dashboard',
   USERS_READ: 'users.read',
   USERS_MANAGE: 'users.manage',
+  USERS_PASSWORD_UPDATE: 'users.password.update',
   
   // Email Settings
   EMAIL_SETTINGS_READ: 'email.settings.read',
@@ -72,6 +75,59 @@ export const IAMPermissions = {
   IAM_GROUPS_READ: 'iam.groups.read',
   IAM_GROUPS_MANAGE: 'iam.groups.manage',
   IAM_PERMISSIONS_READ: 'iam.permissions.read',
+
+  // Besoins (Hiring Needs)
+  BESOINS_CREATE: 'besoins.create',
+  BESOINS_READ: 'besoins.read',
+  BESOINS_EDIT: 'besoins.edit',
+  BESOINS_DELETE: 'besoins.delete',
+  BESOINS_SUBMIT: 'besoins.submit',
+  BESOINS_VALIDATE: 'besoins.validate',
+  BESOINS_CONVERT_TO_MISSION: 'besoins.convert_to_mission',
+  BESOINS_COMMENT: 'besoins.comment',
+
+  // Entreprises (Company Management)
+  ENTREPRISES_CREATE: 'entreprises.create',
+  ENTREPRISES_READ: 'entreprises.read',
+  ENTREPRISES_EDIT: 'entreprises.edit',
+  ENTREPRISES_DELETE: 'entreprises.delete',
+  ENTREPRISES_VALIDATE: 'entreprises.validate',
+  ENTREPRISES_LINK_EXISTING: 'entreprises.link_existing',
+  ENTREPRISES_GROUP_REQUEST: 'entreprises.group_request',
+  ENTREPRISES_GROUP_APPROVE: 'entreprises.group_approve',
+  ENTREPRISES_VIEW_LINKED: 'entreprises.view_linked',
+
+  // Forms & Configuration
+  FORMS_MANAGE: 'forms.manage',
+  CONFIG_READ: 'config.read',
+  CONFIG_MANAGE: 'config.manage',
+
+  // Documents (Phase 2)
+  DOCUMENTS_READ_OWN: 'documents.read_own',
+  DOCUMENTS_UPLOAD_OWN: 'documents.upload_own',
+  DOCUMENTS_DELETE_OWN: 'documents.delete_own',
+  DOCUMENTS_READ_ALL: 'documents.read_all',
+  DOCUMENTS_VERIFY: 'documents.verify',
+  DOCUMENTS_CONFIGURE: 'documents.configure',
+
+  // Notifications (Phase 2)
+  NOTIFICATIONS_READ_OWN: 'notifications.read_own',
+  NOTIFICATIONS_MANAGE_OWN: 'notifications.manage_own',
+  NOTIFICATIONS_SEND: 'notifications.send',
+
+  // Dashboard (Phase 2)
+  DASHBOARD_VIEW_OWN: 'dashboard.view_own',
+  DASHBOARD_CUSTOMIZE: 'dashboard.customize',
+
+  // Chat/Messages (Phase 3)
+  MESSAGES_READ_OWN: 'messages.read_own',
+  MESSAGES_SEND_OWN: 'messages.send_own',
+  MESSAGES_READ_ALL: 'messages.read_all',
+  MESSAGES_MANAGE: 'messages.manage',
+
+  // Matching AI (Phase 3)
+  MATCHING_VIEW_RECOMMENDATIONS: 'matching.view_recommendations',
+  MATCHING_CONFIGURE: 'matching.configure',
 } as const
 
 // ============================================
@@ -79,6 +135,7 @@ export const IAMPermissions = {
 // ============================================
 export const ValidationTypes = {
   CANDIDAT: 'candidat',
+  POSTULANT: 'postulant',
   INTERIM: 'interim',
   COMPANY: 'company',
   COLLABORATEUR: 'collaborateur',
@@ -89,6 +146,7 @@ export const ValidationTypes = {
 // ============================================
 export const UserRoles = {
   CANDIDAT: 'candidat',
+  POSTULANT: 'postulant',
   INTERIM: 'interim',
   COMPANY: 'company',
   COLLABORATEUR: 'collaborateur',
@@ -101,6 +159,7 @@ export const UserRoles = {
 // ============================================
 export const RoleLabels: Record<string, string> = {
   [UserRoles.CANDIDAT]: 'Candidat',
+  [UserRoles.POSTULANT]: 'Postulant',
   [UserRoles.INTERIM]: 'Intérimaire',
   [UserRoles.COMPANY]: 'Entreprise',
   [UserRoles.COLLABORATEUR]: 'Collaborateur',
@@ -115,6 +174,7 @@ export const RoleColors: Record<string, string> = {
   [UserRoles.ADMIN]: 'bg-purple-100 text-purple-800',
   [UserRoles.SUPER_ADMIN]: 'bg-red-100 text-red-800',
   [UserRoles.CANDIDAT]: 'bg-blue-100 text-blue-800',
+  [UserRoles.POSTULANT]: 'bg-blue-50 text-blue-800',
   [UserRoles.INTERIM]: 'bg-teal-100 text-teal-800',
   [UserRoles.COMPANY]: 'bg-indigo-100 text-indigo-800',
   [UserRoles.COLLABORATEUR]: 'bg-green-100 text-green-800',
@@ -126,6 +186,7 @@ export const RoleColors: Record<string, string> = {
 export function getGroupForRole(role: string): string {
   const roleToGroup: Record<string, string> = {
     [UserRoles.CANDIDAT]: IAMGroups.CANDIDAT,
+    [UserRoles.POSTULANT]: IAMGroups.POSTULANT,
     [UserRoles.INTERIM]: IAMGroups.INTERIMAIRE,
     [UserRoles.COMPANY]: IAMGroups.COMPANY,
     [UserRoles.COLLABORATEUR]: IAMGroups.COLLABORATEUR,
@@ -138,6 +199,7 @@ export function getGroupForRole(role: string): string {
 export function getProfileForRole(role: string): string {
   const roleToProfile: Record<string, string> = {
     [UserRoles.CANDIDAT]: IAMProfiles.CANDIDAT,
+    [UserRoles.POSTULANT]: IAMProfiles.POSTULANT,
     [UserRoles.INTERIM]: IAMProfiles.INTERIM_USER,
     [UserRoles.COMPANY]: IAMProfiles.COMPANY_ADMIN,
     [UserRoles.COLLABORATEUR]: IAMProfiles.COLLABORATEUR,
