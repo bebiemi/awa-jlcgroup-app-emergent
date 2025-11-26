@@ -11,6 +11,7 @@ permissions:
 
 env:
   PYTHON_VERSION: "3.11"
+  AUDIT_NEW_OCCURRENCES_THRESHOLD: 0
   AUDIT_MAX_OCCURRENCES: 2100
 
 jobs:
@@ -21,6 +22,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -29,10 +32,124 @@ jobs:
 
       - name: Run audit script
         run: |
-          python scripts/audit_hardcoded_values.py \
-            --root-dir . \
-            --markdown-output audit_reports/AUDIT_VALEURS_EN_DUR.md \
-            --max-occurrences "${AUDIT_MAX_OCCURRENCES}"
+          run_audit() {
+            local workdir=$1
+            local markdown_output=$2
+            local stats_output=$3
+
+            pushd "$workdir"
+
+            if python scripts/audit_hardcoded_values.py --help | grep -q -- "--stats-output"; then
+              python scripts/audit_hardcoded_values.py \
+                --root-dir . \
+                --markdown-output "$markdown_output" \
+                --stats-output "$stats_output" \
+                --max-occurrences "${AUDIT_MAX_OCCURRENCES}"
+            else
+              echo "ℹ️ Version sans --stats-output détectée, génération manuelle des stats."
+              temp_output=$(mktemp)
+              python scripts/audit_hardcoded_values.py \
+                --root-dir . \
+                --markdown-output "$markdown_output" \
+                --max-occurrences "${AUDIT_MAX_OCCURRENCES}" | tee "$temp_output"
+
+              total=$(python - <<'PY'
+import re, sys
+from pathlib import Path
+
+content = Path(sys.argv[1]).read_text(encoding="utf-8")
+match = re.search(r"Total de valeurs en dur trouvées: (\d+)", content)
+print(match.group(1) if match else "0")
+PY
+"$temp_output")
+
+              mkdir -p "$(dirname "$stats_output")"
+              python - <<'PY'
+import json, sys, os
+target = sys.argv[1]
+total = int(sys.argv[2]) if sys.argv[2] else 0
+os.makedirs(os.path.dirname(target), exist_ok=True)
+with open(target, "w", encoding="utf-8") as f:
+    json.dump({"total": total, "by_severity": {}}, f, indent=2, ensure_ascii=False)
+PY
+"$stats_output" "$total")
+            fi
+
+            popd
+          }
+
+          run_audit . audit_reports/AUDIT_VALEURS_EN_DUR.md audit_reports/stats.json
+
+      - name: Run audit on base branch
+        if: github.event_name == 'pull_request'
+        run: |
+          git fetch origin "${{ github.event.pull_request.base.ref }}" --depth=1
+          git worktree add --force /tmp/base "${{ github.event.pull_request.base.ref }}"
+          run_audit() {
+            local workdir=$1
+            local markdown_output=$2
+            local stats_output=$3
+
+            pushd "$workdir"
+
+            if python scripts/audit_hardcoded_values.py --help | grep -q -- "--stats-output"; then
+              python scripts/audit_hardcoded_values.py \
+                --root-dir . \
+                --markdown-output "$markdown_output" \
+                --stats-output "$stats_output" \
+                --max-occurrences "${AUDIT_MAX_OCCURRENCES}"
+            else
+              echo "ℹ️ Version sans --stats-output détectée, génération manuelle des stats."
+              temp_output=$(mktemp)
+              python scripts/audit_hardcoded_values.py \
+                --root-dir . \
+                --markdown-output "$markdown_output" \
+                --max-occurrences "${AUDIT_MAX_OCCURRENCES}" | tee "$temp_output"
+
+              total=$(python - <<'PY'
+import re, sys
+from pathlib import Path
+
+content = Path(sys.argv[1]).read_text(encoding="utf-8")
+match = re.search(r"Total de valeurs en dur trouvées: (\d+)", content)
+print(match.group(1) if match else "0")
+PY
+"$temp_output")
+
+              mkdir -p "$(dirname "$stats_output")"
+              python - <<'PY'
+import json, sys, os
+target = sys.argv[1]
+total = int(sys.argv[2]) if sys.argv[2] else 0
+os.makedirs(os.path.dirname(target), exist_ok=True)
+with open(target, "w", encoding="utf-8") as f:
+    json.dump({"total": total, "by_severity": {}}, f, indent=2, ensure_ascii=False)
+PY
+"$stats_output" "$total")
+            fi
+
+            popd
+          }
+
+          run_audit /tmp/base audit_reports/AUDIT_VALEURS_EN_DUR.md audit_reports/stats.json
+
+      - name: Compare occurrences with base branch
+        if: github.event_name == 'pull_request'
+        run: |
+          base_total=$(jq '.total' /tmp/base/audit_reports/stats.json)
+          pr_total=$(jq '.total' audit_reports/stats.json)
+          diff=$((pr_total - base_total))
+
+          echo "Base (main): ${base_total} occurrences"
+          echo "PR: ${pr_total} occurrences"
+          echo "Delta: ${diff}"
+
+          if [ "$diff" -gt "${AUDIT_NEW_OCCURRENCES_THRESHOLD}" ]; then
+            echo "❌ Le nombre d'occurrences a augmenté de ${diff} (seuil: ${AUDIT_NEW_OCCURRENCES_THRESHOLD})."
+            exit 1
+          fi
+
+          echo "✅ Pas de nouvelles occurrences au-delà du seuil configuré (${AUDIT_NEW_OCCURRENCES_THRESHOLD})."
 
       - name: Upload audit report
         uses: actions/upload-artifact@v4

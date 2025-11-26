@@ -92,6 +92,18 @@ Voir `/docs` pour plus d'informations:
 - **[🔍 Rapport Complet](/docs/AUDIT_VALEURS_EN_DUR.md)** - Détails des 886 occurrences
 - **[🛠️ Script d'Audit](/scripts/audit_hardcoded_values.py)** - Outil automatisé de détection
 
+#### Exécution locale rapide
+
+```bash
+python scripts/audit_hardcoded_values.py \
+  --root-dir . \
+  --markdown-output audit_reports/AUDIT_VALEURS_EN_DUR.md \
+  --stats-output audit_reports/stats.json \
+  --max-occurrences 2040
+```
+
+Voir le [guide dédié](/docs/AUDIT_VALEURS_EN_DUR_GUIDE.md) pour plus de détails et l'intégration CI.
+
 ### Déploiement
 
 - **[📋 Deployment Overview](/docs/DEPLOYMENT_OVERVIEW.md)** - Vue d'ensemble complète du déploiement
