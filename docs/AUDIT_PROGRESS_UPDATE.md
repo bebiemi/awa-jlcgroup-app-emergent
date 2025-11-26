@@ -12,7 +12,8 @@
 - **Frontends auth alignés sur la config** : `LoginPage.tsx`, `GoogleCallback.tsx` et `MfaVerificationPage.tsx` redirigent selon les rôles issus de `useRoles`/`UserRoles`, sans dépendre de chaînes `admin`/`super_admin`/`interim`/`company`/`agency` en dur.
 - **Création utilisateur admin sans rôles inline** : `CreateUserPage.tsx` construit la liste des rôles proposés à partir de la configuration (admin/super_admin/interim/company/agency).
 - **Constantes IAM synchronisées** : `apps/web/src/constants/iamConstants.ts` inclut désormais les valeurs `POSTULANT` pour refléter les constantes backend (`iam_constants.py`).
-- **Documentation de progression mise à jour** : `REFACTORING_PROGRESS.md` reflète 11 fichiers refactorés (~32% du périmètre) dont les flux auth frontend et la création d'utilisateur.
+- **ValidationsList.tsx alignée sur la config** : les filtres « En attente/Approuvées/Refusées » consomment désormais les statuts issus de la configuration/référentiels au lieu des chaînes `pending/approved/rejected` en dur.
+- **Documentation de progression mise à jour** : `REFACTORING_PROGRESS.md` reflète 12 fichiers refactorés (~35% du périmètre) dont les flux auth frontend, la création d'utilisateur et les filtres de validations alignés sur la config.
 - **Contrôles d'accès référentiels alignés IAM** : `auth-microservice/system_references_routes.py` n’utilise plus les rôles `admin`/`super_admin` en dur et s'appuie sur `cfg.get_admin_role` / `cfg.get_super_admin_role` pour sécuriser l'accès public aux référentiels.
 - **Attribution de profils IAM sans valeurs en dur** : `auth-microservice/security_routes.py` mappe désormais les rôles issus de la configuration (`cfg`) vers les profils `IAMProfiles`, supprimant les chaînes inline `admin`/`super_admin`/`interim`/`company`/`commercial` lors de la création d'utilisateurs.
 

@@ -59,7 +59,7 @@
 
 ### Frontend Prioritaires (~13 fichiers)
 - [ ] **EditUserModal.tsx** (1 occurrence)
-- [ ] **ValidationsList.tsx** (2 occurrences)
+- [x] **ValidationsList.tsx** (2 occurrences)
 - [ ] **ProfilePage.tsx** (2 occurrences)
 - [ ] **MfaVerificationPage.tsx** (2 occurrences)
 - [ ] **Breadcrumb.tsx**
@@ -95,12 +95,12 @@
 ## 📈 Statistiques
 
 ### Total
-- **Fichiers refactorés**: 11 / ~34 (~32%)
-- **Occurrences éliminées**: ~70 + statuts/types centralisés dans `validation_routes.py`
+- **Fichiers refactorés**: 12 / ~34 (~35%)
+- **Occurrences éliminées**: ~72 + statuts/types centralisés dans `validation_routes.py`
 - **Tests de sync**: ✅ 100% passés
 
 ### Par Catégorie
-- **Frontend**: 7 fichiers refactorés / ~17 restants
+- **Frontend**: 8 fichiers refactorés / ~16 restants
 - **Backend**: 4 fichiers refactorés / ~11 restants
 
 ---
@@ -109,10 +109,9 @@
 
 ### Étape 1: Frontend (Fichiers simples)
 1. EditUserModal.tsx (1 occurrence) - 3 min
-2. ValidationsList.tsx (2 occurrences) - 5 min
-3. ProfilePage.tsx (2 occurrences) - 5 min
+2. ProfilePage.tsx (2 occurrences) - 5 min
 
-**Temps estimé**: ~13 min pour 3 fichiers
+**Temps estimé**: ~8 min pour 2 fichiers
 
 ### Étape 2: Backend (Scripts importants)
 1. initialize_iam_system.py - Fichier critique, beaucoup d'occurrences
@@ -150,5 +149,5 @@ grep -r '"candidat"\|"interim"\|"company"' /app/auth-microservice --include="*.p
 
 ---
 
-**Dernière mise à jour**: 2025-11-27 (ajout redirections auth config-driven + CreateUserPage)
+**Dernière mise à jour**: 2025-11-27 (ValidationsList.tsx aligné sur les statuts config)
 **Statut**: 🔄 En progression (~32% complété)
