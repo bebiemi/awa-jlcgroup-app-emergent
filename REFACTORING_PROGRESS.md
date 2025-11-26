@@ -29,6 +29,10 @@
    - Utilise `cfg.get_validation_status` et `cfg.get_validation_type`
    - Remplace les valeurs en dur dans les stats et transitions d'approbation/rejet
 
+6. ✅ **validation_routes.py** - Statuts/types de validation centralisés
+   - Utilise `cfg.get_validation_status` et `cfg.get_validation_type`
+   - Remplace les valeurs en dur dans les stats et transitions d'approbation/rejet
+
 ---
 
 ## 🔄 Fichiers Restants à Refactorer

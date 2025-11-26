@@ -1,7 +1,7 @@
 """Profile routes"""
 from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File, Request
 from motor.motor_asyncio import AsyncIOMotorDatabase
-from src.presentation.dependencies import get_database, get_current_user
+from src.presentation.dependencies import get_admin_roles_from_config, get_database, get_current_user
 from src.application.dtos.profile_dtos import (
     ProfileResponse,
     UpdateProfileRequest,
@@ -280,8 +280,9 @@ async def get_user_profile(
 ):
     """Get user profile by ID (admin or self only)"""
     # Check permission: admin or self
-    user_roles = current_user.get('roles', [])
-    if 'admin' not in user_roles and current_user['id'] != user_id:
+    user_roles = set(current_user.get('roles', []))
+    admin_roles = set(get_admin_roles_from_config())
+    if not user_roles.intersection(admin_roles) and current_user['id'] != user_id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Access denied"
