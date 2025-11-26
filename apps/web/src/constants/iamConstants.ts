@@ -9,6 +9,7 @@
 // ============================================
 export const IAMGroups = {
   CANDIDAT: 'grp.candidat',
+  POSTULANT: 'grp.postulant',
   INTERIMAIRE: 'grp.interimaire',
   COMPANY: 'grp.company',
   COLLABORATEUR: 'grp.collaborateur',
@@ -21,6 +22,7 @@ export const IAMGroups = {
 // ============================================
 export const IAMProfiles = {
   CANDIDAT: 'role.candidat',
+  POSTULANT: 'role.postulant',
   INTERIM_USER: 'role.interim_user',
   COMPANY_ADMIN: 'role.company_admin',
   COLLABORATEUR: 'role.collaborateur',
@@ -79,6 +81,7 @@ export const IAMPermissions = {
 // ============================================
 export const ValidationTypes = {
   CANDIDAT: 'candidat',
+  POSTULANT: 'postulant',
   INTERIM: 'interim',
   COMPANY: 'company',
   COLLABORATEUR: 'collaborateur',
@@ -89,6 +92,7 @@ export const ValidationTypes = {
 // ============================================
 export const UserRoles = {
   CANDIDAT: 'candidat',
+  POSTULANT: 'postulant',
   INTERIM: 'interim',
   COMPANY: 'company',
   COLLABORATEUR: 'collaborateur',
@@ -101,6 +105,7 @@ export const UserRoles = {
 // ============================================
 export const RoleLabels: Record<string, string> = {
   [UserRoles.CANDIDAT]: 'Candidat',
+  [UserRoles.POSTULANT]: 'Postulant',
   [UserRoles.INTERIM]: 'Intérimaire',
   [UserRoles.COMPANY]: 'Entreprise',
   [UserRoles.COLLABORATEUR]: 'Collaborateur',
@@ -115,6 +120,7 @@ export const RoleColors: Record<string, string> = {
   [UserRoles.ADMIN]: 'bg-purple-100 text-purple-800',
   [UserRoles.SUPER_ADMIN]: 'bg-red-100 text-red-800',
   [UserRoles.CANDIDAT]: 'bg-blue-100 text-blue-800',
+  [UserRoles.POSTULANT]: 'bg-blue-50 text-blue-800',
   [UserRoles.INTERIM]: 'bg-teal-100 text-teal-800',
   [UserRoles.COMPANY]: 'bg-indigo-100 text-indigo-800',
   [UserRoles.COLLABORATEUR]: 'bg-green-100 text-green-800',
@@ -126,6 +132,7 @@ export const RoleColors: Record<string, string> = {
 export function getGroupForRole(role: string): string {
   const roleToGroup: Record<string, string> = {
     [UserRoles.CANDIDAT]: IAMGroups.CANDIDAT,
+    [UserRoles.POSTULANT]: IAMGroups.POSTULANT,
     [UserRoles.INTERIM]: IAMGroups.INTERIMAIRE,
     [UserRoles.COMPANY]: IAMGroups.COMPANY,
     [UserRoles.COLLABORATEUR]: IAMGroups.COLLABORATEUR,
@@ -138,6 +145,7 @@ export function getGroupForRole(role: string): string {
 export function getProfileForRole(role: string): string {
   const roleToProfile: Record<string, string> = {
     [UserRoles.CANDIDAT]: IAMProfiles.CANDIDAT,
+    [UserRoles.POSTULANT]: IAMProfiles.POSTULANT,
     [UserRoles.INTERIM]: IAMProfiles.INTERIM_USER,
     [UserRoles.COMPANY]: IAMProfiles.COMPANY_ADMIN,
     [UserRoles.COLLABORATEUR]: IAMProfiles.COLLABORATEUR,
