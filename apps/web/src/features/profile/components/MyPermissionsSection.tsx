@@ -32,9 +32,11 @@ export default function MyPermissionsSection() {
   }
 
   const { direct_profiles, group_profiles, all_permissions, groups } = permissionsData
+    ? permissionsData
+    : { direct_profiles: [], group_profiles: [], all_permissions: [], groups: [] }
 
   // Grouper les permissions par catégorie
-  const permissionsByCategory = all_permissions.reduce((acc, perm) => {
+  const permissionsByCategory = (all_permissions || []).reduce((acc, perm) => {
     const category = perm.category || 'Autres'
     if (!acc[category]) {
       acc[category] = []
@@ -62,7 +64,7 @@ export default function MyPermissionsSection() {
       </div>
 
       {/* Profils directs */}
-      {direct_profiles.length > 0 && (
+      {(direct_profiles || []).length > 0 && (
         <div className="bg-white border border-gray-200 rounded-lg p-5">
           <div className="flex items-center mb-4">
             <BriefcaseIcon className="h-5 w-5 text-purple-600 mr-2" />
@@ -82,7 +84,7 @@ export default function MyPermissionsSection() {
                     <p className="text-sm text-gray-600 mt-1">{profile.description}</p>
                   )}
                   <p className="text-xs text-gray-500 mt-1">
-                    {profile.permission_ids.length} permission(s)
+                    {profile.permission_ids?.length || 0} permission(s)
                   </p>
                 </div>
               </div>
@@ -92,7 +94,7 @@ export default function MyPermissionsSection() {
       )}
 
       {/* Groupes */}
-      {groups.length > 0 && (
+      {(groups || []).length > 0 && (
         <div className="bg-white border border-gray-200 rounded-lg p-5">
           <div className="flex items-center mb-4">
             <UserGroupIcon className="h-5 w-5 text-blue-600 mr-2" />
@@ -112,7 +114,7 @@ export default function MyPermissionsSection() {
                     <p className="text-sm text-gray-600 mt-1">{group.description}</p>
                   )}
                   <p className="text-xs text-gray-500 mt-1">
-                    {group.profile_ids.length} profil(s) métier(s)
+                    {group.profile_ids?.length || 0} profil(s) métier(s)
                   </p>
                 </div>
               </div>
@@ -122,7 +124,7 @@ export default function MyPermissionsSection() {
       )}
 
       {/* Profils via groupes */}
-      {group_profiles.length > 0 && (
+      {(group_profiles || []).length > 0 && (
         <div className="bg-white border border-gray-200 rounded-lg p-5">
           <div className="flex items-center mb-4">
             <BriefcaseIcon className="h-5 w-5 text-indigo-600 mr-2" />
@@ -142,7 +144,7 @@ export default function MyPermissionsSection() {
                     <p className="text-sm text-gray-600 mt-1">{profile.description}</p>
                   )}
                   <p className="text-xs text-gray-500 mt-1">
-                    {profile.permission_ids.length} permission(s)
+                    {profile.permission_ids?.length || 0} permission(s)
                   </p>
                 </div>
               </div>

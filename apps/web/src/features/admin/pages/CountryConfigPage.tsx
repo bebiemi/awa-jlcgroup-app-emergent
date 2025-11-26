@@ -15,16 +15,22 @@ import {
 } from '../api/countryConfigApi'
 import { toast } from 'react-hot-toast'
 import ManageCitiesModal from '../components/ManageCitiesModal'
+import { usePermissions } from '@/hooks/usePermission'
 
 export default function CountryConfigPage() {
   const [selectedCountry, setSelectedCountry] = useState<Country | null>(null)
   const [showCitiesModal, setShowCitiesModal] = useState(false)
+
+  const { permissions } = usePermissions(['admin.settings', 'locations.manage'])
+  const canManage = permissions['admin.settings'] || permissions['locations.manage']
+  const canManageCities = permissions['locations.manage']
 
   const { data: countries = [], isLoading, refetch } = useGetCountriesQuery({ active_only: false })
   const [initDefault, { isLoading: isInitializing }] = useInitDefaultCountriesMutation()
   const [setDefault, { isLoading: isSettingDefault }] = useSetDefaultCountryMutation()
 
   const handleInitDefault = async () => {
+    if (!canManage) return
     if (!confirm('Initialiser les pays et devises par défaut ?')) return
 
     try {
@@ -41,6 +47,7 @@ export default function CountryConfigPage() {
   }
 
   const handleSetDefault = async (country: Country) => {
+    if (!canManage) return
     try {
       await setDefault(country.id).unwrap()
       toast.success(`${country.name} défini comme pays par défaut`)
@@ -51,9 +58,12 @@ export default function CountryConfigPage() {
   }
 
   const handleManageCities = (country: Country) => {
+    if (!canManageCities) return
     setSelectedCountry(country)
     setShowCitiesModal(true)
   }
+
+  if (!canManage) return null
 
   return (
     <Layout>
@@ -68,14 +78,16 @@ export default function CountryConfigPage() {
             <p className="mt-2 text-gray-600">Gérez les pays supportés et leurs devises</p>
           </div>
 
-          <button
-            onClick={handleInitDefault}
-            disabled={isInitializing}
-            className="px-4 py-2 bg-gradient-to-r from-jlc-purple-600 to-indigo-600 text-white rounded-lg hover:from-jlc-purple-700 hover:to-indigo-700 shadow-md transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <SparklesIcon className="h-5 w-5" />
-            {isInitializing ? 'Initialisation...' : 'Initialiser données par défaut'}
-          </button>
+          {canManage && (
+            <button
+              onClick={handleInitDefault}
+              disabled={isInitializing}
+              className="px-4 py-2 bg-gradient-to-r from-jlc-purple-600 to-indigo-600 text-white rounded-lg hover:from-jlc-purple-700 hover:to-indigo-700 shadow-md transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <SparklesIcon className="h-5 w-5" />
+              {isInitializing ? 'Initialisation...' : 'Initialiser données par défaut'}
+            </button>
+          )}
         </div>
 
         {/* Countries Grid */}

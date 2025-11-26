@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
-import { useCreateProfileMutation, useListPermissionsQuery } from '../api/iamApi'
+import { useCreateProfileMutation, useListPermissionsQuery, useListBundlesQuery } from '../api/iamApi'
+import { useCanReadPermissions } from '../useCanReadPermissions'
 import PermissionSelector from './PermissionSelector'
+import { usePermissions } from '@/hooks/usePermission'
 
 interface CreateProfileModalProps {
   isOpen: boolean
@@ -10,13 +12,22 @@ interface CreateProfileModalProps {
 
 export default function CreateProfileModal({ isOpen, onClose }: CreateProfileModalProps) {
   const [createProfile, { isLoading }] = useCreateProfileMutation()
-  const { data: permissions = [] } = useListPermissionsQuery()
+  const { canReadPermissions } = useCanReadPermissions()
+  const { permissions: iamPerms } = usePermissions(['iam.profiles.manage'])
+  const canManageProfiles = Boolean(iamPerms['iam.profiles.manage'])
+  const { data: permissions = [] } = useListPermissionsQuery(undefined, {
+    skip: !canReadPermissions,
+  })
+  const { data: bundles = [] } = useListBundlesQuery(undefined, {
+    skip: !canReadPermissions,
+  })
 
   const [formData, setFormData] = useState({
     name: '',
     description: '',
     permission_ids: [] as string[],
     category: 'custom',
+    capability_bundle_ids: [] as string[],
   })
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
@@ -28,6 +39,7 @@ export default function CreateProfileModal({ isOpen, onClose }: CreateProfileMod
         description: '',
         permission_ids: [],
         category: 'custom',
+        capability_bundle_ids: [],
       })
       setError('')
       setSuccess(false)
@@ -68,6 +80,7 @@ export default function CreateProfileModal({ isOpen, onClose }: CreateProfileMod
         description: formData.description || undefined,
         permission_ids: formData.permission_ids,
         category: formData.category,
+        capability_bundle_ids: formData.capability_bundle_ids,
       }).unwrap()
 
       setSuccess(true)
@@ -108,7 +121,20 @@ export default function CreateProfileModal({ isOpen, onClose }: CreateProfileMod
     }
   }
 
+  const toggleBundle = (bundleId: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      capability_bundle_ids: prev.capability_bundle_ids.includes(bundleId)
+        ? prev.capability_bundle_ids.filter((id) => id !== bundleId)
+        : [...prev.capability_bundle_ids, bundleId],
+    }))
+  }
+
   if (!isOpen) return null
+
+  if (!canManageProfiles) {
+    return null
+  }
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
@@ -187,6 +213,60 @@ export default function CreateProfileModal({ isOpen, onClose }: CreateProfileMod
                 onToggle={togglePermission}
                 onToggleCategory={toggleCategory}
               />
+            </div>
+
+            {/* Bundles IAM */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Bundles de permissions ({formData.capability_bundle_ids.length} sélectionné(s))
+              </label>
+              <p className="text-xs text-gray-500 mb-3">
+                Optionnel : ajoute un ensemble de permissions préconfigurées (documents, config,
+                payroll, etc.)
+              </p>
+              <div className="border border-gray-300 rounded-lg max-h-48 overflow-y-auto">
+                {bundles && bundles.length > 0 ? (
+                  <div className="divide-y divide-gray-200">
+                    {bundles.map((bundle) => (
+                      <label
+                        key={bundle.id}
+                        className="flex items-start px-4 py-3 hover:bg-gray-50 cursor-pointer transition-colors"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={formData.capability_bundle_ids.includes(bundle.id)}
+                          onChange={() => toggleBundle(bundle.id)}
+                          className="h-4 w-4 text-jlc-purple-600 focus:ring-jlc-purple-500 border-gray-300 rounded mt-0.5"
+                        />
+                        <div className="ml-3 flex-1">
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-medium text-gray-700">
+                              {bundle.name}
+                            </span>
+                            <span className="px-2 py-0.5 bg-gray-100 text-gray-600 text-xs font-medium rounded">
+                              {bundle.category}
+                            </span>
+                          </div>
+                          <p className="text-xs text-gray-500 mt-1">
+                            Code : <span className="font-mono">{bundle.code}</span>
+                          </p>
+                          {bundle.description && (
+                            <p className="text-xs text-gray-500 mt-1">{bundle.description}</p>
+                          )}
+                          <p className="text-xs text-gray-400 mt-1">
+                            {bundle.permission_ids?.length || bundle.permissions?.length || 0}{' '}
+                            permission(s)
+                          </p>
+                        </div>
+                      </label>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="px-4 py-3 text-sm text-gray-500">
+                    Aucun bundle disponible ou accès insuffisant.
+                  </p>
+                )}
+              </div>
             </div>
 
             {error && (

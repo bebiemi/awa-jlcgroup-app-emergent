@@ -40,7 +40,7 @@
     },
     {
       "id": "5e79ddbd-9e93-484e-8f38-3b0d2c3fe701",
-      "name": "users:delete",
+      "name": "users.delete",
       "description": "Delete users",
       "resource": "users",
       "action": "delete",

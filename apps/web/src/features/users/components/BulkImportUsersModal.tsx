@@ -2,6 +2,7 @@ import { Fragment, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { XMarkIcon, CloudArrowUpIcon, CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/outline'
 import toast from 'react-hot-toast'
+import { usePermissions } from '@/hooks/usePermission'
 
 interface BulkImportUsersModalProps {
   isOpen: boolean
@@ -34,6 +35,7 @@ export default function BulkImportUsersModal({ isOpen, onClose, onSuccess }: Bul
   const [preview, setPreview] = useState<any[]>([])
   const [isUploading, setIsUploading] = useState(false)
   const [result, setResult] = useState<ImportResult | null>(null)
+  const { permissions } = usePermissions(['users.import', 'users.create'])
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0]
@@ -120,6 +122,12 @@ jane_smith,jane@jlcgroup.com,Jane Smith,collaborator,+241062345678`
     window.URL.revokeObjectURL(url)
     document.body.removeChild(a)
     toast.success('Template téléchargé')
+  }
+
+  if (!isOpen) return null
+
+  if (!(permissions['users.import'] || permissions['users.create'])) {
+    return null
   }
 
   return (

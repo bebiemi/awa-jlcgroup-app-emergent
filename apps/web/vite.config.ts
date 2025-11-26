@@ -15,6 +15,28 @@ export default defineConfig({
     host: '0.0.0.0',
     port: 3001,  // Changed to 3001 to allow nginx to listen on 3000
     strictPort: true,
+    // Permet d'override la cible API en local (évite le 503 si jlc-api est introuvable hors Docker)
+    // Exemple: VITE_API_PROXY_TARGET=http://localhost:8001
+    proxy: (() => {
+      const apiTarget = process.env.VITE_API_PROXY_TARGET || 'http://localhost:8001'
+      const agent = new http.Agent({ keepAlive: true })
+      return {
+        '/api': {
+          target: apiTarget,
+          changeOrigin: true,
+          secure: false,
+          ws: true,
+          agent,
+        },
+        '/auth-api': {
+          target: apiTarget,
+          changeOrigin: true,
+          secure: false,
+          ws: true,
+          agent,
+        },
+      }
+    })(),
     // Allow dynamic preview domains (forked apps get different subdomains)
     allowedHosts: ['.preview.emergentagent.com', '.emergent.host', 'localhost', '127.0.0.1'],
     // Fix for ENOSPC error in Kubernetes containers (file watcher limit)
@@ -29,28 +51,6 @@ export default defineConfig({
         clientPort: 443,
         protocol: 'wss',
       }),
-    },
-    proxy: {
-      // ALL /api requests go to backend (port 8001)
-      // Backend has proxy routes to forward to auth-microservice (port 8000) as needed
-      // This architecture works in both dev and production/preview environments
-      '/api': {
-        target: 'http://localhost:8001',
-        changeOrigin: true,
-        secure: false,
-        ws: true,
-        // Force HTTP/1.1 to avoid ALPN negotiation errors
-        agent: new http.Agent({ keepAlive: true }),
-      },
-      // /auth-api also goes to backend (legacy compatibility)
-      '/auth-api': {
-        target: 'http://localhost:8001',
-        changeOrigin: true,
-        secure: false,
-        ws: true,
-        // Force HTTP/1.1 to avoid ALPN negotiation errors
-        agent: new http.Agent({ keepAlive: true }),
-      },
     },
   },
   // Preview configuration (for production builds)

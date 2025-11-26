@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
 import { useCreateGroupMutation, useListProfilesQuery } from '../api/iamApi'
+import { usePermissions } from '@/hooks/usePermission'
 
 interface CreateGroupModalProps {
   isOpen: boolean
@@ -10,6 +11,8 @@ interface CreateGroupModalProps {
 export default function CreateGroupModal({ isOpen, onClose }: CreateGroupModalProps) {
   const [createGroup, { isLoading }] = useCreateGroupMutation()
   const { data: profiles = [] } = useListProfilesQuery()
+  const { permissions: iamPerms } = usePermissions(['iam.groups.manage'])
+  const canManageGroups = Boolean(iamPerms['iam.groups.manage'])
 
   const [formData, setFormData] = useState({
     name: '',
@@ -80,6 +83,10 @@ export default function CreateGroupModal({ isOpen, onClose }: CreateGroupModalPr
   }
 
   if (!isOpen) return null
+
+  if (!canManageGroups) {
+    return null
+  }
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">

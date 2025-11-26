@@ -3,6 +3,7 @@ import { useCreateEntrepriseMutation } from '../api/entreprisesApi'
 import { useCreateBulkInvitationsMutation } from '@/features/company/api/invitationApi'
 import { XMarkIcon, PlusIcon, TrashIcon, EnvelopeIcon } from '@heroicons/react/24/outline'
 import Button from '@/components/Button'
+import { usePermissions } from '@/hooks/usePermission'
 
 interface CreateEntrepriseModalProps {
   isOpen: boolean
@@ -13,6 +14,7 @@ interface CreateEntrepriseModalProps {
 export default function CreateEntrepriseModal({ isOpen, onClose, onSuccess }: CreateEntrepriseModalProps) {
   const [createEntreprise, { isLoading: isCreating }] = useCreateEntrepriseMutation()
   const [createInvitations, { isLoading: isInviting }] = useCreateBulkInvitationsMutation()
+  const { permissions } = usePermissions(['entreprises.create.all', 'entreprises.create.own'])
 
   const [formData, setFormData] = useState({
     nom: '',
@@ -149,6 +151,11 @@ export default function CreateEntrepriseModal({ isOpen, onClose, onSuccess }: Cr
   }
 
   if (!isOpen) return null
+
+  const canCreate = permissions['entreprises.create.all'] || permissions['entreprises.create.own']
+  if (!canCreate) {
+    return null
+  }
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">

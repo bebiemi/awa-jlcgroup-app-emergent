@@ -29,7 +29,7 @@ export interface UsersResponse {
 export const usersApi = createApi({
   reducerPath: 'usersApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: '/api/auth',
+    baseUrl: '/api',
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as RootState).auth.token
       if (token) {
@@ -56,13 +56,13 @@ export const usersApi = createApi({
         if (role) params.append('role', role)
         if (sort_by) params.append('sort_by', sort_by)
         if (sort_order) params.append('sort_order', sort_order)
-        return `/users?${params.toString()}`
+        return `/auth/users?${params.toString()}`
       },
       providesTags: ['Users'],
     }),
     updateUserStatus: builder.mutation<{ message: string }, { user_id: string; status: string }>({
       query: ({ user_id, status }) => ({
-        url: `/users/${user_id}/status`,
+        url: `/auth/users/${user_id}/status`,
         method: 'PATCH',
         body: { status },
       }),
@@ -70,16 +70,17 @@ export const usersApi = createApi({
     }),
     updateUser: builder.mutation<{ message: string }, { user_id: string; data: Partial<User> }>({
       query: ({ user_id, data }) => ({
-        url: `/users/${user_id}`,
+        url: `/auth/users/${user_id}`,
         method: 'PATCH',
         body: data,
       }),
       invalidatesTags: ['Users'],
     }),
-    deleteUser: builder.mutation<{ message: string }, string>({
-      query: (user_id) => ({
-        url: `/users/${user_id}`,
-        method: 'DELETE',
+    deleteUser: builder.mutation<{ message: string }, { user_id: string; reason?: string }>({
+      query: ({ user_id, reason }) => ({
+        url: `/iam/users/${user_id}/archive`,
+        method: 'PATCH',
+        body: { reason: reason || 'Suppression programmée par un administrateur' },
       }),
       invalidatesTags: ['Users'],
     }),
@@ -92,14 +93,14 @@ export const usersApi = createApi({
     }),
     markUserAsViewed: builder.mutation<{ success: boolean; message: string; user_id: string }, string>({
       query: (user_id) => ({
-        url: `/admin/users/${user_id}/mark-as-viewed`,
+        url: `/auth/admin/users/${user_id}/mark-as-viewed`,
         method: 'POST',
       }),
       invalidatesTags: ['Users'],
     }),
     toggleEmailVerification: builder.mutation<{ success: boolean; message: string }, { user_id: string; is_verified: boolean; reason: string }>({
       query: ({ user_id, is_verified, reason }) => ({
-        url: `/admin/email-verification/manual-verify`,
+        url: `/auth/admin/email-verification/manual-verify`,
         method: 'POST',
         body: { user_id, is_verified, reason },
       }),
@@ -117,7 +118,7 @@ export const usersApi = createApi({
     }),
     bulkUnblockUsers: builder.mutation<{ success: boolean; message: string; total: number; succeeded: number; failed: number; errors: any[] }, { user_ids: string[]; reason?: string }>({
       query: ({ user_ids, reason }) => ({
-        url: `/admin/users/bulk-unblock`,
+        url: `/auth/admin/users/bulk-unblock`,
         method: 'POST',
         body: { user_ids, reason },
       }),
@@ -125,7 +126,7 @@ export const usersApi = createApi({
     }),
     bulkArchiveUsers: builder.mutation<{ success: boolean; message: string; total: number; succeeded: number; failed: number; errors: any[] }, { user_ids: string[]; reason?: string }>({
       query: ({ user_ids, reason }) => ({
-        url: `/admin/users/bulk-archive`,
+        url: `/auth/admin/users/bulk-archive`,
         method: 'POST',
         body: { user_ids, reason },
       }),
@@ -133,7 +134,7 @@ export const usersApi = createApi({
     }),
     bulkDeleteUsers: builder.mutation<{ success: boolean; message: string; total: number; succeeded: number; failed: number; errors: any[] }, { user_ids: string[]; permanent?: boolean; reason?: string }>({
       query: ({ user_ids, permanent, reason }) => ({
-        url: `/admin/users/bulk-delete`,
+        url: `/auth/admin/users/bulk-delete`,
         method: 'POST',
         body: { user_ids, permanent, reason },
       }),
@@ -141,7 +142,7 @@ export const usersApi = createApi({
     }),
     exportUsersCSV: builder.mutation<Blob, { user_ids: string[] }>({
       query: ({ user_ids }) => ({
-        url: `/admin/users/export-csv`,
+        url: `/auth/admin/users/export-csv`,
         method: 'POST',
         body: { user_ids },
         responseHandler: (response) => response.blob(),

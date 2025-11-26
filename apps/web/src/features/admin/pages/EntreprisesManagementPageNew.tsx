@@ -30,10 +30,12 @@ export default function EntreprisesManagementPageNew() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
 
   const { permissions } = usePermissions([
-    'company.create',
-    'company.read',
-    'company.edit',
-    'company.delete',
+    'entreprises.read.all',
+    'entreprises.read.own',
+    'entreprises.create.own',
+    'entreprises.edit.all',
+    'entreprises.edit.own',
+    'entreprises.delete.all',
   ])
 
   const { data = [], isLoading, refetch } = useListEntreprisesQuery({ limit: 1000 })
@@ -168,7 +170,7 @@ export default function EntreprisesManagementPageNew() {
       create: {
         label: 'Créer une entreprise',
         onClick: handleCreateModalOpen,
-        permission: 'company.create',
+        permission: 'entreprises.create.own',
       },
       row: [
         {
@@ -177,7 +179,7 @@ export default function EntreprisesManagementPageNew() {
           icon: EyeIcon,
           onClick: handleViewEntreprise,
           variant: 'secondary',
-          permission: 'company.read',
+          permission: 'entreprises.read.all',
         },
         {
           key: 'edit',
@@ -185,7 +187,7 @@ export default function EntreprisesManagementPageNew() {
           icon: PencilIcon,
           onClick: handleEditEntreprise,
           variant: 'primary',
-          permission: 'company.edit',
+          permission: 'entreprises.edit.all',
         },
       ],
     },

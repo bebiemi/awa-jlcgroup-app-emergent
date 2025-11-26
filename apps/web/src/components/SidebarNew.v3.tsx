@@ -3,12 +3,14 @@
  * - Pilotée par configuration (navigation.config.ts)
  * - Utilise useSidebarItems() + useSidebar()
  * - Un seul état global isOpen
+ * DEPRECATED: utiliser SidebarUltimate à la place
  */
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useAppSelector } from '@/store/hooks'
 import { useSidebar } from '@/contexts/SidebarContext'
+import { PlusIcon } from '@heroicons/react/24/outline'
 import { useSidebarItems, useCurrentContext } from '@/hooks/useNavigationConfig'
 import { useDashboardPath } from '@/hooks/useDashboardPath'
 import {
@@ -48,7 +50,10 @@ const ICON_MAP: Record<string, any> = {
   GlobeAltIcon,
   ClockIcon,
   UsersIcon,
+  PlusIcon,
 }
+
+type ThemeName = 'dark' | 'magenta' | 'light'
 
 export default function SidebarNew() {
   const location = useLocation()
@@ -59,6 +64,18 @@ export default function SidebarNew() {
   const sidebarItems = useSidebarItems()
 
   const [expandedSections, setExpandedSections] = useState<string[]>([])
+  
+  useEffect(() => {
+  const active: string[] = []
+
+  sidebarItems.forEach((item) => {
+    if (item.parentId && isPathActive(item.path)) {
+      active.push(item.parentId)
+    }
+  })
+
+  setExpandedSections(prev => Array.from(new Set([...prev, ...active])))
+}, [location.pathname, sidebarItems])
 
   if (!user) return null
 

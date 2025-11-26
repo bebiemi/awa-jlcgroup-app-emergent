@@ -24,6 +24,7 @@ import {
   FunnelIcon,
 } from '@heroicons/react/24/outline'
 import toast from 'react-hot-toast'
+import { usePermissions } from '@/hooks/usePermission'
 
 // Catégories de documents
 const DOCUMENT_CATEGORIES = {
@@ -53,6 +54,16 @@ export default function DocumentsPage() {
   const [selectedType, setSelectedType] = useState<string>('all')
   const [uploadingFile, setUploadingFile] = useState<File | null>(null)
   const [selectedDocType, setSelectedDocType] = useState<string>('cv')
+  const { permissions } = usePermissions([
+    'documents.read.all',
+    'documents.create.all',
+    'documents.delete.all',
+    'documents.download.all',
+  ])
+  const canRead = permissions['documents.read.all']
+  const canUpload = permissions['documents.create.all']
+  const canDelete = permissions['documents.delete.all']
+  const canDownload = permissions['documents.download.all'] || permissions['documents.read.all']
 
   const { data: documentsData, isLoading } = useListDocumentsQuery({})
   const { data: documentTypesData } = useGetDocumentTypesQuery({ requiredOnly: false })
@@ -119,7 +130,7 @@ export default function DocumentsPage() {
       toast.success('✅ Document uploadé avec succès')
       setUploadingFile(null)
     } catch (error: any) {
-      toast.error(`❌ ${error?.data?.detail || 'Erreur lors de l\'upload'}`)
+      toast.error(`❌ ${error?.data?.detail || "Erreur lors de l'upload"}`)
     }
   }
 
@@ -135,6 +146,8 @@ export default function DocumentsPage() {
       toast.error(`❌ ${error?.data?.detail || 'Erreur lors de la suppression'}`)
     }
   }
+
+  if (!canRead) return null
 
   if (isLoading) {
     return (
@@ -222,7 +235,7 @@ export default function DocumentsPage() {
                 <Button
                   variant="primary"
                   onClick={handleUpload}
-                  disabled={!uploadingFile || isUploading}
+                  disabled={!uploadingFile || isUploading || !canUpload}
                   isLoading={isUploading}
                   className="w-full"
                 >
@@ -346,25 +359,28 @@ export default function DocumentsPage() {
                         </div>
 
                         <div className="flex gap-2">
-                          <Button
-                            variant="secondary"
-                            onClick={() => window.open(`/api/documents/${doc.id}/download`, '_blank')}
-                            className="flex-1 text-sm py-1.5"
-                          >
-                            <EyeIcon className="h-4 w-4 mr-1" />
-                            Voir
-                          </Button>
-                          <Button
-                            variant="danger"
-                            onClick={() => handleDelete(doc.id)}
-                            disabled={isDeleting}
-                            className="text-sm py-1.5 px-3"
-                          >
-                            <TrashIcon className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    </Card>
+                <Button
+                  variant="secondary"
+                  onClick={() => window.open(`/api/documents/${doc.id}/download`, '_blank')}
+                  className="flex-1 text-sm py-1.5"
+                  disabled={!canDownload}
+                >
+                  <EyeIcon className="h-4 w-4 mr-1" />
+                  Voir
+                </Button>
+                {canDelete && (
+                  <Button
+                    variant="danger"
+                    onClick={() => handleDelete(doc.id)}
+                    disabled={isDeleting}
+                    className="text-sm py-1.5 px-3"
+                  >
+                    <TrashIcon className="h-4 w-4" />
+                  </Button>
+                )}
+              </div>
+            </div>
+          </Card>
                   ))}
                 </div>
               )}

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useUpdateFormFieldMutation, type FieldOption, type FormFieldConfig } from '@/features/company/api/entrepriseFormConfigApi'
 import { XMarkIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline'
 import Button from '@/components/Button'
+import { usePermissions } from '@/hooks/usePermission'
 
 interface EditFieldModalProps {
   field: FormFieldConfig
@@ -12,6 +13,7 @@ interface EditFieldModalProps {
 
 export default function EditFieldModal({ field, isOpen, onClose, onSuccess }: EditFieldModalProps) {
   const [updateField, { isLoading }] = useUpdateFormFieldMutation()
+  const { permissions } = usePermissions(['forms.enterprise.manage'])
 
   const [formData, setFormData] = useState({
     field_key: field.field_key,
@@ -205,6 +207,10 @@ export default function EditFieldModal({ field, isOpen, onClose, onSuccess }: Ed
   }
 
   if (!isOpen) return null
+
+  if (!permissions['forms.enterprise.manage']) {
+    return null
+  }
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">

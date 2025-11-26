@@ -13,8 +13,13 @@ import Modal from '@/components/Modal'
 import Tooltip from '@/components/Tooltip'
 import { toast } from 'react-hot-toast'
 import { PlusIcon, GlobeAltIcon, CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/outline'
+import { usePermissions } from '@/hooks/usePermission'
 
 const EmailDomainsPage: React.FC = () => {
+  const { permissions } = usePermissions(['security.email_domains.read', 'security.email_domains.manage'])
+  const canRead = permissions['security.email_domains.read'] || permissions['security.email_domains.manage']
+  const canManage = permissions['security.email_domains.manage']
+
   const { data: domains, isLoading } = useListEmailDomainsQuery(undefined)
   const [createDomain] = useCreateEmailDomainMutation()
   const [updateDomain] = useUpdateEmailDomainMutation()
@@ -42,11 +47,13 @@ const EmailDomainsPage: React.FC = () => {
   }
 
   const handleCreateClick = () => {
+    if (!canManage) return
     resetForm()
     setShowCreateModal(true)
   }
 
   const handleEditClick = (domain: AllowedEmailDomain) => {
+    if (!canManage) return
     setSelectedDomain(domain)
     setFormData({
       domain: domain.domain,
@@ -58,11 +65,13 @@ const EmailDomainsPage: React.FC = () => {
   }
 
   const handleDeleteClick = (domain: AllowedEmailDomain) => {
+    if (!canManage) return
     setSelectedDomain(domain)
     setShowDeleteModal(true)
   }
 
   const handleCreateSubmit = async () => {
+    if (!canManage) return
     if (!formData.domain) {
       toast.error('Le domaine est requis')
       return
@@ -82,6 +91,7 @@ const EmailDomainsPage: React.FC = () => {
   }
 
   const handleEditSubmit = async () => {
+    if (!canManage) return
     if (!selectedDomain) return
 
     try {
@@ -103,6 +113,7 @@ const EmailDomainsPage: React.FC = () => {
   }
 
   const handleDeleteConfirm = async () => {
+    if (!canManage) return
     if (!selectedDomain) return
 
     try {
@@ -131,6 +142,8 @@ const EmailDomainsPage: React.FC = () => {
       </Layout>
     )
   }
+
+  if (!canRead) return null
 
   return (
     <Layout>

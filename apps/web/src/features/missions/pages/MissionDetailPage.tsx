@@ -24,6 +24,7 @@ import {
 } from '@heroicons/react/24/outline'
 import { useAppSelector } from '@/store/hooks'
 import toast from 'react-hot-toast'
+import { usePermissions } from '@/hooks/usePermission'
 
 const STATUS_LABELS: Record<string, string> = {
   draft: 'Brouillon',
@@ -73,11 +74,28 @@ export default function MissionDetailPage() {
   const { getLabel: getContractTypeLabel } = useContractTypes()
   const [publishMission] = usePublishMissionMutation()
 
-  const isAdmin = user?.roles.includes('admin') || user?.roles.includes('super_admin')
-  const isCommercial = user?.roles.includes('commercial')
-  const canManage = isAdmin || isCommercial
+  const { permissions } = usePermissions([
+    'missions.read.all',
+    'missions.read.own',
+    'missions.edit.all',
+    'missions.edit.own',
+    'missions.publish.all',
+    'missions.manage.all',
+  ])
+
+  const canRead =
+    permissions['missions.read.all'] ||
+    permissions['missions.read.own'] ||
+    permissions['missions.manage.all']
+  const canEdit =
+    permissions['missions.edit.all'] ||
+    permissions['missions.edit.own'] ||
+    permissions['missions.manage.all']
+  const canPublish =
+    permissions['missions.publish.all'] || permissions['missions.manage.all']
 
   const handlePublish = async () => {
+    if (!canPublish) return
     if (!id) return
     try {
       await publishMission(id).unwrap()
@@ -123,9 +141,9 @@ export default function MissionDetailPage() {
             Retour
           </button>
           
-          {canManage && (
+          {canEdit && (
             <div className="flex gap-2">
-              {mission.status === 'draft' && (
+              {mission.status === 'draft' && canPublish && (
                 <button
                   onClick={handlePublish}
                   className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"

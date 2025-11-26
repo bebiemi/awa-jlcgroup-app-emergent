@@ -1,300 +1,241 @@
+#!/usr/bin/env python3
 """
-Initialize Feature Flags
-Creates feature flags for all current and future features
-All new features are admin-only by default
+Script d'initialisation des feature flags depuis la configuration YAML
+- Crée/met à jour tous les feature flags
+- Gère le rollout progressif
+- Historise les changements
+
+Usage:
+  python3 init_feature_flags.py
+  python3 init_feature_flags.py --config /path/to/custom.yaml
+  python3 init_feature_flags.py --enable chat  # Active un flag spécifique
+  python3 init_feature_flags.py --disable chat  # Désactive un flag
 """
 import asyncio
-from motor.motor_asyncio import AsyncIOMotorClient
+import sys
 import os
 from datetime import datetime, timezone
-from uuid import uuid4
+from pathlib import Path
+import argparse
+import yaml
 
+sys.path.insert(0, str(Path(__file__).parent.parent / "auth-microservice"))
+
+from motor.motor_asyncio import AsyncIOMotorClient
+
+# Configuration
 MONGO_URL = os.getenv("MONGO_URL", "mongodb://localhost:27017")
+DB_NAME = "jlc_db"
+DEFAULT_CONFIG_FILE = Path(__file__).parent.parent / "config" / "feature_flags_config.yaml"
 
 
-# Define feature flags - All new features start as admin-only
-FEATURE_FLAGS = [
-    # ==================== EXISTING FEATURES ====================
-    {
-        "key": "feature.dashboard.unified",
-        "name": "Dashboard Unifié",
-        "description": "Nouveau dashboard avec widgets personnalisables",
-        "type": "ROLE",
-        "enabled": True,
-        "target": ["admin"],  # Admin only initially
-        "metadata": {"version": "1.0", "release_date": "2025-01-15"}
-    },
-    {
-        "key": "feature.profile.postulant",
-        "name": "Dashboard Postulant",
-        "description": "Dashboard guidé pour les candidats en phase de complétion",
-        "type": "ROLE",
-        "enabled": True,
-        "target": ["candidat", "postulant"],
-        "metadata": {"version": "1.0", "phase": "production"}
-    },
-    {
-        "key": "feature.entreprises.management",
-        "name": "Gestion Entreprises",
-        "description": "Page de gestion des entreprises avec édition inline",
-        "type": "ROLE",
-        "enabled": True,
-        "target": ["admin", "commercial"],
-        "metadata": {"version": "1.0"}
-    },
+def load_config(config_path=None):
+    """Charge la configuration des feature flags"""
+    config_file = Path(config_path) if config_path else DEFAULT_CONFIG_FILE
     
-    # ==================== UPCOMING FEATURES (Admin Only) ====================
-    {
-        "key": "feature.ai.matching",
-        "name": "Matching IA Missions",
-        "description": "Matching automatique intérimaires-missions via IA",
-        "type": "ROLE",
-        "enabled": False,
-        "target": ["admin"],  # Admin only for testing
-        "metadata": {"requires": ["openai_key", "matching_algorithm"], "phase": "development"}
-    },
-    {
-        "key": "feature.cv.auto_generate",
-        "name": "Génération Automatique CV",
-        "description": "Générer des CV au format PDF/PNG/JPG à partir du profil",
-        "type": "ROLE",
-        "enabled": False,
-        "target": ["admin"],
-        "metadata": {"formats": ["pdf", "png", "jpg"], "phase": "planning"}
-    },
-    {
-        "key": "feature.chat.messaging",
-        "name": "Système de Chat",
-        "description": "Messagerie instantanée entre utilisateurs",
-        "type": "ROLE",
-        "enabled": False,
-        "target": ["admin"],
-        "metadata": {"requires": ["websocket_server"], "phase": "planning"}
-    },
-    {
-        "key": "feature.notifications.realtime",
-        "name": "Notifications Temps Réel",
-        "description": "Notifications push en temps réel via WebSockets",
-        "type": "ROLE",
-        "enabled": False,
-        "target": ["admin"],
-        "metadata": {"requires": ["websocket_server"], "phase": "planning"}
-    },
-    {
-        "key": "feature.pointage.electronic",
-        "name": "Pointage Électronique",
-        "description": "Système de pointage pour intérimaires (mobile + web)",
-        "type": "ROLE",
-        "enabled": False,
-        "target": ["admin"],
-        "metadata": {"requires": ["geolocation", "mobile_app"], "phase": "planning"}
-    },
-    {
-        "key": "feature.signature.electronic",
-        "name": "Signature Électronique",
-        "description": "Signature de contrats et documents en ligne",
-        "type": "ROLE",
-        "enabled": False,
-        "target": ["admin"],
-        "metadata": {"requires": ["signature_provider"], "phase": "planning"}
-    },
-    {
-        "key": "feature.gamification",
-        "name": "Gamification Intérimaires",
-        "description": "Système de points, badges et récompenses",
-        "type": "ROLE",
-        "enabled": False,
-        "target": ["admin"],
-        "metadata": {"phase": "planning"}
-    },
-    {
-        "key": "feature.geography.v2",
-        "name": "Gestion Géographique V2",
-        "description": "Gestion provinces, districts et quartiers",
-        "type": "ROLE",
-        "enabled": False,
-        "target": ["admin"],
-        "metadata": {"phase": "planning"}
-    },
-    {
-        "key": "feature.validation.email",
-        "name": "Validation Email Obligatoire",
-        "description": "Forcer la validation d'email pour les postulants",
-        "type": "ROLE",
-        "enabled": False,
-        "target": ["admin"],
-        "metadata": {"applies_to": ["candidat", "postulant"], "phase": "development"}
-    },
-    {
-        "key": "feature.documents.advanced",
-        "name": "Gestion Documents Avancée",
-        "description": "Catégorisation, rappels d'expiration, OCR",
-        "type": "ROLE",
-        "enabled": False,
-        "target": ["admin"],
-        "metadata": {"phase": "planning"}
-    },
-    {
-        "key": "feature.reports.advanced",
-        "name": "Rapports Avancés",
-        "description": "Rapports personnalisables avec exports multiples",
-        "type": "ROLE",
-        "enabled": False,
-        "target": ["admin", "commercial"],
-        "metadata": {"formats": ["pdf", "excel", "csv"], "phase": "planning"}
-    },
-    {
-        "key": "feature.timesheet.validation",
-        "name": "Validation Feuilles de Temps",
-        "description": "Workflow de validation des feuilles de temps",
-        "type": "ROLE",
-        "enabled": False,
-        "target": ["admin", "commercial"],
-        "metadata": {"phase": "planning"}
-    },
+    if not config_file.exists():
+        print(f"❌ Fichier de configuration non trouvé: {config_file}")
+        sys.exit(1)
     
-    # ==================== EXPERIMENTAL FEATURES ====================
-    {
-        "key": "feature.ai.recommendations",
-        "name": "Recommandations IA",
-        "description": "Suggestions intelligentes de missions pour intérimaires",
-        "type": "ROLE",
-        "enabled": False,
-        "target": ["admin"],
-        "metadata": {"experimental": True, "requires": ["ai_model"]}
-    },
-    {
-        "key": "feature.mobile.app",
-        "name": "Application Mobile",
-        "description": "Activer les fonctionnalités mobile",
-        "type": "GLOBAL",
-        "enabled": False,
-        "target": None,
-        "metadata": {"platforms": ["ios", "android"], "phase": "planning"}
-    },
-    {
-        "key": "feature.api.public",
-        "name": "API Publique",
-        "description": "Endpoints API publics pour intégrations externes",
-        "type": "GLOBAL",
-        "enabled": False,
-        "target": None,
-        "metadata": {"requires": ["api_keys_management"], "phase": "planning"}
-    },
+    print(f"📖 Chargement de la configuration depuis: {config_file}")
     
-    # ==================== ADMIN TOOLS ====================
-    {
-        "key": "feature.admin.audit_logs",
-        "name": "Logs d'Audit Détaillés",
-        "description": "Historique complet des actions administratives",
-        "type": "ROLE",
-        "enabled": True,
-        "target": ["admin"],
-        "metadata": {"retention_days": 365}
-    },
-    {
-        "key": "feature.admin.system_health",
-        "name": "Monitoring Système",
-        "description": "Tableau de bord de santé du système",
-        "type": "ROLE",
-        "enabled": True,
-        "target": ["admin"],
-        "metadata": {"metrics": ["cpu", "memory", "disk", "api_latency"]}
-    },
-    {
-        "key": "feature.admin.data_export",
-        "name": "Export Données Massif",
-        "description": "Exporter toutes les données en masse",
-        "type": "ROLE",
-        "enabled": True,
-        "target": ["admin"],
-        "metadata": {"formats": ["json", "csv", "sql"]}
-    },
-]
+    with open(config_file, 'r', encoding='utf-8') as f:
+        return yaml.safe_load(f)
 
 
-async def init_feature_flags():
-    """Initialize feature flags"""
+async def init_feature_flags(config, enable_flag=None, disable_flag=None):
+    """Initialise les feature flags depuis la configuration"""
+    
     client = AsyncIOMotorClient(MONGO_URL)
-    db = client.auth_db
-    collection = db.feature_flags
+    db = client[DB_NAME]
     
-    now = datetime.now(timezone.utc)
-    stats = {"created": 0, "updated": 0, "unchanged": 0}
+    print("=" * 80)
+    print(f"🚩 INITIALISATION DES FEATURE FLAGS ({DB_NAME})")
+    print("=" * 80)
     
-    print("🚩 Initializing Feature Flags...\n")
+    stats = {
+        'total': 0,
+        'created': 0,
+        'updated': 0,
+        'enabled': 0,
+        'disabled': 0,
+        'skipped': 0,
+    }
     
-    for flag_data in FEATURE_FLAGS:
-        key = flag_data["key"]
+    # Compter les feature flags
+    flag_count = sum(1 for key in config.keys() if not key.startswith('_'))
+    stats['total'] = flag_count
+    
+    print(f"\n📊 {flag_count} feature flag(s) à traiter\n")
+    
+    # Traiter chaque feature flag
+    for flag_key, flag_config in config.items():
+        if flag_key.startswith('_'):  # Ignorer les métadonnées
+            continue
         
-        # Check if flag already exists
-        existing = await collection.find_one({"key": key})
-        
-        flag_doc = {
-            "id": existing.get("id", str(uuid4())) if existing else str(uuid4()),
-            "key": flag_data["key"],
-            "name": flag_data["name"],
-            "description": flag_data["description"],
-            "type": flag_data["type"],
-            "enabled": existing.get("enabled", flag_data["enabled"]) if existing else flag_data["enabled"],
-            "target": flag_data.get("target"),
-            "metadata": flag_data.get("metadata", {}),
-            "created_at": existing.get("created_at", now) if existing else now,
-            "updated_at": now,
-        }
-        
-        if existing:
-            # Check if update is needed (only description and metadata)
-            needs_update = (
-                existing.get("description") != flag_doc["description"] or
-                existing.get("name") != flag_doc["name"] or
-                existing.get("metadata") != flag_doc["metadata"]
-            )
+        try:
+            key = flag_config.get('key', f'features.{flag_key}')
+            name = flag_config.get('name', flag_key)
+            enabled = flag_config.get('enabled', False)
+            category = flag_config.get('category', 'general')
+            description = flag_config.get('description', '')
             
-            if needs_update:
-                # Don't update enabled status or target if already set
-                update_doc = {k: v for k, v in flag_doc.items() if k not in ["enabled", "target"]}
-                await collection.update_one(
-                    {"id": flag_doc["id"]},
-                    {"$set": update_doc}
+            # Override si demandé en ligne de commande
+            if enable_flag and flag_key == enable_flag:
+                enabled = True
+                print(f"🎚️  Activation forcée de '{flag_key}'")
+            elif disable_flag and flag_key == disable_flag:
+                enabled = False
+                print(f"🎚️  Désactivation forcée de '{flag_key}'")
+            
+            status_icon = "✅" if enabled else "⏸️ "
+            print(f"{status_icon} {name} ({flag_key})")
+            print(f"   Key: {key}")
+            print(f"   Enabled: {enabled}")
+            print(f"   Category: {category}")
+            
+            # Vérifier si le flag existe
+            existing = await db.feature_flags.find_one({"key": key})
+            
+            # Préparer le document
+            flag_doc = {
+                "key": key,
+                "flag_key": flag_key,
+                "name": name,
+                "description": description,
+                "enabled": enabled,
+                "category": category,
+                "config": flag_config.get('config', {}),
+                "rollout": flag_config.get('rollout', {}),
+                "metadata": flag_config.get('metadata', {}),
+                "updated_at": datetime.now(timezone.utc).isoformat(),
+            }
+            
+            if existing:
+                # Historiser le changement si le status change
+                if existing.get('enabled') != enabled:
+                    history_entry = {
+                        "timestamp": datetime.now(timezone.utc).isoformat(),
+                        "action": "enabled" if enabled else "disabled",
+                        "previous_state": existing.get('enabled'),
+                        "new_state": enabled,
+                    }
+                    await db.feature_flags.update_one(
+                        {"key": key},
+                        {"$push": {"history": history_entry}}
+                    )
+                
+                # Mettre à jour
+                await db.feature_flags.update_one(
+                    {"key": key},
+                    {"$set": flag_doc}
                 )
-                status_icon = "🔄"
-                stats["updated"] += 1
+                print(f"   ✅ Mis à jour")
+                stats['updated'] += 1
+                
+                if enabled:
+                    stats['enabled'] += 1
+                else:
+                    stats['disabled'] += 1
             else:
-                status_icon = "✓"
-                stats["unchanged"] += 1
-        else:
-            await collection.insert_one(flag_doc)
-            status_icon = "✅"
-            stats["created"] += 1
-        
-        enabled_icon = "🟢" if flag_doc["enabled"] else "🔴"
-        type_icon = "🌐" if flag_data["type"] == "GLOBAL" else "👥"
-        target_str = f" [{', '.join(flag_data.get('target', []))}]" if flag_data.get('target') else ""
-        
-        print(f"{status_icon} {type_icon} {enabled_icon} {flag_data['name']}{target_str}")
+                # Créer
+                flag_doc["created_at"] = datetime.now(timezone.utc).isoformat()
+                flag_doc["history"] = [{
+                    "timestamp": datetime.now(timezone.utc).isoformat(),
+                    "action": "created",
+                    "initial_state": enabled,
+                }]
+                await db.feature_flags.insert_one(flag_doc)
+                print(f"   ✅ Créé")
+                stats['created'] += 1
+                
+                if enabled:
+                    stats['enabled'] += 1
+                else:
+                    stats['disabled'] += 1
+            
+            # Afficher le rollout
+            rollout = flag_config.get('rollout', {})
+            percentage = rollout.get('percentage', 0)
+            if percentage < 100:
+                print(f"   📊 Rollout: {percentage}%")
+            
+            print()
+            
+        except Exception as e:
+            print(f"   ❌ Erreur: {str(e)}\n")
     
-    print(f"\n✅ Feature flags initialization complete!")
-    print(f"   - Created: {stats['created']} flags")
-    print(f"   - Updated: {stats['updated']} flags")
-    print(f"   - Unchanged: {stats['unchanged']} flags")
-    print(f"   - Total: {len(FEATURE_FLAGS)} flags")
+    # Créer les index
+    print("🔧 Création des index...")
+    try:
+        await db.feature_flags.create_index([("key", 1)], unique=True)
+        await db.feature_flags.create_index([("flag_key", 1)])
+        await db.feature_flags.create_index([("category", 1)])
+        print("   ✅ Index créés")
+    except Exception as e:
+        print(f"   ℹ️  Index déjà existants")
     
-    # Stats
-    enabled_count = sum(1 for f in FEATURE_FLAGS if f["enabled"])
-    admin_only_count = sum(1 for f in FEATURE_FLAGS if f.get("target") == ["admin"])
-    
-    print(f"\n📊 Statistics:")
-    print(f"   - Enabled: {enabled_count}")
-    print(f"   - Disabled: {len(FEATURE_FLAGS) - enabled_count}")
-    print(f"   - Admin Only: {admin_only_count}")
-    print(f"   - Global: {sum(1 for f in FEATURE_FLAGS if f['type'] == 'GLOBAL')}")
-    print(f"   - Role-based: {sum(1 for f in FEATURE_FLAGS if f['type'] == 'ROLE')}")
-    
-    print(f"\n💡 Note: All new features are admin-only by default for safe rollout")
+    # Vérification finale
+    print("\n🔍 Vérification finale...")
+    flag_count = await db.feature_flags.count_documents({})
+    enabled_count = await db.feature_flags.count_documents({"enabled": True})
+    print(f"   📊 Total feature flags: {flag_count}")
+    print(f"   ✅ Activés: {enabled_count}")
+    print(f"   ⏸️  Désactivés: {flag_count - enabled_count}")
     
     client.close()
+    
+    # Résumé
+    print("\n" + "=" * 80)
+    print("📊 RÉSUMÉ")
+    print("=" * 80)
+    print(f"\nFeature flags traités: {stats['total']}")
+    print(f"Créés: {stats['created']}")
+    print(f"Mis à jour: {stats['updated']}")
+    print(f"\n📈 État actuel:")
+    print(f"Activés: {stats['enabled']}")
+    print(f"Désactivés: {stats['disabled']}")
+    
+    print("\n💡 Utilisation:")
+    print("   - API: GET /api/features/flags/{key}")
+    print("   - Frontend: useFeatureFlag(key)")
+    print("   - Backend: is_feature_enabled(key, user)")
+    print("\n📝 Gestion:")
+    print("   - Activer: python3 init_feature_flags.py --enable {flag_key}")
+    print("   - Désactiver: python3 init_feature_flags.py --disable {flag_key}")
+    print("=" * 80)
 
 
 if __name__ == "__main__":
-    asyncio.run(init_feature_flags())
+    parser = argparse.ArgumentParser(
+        description="Initialiser les feature flags depuis la configuration YAML"
+    )
+    parser.add_argument(
+        "--config",
+        type=str,
+        help="Chemin vers un fichier de configuration personnalisé"
+    )
+    parser.add_argument(
+        "--enable",
+        type=str,
+        metavar="FLAG_KEY",
+        help="Activer un feature flag spécifique"
+    )
+    parser.add_argument(
+        "--disable",
+        type=str,
+        metavar="FLAG_KEY",
+        help="Désactiver un feature flag spécifique"
+    )
+    
+    args = parser.parse_args()
+    
+    # Charger la configuration
+    config = load_config(args.config)
+    
+    # Exécuter l'initialisation
+    asyncio.run(init_feature_flags(
+        config,
+        enable_flag=args.enable,
+        disable_flag=args.disable
+    ))

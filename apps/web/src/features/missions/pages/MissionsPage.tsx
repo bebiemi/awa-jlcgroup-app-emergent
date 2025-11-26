@@ -16,12 +16,15 @@ import toast from "react-hot-toast"
 export default function MissionsPage() {
   const navigate = useNavigate()
   const { permissions: userPermissions } = usePermissions([
-    "missions.read.all",
-    "missions.create",
-    "missions.edit",
-    "missions.delete",
-    "missions.archive",
-    "missions.cancel",
+    'missions.read.all',
+    'missions.read.own',
+    'missions.create.all',
+    'missions.create.own',
+    'missions.edit.all',
+    'missions.edit.own',
+    'missions.delete.all',
+    'missions.delete.own',
+    'missions.manage.all',
   ])
 
   const [page, setPage] = useState(1)
@@ -103,7 +106,7 @@ export default function MissionsPage() {
       create: {
         label: "Créer une mission",
         onClick: () => navigate("/admin/missions/new"),
-        permission: "missions.create",
+        permission: ["missions.create.all", "missions.create.own"],
       },
       row: [
         {
@@ -117,14 +120,14 @@ export default function MissionsPage() {
           label: "Modifier",
           icon: PencilIcon,
           onClick: handleEdit,
-          permission: "missions.edit",
+          permission: ["missions.edit.all", "missions.edit.own"],
         },
         {
           key: "archive",
           label: "Archiver",
           icon: ArchiveBoxIcon,
           onClick: handleArchive,
-          permission: "missions.archive",
+          permission: ["missions.archive.all", "missions.manage.all"],
         },
         {
           key: "cancel",
@@ -132,7 +135,7 @@ export default function MissionsPage() {
           icon: XCircleIcon,
           variant: "danger" as const,
           onClick: handleCancel,
-          permission: "missions.cancel",
+          permission: ["missions.cancel.all", "missions.manage.all"],
         },
         {
           key: "delete",
@@ -140,7 +143,7 @@ export default function MissionsPage() {
           icon: TrashIcon,
           variant: "danger" as const,
           onClick: handleDelete,
-          permission: "missions.delete",
+          permission: ["missions.delete.all", "missions.delete.own"],
         },
       ],
     },

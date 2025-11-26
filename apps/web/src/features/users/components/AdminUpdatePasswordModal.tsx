@@ -13,6 +13,7 @@ import {
   CheckCircleIcon,
 } from '@heroicons/react/24/outline'
 import toast from 'react-hot-toast'
+import { usePermissions } from '@/hooks/usePermission'
 
 interface Props {
   isOpen: boolean
@@ -35,6 +36,7 @@ export default function AdminUpdatePasswordModal({
   const [showConfirm, setShowConfirm] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
+  const { permissions } = usePermissions(['users.reset_password', 'users.manage'])
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {}
@@ -133,6 +135,11 @@ export default function AdminUpdatePasswordModal({
   }
 
   const passwordStrength = getPasswordStrength(newPassword)
+
+  if (!isOpen) return null
+  if (!(permissions['users.reset_password'] || permissions['users.manage'])) {
+    return null
+  }
 
   return (
     <Modal isOpen={isOpen} onClose={handleClose}>

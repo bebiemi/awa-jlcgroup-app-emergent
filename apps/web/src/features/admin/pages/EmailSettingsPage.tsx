@@ -12,6 +12,7 @@ import Layout from '@/components/Layout';
 import Card from '@/components/Card';
 import Tooltip from '@/components/Tooltip';
 import { PlusIcon, EnvelopeIcon, Cog6ToothIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
+import { usePermissions } from '@/hooks/usePermission';
 
 type SectionType = 'smtp' | 'admin' | 'test'
 
@@ -19,6 +20,10 @@ export const EmailSettingsPage: React.FC = () => {
   const { data: settings, isLoading, error } = useGetEmailSettingsQuery();
   const [updateSettings, { isLoading: isUpdating }] = useUpdateEmailSettingsMutation();
   const [testConfig, { isLoading: isTesting }] = useTestEmailConfigMutation();
+  const { permissions } = usePermissions(['emails.read_config', 'emails.configure', 'emails.test'])
+  const canRead = permissions['emails.read_config'] || permissions['emails.configure']
+  const canConfigure = permissions['emails.configure']
+  const canTest = permissions['emails.test'] || permissions['emails.configure']
 
   const [activeSection, setActiveSection] = useState<SectionType>('smtp')
 
@@ -84,6 +89,7 @@ export const EmailSettingsPage: React.FC = () => {
   };
 
   const handleTestConfig = async () => {
+    if (!canTest) return
     if (!testEmail) {
       alert('Veuillez entrer un email de test');
       return;
@@ -113,6 +119,7 @@ export const EmailSettingsPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    if (!canConfigure) return;
     if (formData.admin_emails.length === 0) {
       alert('Veuillez ajouter au moins un email admin');
       return;
@@ -125,6 +132,8 @@ export const EmailSettingsPage: React.FC = () => {
       alert(`Erreur: ${err.data?.detail || 'Erreur inconnue'}`);
     }
   };
+
+  if (!canRead) return null;
 
   if (isLoading) {
     return (

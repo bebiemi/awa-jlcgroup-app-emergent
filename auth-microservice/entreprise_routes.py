@@ -9,9 +9,11 @@ from datetime import datetime, timezone
 import uuid
 
 from awana_auth.core.dependencies import get_database
-from awana_auth.core.dependencies import get_current_user
+from awana_auth.core.dependencies import get_current_user, get_iam_service
 from awana_auth.core.models import User
 from awana_auth.dependencies.permission_dependencies import require_permission
+from awana_auth.services.iam_service import IAMService
+from awana_auth.utils.iam_helpers import get_resource_filter
 from pydantic import BaseModel, Field, EmailStr
 
 
@@ -128,6 +130,7 @@ async def get_entreprise(
     entreprise_id: str,
     current_user: User = Depends(get_current_user),
     _: User = Depends(require_permission("entreprises.read")),
+    iam_service: IAMService = Depends(get_iam_service),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """
@@ -137,12 +140,6 @@ async def get_entreprise(
     - entreprises.read.all : Voir toutes les entreprises (Admin)
     - entreprises.read.own : Voir uniquement sa propre entreprise (Entreprise)
     """
-    from awana_auth.core.dependencies import get_iam_service
-    from awana_auth.services.iam_service import IAMService
-    
-    # Get IAM service
-    iam_service = IAMService(db)
-    
     user_company_id = current_user.company_id or current_user.entreprise_id
     
     # Vérifier permission .all
@@ -193,6 +190,7 @@ async def list_entreprises(
     status: Optional[str] = None,
     current_user: User = Depends(get_current_user),
     _: User = Depends(require_permission("entreprises.read")),
+    iam_service: IAMService = Depends(get_iam_service),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """
@@ -201,20 +199,30 @@ async def list_entreprises(
     Admin sees all, others see only their own
     """
     query = {}
+    user_company_id = getattr(current_user, "company_id", None) or getattr(current_user, "entreprise_id", None)
+    iam_filter = await get_resource_filter(
+        iam_service,
+        current_user.id,
+        user_company_id,
+        "entreprises",
+        "read"
+    )
+
+    if iam_filter is None:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Permission insuffisante"
+        )
+    if iam_filter:
+        # Mapper les filtres IAM (.own) vers l'identifiant d'entreprise
+        if "entreprise_id" in iam_filter and "id" not in iam_filter:
+            query["id"] = iam_filter["entreprise_id"]
+        else:
+            query.update(iam_filter)
     
     # Filter by status if provided
     if status:
         query["status"] = status
-    
-    # Scope filtering
-    has_own_scope = "admin" not in current_user.roles and "super_admin" not in current_user.roles
-    if has_own_scope:
-        # User can only see their own company
-        user_company_id = getattr(current_user, "company_id", None) or getattr(current_user, "entreprise_id", None)
-        if user_company_id:
-            query["id"] = user_company_id
-        else:
-            return []  # No company
     
     entreprises = await db.entreprises.find(query).skip(skip).limit(limit).to_list(length=limit)
     
@@ -232,12 +240,19 @@ async def create_entreprise(
     entreprise_data: EntrepriseCreate,
     current_user: User = Depends(get_current_user),
     _: User = Depends(require_permission("entreprises.create")),
+    iam_service: IAMService = Depends(get_iam_service),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """
     Create a new entreprise
     Requires: entreprises.create permission
     """
+    has_create = await iam_service.user_has_permission(current_user.id, "entreprises.create")
+    if not has_create.has_permission:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Permission insuffisante pour créer une entreprise"
+        )
     # Check if SIRET already exists
     existing = await db.entreprises.find_one({"siret": entreprise_data.siret})
     if existing:
@@ -270,12 +285,27 @@ async def update_my_entreprise(
     entreprise_data: EntrepriseUpdate,
     current_user: User = Depends(get_current_user),
     _: User = Depends(require_permission("entreprises.edit")),
+    iam_service: IAMService = Depends(get_iam_service),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """
     Update current user's entreprise
     Requires: entreprises.edit permission
     """
+    # Vérifier le scope (.own/.all)
+    iam_filter = await get_resource_filter(
+        iam_service,
+        current_user.id,
+        getattr(current_user, "company_id", None) or getattr(current_user, "entreprise_id", None),
+        "entreprises",
+        "edit"
+    )
+    if iam_filter is None:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Permission insuffisante"
+        )
+    
     # Get company_id
     company_id = getattr(current_user, "company_id", None) or getattr(current_user, "entreprise_id", None)
     
@@ -283,6 +313,17 @@ async def update_my_entreprise(
         user_doc = await db.users.find_one({"id": current_user.id})
         if user_doc:
             company_id = user_doc.get("company_id") or user_doc.get("entreprise_id")
+    
+    if iam_filter and company_id:
+        allowed_ids = {
+            iam_filter.get("id"),
+            iam_filter.get("entreprise_id")
+        }
+        if None not in allowed_ids and company_id not in allowed_ids:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Accès restreint à votre entreprise"
+            )
     
     if not company_id:
         raise HTTPException(
@@ -345,6 +386,7 @@ async def update_entreprise(
     entreprise_data: EntrepriseUpdate,
     current_user: User = Depends(get_current_user),
     _: User = Depends(require_permission("entreprises.edit")),
+    iam_service: IAMService = Depends(get_iam_service),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """
@@ -352,15 +394,30 @@ async def update_entreprise(
     Requires: entreprises.edit permission
     Admin can edit any, others can only edit their own
     """
-    # Check access
+    # Check access via IAM scopes (.all/.own)
     user_company_id = getattr(current_user, "company_id", None) or getattr(current_user, "entreprise_id", None)
-    
-    has_all_scope = "admin" in current_user.roles or "super_admin" in current_user.roles
-    if not has_all_scope and user_company_id != entreprise_id:
+    iam_filter = await get_resource_filter(
+        iam_service,
+        current_user.id,
+        user_company_id,
+        "entreprises",
+        "edit"
+    )
+    if iam_filter is None:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Accès non autorisé à cette entreprise"
+            detail="Permission insuffisante"
         )
+    if iam_filter:
+        allowed_ids = {
+            iam_filter.get("id"),
+            iam_filter.get("entreprise_id")
+        }
+        if None not in allowed_ids and entreprise_id not in allowed_ids:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Accès non autorisé à cette entreprise"
+            )
     
     # Get current entreprise
     entreprise = await db.entreprises.find_one({"id": entreprise_id})
@@ -414,6 +471,7 @@ async def delete_entreprise(
     entreprise_id: str,
     current_user: User = Depends(get_current_user),
     _: User = Depends(require_permission("entreprises.delete")),
+    iam_service: IAMService = Depends(get_iam_service),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """
@@ -421,11 +479,14 @@ async def delete_entreprise(
     Requires: entreprises.delete permission
     Only admins can delete
     """
-    has_all_scope = "admin" in current_user.roles or "super_admin" in current_user.roles
-    if not has_all_scope:
+    has_delete_all = await iam_service.user_has_permission(
+        current_user.id,
+        "entreprises.delete.all"
+    )
+    if not has_delete_all.has_permission:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Seuls les administrateurs peuvent supprimer une entreprise"
+            detail="Seuls les administrateurs disposant du scope complet peuvent supprimer une entreprise"
         )
     
     # Soft delete - set status to inactive

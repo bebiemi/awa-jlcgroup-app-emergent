@@ -21,16 +21,17 @@ import { UsersPageConfig } from '../config/users.config'
 import EntityListTemplate from '@/templates/EntityListTemplate'
 import { usePermissions } from '@/hooks/usePermission'
 import type { EntityListConfig } from '@/templates/EntityListTemplate'
+import { CloudArrowUpIcon, PlusIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline'
 
 export default function UsersPage() {
   const navigate = useNavigate()
   const { permissions: userPermissions } = usePermissions([
-    'users.view',
-    'users.edit',
+    'users.read',
+    'users.manage',
     'users.create',
     'users.delete',
-    'users.bulk',
-    'users.export',
+    'users.manage_status',
+    'users.reset_mfa',
   ])
   
   // États locaux pour les filtres et recherche
@@ -38,6 +39,7 @@ export default function UsersPage() {
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
   const [roleFilter, setRoleFilter] = useState('')
+  const [activeTab, setActiveTab] = useState<'all' | 'archived' | 'super_admin'>('all')
 
   // RTK Query pour récupérer les utilisateurs
   const { data, isLoading, error } = UsersPageConfig.api.list({
@@ -117,7 +119,7 @@ export default function UsersPage() {
           { value: 'active', label: 'Actif' },
           { value: 'pending', label: 'En attente' },
           { value: 'suspended', label: 'Suspendu' },
-          { value: 'deleted', label: 'Supprimé' },
+          { value: 'deleted', label: 'Archivé' },
         ],
       },
       {
@@ -126,6 +128,7 @@ export default function UsersPage() {
         type: 'select',
         options: [
           { value: 'admin', label: 'Admin' },
+          { value: 'super_admin', label: 'Super Admin' },
           { value: 'company', label: 'Entreprise' },
           { value: 'candidat', label: 'Candidat' },
           { value: 'interim', label: 'Intérimaire' },
@@ -247,9 +250,87 @@ export default function UsersPage() {
   const ResetPasswordModal = UsersPageConfig.actions.resetPassword
   const DetailsModal = UsersPageConfig.details.component
 
+  const filtersAndActions = (
+    <div className="flex flex-wrap gap-2 items-center justify-between w-full">
+      <div className="flex flex-wrap gap-2">
+        {[
+          { key: 'all', label: 'Tous' },
+          { key: 'archived', label: 'Archivés' },
+          { key: 'super_admin', label: 'Super Admins' },
+        ].map((tab) => (
+          <button
+            key={tab.key}
+            onClick={() => {
+              setActiveTab(tab.key as typeof activeTab)
+              if (tab.key === 'archived') {
+                setStatusFilter('deleted')
+              } else {
+                setStatusFilter('')
+              }
+              if (tab.key === 'super_admin') {
+                setRoleFilter('super_admin')
+              } else if (tab.key !== 'archived') {
+                setRoleFilter('')
+              }
+              setPage(1)
+            }}
+            className={[
+              'px-3 py-2 rounded-lg text-sm font-medium transition-colors',
+              activeTab === tab.key
+                ? 'bg-jlc-purple-600 text-white'
+                : 'bg-white border border-gray-200 text-gray-700 hover:bg-gray-50',
+            ].join(' ')}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+      <div className="flex items-center gap-2 flex-wrap">
+        <button
+          type="button"
+          onClick={() => navigate('/admin/users/import')}
+          className="h-10 w-10 md:h-11 md:w-11 inline-flex items-center justify-center rounded-full text-white shadow-md transition-all"
+          style={{ background: 'var(--sidebar-accent-secondary, #16a34a)' }}
+          title="Importer des utilisateurs"
+          aria-label="Importer des utilisateurs"
+        >
+          <CloudArrowUpIcon className="h-5 w-5" />
+        </button>
+        <button
+          type="button"
+          onClick={() => navigate('/admin/users/export')}
+          className="h-10 w-10 md:h-11 md:w-11 inline-flex items-center justify-center rounded-full text-white shadow-md transition-all"
+          style={{ background: 'var(--sidebar-accent, #4f46e5)' }}
+          title="Exporter les utilisateurs"
+          aria-label="Exporter les utilisateurs"
+        >
+          <ArrowDownTrayIcon className="h-5 w-5" />
+        </button>
+        <button
+          type="button"
+          onClick={() => navigate('/admin/users/new')}
+          className="h-10 w-10 md:h-11 md:w-11 inline-flex items-center justify-center rounded-full text-white shadow-md transition-all"
+          style={{ background: 'var(--sidebar-accent-gradient, linear-gradient(90deg,#6d28d9,#4f46e5))' }}
+          title="Créer un utilisateur"
+          aria-label="Créer un utilisateur"
+        >
+          <PlusIcon className="h-5 w-5" />
+        </button>
+      </div>
+    </div>
+  )
+
   return (
     <>
-      <EntityListTemplate config={templateConfig} permissions={permissions} />
+      <EntityListTemplate
+        config={{
+          ...templateConfig,
+          extraFiltersSlot: filtersAndActions,
+          inlineActionsSlot: undefined,
+          showCreateInHeader: false,
+        }}
+        permissions={permissions}
+      />
       
       {/* Modales conditionnelles */}
       {activeModal === 'details' && selectedUser && (

@@ -4,6 +4,7 @@ import { XMarkIcon, MagnifyingGlassIcon, PlusIcon, TrashIcon } from '@heroicons/
 import { BuildingOffice2Icon } from '@heroicons/react/24/solid'
 import { useGetCitiesQuery, useCreateCityMutation, useDeleteCityMutation, City } from '../api/countryConfigApi'
 import { toast } from 'react-hot-toast'
+import { usePermissions } from '@/hooks/usePermission'
 
 interface ManageCitiesModalProps {
   isOpen: boolean
@@ -19,6 +20,7 @@ export default function ManageCitiesModal({ isOpen, onClose, country }: ManageCi
   const [search, setSearch] = useState('')
   const [newCityName, setNewCityName] = useState('')
   const [showAddForm, setShowAddForm] = useState(false)
+  const { permissions } = usePermissions(['locations.manage'])
 
   const { data: cities = [], isLoading, refetch } = useGetCitiesQuery(
     { countryId: country?.id || '', search, active_only: false },
@@ -56,6 +58,10 @@ export default function ManageCitiesModal({ isOpen, onClose, country }: ManageCi
     } catch (error: any) {
       toast.error(error?.data?.detail || 'Erreur lors de la suppression')
     }
+  }
+
+  if (!(permissions['locations.manage'])) {
+    return null
   }
 
   return (

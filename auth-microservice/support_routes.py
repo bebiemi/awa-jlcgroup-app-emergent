@@ -8,6 +8,7 @@ from datetime import datetime, timezone
 from uuid import uuid4
 
 from awana_auth.core.dependencies import get_current_user, get_database
+from awana_auth.dependencies.permission_dependencies import require_permission
 
 router = APIRouter(prefix="/support", tags=["Support"])
 
@@ -352,17 +353,10 @@ async def admin_list_tickets(
     category: Optional[str] = None,
     priority: Optional[str] = None,
     assigned_to: Optional[str] = None,
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_permission("support.manage")),
     db = Depends(get_database)
 ):
     """[Admin] Lister tous les tickets de support"""
-    
-    # Vérifier les permissions admin
-    if "admin" not in current_user.get("roles", []):
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Admin access required"
-        )
     
     query = {}
     
@@ -387,17 +381,10 @@ async def admin_list_tickets(
 async def admin_update_ticket(
     ticket_id: str,
     update_data: TicketUpdate,
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_permission("support.manage")),
     db = Depends(get_database)
 ):
     """[Admin] Mettre à jour un ticket"""
-    
-    # Vérifier les permissions admin
-    if "admin" not in current_user.get("roles", []):
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Admin access required"
-        )
     
     # Vérifier que le ticket existe
     ticket = await db.support_tickets.find_one({"id": ticket_id}, {"_id": 0})

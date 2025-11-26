@@ -3,6 +3,7 @@ import { Dialog, Transition } from '@headlessui/react'
 import { ExclamationTriangleIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { useArchiveUserMutation, useGetRetentionConfigQuery } from '@/features/users/api/userDetailsApi'
 import { toast } from 'react-hot-toast'
+import { usePermissions } from '@/hooks/usePermission'
 
 interface ArchiveUserModalProps {
   isOpen: boolean
@@ -25,6 +26,7 @@ export default function ArchiveUserModal({
   const [reason, setReason] = useState('')
   const [archiveUser, { isLoading }] = useArchiveUserMutation()
   const { data: retentionConfig } = useGetRetentionConfigQuery()
+  const { permissions } = usePermissions(['users.manage_status', 'users.manage'])
 
   const handleArchive = async () => {
     if (!user) return
@@ -44,6 +46,11 @@ export default function ArchiveUserModal({
     } catch (error: any) {
       toast.error(error?.data?.detail || 'Erreur lors de l\'archivage de l\'utilisateur')
     }
+  }
+
+  const canArchive = permissions['users.manage_status'] || permissions['users.manage']
+  if (!canArchive) {
+    return null
   }
 
   return (

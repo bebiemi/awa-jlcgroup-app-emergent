@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { UserDetail, useGetUserActivityQuery } from '@/features/users/api/userDetailsApi'
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
+import { usePermissions } from '@/hooks/usePermission'
 
 interface UserActivityTabProps {
   userId: string
@@ -10,6 +11,7 @@ interface UserActivityTabProps {
 export default function UserActivityTab({ userId }: UserActivityTabProps) {
   const [page, setPage] = useState(1)
   const { data, isLoading } = useGetUserActivityQuery({ userId, page, page_size: 20 })
+  const { permissions } = usePermissions(['users.read', 'users.manage', 'audit.read'])
 
   const activities = data?.activities || []
   const total = data?.total || 0
@@ -41,6 +43,9 @@ export default function UserActivityTab({ userId }: UserActivityTabProps) {
     }
     return colors[action] || 'text-gray-600'
   }
+
+  const canReadActivity = permissions['users.read'] || permissions['users.manage'] || permissions['audit.read']
+  if (!canReadActivity) return null
 
   if (isLoading) {
     return (

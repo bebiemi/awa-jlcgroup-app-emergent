@@ -10,7 +10,9 @@ from datetime import datetime, timezone
 from uuid import uuid4
 
 from awana_auth.core.models import User
-from awana_auth.core.dependencies import get_database, get_current_user
+from awana_auth.core.dependencies import get_database, get_current_user, get_iam_service
+from awana_auth.services.iam_service import IAMService
+from awana_auth.utils.iam_helpers import get_resource_filter
 from awana_auth.dependencies.permission_dependencies import require_permission
 from pydantic import BaseModel
 
@@ -34,10 +36,56 @@ class GroupingRejection(BaseModel):
     notes: Optional[str] = None
 
 
+async def get_user_company_ids(current_user: User, db: AsyncIOMotorDatabase) -> list[str]:
+    """Récupère les IDs d'entreprise associés à l'utilisateur (attributs + fallback DB)."""
+    ids = set()
+    attr_id = getattr(current_user, "company_id", None) or getattr(current_user, "entreprise_id", None)
+    if attr_id:
+        ids.add(attr_id)
+    user_doc = await db.users.find_one({"id": current_user.id}) if hasattr(current_user, "id") else None
+    if user_doc:
+        for key in ("company_id", "entreprise_id"):
+            if user_doc.get(key):
+                ids.add(user_doc[key])
+    # Legacy mapping
+    entreprises = await db.entreprises.find({"user_id": current_user.id}, {"_id": 0, "id": 1}).to_list(None)
+    ids.update(e["id"] for e in entreprises)
+    return list(ids)
+
+
+async def ensure_grouping_scope(
+    iam_service: IAMService,
+    user_id: str,
+    user_company_id: Optional[str],
+    target_entreprise_id: str,
+    action: str,
+):
+    """Vérifie le scope IAM (all/own) pour les regroupements."""
+    iam_filter = await get_resource_filter(
+        iam_service,
+        user_id,
+        user_company_id,
+        "entreprises",
+        action
+    )
+    if iam_filter is None:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Permission insuffisante"
+        )
+    allowed = iam_filter.get("entreprise_id") or iam_filter.get("id")
+    if iam_filter and allowed and target_entreprise_id != allowed:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Accès restreint à votre périmètre"
+        )
+
+
 @grouping_router.post("/request")
 async def create_grouping_request(
     request_data: GroupingRequest,
     current_user: User = Depends(require_permission("entreprises.group_request")),
+    iam_service: IAMService = Depends(get_iam_service),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """
@@ -49,17 +97,14 @@ async def create_grouping_request(
     - Génère automatiquement une demande envoyée aux admins des deux entreprises
     """
     
-    # Récupérer l'entreprise de l'utilisateur courant
-    entreprise_1 = await db.entreprises.find_one(
-        {"user_id": current_user.id},
-        {"_id": 0}
-    )
-    
-    if not entreprise_1:
+    user_companies = await get_user_company_ids(current_user, db)
+    entreprise_1_id = user_companies[0] if user_companies else None
+    if not entreprise_1_id:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Entreprise de l'utilisateur non trouvée"
         )
+    entreprise_1 = await db.entreprises.find_one({"id": entreprise_1_id}, {"_id": 0})
     
     # Récupérer l'entreprise cible
     entreprise_2 = await db.entreprises.find_one(
@@ -72,6 +117,15 @@ async def create_grouping_request(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Entreprise cible non trouvée"
         )
+    
+    # Vérifier les scopes IAM (.own/.all) côté utilisateur sur l'entreprise source
+    await ensure_grouping_scope(
+        iam_service,
+        current_user.id,
+        entreprise_1_id,
+        entreprise_1_id,
+        "group"
+    )
     
     # Vérifier que les deux entreprises sont liées
     if (entreprise_2["id"] not in entreprise_1.get("linked_entreprises", []) or
@@ -143,26 +197,34 @@ async def create_grouping_request(
 @grouping_router.get("/my-requests")
 async def get_my_grouping_requests(
     status_filter: Optional[str] = None,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_permission("entreprises.group_request")),
+    iam_service: IAMService = Depends(get_iam_service),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """
     Récupérer les demandes de regroupement concernant les entreprises de l'utilisateur
     """
     
-    # Récupérer toutes les entreprises de l'utilisateur
-    entreprises = await db.entreprises.find(
-        {"user_id": current_user.id},
-        {"_id": 0, "id": 1}
-    ).to_list(None)
-    
-    if not entreprises:
+    user_company_ids = await get_user_company_ids(current_user, db)
+    if not user_company_ids:
         return {
             "requests": [],
             "total": 0
         }
-    
-    entreprise_ids = [e["id"] for e in entreprises]
+    # IAM scope : on filtre si .own
+    iam_filter = await get_resource_filter(
+        iam_service,
+        current_user.id,
+        user_company_ids[0],
+        "entreprises",
+        "group"
+    )
+    if iam_filter is None:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Permission insuffisante"
+        )
+    entreprise_ids = [iam_filter.get("entreprise_id")] if iam_filter and iam_filter.get("entreprise_id") else user_company_ids
     
     # Construire la requête
     query = {
@@ -190,7 +252,8 @@ async def get_my_grouping_requests(
 @grouping_router.get("/{request_id}")
 async def get_grouping_request(
     request_id: str,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_permission("entreprises.group_request")),
+    iam_service: IAMService = Depends(get_iam_service),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """
@@ -208,16 +271,25 @@ async def get_grouping_request(
             detail="Demande de regroupement non trouvée"
         )
     
-    # Vérifier que l'utilisateur a accès à cette demande
-    user_entreprises = await db.entreprises.find(
-        {"user_id": current_user.id},
-        {"_id": 0, "id": 1}
-    ).to_list(None)
-    
-    user_entreprise_ids = [e["id"] for e in user_entreprises]
-    
-    if (grouping_request["entreprise_1_id"] not in user_entreprise_ids and
-        grouping_request["entreprise_2_id"] not in user_entreprise_ids):
+    user_company_ids = await get_user_company_ids(current_user, db)
+    iam_filter = await get_resource_filter(
+        iam_service,
+        current_user.id,
+        user_company_ids[0] if user_company_ids else None,
+        "entreprises",
+        "group"
+    )
+    if iam_filter is None:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Permission insuffisante"
+        )
+    allowed_ids = set(user_company_ids)
+    if iam_filter and iam_filter.get("entreprise_id"):
+        allowed_ids = {iam_filter.get("entreprise_id")}
+
+    if (grouping_request["entreprise_1_id"] not in allowed_ids and
+        grouping_request["entreprise_2_id"] not in allowed_ids):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Accès non autorisé à cette demande"
@@ -231,6 +303,7 @@ async def approve_grouping_request(
     request_id: str,
     approval: GroupingApproval,
     current_user: User = Depends(require_permission("entreprises.group_approve")),
+    iam_service: IAMService = Depends(get_iam_service),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """
@@ -257,17 +330,27 @@ async def approve_grouping_request(
         )
     
     # Déterminer quelle entreprise approuve
-    user_entreprises = await db.entreprises.find(
-        {"user_id": current_user.id},
-        {"_id": 0, "id": 1}
-    ).to_list(None)
-    
-    user_entreprise_ids = [e["id"] for e in user_entreprises]
+    user_company_ids = await get_user_company_ids(current_user, db)
+    iam_filter = await get_resource_filter(
+        iam_service,
+        current_user.id,
+        user_company_ids[0] if user_company_ids else None,
+        "entreprises",
+        "group"
+    )
+    if iam_filter is None:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Permission insuffisante"
+        )
+    allowed_ids = set(user_company_ids)
+    if iam_filter and iam_filter.get("entreprise_id"):
+        allowed_ids = {iam_filter.get("entreprise_id")}
     
     approval_key = None
-    if grouping_request["entreprise_1_id"] in user_entreprise_ids:
+    if grouping_request["entreprise_1_id"] in allowed_ids:
         approval_key = "entreprise_1"
-    elif grouping_request["entreprise_2_id"] in user_entreprise_ids:
+    elif grouping_request["entreprise_2_id"] in allowed_ids:
         approval_key = "entreprise_2"
     else:
         raise HTTPException(
@@ -337,6 +420,7 @@ async def reject_grouping_request(
     request_id: str,
     rejection: GroupingRejection,
     current_user: User = Depends(require_permission("entreprises.group_approve")),
+    iam_service: IAMService = Depends(get_iam_service),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """
@@ -360,16 +444,25 @@ async def reject_grouping_request(
             detail="Cette demande a déjà été traitée"
         )
     
-    # Vérifier que l'utilisateur a accès
-    user_entreprises = await db.entreprises.find(
-        {"user_id": current_user.id},
-        {"_id": 0, "id": 1}
-    ).to_list(None)
+    user_company_ids = await get_user_company_ids(current_user, db)
+    iam_filter = await get_resource_filter(
+        iam_service,
+        current_user.id,
+        user_company_ids[0] if user_company_ids else None,
+        "entreprises",
+        "group"
+    )
+    if iam_filter is None:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Permission insuffisante"
+        )
+    allowed_ids = set(user_company_ids)
+    if iam_filter and iam_filter.get("entreprise_id"):
+        allowed_ids = {iam_filter.get("entreprise_id")}
     
-    user_entreprise_ids = [e["id"] for e in user_entreprises]
-    
-    if (grouping_request["entreprise_1_id"] not in user_entreprise_ids and
-        grouping_request["entreprise_2_id"] not in user_entreprise_ids):
+    if (grouping_request["entreprise_1_id"] not in allowed_ids and
+        grouping_request["entreprise_2_id"] not in allowed_ids):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Vous n'êtes pas autorisé à rejeter cette demande"

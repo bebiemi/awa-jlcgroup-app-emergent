@@ -24,6 +24,7 @@ import {
   ChevronRightIcon,
 } from '@heroicons/react/24/outline'
 import toast from 'react-hot-toast'
+import { usePermissions } from '@/hooks/usePermission'
 
 const LOCATION_TYPES: { value: LocationType; label: string; icon: any }[] = [
   { value: 'country', label: 'Pays', icon: GlobeAltIcon },
@@ -34,6 +35,8 @@ const LOCATION_TYPES: { value: LocationType; label: string; icon: any }[] = [
 ]
 
 export default function LocationManagementPage() {
+  const { permissions } = usePermissions(['locations.manage'])
+  const canManage = permissions['locations.manage']
   const [selectedType, setSelectedType] = useState<LocationType>('country')
   const [selectedParent, setSelectedParent] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
@@ -56,7 +59,7 @@ export default function LocationManagementPage() {
     type: selectedType,
     ...(selectedParent !== null && { parent_id: selectedParent }),
     search: debouncedSearchQuery || undefined,
-  })
+  }, { skip: !canManage })
 
   const { data: locationTree = [] } = useGetLocationTreeQuery()
 
@@ -85,6 +88,7 @@ export default function LocationManagementPage() {
   }
 
   const handleCreate = async () => {
+    if (!canManage) return
     if (!formData.name.trim()) {
       toast.error('Le nom est requis')
       return
@@ -102,6 +106,7 @@ export default function LocationManagementPage() {
   }
 
   const handleEdit = async () => {
+    if (!canManage) return
     if (!editingLocation) return
 
     try {
@@ -124,6 +129,7 @@ export default function LocationManagementPage() {
   }
 
   const handleDelete = async () => {
+    if (!canManage) return
     if (!deletingLocation) return
 
     try {
@@ -138,6 +144,7 @@ export default function LocationManagementPage() {
   }
 
   const handleToggleVisibility = async (location: Location) => {
+    if (!canManage) return
     try {
       await toggleVisibility({
         id: location.id,
@@ -155,6 +162,7 @@ export default function LocationManagementPage() {
   }
 
   const openEditModal = (location: Location) => {
+    if (!canManage) return
     setEditingLocation(location)
     setFormData({
       name: location.name,
@@ -167,6 +175,7 @@ export default function LocationManagementPage() {
   }
 
   const openDeleteConfirm = (location: Location) => {
+    if (!canManage) return
     setDeletingLocation(location)
     setShowDeleteConfirm(true)
   }
@@ -181,6 +190,8 @@ export default function LocationManagementPage() {
     const parentType = typeOrder[currentIndex - 1]
     return locations.filter(loc => loc.type === parentType)
   }
+
+  if (!canManage) return null
 
   if (isLoading) {
     return (

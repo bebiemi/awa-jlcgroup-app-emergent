@@ -26,7 +26,7 @@ security_router = APIRouter(prefix="/auth/security", tags=["security"])
 async def get_permissions(
     module: Optional[str] = None,
     db: AsyncIOMotorDatabase = Depends(get_database),
-    current_user: User = Depends(require_permission("users.manage"))
+    current_user: User = Depends(require_permission("iam.permissions.read"))
 ):
     """Get all permissions, optionally filtered by module"""
     query = {}
@@ -42,7 +42,7 @@ async def get_permissions(
 @security_router.get("/profiles", response_model=List[Profile])
 async def get_profiles(
     db: AsyncIOMotorDatabase = Depends(get_database),
-    current_user: User = Depends(require_permission("users.manage"))
+    current_user: User = Depends(require_permission("iam.profiles.read"))
 ):
     """Get all profiles"""
     profiles = await db.profiles.find().to_list(length=None)
@@ -53,7 +53,7 @@ async def get_profiles(
 async def get_profile(
     profile_id: str,
     db: AsyncIOMotorDatabase = Depends(get_database),
-    current_user: User = Depends(require_permission("users.manage"))
+    current_user: User = Depends(require_permission("iam.profiles.read"))
 ):
     """Get a specific profile"""
     profile = await db.profiles.find_one({"id": profile_id})
@@ -66,7 +66,7 @@ async def get_profile(
 async def create_profile(
     request: CreateProfileRequest,
     db: AsyncIOMotorDatabase = Depends(get_database),
-    current_user: User = Depends(require_permission("users.manage"))
+    current_user: User = Depends(require_permission("iam.profiles.create"))
 ):
     """Create a new profile"""
     # Check if profile name already exists
@@ -91,7 +91,7 @@ async def update_profile(
     profile_id: str,
     request: CreateProfileRequest,
     db: AsyncIOMotorDatabase = Depends(get_database),
-    current_user: User = Depends(require_permission("users.manage"))
+    current_user: User = Depends(require_permission("iam.profiles.update"))
 ):
     """Update a profile"""
     profile = await db.profiles.find_one({"id": profile_id})
@@ -118,7 +118,7 @@ async def update_profile(
 async def delete_profile(
     profile_id: str,
     db: AsyncIOMotorDatabase = Depends(get_database),
-    current_user: User = Depends(require_permission("users.manage"))
+    current_user: User = Depends(require_permission("iam.profiles.delete"))
 ):
     """Delete a profile"""
     profile = await db.profiles.find_one({"id": profile_id})
@@ -146,7 +146,7 @@ async def delete_profile(
 @security_router.get("/groups", response_model=List[Group])
 async def get_groups(
     db: AsyncIOMotorDatabase = Depends(get_database),
-    current_user: User = Depends(require_permission("users.manage"))
+    current_user: User = Depends(require_permission("iam.groups.read"))
 ):
     """Get all groups"""
     groups = await db.groups.find().to_list(length=None)
@@ -157,7 +157,7 @@ async def get_groups(
 async def get_group(
     group_id: str,
     db: AsyncIOMotorDatabase = Depends(get_database),
-    current_user: User = Depends(require_permission("users.manage"))
+    current_user: User = Depends(require_permission("iam.groups.read"))
 ):
     """Get a specific group"""
     group = await db.groups.find_one({"id": group_id})
@@ -170,7 +170,7 @@ async def get_group(
 async def create_group(
     request: CreateGroupRequest,
     db: AsyncIOMotorDatabase = Depends(get_database),
-    current_user: User = Depends(require_permission("users.manage"))
+    current_user: User = Depends(require_permission("iam.groups.create"))
 ):
     """Create a new group"""
     # Check if group name already exists
@@ -201,7 +201,7 @@ async def update_group(
     group_id: str,
     request: CreateGroupRequest,
     db: AsyncIOMotorDatabase = Depends(get_database),
-    current_user: User = Depends(require_permission("users.manage"))
+    current_user: User = Depends(require_permission("iam.groups.update"))
 ):
     """Update a group"""
     group = await db.groups.find_one({"id": group_id})
@@ -231,7 +231,7 @@ async def update_group(
 async def delete_group(
     group_id: str,
     db: AsyncIOMotorDatabase = Depends(get_database),
-    current_user: User = Depends(require_permission("users.manage"))
+    current_user: User = Depends(require_permission("iam.groups.delete"))
 ):
     """Delete a group"""
     group = await db.groups.find_one({"id": group_id})
@@ -247,7 +247,7 @@ async def add_member_to_group(
     group_id: str,
     user_id: str,
     db: AsyncIOMotorDatabase = Depends(get_database),
-    current_user: User = Depends(require_permission("users.manage"))
+    current_user: User = Depends(require_permission("iam.groups.update"))
 ):
     """Add a user to a group"""
     group = await db.groups.find_one({"id": group_id})
@@ -274,7 +274,7 @@ async def remove_member_from_group(
     group_id: str,
     user_id: str,
     db: AsyncIOMotorDatabase = Depends(get_database),
-    current_user: User = Depends(require_permission("users.manage"))
+    current_user: User = Depends(require_permission("iam.groups.update"))
 ):
     """Remove a user from a group"""
     group = await db.groups.find_one({"id": group_id})
@@ -301,7 +301,7 @@ def generate_password(length: int = 12) -> str:
 async def create_user(
     request: CreateUserRequest,
     db: AsyncIOMotorDatabase = Depends(get_database),
-    current_user: User = Depends(require_permission("users.manage"))
+    current_user: User = Depends(require_permission("iam.users.create"))
 ):
     """Create a new user"""
     from awana_auth.security.password import PasswordManager

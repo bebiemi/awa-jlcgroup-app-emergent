@@ -21,6 +21,9 @@ from awana_auth.services.iam_audit_service import (
     AuditEntry
 )
 from awana_auth.core.database import get_database
+from awana_auth.dependencies.permission_dependencies import require_permission
+from awana_auth.core.dependencies import get_current_user
+from awana_auth.core.models import User
 
 router = APIRouter(prefix="/iam/advanced", tags=["IAM Advanced"])
 
@@ -55,7 +58,8 @@ class AuditSearchRequest(BaseModel):
 
 @router.get("/cache/stats")
 async def get_cache_stats(
-    cache_service: IAMCacheService = Depends(get_cache_service)
+    cache_service: IAMCacheService = Depends(get_cache_service),
+    current_user: User = Depends(require_permission("iam.permissions.read"))
 ):
     """
     Récupérer les statistiques du cache Redis
@@ -71,7 +75,8 @@ async def get_cache_stats(
 async def invalidate_user_cache(
     user_id: str,
     cache_service: IAMCacheService = Depends(get_cache_service),
-    db = Depends(get_database)
+    db = Depends(get_database),
+    current_user: User = Depends(require_permission("iam.permissions.update"))
 ):
     """
     Invalider le cache des permissions d'un utilisateur
@@ -85,8 +90,8 @@ async def invalidate_user_cache(
     audit_service = IAMAuditService(db)
     await audit_service.log_action(
         action=AuditAction.CACHE_INVALIDATED,
-        actor_id="system",
-        actor_type="system",
+        actor_id=current_user.id,
+        actor_type="admin",
         target_type="user",
         target_id=user_id,
         details={"cache_type": "user_permissions"}
@@ -98,7 +103,8 @@ async def invalidate_user_cache(
 @router.post("/cache/invalidate/all")
 async def invalidate_all_cache(
     cache_service: IAMCacheService = Depends(get_cache_service),
-    db = Depends(get_database)
+    db = Depends(get_database),
+    current_user: User = Depends(require_permission("admin.access"))
 ):
     """
     Invalider TOUT le cache IAM (⚠️ Impact performance)
@@ -109,7 +115,7 @@ async def invalidate_all_cache(
     audit_service = IAMAuditService(db)
     await audit_service.log_action(
         action=AuditAction.CACHE_INVALIDATED,
-        actor_id="admin",
+        actor_id=current_user.id,
         actor_type="admin",
         target_type="cache",
         details={"scope": "all"},
@@ -121,7 +127,8 @@ async def invalidate_all_cache(
 
 @router.get("/cache/health")
 async def cache_health_check(
-    cache_service: IAMCacheService = Depends(get_cache_service)
+    cache_service: IAMCacheService = Depends(get_cache_service),
+    current_user: User = Depends(require_permission("iam.permissions.read"))
 ):
     """
     Vérifier la santé du cache Redis
@@ -135,8 +142,8 @@ async def cache_health_check(
 @router.post("/temp-permissions/grant", response_model=TemporaryPermission)
 async def grant_temporary_permission(
     request: GrantTemporaryPermissionRequest,
-    current_user_id: str = "admin",  # TODO: Get from JWT
-    db = Depends(get_database)
+    db = Depends(get_database),
+    current_user: User = Depends(require_permission("iam.permissions.update"))
 ):
     """
     Accorder une permission temporaire à un utilisateur
@@ -152,14 +159,14 @@ async def grant_temporary_permission(
             user_id=request.user_id,
             permission_code=request.permission_code,
             duration_hours=request.duration_hours,
-            granted_by=current_user_id,
+            granted_by=current_user.id,
             reason=request.reason
         )
         
         # Audit
         await audit_service.log_action(
             action=AuditAction.TEMP_PERMISSION_GRANTED,
-            actor_id=current_user_id,
+            actor_id=current_user.id,
             actor_type="admin",
             target_type="user",
             target_id=request.user_id,
@@ -186,7 +193,8 @@ async def grant_temporary_permission(
 async def get_user_temporary_permissions(
     user_id: str,
     include_expired: bool = False,
-    db = Depends(get_database)
+    db = Depends(get_database),
+    current_user: User = Depends(require_permission("iam.permissions.read"))
 ):
     """
     Récupérer toutes les permissions temporaires d'un utilisateur
@@ -209,8 +217,8 @@ async def get_user_temporary_permissions(
 async def revoke_temporary_permission(
     temp_perm_id: str,
     request: RevokeTemporaryPermissionRequest,
-    current_user_id: str = "admin",  # TODO: Get from JWT
-    db = Depends(get_database)
+    db = Depends(get_database),
+    current_user: User = Depends(require_permission("iam.permissions.update"))
 ):
     """
     Révoquer une permission temporaire
@@ -224,7 +232,7 @@ async def revoke_temporary_permission(
     
     success = await temp_service.revoke_temporary_permission(
         temp_perm_id=temp_perm_id,
-        revoked_by=current_user_id,
+        revoked_by=current_user.id,
         reason=request.reason
     )
     
@@ -232,10 +240,10 @@ async def revoke_temporary_permission(
         raise HTTPException(status_code=404, detail="Permission temporaire non trouvée")
     
     # Audit
-    await audit_service.log_action(
-        action=AuditAction.TEMP_PERMISSION_REVOKED,
-        actor_id=current_user_id,
-        actor_type="admin",
+        await audit_service.log_action(
+            action=AuditAction.TEMP_PERMISSION_REVOKED,
+            actor_id=current_user.id,
+            actor_type="admin",
         target_type="temp_permission",
         target_id=temp_perm_id,
         details={"reason": request.reason},
@@ -248,7 +256,8 @@ async def revoke_temporary_permission(
 @router.get("/temp-permissions/expiring-soon", response_model=List[TemporaryPermission])
 async def get_expiring_soon(
     hours_threshold: int = Query(24, ge=1, le=168),
-    db = Depends(get_database)
+    db = Depends(get_database),
+    current_user: User = Depends(require_permission("iam.permissions.read"))
 ):
     """
     Récupérer les permissions qui expirent bientôt
@@ -263,7 +272,8 @@ async def get_expiring_soon(
 
 @router.get("/temp-permissions/statistics")
 async def get_temp_permissions_statistics(
-    db = Depends(get_database)
+    db = Depends(get_database),
+    current_user: User = Depends(require_permission("iam.permissions.read"))
 ):
     """
     Récupérer les statistiques des permissions temporaires
@@ -281,7 +291,8 @@ async def get_user_audit_trail(
     limit: int = Query(100, ge=1, le=1000),
     start_date: Optional[datetime] = None,
     end_date: Optional[datetime] = None,
-    db = Depends(get_database)
+    db = Depends(get_database),
+    current_user: User = Depends(require_permission("iam.audit.read"))
 ):
     """
     Récupérer l'audit trail d'un utilisateur
@@ -307,7 +318,8 @@ async def get_audit_by_action(
     action: str,
     limit: int = Query(100, ge=1, le=1000),
     start_date: Optional[datetime] = None,
-    db = Depends(get_database)
+    db = Depends(get_database),
+    current_user: User = Depends(require_permission("iam.audit.read"))
 ):
     """
     Récupérer les entrées d'audit par type d'action
@@ -334,7 +346,8 @@ async def get_audit_by_action(
 @router.post("/audit/search")
 async def search_audit_trail(
     request: AuditSearchRequest,
-    db = Depends(get_database)
+    db = Depends(get_database),
+    current_user: User = Depends(require_permission("iam.audit.read"))
 ):
     """
     Recherche avancée dans l'audit trail
@@ -357,7 +370,8 @@ async def search_audit_trail(
 @router.get("/audit/security-alerts", response_model=List[AuditEntry])
 async def get_security_alerts(
     hours_back: int = Query(24, ge=1, le=168),
-    db = Depends(get_database)
+    db = Depends(get_database),
+    current_user: User = Depends(require_permission("iam.audit.read"))
 ):
     """
     Récupérer les alertes de sécurité récentes
@@ -374,7 +388,8 @@ async def get_security_alerts(
 async def get_audit_statistics(
     start_date: Optional[datetime] = None,
     end_date: Optional[datetime] = None,
-    db = Depends(get_database)
+    db = Depends(get_database),
+    current_user: User = Depends(require_permission("iam.audit.read"))
 ):
     """
     Récupérer les statistiques d'audit
@@ -395,7 +410,8 @@ async def get_audit_statistics(
 async def generate_compliance_report(
     start_date: datetime = Query(..., description="Date de début du rapport"),
     end_date: datetime = Query(..., description="Date de fin du rapport"),
-    db = Depends(get_database)
+    db = Depends(get_database),
+    current_user: User = Depends(require_permission("iam.audit.read"))
 ):
     """
     Générer un rapport de conformité (RGPD, SOC2)
@@ -416,7 +432,8 @@ async def generate_compliance_report(
 async def get_failed_actions(
     limit: int = Query(100, ge=1, le=1000),
     hours_back: int = Query(24, ge=1, le=168),
-    db = Depends(get_database)
+    db = Depends(get_database),
+    current_user: User = Depends(require_permission("iam.audit.read"))
 ):
     """
     Récupérer toutes les actions échouées récentes

@@ -3,6 +3,7 @@ import Layout from '@/components/Layout'
 import Card from '@/components/Card'
 import Modal from '@/components/Modal'
 import { PlusIcon, PencilIcon, TrashIcon, CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/outline'
+import { usePermissions } from '@/hooks/usePermission'
 
 interface BusinessRule {
   id: string
@@ -28,6 +29,9 @@ export default function BusinessRulesPage() {
   const [selectedType, setSelectedType] = useState<string>('all')
   const [showModal, setShowModal] = useState(false)
   const [editingRule, setEditingRule] = useState<BusinessRule | null>(null)
+  const { permissions } = usePermissions(['rules.manage', 'rules.read'])
+  const canRead = permissions['rules.read'] || permissions['rules.manage']
+  const canManage = permissions['rules.manage']
   
   // Mock data - À remplacer par l'API RTK Query
   const [rules, setRules] = useState<BusinessRule[]>([
@@ -73,7 +77,8 @@ export default function BusinessRulesPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
+    if (!canManage) return
     try {
       // Valider JSON
       const conditions = JSON.parse(formData.conditions)
@@ -134,16 +139,20 @@ export default function BusinessRulesPage() {
   }
 
   const handleDelete = (id: string) => {
+    if (!canManage) return
     if (confirm('Êtes-vous sûr de vouloir supprimer cette règle ?')) {
       setRules(rules.filter(rule => rule.id !== id))
     }
   }
 
   const toggleActive = (id: string) => {
+    if (!canManage) return
     setRules(rules.map(rule => 
       rule.id === id ? { ...rule, is_active: !rule.is_active } : rule
     ))
   }
+
+  if (!canRead) return null
 
   return (
     <Layout>
@@ -157,16 +166,18 @@ export default function BusinessRulesPage() {
               Gérez les règles automatiques de l'application
             </p>
           </div>
-          <button
-            onClick={() => {
-              resetForm()
-              setShowModal(true)
-            }}
-            className="flex items-center gap-2 px-4 py-2 bg-jlc-purple-600 text-white rounded-lg hover:bg-jlc-purple-700"
-          >
-            <PlusIcon className="h-5 w-5" />
-            Nouvelle règle
-          </button>
+          {canManage && (
+            <button
+              onClick={() => {
+                resetForm()
+                setShowModal(true)
+              }}
+              className="flex items-center gap-2 px-4 py-2 bg-jlc-purple-600 text-white rounded-lg hover:bg-jlc-purple-700"
+            >
+              <PlusIcon className="h-5 w-5" />
+              Nouvelle règle
+            </button>
+          )}
         </div>
 
         {/* Filtres par type */}

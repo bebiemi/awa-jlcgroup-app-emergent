@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react'
+import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { Provider } from 'react-redux'
 import { BrowserRouter } from 'react-router-dom'
@@ -7,16 +7,20 @@ import { store } from './store/store'
 import App from './App'
 import './index.css'
 import './i18n/config'
+import { SidebarProvider } from '@/contexts/SidebarContext'
+import { SidebarThemeProvider } from '@/contexts/SidebarThemeContext'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Chargement...</div>}>
-      <Provider store={store}>
-        <BrowserRouter>
-          <App />
-          <Toaster position="top-right" />
-        </BrowserRouter>
-      </Provider>
-    </Suspense>
+    <Provider store={store}>
+      <BrowserRouter>
+        <SidebarProvider>
+          <SidebarThemeProvider>
+            <App />
+            <Toaster position="top-right" />
+          </SidebarThemeProvider>
+        </SidebarProvider>
+      </BrowserRouter>
+    </Provider>
   </React.StrictMode>,
 )

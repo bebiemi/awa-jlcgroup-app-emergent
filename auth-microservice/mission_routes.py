@@ -153,6 +153,52 @@ get_db = get_database
 
 # ==================== MISSION ROUTES ====================
 
+@router.get("/public")
+async def list_public_missions(
+    status_filter: Optional[str] = MissionStatus.PUBLISHED,
+    limit: int = 50,
+    skip: int = 0,
+    db: AsyncIOMotorDatabase = Depends(get_database)
+):
+    """
+    Endpoint public pour afficher les missions publiées (données minimales).
+    Aucune info entreprise exposée : company_name est fixé à JLC Group.
+    """
+    query = {"status": MissionStatus.PUBLISHED}
+    if status_filter:
+        query["status"] = status_filter
+
+    cursor = db.missions.find(
+        query,
+        {
+            "_id": 0,
+            "id": 1,
+            "title": 1,
+            "description": 1,
+            "location": 1,
+            "contract_type": 1,
+            "start_date": 1,
+            "end_date": 1,
+            "salary_range": 1,
+            "work_schedule": 1,
+            "created_at": 1,
+            "published_at": 1,
+        }
+    ).sort("published_at", -1).skip(skip).limit(limit)
+
+    missions = await cursor.to_list(length=limit)
+
+    # Masquer l'entreprise réelle : afficher JLC Group
+    for m in missions:
+        m["company_name"] = "JLC Group"
+
+    return {
+        "items": missions,
+        "total": len(missions),
+        "limit": limit,
+        "skip": skip,
+    }
+
 @router.post("", response_model=Mission, status_code=status.HTTP_201_CREATED)
 async def create_mission(
     mission: MissionCreate,
@@ -881,7 +927,12 @@ async def update_application(
     
     # Vérifier permissions
     user_roles = current_user.get("roles", [])
-    can_update = cfg.get_admin_role() in user_roles or cfg.get_super_admin_role() in user_roles or cfg.get_commercial_role() in user_roles
+    normalized_roles = [r.lower() for r in user_roles]
+    admin_role = (cfg.get_admin_role() or "").lower()
+    super_admin_role = (cfg.get_super_admin_role() or "").lower()
+    commercial_role = (cfg.get_commercial_role() or "").lower()
+
+    can_update = admin_role in normalized_roles or super_admin_role in normalized_roles or commercial_role in normalized_roles
     
     if not can_update:
         raise HTTPException(
@@ -1434,4 +1485,3 @@ async def backfill_application_history(
         "message": "Backfill de l'historique terminé",
         "stats": result
     }
-

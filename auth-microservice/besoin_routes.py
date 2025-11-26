@@ -86,13 +86,43 @@ async def get_user_entreprise_id(current_user, db: AsyncIOMotorDatabase, user_id
     return entreprise_id
 
 
+async def ensure_besoin_scope(
+    iam_service: IAMService,
+    user_id: str,
+    user_company_id: Optional[str],
+    action: str,
+    target_entreprise_id: Optional[str]
+):
+    """
+    Vérifie les scopes IAM (all/own) pour une action sur un besoin.
+    """
+    iam_filter = await get_resource_filter(
+        iam_service,
+        user_id,
+        user_company_id,
+        "besoins",
+        action
+    )
+    if iam_filter is None:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Permission insuffisante"
+        )
+    if iam_filter and iam_filter.get("entreprise_id") and target_entreprise_id != iam_filter["entreprise_id"]:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Accès restreint à votre périmètre"
+        )
+
+
 # ==================== CREATE BESOIN ====================
 
 @router.post("/", response_model=BesoinResponse, status_code=status.HTTP_201_CREATED)
 async def create_besoin(
     besoin: BesoinCreate,
     db: AsyncIOMotorDatabase = Depends(get_database),
-    current_user: dict = Depends(require_permission(IAMPermissions.BESOINS_CREATE))
+    current_user: dict = Depends(require_permission(IAMPermissions.BESOINS_CREATE)),
+    iam_service: IAMService = Depends(get_iam_service)
 ):
     """
     Create a new besoin (hiring need)
@@ -117,6 +147,15 @@ async def create_besoin(
         )
     entreprise_name = entreprise.get("nom", "")
     
+    # Vérifier le scope (all/own) pour la création
+    await ensure_besoin_scope(
+        iam_service,
+        user_id,
+        entreprise_id,
+        "create",
+        entreprise_id
+    )
+
     # Generate besoin ID
     besoin_id = str(uuid.uuid4())
     now = datetime.now(timezone.utc)
@@ -293,10 +332,12 @@ async def list_besoins(
 async def get_besoin(
     besoin_id: str,
     db: AsyncIOMotorDatabase = Depends(get_database),
-    current_user: dict = Depends(require_permission(IAMPermissions.BESOINS_READ))
+    current_user: dict = Depends(require_permission(IAMPermissions.BESOINS_READ)),
+    iam_service: IAMService = Depends(get_iam_service)
 ):
     """Get a single besoin by ID"""
     user_id, user_name, user_role = await get_current_user_info(current_user)
+    user_company_id = await get_user_entreprise_id(current_user, db, user_id, user_role)
     
     besoin = await db.besoins.find_one({"id": besoin_id})
     if not besoin:
@@ -305,15 +346,13 @@ async def get_besoin(
             detail="Besoin non trouvé"
         )
     
-    # Check permissions: company users can only see their own besoins
-    is_jlc_user = "admin" in user_role.lower() or "jlc" in user_role.lower()
-    if not is_jlc_user:
-        user_entreprise_id = await get_user_entreprise_id(current_user, db, user_id, user_role)
-        if besoin["entreprise_id"] != user_entreprise_id:
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="Accès non autorisé à ce besoin"
-            )
+    await ensure_besoin_scope(
+        iam_service,
+        user_id,
+        user_company_id,
+        "read",
+        besoin["entreprise_id"]
+    )
     
     besoin.pop("_id", None)
     
@@ -332,7 +371,8 @@ async def update_besoin(
     besoin_id: str,
     updates: BesoinUpdate,
     db: AsyncIOMotorDatabase = Depends(get_database),
-    current_user: dict = Depends(require_permission(IAMPermissions.BESOINS_EDIT))
+    current_user: dict = Depends(require_permission(IAMPermissions.BESOINS_EDIT)),
+    iam_service: IAMService = Depends(get_iam_service)
 ):
     """
     Update a besoin (only in BROUILLON status)
@@ -347,15 +387,14 @@ async def update_besoin(
             detail="Besoin non trouvé"
         )
     
-    # Check ownership
-    is_jlc_user = "admin" in user_role.lower() or "jlc" in user_role.lower()
-    if not is_jlc_user:
-        user_entreprise_id = await get_user_entreprise_id(current_user, db, user_id, user_role)
-        if besoin["entreprise_id"] != user_entreprise_id:
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="Accès non autorisé à ce besoin"
-            )
+    user_company_id = await get_user_entreprise_id(current_user, db, user_id, user_role)
+    await ensure_besoin_scope(
+        iam_service,
+        user_id,
+        user_company_id,
+        "edit",
+        besoin["entreprise_id"]
+    )
     
     # Check status: can only update if BROUILLON
     if besoin["status"] != BesoinStatus.BROUILLON.value:
@@ -421,7 +460,8 @@ async def update_besoin(
 async def submit_besoin(
     besoin_id: str,
     db: AsyncIOMotorDatabase = Depends(get_database),
-    current_user: dict = Depends(require_permission(IAMPermissions.BESOINS_SUBMIT))
+    current_user: dict = Depends(require_permission(IAMPermissions.BESOINS_SUBMIT)),
+    iam_service: IAMService = Depends(get_iam_service)
 ):
     """
     Submit besoin to JLC for validation
@@ -436,15 +476,14 @@ async def submit_besoin(
             detail="Besoin non trouvé"
         )
     
-    # Check ownership
-    is_jlc_user = "admin" in user_role.lower() or "jlc" in user_role.lower()
-    if not is_jlc_user:
-        user_entreprise_id = await get_user_entreprise_id(current_user, db, user_id, user_role)
-        if besoin["entreprise_id"] != user_entreprise_id:
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="Accès non autorisé à ce besoin"
-            )
+    user_company_id = await get_user_entreprise_id(current_user, db, user_id, user_role)
+    await ensure_besoin_scope(
+        iam_service,
+        user_id,
+        user_company_id,
+        "submit",
+        besoin["entreprise_id"]
+    )
     
     # Check current status
     if besoin["status"] != BesoinStatus.BROUILLON.value:
@@ -524,7 +563,8 @@ async def update_besoin_status(
     besoin_id: str,
     status_update: BesoinStatusUpdate,
     db: AsyncIOMotorDatabase = Depends(get_database),
-    current_user: dict = Depends(require_permission(IAMPermissions.BESOINS_VALIDATE))
+    current_user: dict = Depends(require_permission(IAMPermissions.BESOINS_VALIDATE)),
+    iam_service: IAMService = Depends(get_iam_service)
 ):
     """
     Update besoin status (JLC only)
@@ -540,6 +580,14 @@ async def update_besoin_status(
         )
     
     current_status = besoin["status"]
+    user_company_id = await get_user_entreprise_id(current_user, db, user_id, user_role)
+    await ensure_besoin_scope(
+        iam_service,
+        user_id,
+        user_company_id,
+        "validate",
+        besoin["entreprise_id"]
+    )
     new_status = status_update.new_status
     
     # Validate status transition
@@ -647,7 +695,8 @@ async def add_comment(
     besoin_id: str,
     comment: CommentCreate,
     db: AsyncIOMotorDatabase = Depends(get_database),
-    current_user: dict = Depends(require_permission(IAMPermissions.BESOINS_COMMENT))
+    current_user: dict = Depends(require_permission(IAMPermissions.BESOINS_COMMENT)),
+    iam_service: IAMService = Depends(get_iam_service)
 ):
     """
     Add a comment to a besoin
@@ -662,18 +711,17 @@ async def add_comment(
             detail="Besoin non trouvé"
         )
     
-    # Check access
-    is_jlc_user = "admin" in user_role.lower() or "jlc" in user_role.lower()
-    if not is_jlc_user:
-        user_entreprise_id = await get_user_entreprise_id(current_user, db, user_id, user_role)
-        if besoin["entreprise_id"] != user_entreprise_id:
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="Accès non autorisé à ce besoin"
-            )
+    user_company_id = await get_user_entreprise_id(current_user, db, user_id, user_role)
+    await ensure_besoin_scope(
+        iam_service,
+        user_id,
+        user_company_id,
+        "comment",
+        besoin["entreprise_id"]
+    )
     
     # Determine author type
-    author_type = "jlc" if is_jlc_user else "entreprise"
+    author_type = "jlc" if "admin" in user_role.lower() or "jlc" in user_role.lower() else "entreprise"
     
     # Create comment
     comment_id = str(uuid.uuid4())
@@ -736,7 +784,8 @@ async def add_comment(
 async def get_comments(
     besoin_id: str,
     db: AsyncIOMotorDatabase = Depends(get_database),
-    current_user: dict = Depends(require_permission(IAMPermissions.BESOINS_READ))
+    current_user: dict = Depends(require_permission(IAMPermissions.BESOINS_READ)),
+    iam_service: IAMService = Depends(get_iam_service)
 ):
     """
     Get all comments for a besoin
@@ -751,15 +800,14 @@ async def get_comments(
             detail="Besoin non trouvé"
         )
     
-    # Check access
-    is_jlc_user = "admin" in user_role.lower() or "jlc" in user_role.lower()
-    if not is_jlc_user:
-        user_entreprise_id = await get_user_entreprise_id(current_user, db, user_id, user_role)
-        if besoin["entreprise_id"] != user_entreprise_id:
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="Accès non autorisé à ce besoin"
-            )
+    user_company_id = await get_user_entreprise_id(current_user, db, user_id, user_role)
+    await ensure_besoin_scope(
+        iam_service,
+        user_id,
+        user_company_id,
+        "read",
+        besoin["entreprise_id"]
+    )
     
     # Fetch comments
     cursor = db.besoin_comments.find({"besoin_id": besoin_id}).sort("created_at", 1)
@@ -779,7 +827,8 @@ async def update_jlc_analysis(
     besoin_id: str,
     analysis: BesoinJLCAnalysis,
     db: AsyncIOMotorDatabase = Depends(get_database),
-    current_user: dict = Depends(require_permission(IAMPermissions.BESOINS_VALIDATE))
+    current_user: dict = Depends(require_permission(IAMPermissions.BESOINS_VALIDATE)),
+    iam_service: IAMService = Depends(get_iam_service)
 ):
     """
     Update JLC internal analysis (JLC only)
@@ -792,6 +841,15 @@ async def update_jlc_analysis(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Besoin non trouvé"
         )
+    
+    user_company_id = await get_user_entreprise_id(current_user, db, user_id, user_role)
+    await ensure_besoin_scope(
+        iam_service,
+        user_id,
+        user_company_id,
+        "validate",
+        besoin["entreprise_id"]
+    )
     
     # Prepare analysis data
     analysis_data = analysis.dict(exclude_unset=True)
@@ -839,7 +897,8 @@ async def convert_to_mission(
     besoin_id: str,
     conversion_request: ConvertToMissionRequest,
     db: AsyncIOMotorDatabase = Depends(get_database),
-    current_user: dict = Depends(require_permission(IAMPermissions.BESOINS_CONVERT_TO_MISSION))
+    current_user: dict = Depends(require_permission(IAMPermissions.BESOINS_CONVERT_TO_MISSION)),
+    iam_service: IAMService = Depends(get_iam_service)
 ):
     """
     Convert besoin to mission (JLC only)
@@ -853,6 +912,15 @@ async def convert_to_mission(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Besoin non trouvé"
         )
+    
+    user_company_id = await get_user_entreprise_id(current_user, db, user_id, user_role)
+    await ensure_besoin_scope(
+        iam_service,
+        user_id,
+        user_company_id,
+        "convert",
+        besoin["entreprise_id"]
+    )
     
     # Check status - should be in ANALYSE or later
     if besoin["status"] not in [
@@ -986,7 +1054,8 @@ async def get_besoin_audit_trail(
     page: int = Query(1, ge=1),
     page_size: int = Query(50, ge=1, le=100),
     db: AsyncIOMotorDatabase = Depends(get_database),
-    current_user: dict = Depends(require_permission(IAMPermissions.BESOINS_READ))
+    current_user: dict = Depends(require_permission(IAMPermissions.BESOINS_READ)),
+    iam_service: IAMService = Depends(get_iam_service)
 ):
     """
     Get audit trail for a besoin
@@ -1001,15 +1070,14 @@ async def get_besoin_audit_trail(
             detail="Besoin non trouvé"
         )
     
-    # Check access
-    is_jlc_user = "admin" in user_role.lower() or "jlc" in user_role.lower()
-    if not is_jlc_user:
-        user_entreprise_id = await get_user_entreprise_id(current_user, db, user_id, user_role)
-        if besoin["entreprise_id"] != user_entreprise_id:
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="Accès non autorisé à ce besoin"
-            )
+    user_company_id = await get_user_entreprise_id(current_user, db, user_id, user_role)
+    await ensure_besoin_scope(
+        iam_service,
+        user_id,
+        user_company_id,
+        "read",
+        besoin["entreprise_id"]
+    )
     
     # Get audit trail
     audit_service = AuditService(db)

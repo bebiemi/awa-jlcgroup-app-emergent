@@ -16,8 +16,8 @@ export function usePermission(permissionCode: string) {
   const hasPermission = useMemo(() => {
     if (!user) return false
     
-    // SuperAdmin has all permissions
-    if (user.roles.includes('super_admin')) return true
+    // SuperAdmin et Admin ont tous les droits côté front
+    if (user.roles.includes('super_admin') || user.roles.includes('admin')) return true
     
     // Get permissions from JWT (stored in user object)
     const allPermissions = user.permissions || []
@@ -60,8 +60,8 @@ export function usePermissions(permissionCodes: string[]) {
       }, {} as Record<string, boolean>)
     }
     
-    // SuperAdmin has all permissions
-    if (user.roles.includes('super_admin')) {
+    // SuperAdmin et Admin ont tous les droits côté front
+    if (user.roles.includes('super_admin') || user.roles.includes('admin')) {
       return permissionCodes.reduce((acc, code) => {
         acc[code] = true
         return acc

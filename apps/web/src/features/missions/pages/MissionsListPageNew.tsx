@@ -22,10 +22,15 @@ export default function MissionsListPageNew() {
   const [statusFilter, setStatusFilter] = useState('')
 
   const { permissions } = usePermissions([
-    'missions.create',
-    'missions.read',
-    'missions.edit',
-    'missions.delete',
+    'missions.create.all',
+    'missions.create.own',
+    'missions.read.all',
+    'missions.read.own',
+    'missions.edit.all',
+    'missions.edit.own',
+    'missions.delete.all',
+    'missions.delete.own',
+    'applications.manage',
   ])
 
   const { data, isLoading } = useGetMissionsQuery({
@@ -123,7 +128,7 @@ export default function MissionsListPageNew() {
       create: {
         label: 'Créer une mission',
         onClick: handleCreateMission,
-        permission: 'missions.create',
+        permission: ['missions.create.all', 'missions.create.own'],
       },
       row: [
         {
@@ -132,7 +137,7 @@ export default function MissionsListPageNew() {
           icon: EyeIcon,
           onClick: handleViewMission,
           variant: 'secondary',
-          permission: 'missions.read',
+          permission: ['missions.read.all', 'missions.read.own'],
         },
         {
           key: 'edit',
@@ -140,7 +145,7 @@ export default function MissionsListPageNew() {
           icon: PencilIcon,
           onClick: handleEditMission,
           variant: 'primary',
-          permission: 'missions.edit',
+          permission: ['missions.edit.all', 'missions.edit.own'],
         },
         {
           key: 'candidatures',

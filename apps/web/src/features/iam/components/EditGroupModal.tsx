@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { XMarkIcon, ShieldCheckIcon } from '@heroicons/react/24/outline'
 import { useUpdateGroupMutation, useListProfilesQuery, type Group } from '../api/iamApi'
+import { usePermissions } from '@/hooks/usePermission'
 
 interface EditGroupModalProps {
   group: Group
@@ -11,6 +12,8 @@ interface EditGroupModalProps {
 export default function EditGroupModal({ group, isOpen, onClose }: EditGroupModalProps) {
   const [updateGroup, { isLoading }] = useUpdateGroupMutation()
   const { data: profiles = [] } = useListProfilesQuery()
+  const { permissions: iamPerms } = usePermissions(['iam.groups.manage'])
+  const canManageGroups = Boolean(iamPerms['iam.groups.manage'])
 
   const [formData, setFormData] = useState({
     name: group.name,
@@ -70,6 +73,10 @@ export default function EditGroupModal({ group, isOpen, onClose }: EditGroupModa
   }
 
   if (!isOpen) return null
+
+  if (!canManageGroups) {
+    return null
+  }
 
   const isReadOnly = group.is_protected || group.is_system_group
 

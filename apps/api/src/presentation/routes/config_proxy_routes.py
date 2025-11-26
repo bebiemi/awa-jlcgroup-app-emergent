@@ -104,6 +104,18 @@ async def proxy_config_references_with_path(path: str, request: Request):
     """Proxy all /api/config/references/* requests to auth-microservice"""
     return await proxy_config_request(f"references/{path}", request)
 
+# Config global (all)
+@router.api_route("/all", methods=["GET"])
+async def proxy_config_all(request: Request):
+    """Proxy /api/config/all requests to auth-microservice"""
+    return await proxy_config_request("all", request)
+
+# Config public minimal
+@router.api_route("/public", methods=["GET"])
+async def proxy_config_public(request: Request):
+    """Proxy /api/config/public requests to auth-microservice"""
+    return await proxy_config_request("public", request)
+
 
 # App Configuration routes
 @router.api_route("/app", methods=["GET", "POST"])

@@ -11,6 +11,7 @@ import UIPreferencesSection from '../components/UIPreferencesSection'
 import { UserCircleIcon, DocumentTextIcon, BriefcaseIcon, ShieldCheckIcon, PaintBrushIcon } from '@heroicons/react/24/outline'
 import { useAppSelector } from '@/store/hooks'
 import toast from 'react-hot-toast'
+import SidebarPreferencesPanel from '@/components/sidebar/SidebarPreferencesPanel'
 
 export default function ProfilePage() {
   const { data, isLoading } = useGetMyProfileQuery()
@@ -129,6 +130,9 @@ export default function ProfilePage() {
         </div>
 
         {/* Content */}
+        <section className="mt-8">
+          <SidebarPreferencesPanel />
+        </section>
         <div className={activeTab === 'preferences' ? '' : 'bg-white rounded-lg shadow p-6'}>
           {activeTab === 'info' && (
             <>

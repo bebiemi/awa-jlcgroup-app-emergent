@@ -154,7 +154,7 @@ async def get_public_form_fields(
 async def get_form_fields(
     category: Optional[str] = None,
     is_active: Optional[bool] = None,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_permission("forms.enterprise.read")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """
@@ -187,7 +187,7 @@ async def get_form_fields(
 @router.get("/fields/{field_id}", response_model=FormFieldConfig)
 async def get_form_field(
     field_id: str,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_permission("forms.enterprise.read")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """Récupérer un champ par son ID"""

@@ -18,8 +18,11 @@ import {
 } from '@heroicons/react/24/outline'
 import CreateFieldModal from '../components/CreateFieldModal'
 import EditFieldModal from '../components/EditFieldModal'
+import { usePermissions } from '@/hooks/usePermission'
 
 export default function EntrepriseFormConfigPage() {
+  const { permissions } = usePermissions(['forms.enterprise.manage'])
+  const canManage = permissions['forms.enterprise.manage']
   const { data, isLoading, refetch } = useGetFormFieldsQuery({})
   const [deleteField] = useDeleteFormFieldMutation()
   const [updateField] = useUpdateFormFieldMutation()
@@ -47,6 +50,7 @@ export default function EntrepriseFormConfigPage() {
   }, {} as Record<string, FormFieldConfig[]>)
 
   const handleDelete = async (id: string, fieldKey: string) => {
+    if (!canManage) return
     if (window.confirm(`Êtes-vous sûr de vouloir supprimer le champ "${fieldKey}" ?`)) {
       try {
         await deleteField(id).unwrap()
@@ -58,6 +62,7 @@ export default function EntrepriseFormConfigPage() {
   }
 
   const handleToggleActive = async (field: FormFieldConfig) => {
+    if (!canManage) return
     try {
       await updateField({
         id: field.id,
@@ -86,6 +91,8 @@ export default function EntrepriseFormConfigPage() {
     return labels[type] || type
   }
 
+  if (!canManage) return null
+
   if (isLoading) {
     return (
       <Layout>
@@ -110,10 +117,12 @@ export default function EntrepriseFormConfigPage() {
               Gérez les champs dynamiques du formulaire entreprise
             </p>
           </div>
-          <Button onClick={() => setIsCreateModalOpen(true)} variant="primary">
-            <PlusIcon className="h-5 w-5 mr-2" />
-            Nouveau champ
-          </Button>
+          {canManage && (
+            <Button onClick={() => setIsCreateModalOpen(true)} variant="primary">
+              <PlusIcon className="h-5 w-5 mr-2" />
+              Nouveau champ
+            </Button>
+          )}
         </div>
 
         {/* Stats */}

@@ -8,6 +8,7 @@ import UserDocumentsTab from './UserDetailTabs/UserDocumentsTab'
 import UserPermissionsTab from './UserDetailTabs/UserPermissionsTab'
 import UserActivityTab from './UserDetailTabs/UserActivityTab'
 import toast from 'react-hot-toast'
+import { usePermissions } from '@/hooks/usePermission'
 
 interface UserDetailModalProps {
   isOpen: boolean
@@ -16,6 +17,12 @@ interface UserDetailModalProps {
 }
 
 export default function UserDetailModal({ isOpen, onClose, userId }: UserDetailModalProps) {
+  const { permissions } = usePermissions([
+    'users.read',
+    'users.manage',
+    'users.manage_status',
+    'iam.profiles.manage',
+  ])
   const { data: userDetail, isLoading, error } = useGetUserDetailQuery(userId, {
     skip: !isOpen || !userId,
   })
@@ -64,6 +71,9 @@ export default function UserDetailModal({ isOpen, onClose, userId }: UserDetailM
       setIsVerifying(false)
     }
   }
+
+  const canView = permissions['users.read'] || permissions['users.manage']
+  if (!isOpen || !canView) return null
 
   return (
     <Transition appear show={isOpen} as={Fragment}>

@@ -41,7 +41,8 @@ def get_audit_service(db: AsyncIOMotorDatabase = Depends(get_database)) -> IAMAu
 
 def require_admin(current_user: User = Depends(get_current_user)):
     """Vérifier que l'utilisateur est admin"""
-    if "admin" not in current_user.roles and "super_admin" not in current_user.roles:
+    normalized_roles = [r.lower() for r in current_user.roles]
+    if "admin" not in normalized_roles and "super_admin" not in normalized_roles:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Accès réservé aux administrateurs"

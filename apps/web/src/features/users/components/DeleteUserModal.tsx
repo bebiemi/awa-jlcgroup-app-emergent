@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { XMarkIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline'
 import { useDeleteUserMutation, type User } from '@/features/users/api/usersApi'
+import { usePermissions } from '@/hooks/usePermission'
 
 interface DeleteUserModalProps {
   user: User
@@ -10,14 +11,16 @@ interface DeleteUserModalProps {
 
 export default function DeleteUserModal({ user, isOpen, onClose }: DeleteUserModalProps) {
   const [deleteUser, { isLoading }] = useDeleteUserMutation()
+  const { permissions } = usePermissions(['users.delete', 'users.manage'])
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
+  const [reason, setReason] = useState('Suppression initiée par un administrateur')
 
   const handleDelete = async () => {
     setError('')
 
     try {
-      await deleteUser(user.id).unwrap()
+      await deleteUser({ user_id: user.id, reason }).unwrap()
       setSuccess(true)
       setTimeout(() => {
         onClose()
@@ -28,6 +31,10 @@ export default function DeleteUserModal({ user, isOpen, onClose }: DeleteUserMod
   }
 
   if (!isOpen) return null
+
+  if (!permissions['users.delete'] && !permissions['users.manage']) {
+    return null
+  }
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
@@ -56,16 +63,28 @@ export default function DeleteUserModal({ user, isOpen, onClose }: DeleteUserMod
           {/* Content */}
           <div className="space-y-4">
             <p className="text-gray-600">
-              Êtes-vous sûr de vouloir supprimer définitivement l'utilisateur{' '}
+              Cette action programme l'archivage puis la suppression définitive de l'utilisateur{' '}
               <span className="font-semibold">{user.full_name || user.username}</span> (
               {user.email})?
             </p>
 
             <div className="bg-red-50 border border-red-200 rounded-lg p-4">
               <p className="text-sm text-red-800">
-                <strong>⚠️ Attention :</strong> Cette action est irréversible. Toutes les données
-                associées à cet utilisateur seront définitivement supprimées.
+                <strong>⚠️ Attention :</strong> L'utilisateur est archivé immédiatement puis supprimé définitivement
+                après la période de rétention définie (déjà stockée pour les comptes en cours). Les nouvelles valeurs
+                de rétention n'affectent pas les programmations déjà enregistrées.
               </p>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Motif</label>
+              <input
+                type="text"
+                value={reason}
+                onChange={(e) => setReason(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                placeholder="Ex: compte inactif, demande de suppression..."
+              />
             </div>
 
             {/* Error Message */}

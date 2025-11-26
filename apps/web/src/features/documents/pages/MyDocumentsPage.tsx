@@ -13,6 +13,7 @@ import {
   EyeIcon,
 } from '@heroicons/react/24/outline'
 import { toast } from 'react-hot-toast'
+import { usePermissions } from '@/hooks/usePermission'
 
 const CATEGORY_LABELS: Record<string, string> = {
   cv: 'CV',
@@ -50,6 +51,20 @@ export default function MyDocumentsPage() {
   const [categoryFilter, setCategoryFilter] = useState<string>('all')
   const [statusFilter, setStatusFilter] = useState<string>('all')
   const [showUploadModal, setShowUploadModal] = useState(false)
+  const { permissions } = usePermissions([
+    'documents.read.own',
+    'documents.read.all',
+    'documents.create.own',
+    'documents.delete.own',
+    'documents.download.all',
+  ])
+  const canRead = permissions['documents.read.own'] || permissions['documents.read.all']
+  const canUpload = permissions['documents.create.own']
+  const canDelete = permissions['documents.delete.own']
+  const canDownload =
+    permissions['documents.download.all'] ||
+    permissions['documents.read.own'] ||
+    permissions['documents.read.all']
 
   const { data: documents = [], isLoading } = useListDocumentsQuery({
     category: categoryFilter === 'all' ? undefined : categoryFilter,
@@ -72,8 +87,14 @@ export default function MyDocumentsPage() {
   }
 
   const handleDownload = (id: string) => {
+    if (!canDownload) {
+      toast.error('Vous ne pouvez pas télécharger ce document')
+      return
+    }
     window.open(`/api/documents/${id}/download`, '_blank')
   }
+
+  if (!canRead) return null
 
   // Statistics
   const stats = {
@@ -92,13 +113,15 @@ export default function MyDocumentsPage() {
             <h1 className="text-3xl font-bold text-gray-900">Mes Documents</h1>
             <p className="text-gray-600 mt-1">Gérez vos documents en toute sécurité</p>
           </div>
-          <button
-            onClick={() => setShowUploadModal(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-jlc-purple-600 text-white rounded-lg hover:bg-jlc-purple-700 transition-colors shadow-md hover:shadow-lg"
-          >
-            <ArrowUpTrayIcon className="h-5 w-5" />
-            Importer un document
-          </button>
+          {canUpload && (
+            <button
+              onClick={() => setShowUploadModal(true)}
+              className="flex items-center gap-2 px-4 py-2 bg-jlc-purple-600 text-white rounded-lg hover:bg-jlc-purple-700 transition-colors shadow-md hover:shadow-lg"
+            >
+              <ArrowUpTrayIcon className="h-5 w-5" />
+              Importer un document
+            </button>
+          )}
         </div>
 
         {/* Statistics Cards */}
@@ -288,18 +311,21 @@ export default function MyDocumentsPage() {
                         <div className="flex gap-2 justify-end">
                           <button
                             onClick={() => handleDownload(doc.id)}
-                            className="text-blue-600 hover:text-blue-900"
+                            className="text-blue-600 hover:text-blue-900 disabled:opacity-50"
                             title="Télécharger"
+                            disabled={!canDownload}
                           >
                             <ArrowDownTrayIcon className="h-5 w-5" />
                           </button>
-                          <button
-                            onClick={() => handleDelete(doc.id, doc.original_filename)}
-                            className="text-red-600 hover:text-red-900"
-                            title="Supprimer"
-                          >
-                            <TrashIcon className="h-5 w-5" />
-                          </button>
+                          {canDelete && (
+                            <button
+                              onClick={() => handleDelete(doc.id, doc.original_filename)}
+                              className="text-red-600 hover:text-red-900"
+                              title="Supprimer"
+                            >
+                              <TrashIcon className="h-5 w-5" />
+                            </button>
+                          )}
                         </div>
                       </td>
                     </tr>

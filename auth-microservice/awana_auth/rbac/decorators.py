@@ -52,7 +52,7 @@ def require_permission(*permissions: str, require_all: bool = True):
     
     Usage:
         @app.delete("/admin/users/{user_id}")
-        @require_permission("users:delete")
+        @require_permission("users.delete")
         async def delete_user(user_id: str, current_user: User = Depends(get_current_user)):
             ...
     

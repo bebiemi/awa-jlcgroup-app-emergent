@@ -7,16 +7,19 @@ from fastapi import APIRouter, Depends, HTTPException, status, Query
 from typing import List, Optional
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
-from awana_auth.core.dependencies import get_database, get_current_user
+from awana_auth.core.dependencies import get_database, get_current_user, get_iam_service
+from awana_auth.dependencies.permission_dependencies import require_permission
+from awana_auth.services.iam_service import IAMService
 
 router = APIRouter(prefix="/api/system-references", tags=["system-references"])
+public_router = APIRouter(prefix="/api/public/system-references", tags=["system-references-public"])
 
 
 @router.get("/document-types")
 async def get_document_types(
     required_only: bool = Query(False, description="Ne retourner que les documents requis"),
     db: AsyncIOMotorDatabase = Depends(get_database),
-    current_user: dict = Depends(get_current_user)
+    current_user: dict = Depends(require_permission("references.read"))
 ):
     """
     Récupérer la liste des types de documents disponibles
@@ -44,11 +47,67 @@ async def get_document_types(
     }
 
 
+# ==================== PUBLIC ENDPOINTS (filtrés) ====================
+
+@public_router.get("/document-types")
+async def get_public_document_types(
+    db: AsyncIOMotorDatabase = Depends(get_database),
+    current_user: dict = Depends(require_permission("references.read")),
+    iam_service: IAMService = Depends(get_iam_service)
+):
+    """
+    Référentiels de types de documents accessibles publiquement (actifs uniquement).
+    Champs minimalistes (code, label_fr, label_en optionnel).
+    """
+    roles = getattr(current_user, "roles", []) if not isinstance(current_user, dict) else current_user.get("roles", [])
+    has_manage = await iam_service.user_has_permission(
+        getattr(current_user, "id", None) or current_user.get("id"),
+        "references.manage"
+    )
+    if "admin" not in roles and "super_admin" not in roles and not has_manage.has_permission:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Accès réservé aux administrateurs ou aux titulaires de la permission references.manage"
+        )
+    docs = await db.system_references.find(
+        {"category": "document_types", "is_active": True},
+        {"_id": 0, "code": 1, "label_fr": 1, "label_en": 1}
+    ).sort("order", 1).to_list(length=None)
+    return {"success": True, "data": docs, "total": len(docs)}
+
+
+@public_router.get("/categories/{category}")
+async def get_public_references_by_category(
+    category: str,
+    db: AsyncIOMotorDatabase = Depends(get_database),
+    current_user: dict = Depends(require_permission("references.read")),
+    iam_service: IAMService = Depends(get_iam_service)
+):
+    """
+    Référentiels publics filtrés (actifs) par catégorie.
+    """
+    roles = getattr(current_user, "roles", []) if not isinstance(current_user, dict) else current_user.get("roles", [])
+    has_manage = await iam_service.user_has_permission(
+        getattr(current_user, "id", None) or current_user.get("id"),
+        "references.manage"
+    )
+    if "admin" not in roles and "super_admin" not in roles and not has_manage.has_permission:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Accès réservé aux administrateurs ou aux titulaires de la permission references.manage"
+        )
+    refs = await db.system_references.find(
+        {"category": category, "is_active": True},
+        {"_id": 0, "code": 1, "label_fr": 1, "label_en": 1}
+    ).sort("order", 1).to_list(length=None)
+    return {"success": True, "category": category, "data": refs, "total": len(refs)}
+
+
 @router.get("/categories/{category}")
 async def get_references_by_category(
     category: str,
     db: AsyncIOMotorDatabase = Depends(get_database),
-    current_user: dict = Depends(get_current_user)
+    current_user: dict = Depends(require_permission("references.read"))
 ):
     """
     Récupérer les références pour une catégorie donnée
@@ -76,7 +135,7 @@ async def get_references_by_category(
 @router.get("/categories")
 async def list_categories(
     db: AsyncIOMotorDatabase = Depends(get_database),
-    current_user: dict = Depends(get_current_user)
+    current_user: dict = Depends(require_permission("references.read"))
 ):
     """
     Lister toutes les catégories de références disponibles

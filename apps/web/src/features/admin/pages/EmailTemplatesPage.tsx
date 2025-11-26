@@ -1,11 +1,16 @@
 import React from 'react';
 import { useGetTemplatesQuery, useInitDefaultTemplatesMutation } from '../api/emailTemplatesApi';
+import { usePermissions } from '@/hooks/usePermission';
 
 export const EmailTemplatesPage: React.FC = () => {
   const { data, isLoading } = useGetTemplatesQuery({});
   const [initDefaults, { isLoading: isInitializing }] = useInitDefaultTemplatesMutation();
+  const { permissions } = usePermissions(['emails.manage_templates', 'emails.read_config'])
+  const canRead = permissions['emails.read_config'] || permissions['emails.manage_templates']
+  const canManage = permissions['emails.manage_templates']
 
   const handleInitDefaults = async () => {
+    if (!canManage) return
     try {
       await initDefaults().unwrap();
       alert('Templates par défaut créés avec succès !');
@@ -13,6 +18,8 @@ export const EmailTemplatesPage: React.FC = () => {
       alert(`Erreur: ${err.data?.detail || 'Erreur inconnue'}`);
     }
   };
+
+  if (!canRead) return null;
 
   if (isLoading) {
     return (
@@ -29,13 +36,15 @@ export const EmailTemplatesPage: React.FC = () => {
           <h1 className="text-3xl font-bold text-gray-900">Templates Email</h1>
           <p className="text-gray-600 mt-2">Gérer les templates d'email personnalisables</p>
         </div>
-        <button
-          onClick={handleInitDefaults}
-          disabled={isInitializing}
-          className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 disabled:opacity-50"
-        >
-          {isInitializing ? 'Initialisation...' : 'Initialiser Templates'}
-        </button>
+        {canManage && (
+          <button
+            onClick={handleInitDefaults}
+            disabled={isInitializing}
+            className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 disabled:opacity-50"
+          >
+            {isInitializing ? 'Initialisation...' : 'Initialiser Templates'}
+          </button>
+        )}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

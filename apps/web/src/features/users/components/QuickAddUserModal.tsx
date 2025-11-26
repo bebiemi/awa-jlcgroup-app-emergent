@@ -4,6 +4,7 @@ import {
   useCreateUserMutation,
   useGetGroupsQuery,
 } from '@/features/admin/api/securityApi'
+import { usePermissions } from '@/hooks/usePermission'
 
 interface QuickAddUserModalProps {
   isOpen: boolean
@@ -13,6 +14,7 @@ interface QuickAddUserModalProps {
 export default function QuickAddUserModal({ isOpen, onClose }: QuickAddUserModalProps) {
   const [createUser, { isLoading }] = useCreateUserMutation()
   const { data: groups } = useGetGroupsQuery()
+  const { permissions } = usePermissions(['users.create'])
 
   const [formData, setFormData] = useState({
     email: '',
@@ -69,6 +71,10 @@ export default function QuickAddUserModal({ isOpen, onClose }: QuickAddUserModal
   }
 
   if (!isOpen) return null
+
+  if (!permissions['users.create']) {
+    return null
+  }
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">

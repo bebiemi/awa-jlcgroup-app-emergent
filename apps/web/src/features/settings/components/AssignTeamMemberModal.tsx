@@ -11,6 +11,7 @@ import {
 import { usersApi } from '@/features/users/api/usersApi'
 import { useAppDispatch } from '@/store/hooks'
 import { toast } from 'react-hot-toast'
+import { usePermissions } from '@/hooks/usePermission'
 
 interface AssignTeamMemberModalProps {
   user: any
@@ -28,6 +29,7 @@ export default function AssignTeamMemberModal({
   canAssignGroups,
 }: AssignTeamMemberModalProps) {
   const dispatch = useAppDispatch()
+  const { permissions } = usePermissions(['iam.profiles.manage', 'iam.groups.manage'])
   const { data: profiles = [] } = useListProfilesQuery()
   const { data: groups = [] } = useListGroupsQuery()
   const [assignProfiles] = useAssignProfilesToUserMutation()
@@ -111,6 +113,12 @@ export default function AssignTeamMemberModal({
   }
 
   if (!isOpen) return null
+
+  const canManageProfiles = permissions['iam.profiles.manage']
+  const canManageGroups = permissions['iam.groups.manage']
+  if (!canManageProfiles && !canManageGroups) {
+    return null
+  }
 
   // Filtrer les profils pour exclure les profils système/admin sauf si l'utilisateur a déjà ces permissions
   const availableProfiles = profiles.filter((profile: Profile) => {

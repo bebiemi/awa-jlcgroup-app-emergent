@@ -93,7 +93,7 @@ DEFAULT_ROLES = [
         display_name="Administrator",
         description="Administrative access to manage users and content",
         permissions=[
-            "users:read", "users:write", "users:delete",
+            "users:read", "users:write", "users.delete",
             "roles:read", "roles:write",
             "content:read", "content:write", "content:delete",
             "analytics:read",
@@ -131,7 +131,7 @@ DEFAULT_PERMISSIONS = [
     # User management
     Permission(name="users:read", code="users.read", resource="users", action="read", description="View users"),
     Permission(name="users:write", code="users.write", resource="users", action="write", description="Create/edit users"),
-    Permission(name="users:delete", code="users.delete", resource="users", action="delete", description="Delete users"),
+Permission(name="users.delete", code="users.delete", resource="users", action="delete", description="Delete users"),
     
     # Role management
     Permission(name="roles:read", code="roles.read", resource="roles", action="read", description="View roles"),

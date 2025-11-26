@@ -50,7 +50,7 @@ export const configurationApi = createApi({
         validation: Record<string, string[]>
       }
     }, void>({
-      query: () => '/auth/config/all',
+      query: () => '/config/all',
       // Cache pendant 5 minutes
       keepUnusedDataFor: 300,
     }),
@@ -62,7 +62,7 @@ export const configurationApi = createApi({
       is_active?: boolean
     }>({
       query: (params) => ({
-        url: '/auth/config/references',
+        url: '/config/references',
         params,
       }),
       providesTags: ['References'],
@@ -70,7 +70,7 @@ export const configurationApi = createApi({
     
     createReference: builder.mutation<{ reference: SystemReference }, Partial<SystemReference>>({
       query: (data) => ({
-        url: '/auth/config/references',
+        url: '/config/references',
         method: 'POST',
         body: data,
       }),
@@ -82,7 +82,7 @@ export const configurationApi = createApi({
       data: Partial<SystemReference>
     }>({
       query: ({ id, data }) => ({
-        url: `/references/${id}`,
+        url: `/config/references/${id}`,
         method: 'PATCH',
         body: data,
       }),
@@ -91,7 +91,7 @@ export const configurationApi = createApi({
     
     deleteReference: builder.mutation<void, string>({
       query: (id) => ({
-        url: `/references/${id}`,
+        url: `/config/references/${id}`,
         method: 'DELETE',
       }),
       invalidatesTags: ['References'],
@@ -103,7 +103,7 @@ export const configurationApi = createApi({
       is_public?: boolean
     }>({
       query: (params) => ({
-        url: '/auth/config/settings',
+        url: '/config/settings',
         params,
       }),
       providesTags: ['Settings'],
@@ -114,7 +114,7 @@ export const configurationApi = createApi({
       value: string
     }>({
       query: ({ key, value }) => ({
-        url: `/settings/${key}`,
+        url: `/config/settings/${key}`,
         method: 'PATCH',
         body: { value },
       }),

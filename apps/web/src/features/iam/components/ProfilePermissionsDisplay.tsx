@@ -1,4 +1,5 @@
 import { useListPermissionsQuery } from '../api/iamApi'
+import { useCanReadPermissions } from '../useCanReadPermissions'
 import { LockClosedIcon } from '@heroicons/react/24/outline'
 
 interface ProfilePermissionsDisplayProps {
@@ -7,7 +8,10 @@ interface ProfilePermissionsDisplayProps {
 }
 
 export default function ProfilePermissionsDisplay({ permissionIds, profileName }: ProfilePermissionsDisplayProps) {
-  const { data: allPermissions = [], isLoading } = useListPermissionsQuery()
+  const { canReadPermissions } = useCanReadPermissions()
+  const { data: allPermissions = [], isLoading } = useListPermissionsQuery(undefined, {
+    skip: !canReadPermissions,
+  })
 
   if (isLoading) {
     return (

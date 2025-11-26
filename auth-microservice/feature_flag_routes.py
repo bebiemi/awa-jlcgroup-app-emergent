@@ -52,7 +52,7 @@ async def check_feature_flag(
 async def list_feature_flags(
     include_inactive: bool = Query(False),
     type_filter: Optional[FeatureFlagType] = Query(None),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_permission("flags.read")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """
@@ -73,7 +73,7 @@ async def list_feature_flags(
     return {
         "flags": flags,
         "total": len(flags),
-        "can_create": "super_admin" in current_user.roles
+        "can_create": "super_admin" in [r.lower() for r in current_user.roles]
     }
 
 

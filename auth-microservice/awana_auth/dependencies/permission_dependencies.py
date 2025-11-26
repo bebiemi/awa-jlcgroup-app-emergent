@@ -35,8 +35,8 @@ class PermissionDependency:
         """Check if user has required permission"""
         checker = PermissionChecker(db)
         
-        # SuperAdmin bypass
-        if "super_admin" in current_user.roles:
+        # SuperAdmin/Admin bypass
+        if "super_admin" in current_user.roles or "admin" in current_user.roles:
             return current_user
         
         # Check permission
@@ -77,8 +77,8 @@ class MultiPermissionDependency:
         """Check if user has required permissions"""
         checker = PermissionChecker(db)
         
-        # SuperAdmin bypass
-        if "super_admin" in current_user.roles:
+        # SuperAdmin/Admin bypass
+        if "super_admin" in current_user.roles or "admin" in current_user.roles:
             return current_user
         
         # Check permissions

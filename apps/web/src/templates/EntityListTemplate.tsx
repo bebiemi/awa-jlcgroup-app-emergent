@@ -97,6 +97,21 @@ export interface EntityListConfig {
       onClick: () => void
     }
   }
+
+  // Slot optionnel pour filtres personnalisés (ex: onglets)
+  extraFiltersSlot?: React.ReactNode
+
+  // Slot optionnel pour actions header (ex: import)
+  extraHeaderSlot?: React.ReactNode
+
+  // Slot optionnel pour actions inline dans la barre de filtres
+  inlineActionsSlot?: React.ReactNode
+
+  // Afficher ou non le bouton create dans le header
+  showCreateInHeader?: boolean
+
+  // Slot optionnel pour actions inline (mobile friendly)
+  mobileActionsSlot?: React.ReactNode
 }
 
 interface EntityListTemplateProps {
@@ -109,6 +124,9 @@ export default function EntityListTemplate({ config, permissions }: EntityListTe
   const [searchQuery, setSearchQuery] = useState('')
   const [activeFilters, setActiveFilters] = useState<Record<string, any>>({})
   const [selectedEntities, setSelectedEntities] = useState<string[]>([])
+  const activeFilterChips = Object.entries(activeFilters).filter(
+    ([, value]) => value !== undefined && value !== ''
+  )
 
   const handleSearch = (query: string) => {
     setSearchQuery(query)
@@ -147,44 +165,49 @@ export default function EntityListTemplate({ config, permissions }: EntityListTe
   })
 
   const canCreate = !config.actions.create?.permission || permissions[config.actions.create.permission]
+  const showCreateInHeader = config.showCreateInHeader !== false && config.actions.create && canCreate
 
   return (
     <Layout>
-      <div className="min-h-screen bg-gray-50 p-6">
+      <div className="min-h-screen bg-gray-50 p-4 md:p-6">
         {/* Breadcrumb */}
         <Breadcrumb className="mb-4" />
 
         <div className="max-w-7xl mx-auto">
           <div className="space-y-6">
             {/* Header */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                {config.icon && <config.icon className="h-10 w-10 text-jlc-purple-600" />}
+            <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+              <div className="flex items-center gap-3">
+                {config.icon && <config.icon className="h-8 w-8 md:h-10 md:w-10 text-jlc-purple-600" />}
                 <div>
-                  <h1 className="text-3xl font-bold text-gray-900">{config.title}</h1>
+                  <h1 className="text-2xl md:text-3xl font-bold text-gray-900">{config.title}</h1>
                   {config.subtitle && (
-                    <p className="text-gray-600 mt-1">{config.subtitle}</p>
+                    <p className="text-sm md:text-base text-gray-600 mt-1">{config.subtitle}</p>
                   )}
                 </div>
               </div>
               
-              {config.actions.create && canCreate && (
-                <button
-                  onClick={config.actions.create.onClick}
-                  className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-jlc-purple-600 to-indigo-600 text-white rounded-lg hover:from-jlc-purple-700 hover:to-indigo-700 shadow-md transition-all"
-                >
-                  <PlusIcon className="h-5 w-5" />
-                  {config.actions.create.label}
-                </button>
-              )}
+              <div className="flex items-center gap-3">
+                {config.extraHeaderSlot}
+                {showCreateInHeader && (
+                  <button
+                    onClick={config.actions.create.onClick}
+                    className="h-11 w-11 inline-flex items-center justify-center rounded-full bg-gradient-to-r from-jlc-purple-600 to-indigo-600 text-white shadow-md hover:from-jlc-purple-700 hover:to-indigo-700 transition-all"
+                    title={config.actions.create.label}
+                    aria-label={config.actions.create.label}
+                  >
+                    <PlusIcon className="h-5 w-5" />
+                  </button>
+                )}
+              </div>
             </div>
 
             {/* Filtres et recherche */}
-            <div className="bg-white rounded-lg shadow-sm p-4">
-              <div className="flex flex-col md:flex-row gap-4">
-                {/* Recherche */}
+            <div className="bg-white rounded-lg shadow-sm p-3 md:p-4">
+              <div className="w-full flex flex-wrap gap-3 lg:items-center">
+                {/* Recherche (plus large) */}
                 {config.onSearch && (
-                  <div className="flex-1">
+                  <div className="flex-grow min-w-[260px]">
                     <div className="relative">
                       <MagnifyingGlassIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                       <input
@@ -192,7 +215,7 @@ export default function EntityListTemplate({ config, permissions }: EntityListTe
                         placeholder={config.searchPlaceholder || 'Rechercher...'}
                         value={searchQuery}
                         onChange={(e) => handleSearch(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-jlc-purple-500 focus:border-transparent"
+                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-jlc-purple-500 focus:border-transparent text-sm md:text-base text-gray-900 placeholder-gray-500"
                       />
                     </div>
                   </div>
@@ -200,14 +223,14 @@ export default function EntityListTemplate({ config, permissions }: EntityListTe
 
                 {/* Filtres dynamiques */}
                 {config.filters?.map((filter) => (
-                  <div key={filter.key} className="md:w-64">
+                  <div key={filter.key} className="w-full sm:w-1/2 md:w-64">
                     {filter.type === 'select' && (
                       <div className="relative">
                         <FunnelIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                         <select
                           value={activeFilters[filter.key] || ''}
                           onChange={(e) => handleFilterChange(filter.key, e.target.value)}
-                          className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-jlc-purple-500 focus:border-transparent appearance-none bg-white"
+                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-jlc-purple-500 focus:border-transparent appearance-none bg-white text-sm md:text-base text-gray-900"
                         >
                           <option value="">{filter.label}</option>
                           {filter.options?.map((option) => (
@@ -220,7 +243,50 @@ export default function EntityListTemplate({ config, permissions }: EntityListTe
                     )}
                   </div>
                 ))}
+
+                {/* Onglets / actions inline */}
+                {config.extraFiltersSlot && (
+                  <div className="flex flex-wrap gap-2 items-center">
+                    {config.extraFiltersSlot}
+                  </div>
+                )}
+                {config.inlineActionsSlot && (
+                  <div className="flex items-center gap-2 flex-wrap">{config.inlineActionsSlot}</div>
+                )}
+                {config.mobileActionsSlot && (
+                  <div className="w-full flex items-center gap-2 flex-wrap lg:hidden mt-2">
+                    {config.mobileActionsSlot}
+                  </div>
+                )}
               </div>
+              {activeFilterChips.length > 0 && (
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {activeFilterChips.map(([key, value]) => (
+                    <span
+                      key={key}
+                      className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gray-100 text-gray-700 text-xs"
+                    >
+                      <span className="font-medium">
+                        {config.filters?.find((f) => f.key === key)?.label || key}:
+                      </span>
+                      <span>{value}</span>
+                      <button
+                        onClick={() => handleFilterChange(key, '')}
+                        className="text-gray-500 hover:text-gray-700"
+                        aria-label={`Supprimer le filtre ${key}`}
+                      >
+                        ×
+                      </button>
+                    </span>
+                  ))}
+                  <button
+                    onClick={clearFilters}
+                    className="text-xs text-jlc-purple-600 font-medium hover:underline"
+                  >
+                    Réinitialiser
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* Table */}
@@ -249,7 +315,7 @@ export default function EntityListTemplate({ config, permissions }: EntityListTe
             ) : (
               <div className="bg-white rounded-lg shadow-sm overflow-hidden">
                 <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
+                  <thead className="bg-gray-50 sticky top-0 z-10">
                     <tr>
                       {config.actions.bulk && config.actions.bulk.length > 0 && (
                         <th className="px-6 py-3 text-left">
@@ -280,8 +346,11 @@ export default function EntityListTemplate({ config, permissions }: EntityListTe
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {config.data.map((entity: any) => (
-                      <tr key={entity.id} className="hover:bg-gray-50 transition-colors">
+                    {config.data.map((entity: any, idx: number) => (
+                      <tr
+                        key={entity.id || idx}
+                        className={`transition-colors ${idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'} hover:bg-gray-100`}
+                      >
                         {config.actions.bulk && config.actions.bulk.length > 0 && (
                           <td className="px-6 py-4">
                             <input
@@ -359,10 +428,15 @@ export default function EntityListTemplate({ config, permissions }: EntityListTe
                     </div>
                   </div>
                 )}
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-        </div>
+              {config.extraFiltersSlot && (
+                <div className="pt-3">
+                  {config.extraFiltersSlot}
+                </div>
+              )}
+            </div>
       </div>
     </Layout>
   )

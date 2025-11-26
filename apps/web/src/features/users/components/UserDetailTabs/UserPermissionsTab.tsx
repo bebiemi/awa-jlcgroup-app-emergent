@@ -1,9 +1,10 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { UserDetail, useGetUserGroupsQuery, useGetUserProfilesQuery, useAssignGroupMutation, useRemoveGroupMutation, useAssignProfileMutation, useRemoveProfileMutation } from '@/features/users/api/userDetailsApi'
-import { useListGroupsQuery, useListProfilesQuery } from '@/features/iam/api/iamApi'
+import { useGetUserPermissionsQuery, useListGroupsQuery, useListProfilesQuery } from '@/features/iam/api/iamApi'
 import { PlusIcon, TrashIcon } from '@heroicons/react/24/outline'
 import toast from 'react-hot-toast'
 import { BADGE_VARIANTS } from '@/constants/ui'
+import { usePermissions } from '@/hooks/usePermission'
 
 interface UserPermissionsTabProps {
   userId: string
@@ -15,6 +16,8 @@ export default function UserPermissionsTab({ userId, userDetail }: UserPermissio
   const { data: userProfiles = [], isLoading: loadingProfiles } = useGetUserProfilesQuery(userId)
   const { data: allGroupsData } = useListGroupsQuery({})
   const { data: allProfilesData } = useListProfilesQuery({})
+  const { data: permissionsData, isLoading: loadingPermissions, error: permissionsError } = useGetUserPermissionsQuery(userId)
+  const { permissions } = usePermissions(['iam.groups.manage', 'iam.profiles.manage'])
   
   const allGroups = Array.isArray(allGroupsData) ? allGroupsData : []
   const allProfiles = Array.isArray(allProfilesData) ? allProfilesData : []
@@ -26,6 +29,17 @@ export default function UserPermissionsTab({ userId, userDetail }: UserPermissio
   
   const [selectedGroup, setSelectedGroup] = useState('')
   const [selectedProfile, setSelectedProfile] = useState('')
+
+  const directProfiles = permissionsData?.direct_profiles || []
+  const groupProfiles = permissionsData?.group_profiles || []
+  const inheritedGroups = permissionsData?.groups || []
+  const capabilityBundles = useMemo(() => {
+    const bundles = new Set<string>()
+    directProfiles.concat(groupProfiles).forEach((profile) => {
+      ;(profile.capability_bundle_ids || []).forEach((id) => bundles.add(id))
+    })
+    return Array.from(bundles)
+  }, [directProfiles, groupProfiles])
 
   const handleAssignGroup = async () => {
     if (!selectedGroup) return
@@ -81,18 +95,24 @@ export default function UserPermissionsTab({ userId, userDetail }: UserPermissio
     ? allProfiles.filter(p => !userProfiles.some(up => up.id === p.id))
     : []
 
+  const canManageGroups = permissions['iam.groups.manage']
+  const canManageProfiles = permissions['iam.profiles.manage']
+  if (!canManageGroups && !canManageProfiles) return null
+
+  const effectivePermissions = permissionsData?.all_permissions?.map((p) => p.code) || userDetail.permissions || []
+
   return (
     <div className="space-y-6">
       {/* Groupes IAM */}
       <div className="bg-white rounded-lg shadow p-6">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-gray-900">Groupes IAM</h3>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold text-gray-900">Groupes IAM</h3>
           <div className="flex gap-2">
             <select
               value={selectedGroup}
               onChange={(e) => setSelectedGroup(e.target.value)}
               className="px-3 py-2 border border-gray-300 rounded-md text-sm"
-              disabled={availableGroups.length === 0}
+              disabled={availableGroups.length === 0 || !canManageGroups}
             >
               <option value="">Sélectionner un groupe</option>
               {availableGroups.map((group) => (
@@ -103,7 +123,7 @@ export default function UserPermissionsTab({ userId, userDetail }: UserPermissio
             </select>
             <button
               onClick={handleAssignGroup}
-              disabled={!selectedGroup}
+              disabled={!selectedGroup || !canManageGroups}
               className="px-4 py-2 bg-jlc-purple-600 text-white rounded-md hover:bg-jlc-purple-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             >
               <PlusIcon className="h-4 w-4" />
@@ -130,13 +150,15 @@ export default function UserPermissionsTab({ userId, userDetail }: UserPermissio
                     <p className="text-xs text-gray-500 mt-1">{group.description}</p>
                   )}
                 </div>
-                <button
-                  onClick={() => handleRemoveGroup(group.id)}
-                  className="p-2 text-red-600 hover:bg-red-50 rounded-md"
-                  title="Retirer"
-                >
-                  <TrashIcon className="h-5 w-5" />
-                </button>
+                {canManageGroups && (
+                  <button
+                    onClick={() => handleRemoveGroup(group.id)}
+                    className="p-2 text-red-600 hover:bg-red-50 rounded-md"
+                    title="Retirer"
+                  >
+                    <TrashIcon className="h-5 w-5" />
+                  </button>
+                )}
               </div>
             ))}
           </div>
@@ -152,7 +174,7 @@ export default function UserPermissionsTab({ userId, userDetail }: UserPermissio
               value={selectedProfile}
               onChange={(e) => setSelectedProfile(e.target.value)}
               className="px-3 py-2 border border-gray-300 rounded-md text-sm"
-              disabled={availableProfiles.length === 0}
+              disabled={availableProfiles.length === 0 || !canManageProfiles}
             >
               <option value="">Sélectionner un profil</option>
               {availableProfiles.map((profile) => (
@@ -163,7 +185,7 @@ export default function UserPermissionsTab({ userId, userDetail }: UserPermissio
             </select>
             <button
               onClick={handleAssignProfile}
-              disabled={!selectedProfile}
+              disabled={!selectedProfile || !canManageProfiles}
               className="px-4 py-2 bg-jlc-purple-600 text-white rounded-md hover:bg-jlc-purple-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             >
               <PlusIcon className="h-4 w-4" />
@@ -192,13 +214,15 @@ export default function UserPermissionsTab({ userId, userDetail }: UserPermissio
                     )}
                   </div>
                 </div>
-                <button
-                  onClick={() => handleRemoveProfile(profile.id)}
-                  className="p-2 text-red-600 hover:bg-red-50 rounded-md"
-                  title="Retirer"
-                >
-                  <TrashIcon className="h-5 w-5" />
-                </button>
+                {canManageProfiles && (
+                  <button
+                    onClick={() => handleRemoveProfile(profile.id)}
+                    className="p-2 text-red-600 hover:bg-red-50 rounded-md"
+                    title="Retirer"
+                  >
+                    <TrashIcon className="h-5 w-5" />
+                  </button>
+                )}
               </div>
             ))}
           </div>
@@ -207,12 +231,83 @@ export default function UserPermissionsTab({ userId, userDetail }: UserPermissio
 
       {/* Permissions héritées */}
       <div className="bg-white rounded-lg shadow p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Permissions Héritées</h3>
-        {!userDetail.permissions || userDetail.permissions.length === 0 ? (
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Permissions et héritage</h3>
+
+        {loadingPermissions ? (
+          <div className="animate-pulse space-y-2">
+            <div className="h-10 bg-gray-200 rounded"></div>
+            <div className="h-10 bg-gray-200 rounded"></div>
+            <div className="h-10 bg-gray-200 rounded"></div>
+          </div>
+        ) : permissionsError ? (
+          <p className="text-sm text-red-600">
+            Impossible de charger les permissions (fallback sur les données du profil utilisateur).
+          </p>
+        ) : null}
+
+        {/* Profils directs */}
+        <div className="mb-4">
+          <h4 className="text-sm font-semibold text-gray-800 mb-2">Profils assignés directement</h4>
+          {directProfiles.length === 0 ? (
+            <p className="text-gray-500 text-sm">Aucun profil direct</p>
+          ) : (
+            <div className="flex flex-wrap gap-2">
+              {directProfiles.map((profile) => (
+                <span key={profile.id} className="px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-800 border border-gray-200">
+                  {profile.name} ({profile.code})
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Groupes + profils hérités */}
+        <div className="mb-4">
+          <h4 className="text-sm font-semibold text-gray-800 mb-2">Profils hérités via les groupes</h4>
+          {groupProfiles.length === 0 ? (
+            <p className="text-gray-500 text-sm">Aucun profil hérité</p>
+          ) : (
+            <div className="space-y-2">
+              {groupProfiles.map((profile) => {
+                const sourceGroups = inheritedGroups.filter((g) => g.profile_ids?.includes(profile.id))
+                return (
+                  <div key={profile.id} className="flex items-center gap-2 text-sm text-gray-800 bg-gray-50 border border-gray-200 rounded-md px-3 py-2">
+                    <span className="font-semibold">{profile.name}</span>
+                    <span className="text-xs text-gray-500">({profile.code})</span>
+                    {sourceGroups.length > 0 && (
+                      <span className="text-xs text-gray-600">
+                        via {sourceGroups.map((g) => g.name || g.code).join(', ')}
+                      </span>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+          )}
+        </div>
+
+        {/* Bundles / capacités */}
+        <div className="mb-4">
+          <h4 className="text-sm font-semibold text-gray-800 mb-2">Permission bundles hérités</h4>
+          {capabilityBundles.length === 0 ? (
+            <p className="text-gray-500 text-sm">Aucun bundle de permissions</p>
+          ) : (
+            <div className="flex flex-wrap gap-2">
+              {capabilityBundles.map((bundleId) => (
+                <span key={bundleId} className="px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-800 border border-blue-200">
+                  {bundleId}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Permissions effectives */}
+        {effectivePermissions.length === 0 ? (
           <p className="text-gray-500 text-sm">Aucune permission</p>
         ) : (
           <div className="flex flex-wrap gap-2">
-            {userDetail.permissions.map((permission) => (
+            {effectivePermissions.map((permission) => (
               <span key={permission} className={`px-3 py-1 rounded-full text-xs font-semibold ${BADGE_VARIANTS.info}`}>
                 {permission}
               </span>

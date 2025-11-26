@@ -22,6 +22,7 @@ import {
 } from '@heroicons/react/24/outline'
 import toast from 'react-hot-toast'
 import { useAppSelector } from '@/store/hooks'
+import { usePermissions } from '@/hooks/usePermission'
 
 export default function OffresPage() {
   const [searchQuery, setSearchQuery] = useState('')
@@ -33,10 +34,24 @@ export default function OffresPage() {
 
   const currentUser = useAppSelector((state) => state.auth.user)
   const isInterimaire = currentUser?.roles?.includes('intérimaire') ?? false
+  const { permissions } = usePermissions([
+    'missions.browse',
+    'missions.read.all',
+    'missions.read.own',
+    'applications.create',
+    'applications.create.own',
+  ])
+  const canView =
+    permissions['missions.browse'] ||
+    permissions['missions.read.all'] ||
+    permissions['missions.read.own']
+  const canApplyPerm =
+    permissions['applications.create'] || permissions['applications.create.own']
 
-  const { data: missions = [], isLoading } = useGetMissionsQuery({
-    published_only: true,
-  })
+  const { data: missions = [], isLoading } = useGetMissionsQuery(
+    { published_only: true },
+    { skip: !canView }
+  )
 
   const { data: myApplications = [] } = useGetMyApplicationsQuery()
   // Only fetch active contract for intérimaires
@@ -93,7 +108,7 @@ export default function OffresPage() {
     setTimeout(() => setSelectedMission(null), 300)
   }
 
-  if (isLoading) {
+  if (!canView || isLoading) {
     return (
       <Layout>
         <div className="flex justify-center items-center py-12">
@@ -292,6 +307,15 @@ export default function OffresPage() {
                   <span className="flex-1 flex items-center justify-center px-4 py-2 bg-blue-100 text-blue-700 rounded-lg text-sm font-medium">
                     ✓ Candidature envoyée
                   </span>
+                )}
+                {!hasApplied(mission.id) && canApplyPerm && (
+                  <button
+                    onClick={() => handleMissionClick(mission)}
+                    className="flex-1 text-center px-4 py-2 bg-jlc-purple-600 text-white rounded-lg hover:bg-jlc-purple-700 transition"
+                    disabled={!canApply}
+                  >
+                    Postuler
+                  </button>
                 )}
               </div>
             </div>

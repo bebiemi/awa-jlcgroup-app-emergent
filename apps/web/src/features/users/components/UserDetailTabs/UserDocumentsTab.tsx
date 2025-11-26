@@ -3,6 +3,7 @@ import { UserDetail, useGetUserDocumentsQuery, useVerifyDocumentMutation, useDel
 import { DOCUMENT_TYPES, BADGE_VARIANTS, COLORS } from '@/constants/ui'
 import { CheckCircleIcon, XCircleIcon, EyeIcon, TrashIcon } from '@heroicons/react/24/outline'
 import toast from 'react-hot-toast'
+import { usePermissions } from '@/hooks/usePermission'
 
 interface UserDocumentsTabProps {
   userId: string
@@ -14,6 +15,16 @@ export default function UserDocumentsTab({ userId }: UserDocumentsTabProps) {
   const [verifyDocument] = useVerifyDocumentMutation()
   const [deleteDocument] = useDeleteDocumentMutation()
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+  const { permissions } = usePermissions([
+    'documents.read.all',
+    'documents.verify.all',
+    'documents.delete.all',
+    'documents.download.all',
+  ])
+  const canRead = permissions['documents.read.all']
+  const canVerify = permissions['documents.verify.all']
+  const canDelete = permissions['documents.delete.all']
+  const canPreview = permissions['documents.download.all'] || permissions['documents.read.all']
 
   const handleVerify = async (docId: string) => {
     try {
@@ -50,6 +61,8 @@ export default function UserDocumentsTab({ userId }: UserDocumentsTabProps) {
     )
   }
 
+  if (!canRead) return null
+
   return (
     <div className="space-y-4">
       {documents.length === 0 ? (
@@ -81,27 +94,33 @@ export default function UserDocumentsTab({ userId }: UserDocumentsTabProps) {
                       Vérifié
                     </span>
                   ) : (
+                    canVerify && (
+                      <button
+                        onClick={() => handleVerify(doc.id)}
+                        className="px-3 py-1 rounded-md text-xs font-semibold bg-blue-600 text-white hover:bg-blue-700"
+                      >
+                        Valider la conformité
+                      </button>
+                    )
+                  )}
+                  {canPreview && (
                     <button
-                      onClick={() => handleVerify(doc.id)}
-                      className="px-3 py-1 rounded-md text-xs font-semibold bg-blue-600 text-white hover:bg-blue-700"
+                      onClick={() => setPreviewUrl(doc.url)}
+                      className="p-2 rounded-md hover:bg-gray-100"
+                      title="Prévisualiser"
                     >
-                      Valider la conformité
+                      <EyeIcon className="h-5 w-5 text-gray-600" />
                     </button>
                   )}
-                  <button
-                    onClick={() => setPreviewUrl(doc.url)}
-                    className="p-2 rounded-md hover:bg-gray-100"
-                    title="Prévisualiser"
-                  >
-                    <EyeIcon className="h-5 w-5 text-gray-600" />
-                  </button>
-                  <button
-                    onClick={() => handleDelete(doc.id)}
-                    className="p-2 rounded-md hover:bg-red-50"
-                    title="Supprimer"
-                  >
-                    <TrashIcon className="h-5 w-5 text-red-600" />
-                  </button>
+                  {canDelete && (
+                    <button
+                      onClick={() => handleDelete(doc.id)}
+                      className="p-2 rounded-md hover:bg-red-50"
+                      title="Supprimer"
+                    >
+                      <TrashIcon className="h-5 w-5 text-red-600" />
+                    </button>
+                  )}
                 </div>
               </div>
             </div>

@@ -57,7 +57,7 @@ from notification_routes import router as notification_router
 from app_config_routes import router as app_config_router
 from email_verification_routes import router as email_verification_router
 from admin_email_verification_routes import router as admin_email_verification_router
-from system_references_routes import router as system_references_router
+from system_references_routes import router as system_references_router, public_router as public_system_references_router
 from retention_management_routes import router as retention_management_router
 from retention_policies_routes import router as retention_policies_router
 from iam_unified_routes import router as iam_unified_router
@@ -69,6 +69,7 @@ from iam_expiration_routes import router as iam_expiration_router
 from iam_cache_routes import router as iam_cache_router
 from temporary_permissions_routes import router as temporary_permissions_router
 from iam_audit_routes import router as iam_audit_router
+from payroll_routes import router as payroll_router
 from awana_auth.routes.user_preferences_routes import router as user_preferences_router
 from rate_limit import limiter
 
@@ -178,7 +179,9 @@ app.include_router(profile_router, prefix="/api")
 app.include_router(professional_experiences_router, prefix="/api")
 app.include_router(mission_router)
 # app.include_router(document_router)  # DEPRECATED: Using documents_routes_v2 instead
-app.include_router(configuration_router, prefix="/api/auth")
+app.include_router(configuration_router, prefix="/api")
+# Expose configuration sous /api/config pour le front (useAppConfig)
+app.include_router(configuration_router, prefix="/api/config")
 app.include_router(version_router)
 app.include_router(feature_flag_router)
 app.include_router(role_visibility_router)
@@ -208,6 +211,7 @@ app.include_router(app_config_router, prefix="/api", tags=["App Configuration"])
 app.include_router(email_verification_router, tags=["Email Verification"])
 app.include_router(admin_email_verification_router, tags=["Admin Email Verification"])
 app.include_router(system_references_router)
+app.include_router(public_system_references_router)
 app.include_router(retention_management_router)
 app.include_router(retention_policies_router)
 app.include_router(iam_unified_router)
@@ -216,6 +220,7 @@ app.include_router(iam_expiration_router, prefix="/api")
 app.include_router(iam_cache_router)
 app.include_router(temporary_permissions_router)
 app.include_router(iam_audit_router)
+app.include_router(payroll_router)
 app.include_router(user_preferences_router, prefix="/api/auth", tags=["User Preferences"])
 
 @app.get("/health")

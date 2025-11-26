@@ -8,7 +8,6 @@ from typing import Optional
 
 from awana_auth.core.dependencies import get_database
 from awana_auth.dependencies.permission_dependencies import require_permission
-from awana_auth.core.iam_constants import IAMPermissions
 from awana_auth.services.notification_service import NotificationService
 
 router = APIRouter()
@@ -31,7 +30,7 @@ async def get_notifications(
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
     db: AsyncIOMotorDatabase = Depends(get_database),
-    current_user: dict = Depends(require_permission(IAMPermissions.PROFILE_MANAGE_OWN))
+    current_user: dict = Depends(require_permission("notifications.read"))
 ):
     """
     Get current user's notifications
@@ -53,7 +52,7 @@ async def get_notifications(
 async def mark_notification_as_read(
     notification_id: str,
     db: AsyncIOMotorDatabase = Depends(get_database),
-    current_user: dict = Depends(require_permission(IAMPermissions.PROFILE_MANAGE_OWN))
+    current_user: dict = Depends(require_permission("notifications.read"))
 ):
     """
     Mark a notification as read
@@ -73,7 +72,7 @@ async def mark_notification_as_read(
 @router.post("/mark-all-read", status_code=status.HTTP_200_OK)
 async def mark_all_notifications_as_read(
     db: AsyncIOMotorDatabase = Depends(get_database),
-    current_user: dict = Depends(require_permission(IAMPermissions.PROFILE_MANAGE_OWN))
+    current_user: dict = Depends(require_permission("notifications.read"))
 ):
     """
     Mark all notifications as read for current user

@@ -16,6 +16,7 @@ import Modal from '@/components/Modal'
 import Tooltip from '@/components/Tooltip'
 import { toast } from 'react-hot-toast'
 import { PlusIcon, UsersIcon, ShieldCheckIcon, KeyIcon } from '@heroicons/react/24/outline'
+import { useCanReadPermissions } from '../useCanReadPermissions'
 
 type TabType = 'groups' | 'permissions'
 
@@ -24,7 +25,10 @@ const IAMControlPage: React.FC = () => {
   
   const { data: groups, isLoading: groupsLoading } = useListGroupsQuery()
   const { data: profiles, isLoading: profilesLoading } = useListProfilesQuery()
-  const { data: permissions, isLoading: permissionsLoading } = useListPermissionsQuery()
+  const { canReadPermissions } = useCanReadPermissions()
+  const { data: permissions, isLoading: permissionsLoading } = useListPermissionsQuery(undefined, {
+    skip: !canReadPermissions,
+  })
   
   const [createGroup] = useCreateGroupMutation()
   const [updateGroup] = useUpdateGroupMutation()

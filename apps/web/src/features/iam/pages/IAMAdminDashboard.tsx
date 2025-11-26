@@ -17,6 +17,7 @@ import {
   BarChart
 } from 'lucide-react';
 import { useListProfilesQuery, useListPermissionsQuery } from '../api/iamApi';
+import { useCanReadPermissions } from '../useCanReadPermissions';
 import { useBundlesQuery } from '../api/bundlesApi';
 
 /**
@@ -35,7 +36,10 @@ export const IAMAdminDashboard: React.FC = () => {
 
   // Charger les données
   const { data: profiles = [], isLoading: loadingProfiles } = useListProfilesQuery();
-  const { data: permissions = [], isLoading: loadingPermissions } = useListPermissionsQuery();
+  const { canReadPermissions } = useCanReadPermissions();
+  const { data: permissions = [], isLoading: loadingPermissions } = useListPermissionsQuery(undefined, {
+    skip: !canReadPermissions,
+  });
   const { data: bundles = [], isLoading: loadingBundles } = useBundlesQuery();
 
   // Statistiques

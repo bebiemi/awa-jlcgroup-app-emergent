@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useCreateLocationMutation, type LocationTree, type LocationType } from '../api/locationsApi'
 import toast from 'react-hot-toast'
 import { XMarkIcon } from '@heroicons/react/24/outline'
+import { usePermissions } from '@/hooks/usePermission'
 
 interface CreateLocationModalProps {
   isOpen: boolean
@@ -19,6 +20,7 @@ const locationTypeOptions: { value: LocationType; label: string }[] = [
 
 export default function CreateLocationModal({ isOpen, onClose, parent }: CreateLocationModalProps) {
   const [createLocation, { isLoading }] = useCreateLocationMutation()
+  const { permissions } = usePermissions(['locations.manage'])
   const [formData, setFormData] = useState({
     name: '',
     type: (parent ? getNextType(parent.type) : 'country') as LocationType,
@@ -100,6 +102,10 @@ export default function CreateLocationModal({ isOpen, onClose, parent }: CreateL
   }
 
   if (!isOpen) return null
+
+  if (!permissions['locations.manage']) {
+    return null
+  }
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">

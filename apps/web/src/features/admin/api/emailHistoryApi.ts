@@ -68,7 +68,7 @@ export const emailHistoryApi = createApi({
     }),
     clearEmailHistory: builder.mutation<any, number>({
       query: (older_than_days) => ({
-        url: `/api/emails/history?older_than_days=${older_than_days}`,
+        url: `/emails/history?older_than_days=${older_than_days}`,
         method: 'DELETE',
       }),
       invalidatesTags: ['EmailHistory'],

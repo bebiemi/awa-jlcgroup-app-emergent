@@ -15,7 +15,7 @@ ALL_PERMISSIONS = [
     # ============ USERS PERMISSIONS ============
     {"code": "users:read", "name": "users:read", "description": "View users", "resource": "users", "action": "read", "scope": "organization", "category": "users"},
     {"code": "users:write", "name": "users:write", "description": "Create/edit users", "resource": "users", "action": "write", "scope": "organization", "category": "users"},
-    {"code": "users:delete", "name": "users:delete", "description": "Delete users", "resource": "users", "action": "delete", "scope": "organization", "category": "users"},
+    {"code": "users.delete", "name": "users.delete", "description": "Delete users", "resource": "users", "action": "delete", "scope": "organization", "category": "users"},
     {"code": "users.read", "name": "Consulter les utilisateurs", "description": "Lire les informations des utilisateurs", "resource": "users", "action": "read", "scope": "organization", "category": "users"},
     {"code": "users.create", "name": "Créer des utilisateurs", "description": "Créer de nouveaux utilisateurs", "resource": "users", "action": "create", "scope": "organization", "category": "users"},
     {"code": "users.update", "name": "Modifier les utilisateurs", "description": "Mettre à jour les utilisateurs", "resource": "users", "action": "update", "scope": "organization", "category": "users"},

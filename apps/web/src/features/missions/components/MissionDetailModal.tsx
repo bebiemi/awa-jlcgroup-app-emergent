@@ -30,6 +30,7 @@ import {
   ExclamationTriangleIcon,
 } from '@heroicons/react/24/outline'
 import toast from 'react-hot-toast'
+import { usePermissions } from '@/hooks/usePermission'
 
 interface MissionDetailModalProps {
   mission: Mission | null
@@ -49,13 +50,30 @@ export default function MissionDetailModal({
   const [applyToMission, { isLoading: isApplying }] = useApplyToMissionMutation()
   const isInterimaire = currentUser?.roles?.includes('intérimaire') ?? false
   const { data: contractData } = useGetActiveContractQuery(undefined, { skip: !isInterimaire })
+  const { permissions } = usePermissions([
+    'missions.browse',
+    'missions.read.all',
+    'missions.read.own',
+    'applications.create',
+    'applications.create.own',
+    'documents.create.own',
+    'documents.create.all',
+  ])
+  const canViewMission =
+    permissions['missions.read.all'] ||
+    permissions['missions.read.own'] ||
+    permissions['missions.browse']
+  const canApplyPerm =
+    permissions['applications.create'] || permissions['applications.create.own']
+  const canUploadCv =
+    permissions['documents.create.all'] || permissions['documents.create.own']
   
   const [selectedCvId, setSelectedCvId] = useState<string>('')
   const [showQuickApply, setShowQuickApply] = useState(false)
   const [showCvUpload, setShowCvUpload] = useState(false)
   const [uploadedCvId, setUploadedCvId] = useState<string>('')
 
-  if (!mission) return null
+  if (!isOpen || !mission || !canViewMission) return null
 
   // Récupérer les documents de type CV de l'utilisateur
   const profile = profileData?.profile
@@ -342,7 +360,7 @@ export default function MissionDetailModal({
                   variant="primary"
                   onClick={() => setShowQuickApply(true)}
                   className="w-full"
-                  disabled={!eligibility.canApply}
+                  disabled={!eligibility.canApply || !canApplyPerm}
                 >
                   <BriefcaseIcon className="h-5 w-5 mr-2" />
                   Postuler rapidement
@@ -365,15 +383,20 @@ export default function MissionDetailModal({
                             </p>
                           </div>
                         </div>
-                        
-                        <InlineDocumentUpload
-                          documentType="cv"
-                          onUploadSuccess={handleCvUploadSuccess}
-                          maxSizeMB={5}
-                          allowedFormats={['pdf', 'doc', 'docx']}
-                          label="Votre CV"
-                          helperText="Votre CV sera enregistré dans votre profil et utilisé pour cette candidature"
-                        />
+                        {canUploadCv ? (
+                          <InlineDocumentUpload
+                            documentType="cv"
+                            onUploadSuccess={handleCvUploadSuccess}
+                            maxSizeMB={5}
+                            allowedFormats={['pdf', 'doc', 'docx']}
+                            label="Votre CV"
+                            helperText="Votre CV sera enregistré dans votre profil et utilisé pour cette candidature"
+                          />
+                        ) : (
+                          <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
+                            Vous n'avez pas l'autorisation d'uploader un CV. Contactez un administrateur.
+                          </div>
+                        )}
                       </>
                     ) : (
                       <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-lg">

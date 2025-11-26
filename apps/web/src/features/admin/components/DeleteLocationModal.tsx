@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useDeleteLocationMutation, type LocationTree } from '../api/locationsApi'
 import toast from 'react-hot-toast'
 import { XMarkIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline'
+import { usePermissions } from '@/hooks/usePermission'
 
 interface DeleteLocationModalProps {
   isOpen: boolean
@@ -11,6 +12,7 @@ interface DeleteLocationModalProps {
 
 export default function DeleteLocationModal({ isOpen, onClose, location }: DeleteLocationModalProps) {
   const [deleteLocation, { isLoading }] = useDeleteLocationMutation()
+  const { permissions } = usePermissions(['locations.manage'])
   const [confirmed, setConfirmed] = useState(false)
 
   const hasChildren = location.children && location.children.length > 0
@@ -32,6 +34,10 @@ export default function DeleteLocationModal({ isOpen, onClose, location }: Delet
   }
 
   if (!isOpen) return null
+
+  if (!permissions['locations.manage']) {
+    return null
+  }
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">

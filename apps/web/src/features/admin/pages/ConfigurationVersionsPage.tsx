@@ -12,6 +12,7 @@ import {
   XCircleIcon
 } from '@heroicons/react/24/outline'
 import toast from 'react-hot-toast'
+import { usePermissions } from '@/hooks/usePermission'
 
 interface Version {
   id: string
@@ -35,6 +36,9 @@ export default function ConfigurationVersionsPage() {
   const [compareResult, setCompareResult] = useState<any>(null)
   const [description, setDescription] = useState('')
   const [rollbackReason, setRollbackReason] = useState('')
+  const { permissions } = usePermissions(['config.read', 'config.manage'])
+  const canRead = permissions['config.read'] || permissions['config.manage']
+  const canManage = permissions['config.manage']
 
   const loadVersions = async () => {
     setLoading(true)
@@ -50,6 +54,7 @@ export default function ConfigurationVersionsPage() {
   }
 
   const createSnapshot = async () => {
+    if (!canManage) return
     if (!description.trim()) {
       toast.error('Description requise')
       return
@@ -80,6 +85,7 @@ export default function ConfigurationVersionsPage() {
   }
 
   const rollbackToVersion = async () => {
+    if (!canManage) return
     if (!selectedVersion || !rollbackReason.trim()) {
       toast.error('Veuillez entrer une raison pour le rollback')
       return
@@ -112,6 +118,7 @@ export default function ConfigurationVersionsPage() {
   }
 
   const compareVersions = async () => {
+    if (!canRead) return
     if (!selectedVersion || !versionToCompare) {
       toast.error('Veuillez sélectionner deux versions')
       return
@@ -136,6 +143,8 @@ export default function ConfigurationVersionsPage() {
   useEffect(() => {
     loadVersions()
   }, [])
+
+  if (!canRead) return null
 
   return (
     <Layout>

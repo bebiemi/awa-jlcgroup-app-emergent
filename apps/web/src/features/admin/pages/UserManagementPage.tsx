@@ -46,6 +46,9 @@ import { UserRoles, RoleLabels, RoleColors } from '@/constants/iamConstants'
 import { ArrowPathIcon, ArchiveBoxIcon } from '@heroicons/react/24/outline'
 import NewBadge from '@/components/NewBadge'
 import { useListProfilesQuery, useListGroupsQuery } from '@/features/iam/api/iamApi'
+import { usePermissions } from '@/hooks/usePermission'
+import { useMemo } from 'react'
+import Card from '@/components/Card'
 
 export default function UserManagementPage() {
   const [page, setPage] = useState(1)
@@ -64,6 +67,7 @@ export default function UserManagementPage() {
   const [roleFilter, setRoleFilter] = useState<string>('')
   const [showFilters, setShowFilters] = useState(false)
   const [viewMode, setViewMode] = useState<'active' | 'archived'>('active')
+  const [onlySuperAdmin, setOnlySuperAdmin] = useState(false)
   
   // Sorting states
   const [sortBy, setSortBy] = useState<'username' | 'email' | 'roles' | 'status' | 'created_at'>('username')
@@ -86,6 +90,22 @@ export default function UserManagementPage() {
   const [showRestoreModal, setShowRestoreModal] = useState(false)
   const [showBulkImportModal, setShowBulkImportModal] = useState(false)
   const [showPasswordModal, setShowPasswordModal] = useState(false)
+  const { permissions } = usePermissions([
+    'users.read',
+    'users.manage',
+    'users.manage_status',
+    'users.delete',
+    'users.import',
+    'users.create',
+    'users.reset_mfa',
+    'users.reset_password',
+  ])
+  const canRead = permissions['users.read'] || permissions['users.manage']
+  const canManageStatus = permissions['users.manage_status'] || permissions['users.manage']
+  const canDelete = permissions['users.delete'] || permissions['users.manage']
+  const canImport = permissions['users.import'] || permissions['users.create']
+  const canResetMfa = permissions['users.reset_mfa'] || permissions['users.manage']
+  const canResetPassword = permissions['users.reset_password'] || permissions['users.manage']
 
   // Fetch users with filters
   const { data, isLoading, isFetching, refetch } = useGetUsersQuery({
@@ -93,7 +113,7 @@ export default function UserManagementPage() {
     page_size: 15,
     search: debouncedSearchQuery || undefined,
     status: viewMode === 'archived' ? 'archived' : (statusFilter || undefined),
-    role: roleFilter || undefined,
+    role: onlySuperAdmin ? 'super_admin' : (roleFilter || undefined),
     sort_by: sortBy,
     sort_order: sortOrder,
   })
@@ -101,6 +121,38 @@ export default function UserManagementPage() {
   // Fetch profiles and groups for mapping
   const { data: profiles = [] } = useListProfilesQuery()
   const { data: groups = [] } = useListGroupsQuery()
+
+  // Options dynamiques basées sur les données chargées
+  const availableStatuses = useMemo(() => {
+    const base = ['active', 'pending', 'suspended', 'archived', 'deleted']
+    const dynamic = new Set<string>(base)
+    data?.users.forEach((u: User) => dynamic.add(u.status))
+    return Array.from(dynamic)
+  }, [data])
+
+  const availableRoles = useMemo(() => {
+    const base = [
+      UserRoles.ADMIN,
+      UserRoles.SUPER_ADMIN,
+      UserRoles.CANDIDAT,
+      UserRoles.INTERIM,
+      UserRoles.COMPANY,
+      UserRoles.COLLABORATEUR,
+    ]
+    const dynamic = new Set<string>(base)
+    data?.users.forEach((u: User) => (u.roles || []).forEach((r) => dynamic.add(r)))
+    return Array.from(dynamic)
+  }, [data])
+
+  // Réinitialiser les filtres si plus disponibles
+  useEffect(() => {
+    if (statusFilter && !availableStatuses.includes(statusFilter)) {
+      setStatusFilter('')
+    }
+    if (roleFilter && !availableRoles.includes(roleFilter)) {
+      setRoleFilter('')
+    }
+  }, [availableStatuses, availableRoles, roleFilter, statusFilter])
 
   // Create maps for quick lookup
   const profilesMap = profiles.reduce((acc, profile) => {
@@ -137,6 +189,7 @@ export default function UserManagementPage() {
 
   // Manual email verification toggle
   const handleToggleEmailVerification = async (user: User) => {
+    if (!canManageStatus) return
     const newStatus = !user.is_verified
     const action = newStatus ? 'vérifier' : 'dévérifier'
     
@@ -178,7 +231,9 @@ export default function UserManagementPage() {
   }
 
   const handleViewDetails = async (user: User) => {
+    if (!canRead) return
     setSelectedUserId(user.id)
+    setSelectedUser(user)
     setShowDetailModal(true)
     
     // Mark user as viewed to remove "New" badge
@@ -190,11 +245,13 @@ export default function UserManagementPage() {
   }
 
   const handleEdit = (user: User) => {
+    if (!canRead) return
     setSelectedUser(user)
     setShowEditModal(true)
   }
 
   const handleDelete = (user: User) => {
+    if (!canDelete) return
     setSelectedUser(user)
     setShowDeleteModal(true)
   }
@@ -238,6 +295,11 @@ export default function UserManagementPage() {
         return [...prev, userId]
       }
     })
+
+    const user = data?.users.find((u: User) => u.id === userId)
+    if (user) {
+      setSelectedUser(user)
+    }
   }
 
   // Reset selection when data changes
@@ -248,6 +310,7 @@ export default function UserManagementPage() {
 
   // Bulk operation handlers
   const handleBulkBlock = async () => {
+    if (!canManageStatus) return
     if (!confirm(`Êtes-vous sûr de vouloir bloquer ${selectedUserIds.length} utilisateur(s) ?`)) return
     
     try {
@@ -261,6 +324,7 @@ export default function UserManagementPage() {
   }
 
   const handleBulkUnblock = async () => {
+    if (!canManageStatus) return
     if (!confirm(`Êtes-vous sûr de vouloir débloquer ${selectedUserIds.length} utilisateur(s) ?`)) return
     
     try {
@@ -274,6 +338,7 @@ export default function UserManagementPage() {
   }
 
   const handleBulkArchive = async () => {
+    if (!canManageStatus) return
     if (!confirm(`Êtes-vous sûr de vouloir archiver ${selectedUserIds.length} utilisateur(s) ?`)) return
     
     try {
@@ -287,6 +352,7 @@ export default function UserManagementPage() {
   }
 
   const handleBulkDelete = async () => {
+    if (!canDelete) return
     if (!confirm(`⚠️ ATTENTION : Êtes-vous sûr de vouloir supprimer définitivement ${selectedUserIds.length} utilisateur(s) ?\n\nCette action est irréversible.`)) return
     
     try {
@@ -374,107 +440,232 @@ export default function UserManagementPage() {
     )
   }
 
+  const QuickActionsInline = ({ user }: { user: User | null }) => {
+    if (!user) return null
+    return (
+      <Card className="p-3 flex flex-wrap gap-2 items-center bg-white/70 backdrop-blur shadow-sm">
+        <span className="text-sm font-medium text-gray-800">
+          Actions rapides : <span className="text-gray-500">{user.full_name || user.username}</span>
+        </span>
+        <div className="flex flex-wrap gap-2">
+          <button
+            onClick={() => handleViewDetails(user)}
+            className="px-3 py-1.5 rounded-lg border border-gray-200 hover:bg-gray-50 text-sm flex items-center gap-2"
+          >
+            <EyeIcon className="h-4 w-4" />
+            Fiche
+          </button>
+          {canRead && (
+            <button
+              onClick={() => handleEdit(user)}
+              className="px-3 py-1.5 rounded-lg border border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-100 text-sm flex items-center gap-2"
+            >
+              <PencilIcon className="h-4 w-4" />
+              Modifier
+            </button>
+          )}
+          {canManageStatus && (
+            <>
+              <button
+                onClick={() => handleBlock(user)}
+                className="px-3 py-1.5 rounded-lg border border-amber-200 bg-amber-50 text-amber-700 hover:bg-amber-100 text-sm flex items-center gap-2"
+              >
+                <NoSymbolIcon className="h-4 w-4" />
+                Bloquer/Débloquer
+              </button>
+              <button
+                onClick={() => handleArchive(user)}
+                className="px-3 py-1.5 rounded-lg border border-orange-200 bg-orange-50 text-orange-700 hover:bg-orange-100 text-sm flex items-center gap-2"
+              >
+                <ArchiveBoxIcon className="h-4 w-4" />
+                Archiver
+              </button>
+            </>
+          )}
+          {canResetPassword && (
+            <button
+              onClick={() => {
+                setSelectedUser(user)
+                setShowPasswordModal(true)
+              }}
+              className="px-3 py-1.5 rounded-lg border border-gray-200 hover:bg-gray-50 text-sm flex items-center gap-2"
+            >
+              <KeyIcon className="h-4 w-4" />
+              MDP
+            </button>
+          )}
+          {canDelete && (
+            <button
+              onClick={() => handleDelete(user)}
+              className="px-3 py-1.5 rounded-lg border border-red-200 bg-red-50 text-red-700 hover:bg-red-100 text-sm flex items-center gap-2"
+            >
+              <TrashIcon className="h-4 w-4" />
+              Supprimer
+            </button>
+          )}
+        </div>
+      </Card>
+    )
+  }
+
   return (
     <Layout>
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">Gestion des Utilisateurs</h1>
-            <p className="mt-2 text-gray-600">
-              {data?.pagination.total || 0} utilisateur(s) {viewMode === 'archived' ? 'archivé(s)' : 'enregistré(s)'}
-            </p>
-            {/* Tabs */}
-            <div className="mt-4 flex gap-2">
-              <button
-                onClick={() => {
-                  setViewMode('active')
-                  setStatusFilter('')
-                  setPage(1)
-                }}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                  viewMode === 'active'
-                    ? 'bg-jlc-purple-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                Actifs
-              </button>
-              <button
-                onClick={() => {
-                  setViewMode('archived')
-                  setStatusFilter('')
-                  setPage(1)
-                }}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                  viewMode === 'archived'
-                    ? 'bg-orange-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                <ArchiveBoxIcon className="h-5 w-5 inline mr-2" />
-                Archives
-              </button>
-            </div>
-          </div>
-          <div className="flex gap-3">
-            <button
-              onClick={() => setShowBulkImportModal(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
-              title="Importer plusieurs utilisateurs via CSV"
-            >
-              <CloudArrowUpIcon className="h-5 w-5" />
-              Importer CSV
-            </button>
-            <button
-              onClick={() => setShowQuickAddModal(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-white border-2 border-jlc-purple-600 text-jlc-purple-600 rounded-lg hover:bg-jlc-purple-50 transition-colors"
-            >
-              <UserPlusIcon className="h-5 w-5" />
-              Ajout rapide
-            </button>
-            <Link
-              to="/admin/users/new"
-              className="flex items-center gap-2 px-4 py-2 bg-jlc-purple-600 text-white rounded-lg hover:bg-jlc-purple-700 transition-colors"
-            >
-              <PlusIcon className="h-5 w-5" />
-              Création détaillée
-            </Link>
-          </div>
+        <div className="space-y-1">
+          <h1 className="text-3xl font-bold text-gray-900">Gestion des Utilisateurs</h1>
+          <p className="text-gray-600">
+            {data?.pagination.total || 0} utilisateur(s) {viewMode === 'archived' ? 'archivé(s)' : 'enregistré(s)'}
+          </p>
         </div>
 
         {/* Search and Filters */}
         <Card>
           <form onSubmit={handleSearch} className="space-y-4">
-            <div className="flex gap-4">
-              <div className="flex-1 relative">
-                <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Rechercher par nom, email ou nom d'utilisateur..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-jlc-purple-500 focus:border-transparent"
-                />
+            <div className="flex flex-col md:flex-row gap-4">
+              <div className="flex-1">
+                <div className="relative">
+                  <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                  <input
+                    type="text"
+                    placeholder="Rechercher par nom, email ou nom d'utilisateur..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-jlc-purple-500 focus:border-transparent"
+                  />
+                </div>
               </div>
-              <button
-                type="button"
-                onClick={() => setShowFilters(!showFilters)}
-                className={`px-4 py-2 border rounded-lg flex items-center gap-2 transition-colors ${
-                  showFilters
-                    ? 'bg-jlc-purple-50 border-jlc-purple-300 text-jlc-purple-700'
-                    : 'border-gray-300 text-gray-700 hover:bg-gray-50'
-                }`}
-              >
-                <FunnelIcon className="h-5 w-5" />
-                Filtres
-              </button>
-              <button
-                type="submit"
-                className="px-6 py-2 bg-jlc-purple-600 text-white rounded-lg hover:bg-jlc-purple-700 transition-colors"
-              >
-                Rechercher
-              </button>
+
+              <div className="md:w-64">
+                <div className="relative">
+                  <MagnifyingGlassIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                  <select
+                    value={statusFilter}
+                    onChange={(e) => {
+                      setStatusFilter(e.target.value)
+                      setPage(1)
+                    }}
+                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-jlc-purple-500 focus:border-transparent appearance-none bg-white"
+                  >
+                    <option value="">Statut</option>
+                    {availableStatuses.map((st) => (
+                      <option key={st} value={st}>
+                        {st}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="md:w-64">
+                <div className="relative">
+                  <MagnifyingGlassIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                  <select
+                    value={roleFilter}
+                    onChange={(e) => {
+                      setRoleFilter(e.target.value)
+                      setPage(1)
+                    }}
+                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-jlc-purple-500 focus:border-transparent appearance-none bg-white"
+                  >
+                    <option value="">Rôle</option>
+                    {availableRoles.map((role) => (
+                      <option key={role} value={role}>
+                        {RoleLabels[role] || role}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => {
+                    setViewMode('active')
+                    setStatusFilter('')
+                    setPage(1)
+                  }}
+                  type="button"
+                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    viewMode === 'active'
+                      ? 'bg-jlc-purple-600 text-white'
+                      : 'bg-white border border-gray-200 text-gray-700 hover:bg-gray-50'
+                  }`}
+                >
+                  Tous
+                </button>
+                <button
+                  onClick={() => {
+                    setViewMode('archived')
+                    setStatusFilter('')
+                    setPage(1)
+                  }}
+                  type="button"
+                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    viewMode === 'archived'
+                      ? 'bg-jlc-purple-600 text-white'
+                      : 'bg-white border border-gray-200 text-gray-700 hover:bg-gray-50'
+                  }`}
+                >
+                  Archivés
+                </button>
+                <button
+                  onClick={handleSuperAdminToggle}
+                  type="button"
+                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    onlySuperAdmin
+                      ? 'bg-jlc-purple-600 text-white'
+                      : 'bg-white border border-gray-200 text-gray-700 hover:bg-gray-50'
+                  }`}
+                  title="Filtrer uniquement les Super Admin"
+                >
+                  Super Admins
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowFilters(!showFilters)}
+                  className={`px-4 py-2 border rounded-lg flex items-center gap-2 transition-colors ${
+                    showFilters
+                      ? 'bg-jlc-purple-50 border-jlc-purple-300 text-jlc-purple-700'
+                      : 'border-gray-300 text-gray-700 hover:bg-gray-50'
+                  }`}
+                >
+                  <FunnelIcon className="h-5 w-5" />
+                  Filtres
+                </button>
+                <button
+                  onClick={() => setShowBulkImportModal(true)}
+                  className="inline-flex items-center justify-center h-11 w-11 bg-green-600 text-white rounded-full hover:bg-green-700 transition-colors shadow-md shrink-0"
+                  title="Importer plusieurs utilisateurs via CSV"
+                  aria-label="Importer des utilisateurs"
+                  type="button"
+                >
+                  <CloudArrowUpIcon className="h-5 w-5" />
+                </button>
+                <button
+                  onClick={() => setShowQuickAddModal(true)}
+                  className="inline-flex items-center justify-center h-11 w-11 bg-white border-2 border-jlc-purple-600 text-jlc-purple-600 rounded-full hover:bg-jlc-purple-50 transition-colors shadow-md shrink-0"
+                  title="Ajout rapide"
+                  aria-label="Ajout rapide"
+                  type="button"
+                >
+                  <UserPlusIcon className="h-5 w-5" />
+                </button>
+                <Link
+                  to="/admin/users/new"
+                  className="inline-flex items-center justify-center h-11 w-11 bg-jlc-purple-600 text-white rounded-full hover:bg-jlc-purple-700 transition-colors shadow-md shrink-0"
+                  title="Création détaillée"
+                  aria-label="Créer un utilisateur"
+                >
+                  <PlusIcon className="h-5 w-5" />
+                </Link>
+                <button
+                  type="submit"
+                  className="px-5 py-2 bg-jlc-purple-600 text-white rounded-lg hover:bg-jlc-purple-700 transition-colors"
+                >
+                  Rechercher
+                </button>
+              </div>
             </div>
 
             {/* Advanced Filters */}
@@ -490,14 +681,14 @@ export default function UserManagementPage() {
                       setStatusFilter(e.target.value)
                       setPage(1)
                     }}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-jlc-purple-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-jlc-purple-500 focus:border-transparent text-gray-900"
                   >
                     <option value="">Tous les statuts</option>
-                    <option value="active">Actif</option>
-                    <option value="pending">En attente</option>
-                    <option value="suspended">Suspendu</option>
-                    <option value="archived">Archivé</option>
-                    <option value="deleted">Supprimé</option>
+                    {availableStatuses.map((st) => (
+                      <option key={st} value={st} className="text-gray-900">
+                        {st}
+                      </option>
+                    ))}
                   </select>
                 </div>
                 <div>
@@ -508,21 +699,116 @@ export default function UserManagementPage() {
                       setRoleFilter(e.target.value)
                       setPage(1)
                     }}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-jlc-purple-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-jlc-purple-500 focus:border-transparent text-gray-900"
                   >
                     <option value="">Tous les rôles</option>
-                    <option value={UserRoles.ADMIN}>Administrateur</option>
-                    <option value={UserRoles.SUPER_ADMIN}>Super Admin</option>
-                    <option value={UserRoles.CANDIDAT}>Candidat</option>
-                    <option value={UserRoles.INTERIM}>Intérimaire</option>
-                    <option value={UserRoles.COMPANY}>Entreprise</option>
-                    <option value={UserRoles.COLLABORATEUR}>Collaborateur</option>
+                    {availableRoles.map((role) => (
+                      <option key={role} value={role} className="text-gray-900">
+                        {RoleLabels[role] || role}
+                      </option>
+                    ))}
                   </select>
                 </div>
               </div>
             )}
           </form>
         </Card>
+
+        {/* Actions contextuelles */}
+        <Card className="sticky top-20 space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900">Actions rapides</h3>
+              <p className="text-sm text-gray-500">
+                Sélectionnez un utilisateur pour afficher les actions disponibles.
+              </p>
+            </div>
+            {selectedUser && (
+              <span className="inline-flex items-center px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-full">
+                {selectedUser.username}
+              </span>
+            )}
+          </div>
+
+          {!selectedUser ? (
+            <div className="text-sm text-gray-500 bg-gray-50 border border-dashed border-gray-200 rounded-lg p-4">
+              Aucun utilisateur sélectionné.
+            </div>
+          ) : (
+            <div className="space-y-3">
+              <div className="p-3 rounded-lg bg-gray-50 border border-gray-200">
+                <p className="text-sm font-semibold text-gray-800">{selectedUser.full_name || selectedUser.username}</p>
+                <p className="text-xs text-gray-500">{selectedUser.email}</p>
+                <div className="mt-2 flex flex-wrap gap-1">
+                  {selectedUser.roles?.map((role) => (
+                    <span key={role} className="text-[11px] px-2 py-0.5 rounded-full bg-purple-100 text-purple-700">
+                      {RoleLabels[role] || role}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 gap-2">
+                <button
+                  onClick={() => handleViewDetails(selectedUser)}
+                  className="w-full px-3 py-2 rounded-lg border border-gray-200 hover:bg-gray-50 text-sm flex items-center justify-between"
+                >
+                  Voir la fiche
+                  <EyeIcon className="h-4 w-4" />
+                </button>
+                {canRead && (
+                  <button
+                    onClick={() => handleEdit(selectedUser)}
+                    className="w-full px-3 py-2 rounded-lg border border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-100 text-sm flex items-center justify-between"
+                  >
+                    Modifier
+                    <PencilIcon className="h-4 w-4" />
+                  </button>
+                )}
+                {canManageStatus && (
+                  <>
+                    <button
+                      onClick={() => handleBlock(selectedUser)}
+                      className="w-full px-3 py-2 rounded-lg border border-amber-200 bg-amber-50 text-amber-700 hover:bg-amber-100 text-sm flex items-center justify-between"
+                    >
+                      Bloquer / Débloquer
+                      <NoSymbolIcon className="h-4 w-4" />
+                    </button>
+                    <button
+                      onClick={() => handleArchive(selectedUser)}
+                      className="w-full px-3 py-2 rounded-lg border border-orange-200 bg-orange-50 text-orange-700 hover:bg-orange-100 text-sm flex items-center justify-between"
+                    >
+                      Archiver
+                      <ArchiveBoxIcon className="h-4 w-4" />
+                    </button>
+                  </>
+                )}
+                {canResetPassword && (
+                  <button
+                    onClick={() => {
+                      setSelectedUser(selectedUser)
+                      setShowPasswordModal(true)
+                    }}
+                    className="w-full px-3 py-2 rounded-lg border border-gray-200 hover:bg-gray-50 text-sm flex items-center justify-between"
+                  >
+                    Réinitialiser le mot de passe
+                    <KeyIcon className="h-4 w-4" />
+                  </button>
+                )}
+                {canDelete && (
+                  <button
+                    onClick={() => handleDelete(selectedUser)}
+                    className="w-full px-3 py-2 rounded-lg border border-red-200 bg-red-50 text-red-700 hover:bg-red-100 text-sm flex items-center justify-between"
+                  >
+                    Supprimer
+                    <TrashIcon className="h-4 w-4" />
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
+        </Card>
+        </div>
 
         {/* Bulk Actions Bar */}
         {selectedUserIds.length > 0 && (
@@ -532,41 +818,49 @@ export default function UserManagementPage() {
                 {selectedUserIds.length} utilisateur(s) sélectionné(s)
               </span>
               <div className="flex items-center gap-2">
-                <button
-                  onClick={handleBulkBlock}
-                  className="px-4 py-2 bg-white text-jlc-purple-600 rounded hover:bg-gray-100 transition-colors text-sm font-medium"
-                  title="Bloquer les utilisateurs sélectionnés"
-                >
-                  Bloquer
-                </button>
-                <button
-                  onClick={handleBulkUnblock}
-                  className="px-4 py-2 bg-white text-jlc-purple-600 rounded hover:bg-gray-100 transition-colors text-sm font-medium"
-                  title="Débloquer les utilisateurs sélectionnés"
-                >
-                  Débloquer
-                </button>
-                <button
-                  onClick={handleBulkArchive}
-                  className="px-4 py-2 bg-white text-jlc-purple-600 rounded hover:bg-gray-100 transition-colors text-sm font-medium"
-                  title="Archiver les utilisateurs sélectionnés"
-                >
-                  Archiver
-                </button>
-                <button
-                  onClick={handleBulkDelete}
-                  className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors text-sm font-medium"
-                  title="Supprimer les utilisateurs sélectionnés"
-                >
-                  Supprimer
-                </button>
-                <button
-                  onClick={handleExportCSV}
-                  className="px-4 py-2 bg-white text-jlc-purple-600 rounded hover:bg-gray-100 transition-colors text-sm font-medium"
-                  title="Exporter en CSV"
-                >
-                  Exporter CSV
-                </button>
+                {canManageStatus && (
+                  <>
+                    <button
+                      onClick={handleBulkBlock}
+                      className="px-4 py-2 bg-white text-jlc-purple-600 rounded hover:bg-gray-100 transition-colors text-sm font-medium"
+                      title="Bloquer les utilisateurs sélectionnés"
+                    >
+                      Bloquer
+                    </button>
+                    <button
+                      onClick={handleBulkUnblock}
+                      className="px-4 py-2 bg-white text-jlc-purple-600 rounded hover:bg-gray-100 transition-colors text-sm font-medium"
+                      title="Débloquer les utilisateurs sélectionnés"
+                    >
+                      Débloquer
+                    </button>
+                    <button
+                      onClick={handleBulkArchive}
+                      className="px-4 py-2 bg-white text-jlc-purple-600 rounded hover:bg-gray-100 transition-colors text-sm font-medium"
+                      title="Archiver les utilisateurs sélectionnés"
+                    >
+                      Archiver
+                    </button>
+                  </>
+                )}
+                {canDelete && (
+                  <button
+                    onClick={handleBulkDelete}
+                    className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors text-sm font-medium"
+                    title="Supprimer les utilisateurs sélectionnés"
+                  >
+                    Supprimer
+                  </button>
+                )}
+                {canImport && (
+                  <button
+                    onClick={handleExportCSV}
+                    className="px-4 py-2 bg-white text-jlc-purple-600 rounded hover:bg-gray-100 transition-colors text-sm font-medium"
+                    title="Exporter en CSV"
+                  >
+                    Exporter CSV
+                  </button>
+                )}
                 <button
                   onClick={() => {
                     setSelectedUserIds([])
@@ -581,6 +875,9 @@ export default function UserManagementPage() {
           </div>
         )}
 
+        <QuickActionsInline user={selectedUser} />
+
+        <div className="grid gap-6 xl:grid-cols-[1fr_320px] items-start">
         {/* Users Table */}
         <Card>
           {isLoading ? (
@@ -1032,14 +1329,16 @@ export default function UserManagementPage() {
               setSelectedUser(null)
             }}
           />
-          <ResetMfaModal
-            user={selectedUser}
-            isOpen={showResetMfaModal}
-            onClose={() => {
-              setShowResetMfaModal(false)
-              setSelectedUser(null)
-            }}
-          />
+          {canResetMfa && (
+            <ResetMfaModal
+              user={selectedUser}
+              isOpen={showResetMfaModal}
+              onClose={() => {
+                setShowResetMfaModal(false)
+                setSelectedUser(null)
+              }}
+            />
+          )}
           <ArchiveUserModal
             user={selectedUser}
             isOpen={showArchiveModal}
@@ -1058,24 +1357,28 @@ export default function UserManagementPage() {
             }}
             onSuccess={handleModalSuccess}
           />
-          <AdminUpdatePasswordModal
-            isOpen={showPasswordModal}
-            onClose={() => {
-              setShowPasswordModal(false)
-              setSelectedUser(null)
-            }}
-            userId={selectedUser.id}
-            username={selectedUser.username}
-            onSuccess={handleModalSuccess}
-          />
+          {canResetPassword && selectedUser?.id && (
+            <AdminUpdatePasswordModal
+              isOpen={showPasswordModal}
+              onClose={() => {
+                setShowPasswordModal(false)
+                setSelectedUser(null)
+              }}
+              userId={selectedUser.id}
+              username={selectedUser.username}
+              onSuccess={handleModalSuccess}
+            />
+          )}
         </>
       )}
       <QuickAddUserModal isOpen={showQuickAddModal} onClose={() => setShowQuickAddModal(false)} />
-      <BulkImportUsersModal 
-        isOpen={showBulkImportModal} 
-        onClose={() => setShowBulkImportModal(false)}
-        onSuccess={handleModalSuccess}
-      />
+      {canImport && (
+        <BulkImportUsersModal 
+          isOpen={showBulkImportModal} 
+          onClose={() => setShowBulkImportModal(false)}
+          onSuccess={handleModalSuccess}
+        />
+      )}
     </Layout>
   )
 }

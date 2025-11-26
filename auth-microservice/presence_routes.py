@@ -16,6 +16,7 @@ from awana_auth.core.models import (
     PresenceStatus
 )
 from awana_auth.core.dependencies import get_current_user, get_database
+from awana_auth.dependencies.permission_dependencies import require_permission
 
 logger = logging.getLogger(__name__)
 
@@ -132,7 +133,7 @@ async def update_activity(
 
 @router.get("/online", response_model=OnlineUsersResponse)
 async def get_online_users(
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_permission("presence.read")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """
@@ -193,7 +194,7 @@ async def get_online_users(
 @router.get("/{user_id}", response_model=UserPresenceResponse)
 async def get_user_presence(
     user_id: str,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_permission("presence.read")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """

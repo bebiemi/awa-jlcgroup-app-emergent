@@ -17,6 +17,7 @@ import {
   useRejectAttachmentMutation 
 } from '../api/validationApi'
 import toast from 'react-hot-toast'
+import { usePermissions } from '@/hooks/usePermission'
 
 interface RepresentantEntreprise {
   id: string
@@ -47,6 +48,7 @@ export default function AttachToExistingModal({
   
   const [attachToExisting, { isLoading: isAttaching }] = useAttachToExistingRepresentantMutation()
   const [rejectAttachment, { isLoading: isRejecting }] = useRejectAttachmentMutation()
+  const { permissions } = usePermissions(['validations.manage'])
 
   const handleAttach = async () => {
     if (!validation) return
@@ -108,6 +110,10 @@ export default function AttachToExistingModal({
   }
 
   if (!validation) return null
+
+  if (!permissions['validations.manage']) {
+    return null
+  }
 
   return (
     <Modal isOpen={isOpen} onClose={handleClose}>

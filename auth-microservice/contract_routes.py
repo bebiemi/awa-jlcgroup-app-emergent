@@ -3,8 +3,10 @@ Routes pour la gestion des contrats
 """
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from motor.motor_asyncio import AsyncIOMotorDatabase, AsyncIOMotorClient
-from awana_auth.core.dependencies import get_current_user
+from awana_auth.core.dependencies import get_current_user, get_iam_service
 from awana_auth.core.models import User
+from awana_auth.dependencies.permission_dependencies import require_permission
+from awana_auth.services.iam_service import IAMService
 from datetime import datetime, timezone, timedelta
 from typing import Optional, List
 import logging
@@ -38,19 +40,23 @@ def get_jlc_database() -> AsyncIOMotorDatabase:
 async def get_my_contracts(
     status_filter: Optional[str] = Query(None, description="Filtrer par statut (active, completed, cancelled)"),
     include_ended: bool = Query(False, description="Inclure les contrats terminés"),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_permission("contracts.read")),
+    iam_service: IAMService = Depends(get_iam_service),
     db: AsyncIOMotorDatabase = Depends(get_jlc_database)
 ):
     """
     Récupérer les contrats de l'utilisateur connecté (intérimaire)
     Retourne les contrats associés aux applications acceptées
     """
-    # Vérifier que l'utilisateur est un intérimaire
-    if "interim" not in current_user.roles:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Accès réservé aux intérimaires"
-        )
+    # Vérifier que l'utilisateur est un intérimaire ou dispose du scope read.all
+    normalized_roles = [r.lower() for r in current_user.roles]
+    if "interim" not in normalized_roles:
+        has_all = await iam_service.user_has_permission(current_user.id, "contracts.read.all")
+        if not has_all.has_permission:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Accès réservé aux intérimaires ou aux utilisateurs autorisés"
+            )
     
     # Récupérer le profil de l'utilisateur
     profile = await db.interim_profiles.find_one({"user_id": current_user.id})
@@ -166,18 +172,22 @@ async def get_my_contracts(
 
 @router.get("/active")
 async def get_active_contract(
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_permission("contracts.read")),
+    iam_service: IAMService = Depends(get_iam_service),
     db: AsyncIOMotorDatabase = Depends(get_jlc_database)
 ):
     """
     Récupérer le contrat actif de l'utilisateur (s'il existe)
     """
-    # Vérifier que l'utilisateur est un intérimaire
-    if "interim" not in current_user.roles:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Accès réservé aux intérimaires"
-        )
+    # Vérifier que l'utilisateur est un intérimaire ou dispose du scope read.all
+    normalized_roles = [r.lower() for r in current_user.roles]
+    if "interim" not in normalized_roles:
+        has_all = await iam_service.user_has_permission(current_user.id, "contracts.read.all")
+        if not has_all.has_permission:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Accès réservé aux intérimaires ou aux utilisateurs autorisés"
+            )
     
     # Récupérer le profil de l'utilisateur
     profile = await db.interim_profiles.find_one({"user_id": current_user.id})
@@ -258,23 +268,30 @@ async def get_active_contract(
 @router.get("/{contract_id}")
 async def get_contract_details(
     contract_id: str,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_permission("contracts.read")),
+    iam_service: IAMService = Depends(get_iam_service),
     db: AsyncIOMotorDatabase = Depends(get_jlc_database)
 ):
     """
     Récupérer les détails d'un contrat spécifique
     """
-    # Récupérer l'application
-    application = await db.mission_applications.find_one({
-        "id": contract_id,
-        "interim_id": current_user.id
-    })
+    # Récupérer l'application (propriétaire ou accessible via scope all)
+    query = {"id": contract_id}
+    application = await db.mission_applications.find_one(query)
     
     if not application:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Contrat non trouvé"
         )
+    
+    if application["interim_id"] != current_user.id:
+        has_all = await iam_service.user_has_permission(current_user.id, "contracts.read.all")
+        if not has_all.has_permission:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Contrat non autorisé"
+            )
     
     # Récupérer la mission
     mission = await db.missions.find_one({"id": application["mission_id"]})

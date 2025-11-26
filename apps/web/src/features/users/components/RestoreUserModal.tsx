@@ -3,6 +3,7 @@ import { Dialog, Transition } from '@headlessui/react'
 import { ArrowPathIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { useRestoreUserMutation } from '@/features/users/api/userDetailsApi'
 import { toast } from 'react-hot-toast'
+import { usePermissions } from '@/hooks/usePermission'
 
 interface RestoreUserModalProps {
   isOpen: boolean
@@ -25,6 +26,7 @@ export default function RestoreUserModal({
 }: RestoreUserModalProps) {
   const [reason, setReason] = useState('')
   const [restoreUser, { isLoading }] = useRestoreUserMutation()
+  const { permissions } = usePermissions(['users.manage_status', 'users.manage'])
 
   const handleRestore = async () => {
     if (!user) return
@@ -54,6 +56,11 @@ export default function RestoreUserModal({
   }
 
   const daysRemaining = getDaysRemaining()
+
+  const canRestore = permissions['users.manage_status'] || permissions['users.manage']
+  if (!canRestore) {
+    return null
+  }
 
   return (
     <Transition appear show={isOpen} as={Fragment}>

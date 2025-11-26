@@ -16,11 +16,15 @@ export default function BesoinsPage() {
 
   /** 👉 Permissions */
   const { permissions: userPermissions } = usePermissions([
-    "besoins.read.all",
-    "besoins.create",
-    "besoins.edit",
-    "besoins.delete",
-    "besoins.validate",
+    'besoins.read.all',
+    'besoins.read.own',
+    'besoins.create.own',
+    'besoins.create.all',
+    'besoins.edit.all',
+    'besoins.edit.own',
+    'besoins.delete.all',
+    'besoins.delete.own',
+    'besoins.validate.all',
   ])
 
   /** 👉 Local UI state (recherche + filtre + pagination) */
@@ -139,7 +143,7 @@ export default function BesoinsPage() {
       create: {
         label: "Créer un besoin",
         onClick: actions.create,
-        permission: "besoins.create",
+        permission: ['besoins.create.all', 'besoins.create.own'],
       },
 
       row: [
@@ -152,27 +156,27 @@ export default function BesoinsPage() {
           key: "edit",
           label: "Modifier",
           onClick: actions.edit,
-          permission: "besoins.edit",
+          permission: ['besoins.edit.all', 'besoins.edit.own'],
         },
         {
           key: "validate",
           label: "Valider",
           show: (b: Besoin) => b.status === "soumis",
           onClick: actions.validate,
-          permission: "besoins.validate",
+          permission: 'besoins.validate.all',
         },
         {
           key: "reject",
           label: "Rejeter",
           show: (b: Besoin) => b.status === "soumis",
           onClick: actions.reject,
-          permission: "besoins.validate",
+          permission: 'besoins.validate.all',
         },
         {
           key: "delete",
           label: "Supprimer",
           onClick: actions.delete,
-          permission: "besoins.delete",
+          permission: ['besoins.delete.all', 'besoins.delete.own'],
         },
       ],
     },

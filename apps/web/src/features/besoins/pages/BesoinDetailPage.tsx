@@ -18,6 +18,7 @@ import { useGetWorkflowConfigQuery } from '../api/configApi'
 import { toast } from 'react-hot-toast'
 import CommentThread from '../components/CommentThread'
 import StatusTimeline from '../components/StatusTimeline'
+import { usePermissions } from '@/hooks/usePermission'
 
 export default function BesoinDetailPage() {
   const { id } = useParams<{ id: string }>()
@@ -27,6 +28,13 @@ export default function BesoinDetailPage() {
   const { data: besoin, isLoading } = useGetBesoinQuery(id!)
   const { data: workflowConfig } = useGetWorkflowConfigQuery('besoin')
   const [submitBesoin, { isLoading: submitting }] = useSubmitBesoinMutation()
+  const { permissions } = usePermissions([
+    'besoins.read.own',
+    'besoins.read.all',
+    'besoins.edit.own',
+    'besoins.edit.all',
+    'besoins.submit.own',
+  ])
 
   const handleSubmit = async () => {
     if (!besoin) return
@@ -82,7 +90,11 @@ export default function BesoinDetailPage() {
 
   const statusConfig = getStatusConfig()
   const isDraft = besoin.status === 'brouillon'
-  const canEdit = isDraft
+  const canEdit =
+    isDraft &&
+    (permissions['besoins.edit.own'] || permissions['besoins.edit.all'])
+  const canSubmit =
+    permissions['besoins.submit.own'] || permissions['besoins.edit.all']
 
   return (
     <Layout>
@@ -124,7 +136,7 @@ export default function BesoinDetailPage() {
                 Modifier
               </button>
             )}
-            {isDraft && (
+            {isDraft && canSubmit && (
               <button
                 onClick={handleSubmit}
                 disabled={submitting}

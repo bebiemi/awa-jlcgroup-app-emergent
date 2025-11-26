@@ -13,10 +13,13 @@ import { PlusIcon, ShieldCheckIcon, EyeIcon } from '@heroicons/react/24/outline'
 import CreateProfileModal from '../components/CreateProfileModal'
 import EditProfileModal from '../components/EditProfileModal'
 import ViewProfileDetailsModal from '../components/ViewProfileDetailsModal'
+import { useAppSelector } from '@/store/hooks'
 
 const ProfilesManagementPage: React.FC = () => {
   const { data: profiles, isLoading: profilesLoading } = useListProfilesQuery()
   const [deleteProfile] = useDeleteProfileMutation()
+  const { user } = useAppSelector((state) => state.auth)
+  const isAdminUser = user?.roles?.includes('admin') || user?.roles?.includes('super_admin')
 
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [showEditModal, setShowEditModal] = useState(false)
@@ -35,11 +38,19 @@ const ProfilesManagementPage: React.FC = () => {
   }
 
   const handleEditClick = (profile: Profile) => {
+    if (profile.is_system_role && !isAdminUser) {
+      toast.error('Seuls les administrateurs peuvent modifier un profil système.')
+      return
+    }
     setSelectedProfile(profile)
     setShowEditModal(true)
   }
 
   const handleDeleteClick = (profile: Profile) => {
+    if (profile.is_system_role || profile.is_protected) {
+      toast.error('Ce profil système est protégé et ne peut pas être supprimé.')
+      return
+    }
     setSelectedProfile(profile)
     setShowDeleteModal(true)
   }
@@ -94,6 +105,16 @@ const ProfilesManagementPage: React.FC = () => {
     if (filterCategory === 'all') return profiles
     return profiles.filter(p => p.category === filterCategory)
   }, [profiles, filterCategory])
+
+  const groupedProfiles = React.useMemo(() => {
+    const groups: Record<string, Profile[]> = {}
+    filteredProfiles.forEach((p) => {
+      const key = p.category || 'uncategorized'
+      if (!groups[key]) groups[key] = []
+      groups[key].push(p)
+    })
+    return groups
+  }, [filteredProfiles])
 
   // Statistics
   const stats = {
@@ -216,14 +237,14 @@ const ProfilesManagementPage: React.FC = () => {
           </div>
         </Card>
 
-        {/* Profiles Grid */}
-        <Card>
+        {/* Profiles regroupés par catégorie */}
+        <Card className="p-4 space-y-8">
           {filteredProfiles.length === 0 ? (
             <div className="text-center py-12">
               <div className="text-6xl mb-4">🎭</div>
               <h3 className="text-lg font-medium text-gray-900 mb-2">Aucun profil</h3>
               <p className="text-gray-500 mb-4">
-                {filterCategory === 'all' 
+                {filterCategory === 'all'
                   ? 'Créez votre premier profil pour définir les permissions.'
                   : `Aucun profil dans la catégorie "${categories.find(c => c.value === filterCategory)?.label}".`
                 }
@@ -239,89 +260,111 @@ const ProfilesManagementPage: React.FC = () => {
               )}
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {filteredProfiles.map((profile) => (
-                <div
-                  key={profile.id}
-                  className="bg-gradient-to-br from-white to-gray-50 rounded-lg p-6 hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer border border-gray-200"
-                  onClick={() => !profile.is_protected && handleEditClick(profile)}
-                >
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex items-center gap-3">
-                      <div 
-                        className="w-12 h-12 rounded-lg flex items-center justify-center text-white font-bold text-2xl shadow-md"
-                        style={{ backgroundColor: profile.color || '#6366F1' }}
-                      >
-                        {profile.icon === 'shield' ? '🛡️' : '⭐'}
-                      </div>
-                      <div>
-                        <h3 className="font-semibold text-gray-900">{profile.name}</h3>
-                        <p className="text-sm text-gray-500">{profile.code}</p>
-                      </div>
-                    </div>
-                    {profile.is_system_role && (
-                      <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
-                        Système
-                      </span>
-                    )}
-                  </div>
-
-                  <p className="text-sm text-gray-600 mb-4 line-clamp-2">
-                    {profile.description || 'Aucune description'}
-                  </p>
-
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-2">
-                      <ShieldCheckIcon className="h-4 w-4 text-gray-500" />
-                      <span className="text-sm text-gray-500">
-                        {profile.effective_permission_count ?? profile.permission_ids.length} permission(s)
-                      </span>
-                      {profile.bundle_permission_count && profile.bundle_permission_count > 0 && (
-                        <span className="text-xs text-gray-400">
-                          ({profile.bundle_permission_count} via bundles)
-                        </span>
-                      )}
-                    </div>
-                    <span className={`px-2 py-1 text-xs rounded-full ${
-                      profile.category === 'system' ? 'bg-purple-100 text-purple-800' :
-                      profile.category === 'department' ? 'bg-green-100 text-green-800' :
-                      'bg-gray-100 text-gray-800'
-                    }`}>
-                      {profile.category}
+            Object.entries(groupedProfiles).map(([categoryKey, items]) => (
+              <div key={categoryKey} className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="text-lg font-semibold text-gray-900">
+                      {categoryKey === 'system'
+                        ? 'Profils système'
+                        : categoryKey === 'department'
+                          ? 'Profils département'
+                          : categoryKey === 'custom'
+                            ? 'Profils personnalisés'
+                            : 'Autres'}
+                    </span>
+                    <span className="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded-full">
+                      {items.length} profil(s)
                     </span>
                   </div>
-
-                  <div className="space-y-2" onClick={(e) => e.stopPropagation()}>
-                    {/* Bouton Voir Détails - Pour tous les profils */}
-                    <button
-                      onClick={() => handleViewDetailsClick(profile)}
-                      className="w-full px-3 py-2 bg-purple-50 text-purple-600 rounded hover:bg-purple-100 transition-colors text-sm font-medium flex items-center justify-center gap-2"
-                    >
-                      <EyeIcon className="h-4 w-4" />
-                      Voir Détails & Permissions
-                    </button>
-                    
-                    {/* Boutons Modifier/Supprimer - Seulement pour profils non protégés */}
-                    {!profile.is_protected && (
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => handleEditClick(profile)}
-                          className="flex-1 px-3 py-2 bg-blue-50 text-blue-600 rounded hover:bg-blue-100 transition-colors text-sm font-medium"
-                        >
-                          Modifier
-                        </button>
-                        <button
-                          onClick={() => handleDeleteClick(profile)}
-                          className="flex-1 px-3 py-2 bg-red-50 text-red-600 rounded hover:bg-red-100 transition-colors text-sm font-medium"
-                        >
-                          Supprimer
-                        </button>
-                      </div>
-                    )}
-                  </div>
+                  {categoryKey !== 'system' && (
+                    <span className="text-xs text-gray-500">Catégorie personnalisée</span>
+                  )}
                 </div>
-              ))}
-            </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {items.map((profile) => (
+                    <div
+                      key={profile.id}
+                      className="bg-gradient-to-br from-white to-gray-50 rounded-lg p-6 hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer border border-gray-200"
+                      onClick={() => !profile.is_protected && handleEditClick(profile)}
+                    >
+                      <div className="flex items-start justify-between mb-4">
+                        <div className="flex items-center gap-3">
+                          <div
+                            className="w-12 h-12 rounded-lg flex items-center justify-center text-white font-bold text-2xl shadow-md"
+                            style={{ backgroundColor: profile.color || '#6366F1' }}
+                          >
+                            {profile.icon === 'shield' ? '🛡️' : '⭐'}
+                          </div>
+                          <div>
+                            <h3 className="font-semibold text-gray-900">{profile.name}</h3>
+                            <p className="text-sm text-gray-500">{profile.code}</p>
+                          </div>
+                        </div>
+                        {profile.is_system_role && (
+                          <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
+                            Système
+                          </span>
+                        )}
+                      </div>
+
+                      <p className="text-sm text-gray-600 mb-4 line-clamp-2">
+                        {profile.description || 'Aucune description'}
+                      </p>
+
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center gap-2">
+                          <ShieldCheckIcon className="h-4 w-4 text-gray-500" />
+                          <span className="text-sm text-gray-500">
+                            {profile.effective_permission_count ?? profile.permission_ids.length} permission(s)
+                          </span>
+                          {profile.bundle_permission_count && profile.bundle_permission_count > 0 && (
+                            <span className="text-xs text-gray-400">
+                              ({profile.bundle_permission_count} via bundles)
+                            </span>
+                          )}
+                        </div>
+                        <span className={`px-2 py-1 text-xs rounded-full ${
+                          profile.category === 'system' ? 'bg-purple-100 text-purple-800' :
+                          profile.category === 'department' ? 'bg-green-100 text-green-800' :
+                          'bg-gray-100 text-gray-800'
+                        }`}>
+                          {profile.category}
+                        </span>
+                      </div>
+
+                      <div className="space-y-2" onClick={(e) => e.stopPropagation()}>
+                        <button
+                          onClick={() => handleViewDetailsClick(profile)}
+                          className="w-full px-3 py-2 bg-purple-50 text-purple-600 rounded hover:bg-purple-100 transition-colors text-sm font-medium flex items-center justify-center gap-2"
+                        >
+                          <EyeIcon className="h-4 w-4" />
+                          Voir Détails & Permissions
+                        </button>
+                        
+                        {!profile.is_protected && (!profile.is_system_role || isAdminUser) && (
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => handleEditClick(profile)}
+                              className="flex-1 px-3 py-2 bg-blue-50 text-blue-600 rounded hover:bg-blue-100 transition-colors text-sm font-medium"
+                            >
+                              Modifier
+                            </button>
+                            <button
+                              onClick={() => handleDeleteClick(profile)}
+                              className="flex-1 px-3 py-2 bg-red-50 text-red-600 rounded hover:bg-red-100 transition-colors text-sm font-medium"
+                            >
+                              Supprimer
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))
           )}
         </Card>
       </div>

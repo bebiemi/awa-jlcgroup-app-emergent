@@ -118,7 +118,7 @@ async def delete_permission(
 
 @router.get("/profiles", response_model=List[Profile])
 async def list_profiles(
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_permission("iam.profiles.read")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """List all profiles with effective permission counts"""
@@ -169,7 +169,7 @@ async def list_profiles(
 @router.get("/profiles/{profile_id}", response_model=Profile)
 async def get_profile(
     profile_id: str,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_permission("iam.profiles.read")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """Get profile details"""
@@ -185,7 +185,7 @@ async def get_profile(
 @router.get("/profiles/{profile_id}/effective-permissions")
 async def get_profile_effective_permissions(
     profile_id: str,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_permission("iam.profiles.read")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """
@@ -450,7 +450,7 @@ async def delete_profile(
 
 @router.get("/groups", response_model=List[Group])
 async def list_groups(
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_permission("iam.groups.read")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """List all groups"""
@@ -467,7 +467,7 @@ async def list_groups(
 @router.get("/groups/{group_id}", response_model=Group)
 async def get_group(
     group_id: str,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_permission("iam.groups.read")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """Get group details with members"""
@@ -805,8 +805,10 @@ async def get_user_permissions(
     Supports both old format (permission_ids) and new format (permissions codes)
     """
     # Users can only see their own permissions unless admin or super_admin
-    is_admin = any(role in current_user.roles for role in ["admin", "super_admin"])
+    normalized_roles = [r.lower() for r in current_user.roles]
+    is_admin = any(role in normalized_roles for role in ["admin", "super_admin"])
     if user_id != current_user.id and not is_admin:
+        # Optionnel: autoriser via permission IAM dédiée
         raise HTTPException(status_code=403, detail="Not authorized")
     
     # Get user
@@ -891,7 +893,7 @@ async def get_user_permissions(
 @router.post("/check-permission", response_model=PermissionCheckResponse)
 async def check_permission(
     request: PermissionCheckRequest,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_any_permission(["iam.permissions.read", "admin.dashboard"])),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """Check if user has specific permission"""

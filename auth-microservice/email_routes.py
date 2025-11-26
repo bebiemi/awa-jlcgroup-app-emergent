@@ -163,18 +163,12 @@ async def send_test_rollback_notification(
 
 @router.get("/status")
 async def get_email_status(
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(require_permission("emails.read_status"))
 ):
     """
     Vérifier le statut du service email
-    Accessible aux admins et super-admins
+    Accessible via permission emails.read_status
     """
-    if "admin" not in current_user.roles and "super_admin" not in current_user.roles:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Accès refusé : admin requis"
-        )
-    
     email_service = get_email_service()
     
     return {

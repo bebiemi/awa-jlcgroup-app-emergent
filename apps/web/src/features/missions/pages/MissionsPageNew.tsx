@@ -74,11 +74,16 @@ export default function MissionsPageNew() {
   const [searchQuery, setSearchQuery] = useState('')
 
   const { permissions } = usePermissions([
-    'missions.create',
-    'missions.read',
-    'missions.edit',
-    'missions.delete',
-    'missions.publish',
+    'missions.create.all',
+    'missions.create.own',
+    'missions.read.all',
+    'missions.read.own',
+    'missions.edit.all',
+    'missions.edit.own',
+    'missions.delete.all',
+    'missions.delete.own',
+    'missions.publish.all',
+    'missions.manage.all',
   ])
 
   const { data: missions = [], isLoading, refetch } = useGetMissionsQuery({
@@ -98,6 +103,7 @@ export default function MissionsPageNew() {
   }
 
   const handlePublish = async (mission: Mission) => {
+    if (!(permissions['missions.publish.all'] || permissions['missions.manage.all'])) return
     try {
       await publishMission(mission.id).unwrap()
       toast.success('Mission publiée avec succès')
@@ -108,6 +114,7 @@ export default function MissionsPageNew() {
   }
 
   const handleCancel = async (mission: Mission) => {
+    if (!(permissions['missions.delete.all'] || permissions['missions.delete.own'] || permissions['missions.manage.all'])) return
     if (!window.confirm('Êtes-vous sûr de vouloir annuler cette mission ?')) return
     
     try {
@@ -228,7 +235,7 @@ export default function MissionsPageNew() {
       create: {
         label: 'Nouvelle Mission',
         onClick: handleCreateMission,
-        permission: 'missions.create',
+        permission: ['missions.create.all', 'missions.create.own'],
       },
       row: [
         {
@@ -237,7 +244,7 @@ export default function MissionsPageNew() {
           icon: EyeIcon,
           onClick: handleViewMission,
           variant: 'secondary',
-          permission: 'missions.read',
+          permission: ['missions.read.all', 'missions.read.own'],
         },
         {
           key: 'publish',
@@ -245,7 +252,7 @@ export default function MissionsPageNew() {
           icon: CheckCircleIcon,
           onClick: handlePublish,
           variant: 'primary',
-          permission: 'missions.publish',
+          permission: ['missions.publish.all', 'missions.manage.all'],
           show: (mission: Mission) => mission.status === 'draft',
         },
         {
@@ -254,7 +261,7 @@ export default function MissionsPageNew() {
           icon: XCircleIcon,
           onClick: handleCancel,
           variant: 'danger',
-          permission: 'missions.delete',
+          permission: ['missions.delete.all', 'missions.delete.own', 'missions.manage.all'],
           show: (mission: Mission) => !['completed', 'cancelled'].includes(mission.status),
         },
       ],

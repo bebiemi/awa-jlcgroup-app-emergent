@@ -76,7 +76,7 @@ export const securityApi = createApi({
       providesTags: ['Profiles'],
     }),
     getProfile: builder.query<Profile, string>({
-      query: (id) => `/profiles/${id}`,
+      query: (id) => `/auth/security/profiles/${id}`,
       providesTags: ['Profiles'],
     }),
     createProfile: builder.mutation<Profile, CreateProfileRequest>({
@@ -89,7 +89,7 @@ export const securityApi = createApi({
     }),
     updateProfile: builder.mutation<Profile, { id: string; data: CreateProfileRequest }>({
       query: ({ id, data }) => ({
-        url: `/profiles/${id}`,
+        url: `/auth/security/profiles/${id}`,
         method: 'PUT',
         body: data,
       }),
@@ -100,7 +100,7 @@ export const securityApi = createApi({
       { id: string; force?: boolean }
     >({
       query: ({ id, force = false }) => ({
-        url: `/profiles/${id}?force=${force}`,
+        url: `/auth/security/profiles/${id}?force=${force}`,
         method: 'DELETE',
       }),
       invalidatesTags: ['Profiles'],
@@ -112,7 +112,7 @@ export const securityApi = createApi({
       providesTags: ['Groups'],
     }),
     getGroup: builder.query<Group, string>({
-      query: (id) => `/groups/${id}`,
+      query: (id) => `/auth/security/groups/${id}`,
       providesTags: ['Groups'],
     }),
     createGroup: builder.mutation<Group, CreateGroupRequest>({
@@ -125,7 +125,7 @@ export const securityApi = createApi({
     }),
     updateGroup: builder.mutation<Group, { id: string; data: CreateGroupRequest }>({
       query: ({ id, data }) => ({
-        url: `/groups/${id}`,
+        url: `/auth/security/groups/${id}`,
         method: 'PUT',
         body: data,
       }),
@@ -133,21 +133,21 @@ export const securityApi = createApi({
     }),
     deleteGroup: builder.mutation<{ message: string }, string>({
       query: (id) => ({
-        url: `/groups/${id}`,
+        url: `/auth/security/groups/${id}`,
         method: 'DELETE',
       }),
       invalidatesTags: ['Groups'],
     }),
     addMemberToGroup: builder.mutation<{ message: string }, { groupId: string; userId: string }>({
       query: ({ groupId, userId }) => ({
-        url: `/groups/${groupId}/members/${userId}`,
+        url: `/auth/security/groups/${groupId}/members/${userId}`,
         method: 'POST',
       }),
       invalidatesTags: ['Groups'],
     }),
     removeMemberFromGroup: builder.mutation<{ message: string }, { groupId: string; userId: string }>({
       query: ({ groupId, userId }) => ({
-        url: `/groups/${groupId}/members/${userId}`,
+        url: `/auth/security/groups/${groupId}/members/${userId}`,
         method: 'DELETE',
       }),
       invalidatesTags: ['Groups'],

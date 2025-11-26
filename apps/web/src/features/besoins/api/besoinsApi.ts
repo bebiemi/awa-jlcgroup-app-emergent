@@ -113,7 +113,7 @@ export const besoinApi = createApi({
 
     // Get single besoin
     getBesoin: builder.query<Besoin, string>({
-      query: (id) => `/api/besoins/${id}`,
+      query: (id) => `/besoins/${id}`,
       providesTags: (result, error, id) => [{ type: 'Besoin', id }],
     }),
 
@@ -130,7 +130,7 @@ export const besoinApi = createApi({
     // Update besoin
     updateBesoin: builder.mutation<Besoin, { id: string; data: BesoinUpdate }>({
       query: ({ id, data }) => ({
-        url: `/api/besoins/${id}`,
+        url: `/besoins/${id}`,
         method: 'PATCH',
         body: data,
       }),
@@ -140,7 +140,7 @@ export const besoinApi = createApi({
     // Submit besoin
     submitBesoin: builder.mutation<Besoin, string>({
       query: (id) => ({
-        url: `/api/besoins/${id}/submit`,
+        url: `/besoins/${id}/submit`,
         method: 'POST',
       }),
       invalidatesTags: (result, error, id) => [{ type: 'Besoin', id }, 'Besoins'],
@@ -148,14 +148,14 @@ export const besoinApi = createApi({
 
     // Get comments
     getComments: builder.query<Comment[], string>({
-      query: (besoinId) => `/api/besoins/${besoinId}/comments`,
+      query: (besoinId) => `/besoins/${besoinId}/comments`,
       providesTags: (result, error, besoinId) => [{ type: 'Comments', id: besoinId }],
     }),
 
     // Add comment
     addComment: builder.mutation<Comment, { besoinId: string; data: CommentCreate }>({
       query: ({ besoinId, data }) => ({
-        url: `/api/besoins/${besoinId}/comments`,
+        url: `/besoins/${besoinId}/comments`,
         method: 'POST',
         body: data,
       }),
@@ -168,7 +168,7 @@ export const besoinApi = createApi({
     // Get audit trail
     getAuditTrail: builder.query<any, { besoinId: string; page?: number }>({
       query: ({ besoinId, page = 1 }) => ({
-        url: `/api/besoins/${besoinId}/audit`,
+        url: `/besoins/${besoinId}/audit`,
         params: { page },
       }),
     }),
@@ -176,7 +176,7 @@ export const besoinApi = createApi({
     // Validate besoin (for admin/commercial)
     validateBesoin: builder.mutation<Besoin, { id: string; approved: boolean; comment?: string }>({
       query: ({ id, approved, comment }) => ({
-        url: `/api/besoins/${id}/validate`,
+        url: `/besoins/${id}/validate`,
         method: 'POST',
         body: { approved, comment },
       }),
@@ -186,7 +186,7 @@ export const besoinApi = createApi({
     // Delete besoin
     deleteBesoin: builder.mutation<void, string>({
       query: (id) => ({
-        url: `/api/besoins/${id}`,
+        url: `/besoins/${id}`,
         method: 'DELETE',
       }),
       invalidatesTags: ['Besoins'],

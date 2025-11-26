@@ -1,17 +1,22 @@
 import React, { useState } from 'react';
 import { useGetEmailHistoryQuery, useGetEmailStatsQuery } from '../api/emailHistoryApi';
+import { usePermissions } from '@/hooks/usePermission';
 
 export const EmailHistoryPage: React.FC = () => {
   const [page, setPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState<string>('');
+  const { permissions } = usePermissions(['emails.read_history'])
+  const canRead = permissions['emails.read_history']
   
   const { data: history, isLoading } = useGetEmailHistoryQuery({
     page,
     page_size: 20,
     status_filter: statusFilter || undefined,
-  });
+  }, { skip: !canRead });
   
-  const { data: stats } = useGetEmailStatsQuery();
+  const { data: stats } = useGetEmailStatsQuery(undefined, { skip: !canRead });
+
+  if (!canRead) return null;
 
   if (isLoading) {
     return (

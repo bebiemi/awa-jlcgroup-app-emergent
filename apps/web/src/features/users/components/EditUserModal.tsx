@@ -10,6 +10,7 @@ import {
 } from '@/features/iam/api/iamApi'
 import { useAppDispatch } from '@/store/hooks'
 import { toast } from 'react-hot-toast'
+import { usePermissions } from '@/hooks/usePermission'
 
 interface EditUserModalProps {
   user: User
@@ -22,6 +23,7 @@ export default function EditUserModal({ user, isOpen, onClose }: EditUserModalPr
   const [updateUser, { isLoading: isUpdating }] = useUpdateUserMutation()
   const [assignProfiles, { isLoading: isAssigningProfiles }] = useAssignProfilesToUserMutation()
   const [assignGroups, { isLoading: isAssigningGroups }] = useAssignGroupsToUserMutation()
+  const { permissions } = usePermissions(['users.edit', 'users.manage'])
   
   // Fetch available profiles and groups
   const { data: profiles = [] } = useListProfilesQuery()
@@ -120,6 +122,10 @@ export default function EditUserModal({ user, isOpen, onClose }: EditUserModalPr
   }
 
   if (!isOpen) return null
+
+  if (!(permissions['users.edit'] || permissions['users.manage'])) {
+    return null
+  }
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">

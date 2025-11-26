@@ -22,6 +22,7 @@ import {
   StarIcon,
 } from '@heroicons/react/24/outline'
 import toast from 'react-hot-toast'
+import { usePermissions } from '@/hooks/usePermission'
 
 const STATUS_FILTERS = [
   { value: 'all', label: 'Toutes', count: 0 },
@@ -77,11 +78,22 @@ const STATUS_COLORS: Record<string, string> = {
 export default function ApplicationsManagementPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
+  const { permissions } = usePermissions([
+    'applications.read.all',
+    'applications.manage',
+    'applications.manage_status',
+    'applications.shortlist',
+    'applications.send_to_client',
+  ])
+  const canRead = permissions['applications.read.all'] || permissions['applications.manage']
+  const canManage = permissions['applications.manage'] || permissions['applications.manage_status']
+  const canShortlist = permissions['applications.shortlist'] || permissions['applications.manage']
+  const canSendToClient = permissions['applications.send_to_client'] || permissions['applications.manage']
 
   const { data: mission } = useGetMissionQuery(id!)
   const { data: applications = [], isLoading, refetch } = useGetMissionApplicationsQuery(
     { mission_id: id! },
-    { skip: !id }
+    { skip: !id || !canRead }
   )
 
   const { getMetadata: getApplicationMetadata } = useApplicationStatuses()
@@ -124,6 +136,7 @@ export default function ApplicationsManagementPage() {
   }
 
   const handleShortlist = async (appId: string) => {
+    if (!canShortlist) return
     try {
       await shortlistApplication(appId).unwrap()
       toast.success('Candidature présélectionnée')
@@ -134,6 +147,7 @@ export default function ApplicationsManagementPage() {
   }
 
   const handleReject = async () => {
+    if (!canManage) return
     if (!selectedApp || !rejectReason.trim()) {
       toast.error('Veuillez indiquer la raison du rejet')
       return
@@ -158,6 +172,7 @@ export default function ApplicationsManagementPage() {
   }
 
   const handleScheduleInterview = async () => {
+    if (!canManage) return
     if (!selectedApp || !interviewDate) {
       toast.error('Veuillez sélectionner une date')
       return
@@ -184,6 +199,7 @@ export default function ApplicationsManagementPage() {
   }
 
   const handleSendToClient = async (appId: string) => {
+    if (!canSendToClient) return
     try {
       await updateApplication({
         id: appId,
@@ -202,16 +218,18 @@ export default function ApplicationsManagementPage() {
   }
 
   const openRejectModal = (app: Application) => {
+    if (!canManage) return
     setSelectedApp(app)
     setShowRejectModal(true)
   }
 
   const openInterviewModal = (app: Application) => {
+    if (!canManage) return
     setSelectedApp(app)
     setShowInterviewModal(true)
   }
 
-  if (isLoading) {
+  if (!canRead || isLoading) {
     return (
       <Layout>
         <div className="flex justify-center items-center py-12">
@@ -408,7 +426,7 @@ export default function ApplicationsManagementPage() {
                       Détails
                     </button>
 
-                    {app.status === 'submitted' && (
+                    {app.status === 'submitted' && canManage && (
                       <>
                         <button
                           onClick={() => handleShortlist(app.id)}
@@ -427,7 +445,7 @@ export default function ApplicationsManagementPage() {
                       </>
                     )}
 
-                    {app.status === 'shortlisted' && (
+                    {app.status === 'shortlisted' && canManage && (
                       <>
                         <button
                           onClick={() => openInterviewModal(app)}
@@ -446,7 +464,7 @@ export default function ApplicationsManagementPage() {
                       </>
                     )}
 
-                    {app.status === 'interview_completed' && (
+                    {app.status === 'interview_completed' && canSendToClient && (
                       <button
                         onClick={() => handleSendToClient(app.id)}
                         className="flex items-center px-4 py-2 text-sm bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition"

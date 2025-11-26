@@ -46,7 +46,7 @@ def get_temp_perm_service(db: AsyncIOMotorDatabase = Depends(get_database)) -> T
 @router.post("", response_model=TemporaryPermission)
 async def grant_temporary_permission(
     request: GrantTempPermissionRequest,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_permission("iam.permissions.update")),
     service: TemporaryPermissionsService = Depends(get_temp_perm_service)
 ):
     """
@@ -92,7 +92,7 @@ async def grant_temporary_permission(
 async def get_user_temporary_permissions(
     user_id: str,
     include_expired: bool = False,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_permission("iam.permissions.read")),
     service: TemporaryPermissionsService = Depends(get_temp_perm_service)
 ):
     """
@@ -102,8 +102,8 @@ async def get_user_temporary_permissions(
     - Utilisateur peut voir ses propres permissions
     - Admin peut voir toutes les permissions
     """
-    # Vérifier les permissions
-    if user_id != current_user.id and "admin" not in current_user.roles:
+    normalized_roles = [r.lower() for r in current_user.roles]
+    if user_id != current_user.id and "admin" not in normalized_roles and "super_admin" not in normalized_roles:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Vous ne pouvez consulter que vos propres permissions temporaires"
@@ -120,14 +120,14 @@ async def get_user_temporary_permissions(
 @router.get("/active/{user_id}", response_model=List[TemporaryPermission])
 async def get_active_temporary_permissions(
     user_id: str,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_permission("iam.permissions.read")),
     service: TemporaryPermissionsService = Depends(get_temp_perm_service)
 ):
     """
     Récupérer uniquement les permissions temporaires actives d'un utilisateur
     """
-    # Vérifier les permissions
-    if user_id != current_user.id and "admin" not in current_user.roles:
+    normalized_roles = [r.lower() for r in current_user.roles]
+    if user_id != current_user.id and "admin" not in normalized_roles and "super_admin" not in normalized_roles:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Accès refusé"
@@ -141,7 +141,7 @@ async def get_active_temporary_permissions(
 async def extend_temporary_permission(
     temp_perm_id: str,
     request: ExtendTempPermissionRequest,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_permission("iam.permissions.update")),
     service: TemporaryPermissionsService = Depends(get_temp_perm_service)
 ):
     """
@@ -149,12 +149,6 @@ async def extend_temporary_permission(
     
     **Permissions requises:** Admin
     """
-    if "admin" not in current_user.roles:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Seuls les administrateurs peuvent prolonger les permissions temporaires"
-        )
-    
     extended = await service.extend_temporary_permission(
         temp_perm_id=temp_perm_id,
         additional_hours=request.additional_hours
@@ -178,7 +172,7 @@ async def extend_temporary_permission(
 async def revoke_temporary_permission(
     temp_perm_id: str,
     request: RevokeTempPermissionRequest,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_permission("iam.permissions.update")),
     service: TemporaryPermissionsService = Depends(get_temp_perm_service)
 ):
     """
@@ -186,12 +180,6 @@ async def revoke_temporary_permission(
     
     **Permissions requises:** Admin
     """
-    if "admin" not in current_user.roles:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Seuls les administrateurs peuvent révoquer les permissions temporaires"
-        )
-    
     success = await service.revoke_temporary_permission(
         temp_perm_id=temp_perm_id,
         revoked_by=current_user.id,
@@ -214,7 +202,7 @@ async def revoke_temporary_permission(
 @router.get("/expiring-soon", response_model=List[TemporaryPermission])
 async def get_expiring_permissions(
     hours_threshold: int = 24,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_permission("iam.permissions.read")),
     service: TemporaryPermissionsService = Depends(get_temp_perm_service)
 ):
     """
@@ -222,19 +210,13 @@ async def get_expiring_permissions(
     
     **Permissions requises:** Admin
     """
-    if "admin" not in current_user.roles:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Réservé aux administrateurs"
-        )
-    
     expiring = await service.get_expiring_soon(hours_threshold=hours_threshold)
     return expiring
 
 
 @router.get("/statistics")
 async def get_temp_permissions_statistics(
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_permission("iam.permissions.read")),
     service: TemporaryPermissionsService = Depends(get_temp_perm_service)
 ):
     """
@@ -242,19 +224,13 @@ async def get_temp_permissions_statistics(
     
     **Permissions requises:** Admin
     """
-    if "admin" not in current_user.roles:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Réservé aux administrateurs"
-        )
-    
     stats = await service.get_statistics()
     return stats
 
 
 @router.post("/cleanup")
 async def cleanup_expired_permissions(
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_permission("iam.permissions.update")),
     service: TemporaryPermissionsService = Depends(get_temp_perm_service)
 ):
     """
@@ -264,12 +240,6 @@ async def cleanup_expired_permissions(
     
     **Note:** Cette route peut aussi être appelée par une tâche cron
     """
-    if "admin" not in current_user.roles:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Réservé aux administrateurs"
-        )
-    
     count = await service.cleanup_expired_permissions()
     
     return {

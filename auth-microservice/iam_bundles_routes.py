@@ -52,7 +52,7 @@ class CapabilityBundleResponse(BaseModel):
 async def get_bundles(
     category: Optional[str] = Query(None, description="Filtrer par catégorie"),
     db: AsyncIOMotorDatabase = Depends(get_database),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(require_permission("iam.permissions.read"))
 ):
     """
     Récupère la liste des capability bundles
@@ -70,7 +70,7 @@ async def get_bundles(
 async def get_bundle(
     bundle_id: str,
     db: AsyncIOMotorDatabase = Depends(get_database),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(require_permission("iam.permissions.read"))
 ):
     """
     Récupère les détails d'un bundle spécifique
@@ -90,11 +90,11 @@ async def get_bundle(
 async def create_bundle(
     bundle: CapabilityBundleCreate,
     db: AsyncIOMotorDatabase = Depends(get_database),
-    current_user: User = Depends(require_permission("iam:manage"))
+    current_user: User = Depends(require_permission("iam.permissions.update"))
 ):
     """
     Crée un nouveau capability bundle
-    Requiert: iam:manage
+    Requiert: iam.permissions.update
     """
     # Vérifier que le code n'existe pas déjà
     existing = await db.capability_bundles.find_one({"code": bundle.code}, {"_id": 0})
@@ -129,11 +129,11 @@ async def update_bundle(
     bundle_id: str,
     bundle_update: CapabilityBundleUpdate,
     db: AsyncIOMotorDatabase = Depends(get_database),
-    current_user: User = Depends(require_permission("iam:manage"))
+    current_user: User = Depends(require_permission("iam.permissions.update"))
 ):
     """
     Met à jour un capability bundle
-    Requiert: iam:manage
+    Requiert: iam.permissions.update
     Les bundles système ne peuvent pas être modifiés
     """
     # Vérifier que le bundle existe
@@ -178,7 +178,7 @@ async def update_bundle(
 async def delete_bundle(
     bundle_id: str,
     db: AsyncIOMotorDatabase = Depends(get_database),
-    current_user: User = Depends(require_permission("iam:manage"))
+    current_user: User = Depends(require_permission("iam.permissions.update"))
 ):
     """
     Supprime un capability bundle

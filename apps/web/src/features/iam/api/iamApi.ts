@@ -75,6 +75,7 @@ export interface ProfileCreate {
   category?: string
   color?: string
   icon?: string
+  capability_bundle_ids?: string[]
 }
 
 export interface ProfileUpdate {
@@ -83,6 +84,17 @@ export interface ProfileUpdate {
   permission_ids?: string[]
   color?: string
   icon?: string
+  capability_bundle_ids?: string[]
+}
+
+export interface CapabilityBundle {
+  id: string
+  code: string
+  name: string
+  description: string
+  category: string
+  permission_ids?: string[]
+  permissions?: string[]
 }
 
 export interface GroupCreate {
@@ -105,6 +117,11 @@ export const iamApi = createApi({
   baseQuery: createBaseQueryWithAuth(),
   tagTypes: ['Permissions', 'Profiles', 'Groups', 'UserPermissions'],
   endpoints: (builder) => ({
+    // Bundles
+    listBundles: builder.query<CapabilityBundle[], void>({
+      query: () => '/iam/bundles',
+      providesTags: [{ type: 'Profiles', id: 'LIST' }],
+    }),
     // Permissions
     listPermissions: builder.query<Permission[], void>({
       query: () => '/iam/permissions',
@@ -122,7 +139,7 @@ export const iamApi = createApi({
     
     deletePermission: builder.mutation<void, string>({
       query: (permissionId) => ({
-        url: `/permissions/${permissionId}`,
+        url: `/iam/permissions/${permissionId}`,
         method: 'DELETE',
       }),
       invalidatesTags: ['Permissions'],
@@ -166,14 +183,17 @@ export const iamApi = createApi({
       ],
     }),
     
-    deleteProfile: builder.mutation<void, string>({
-      query: (profileId) => ({
-        url: `/iam/profiles/${profileId}`,
+    deleteProfile: builder.mutation<
+      { success?: boolean; unassigned_users?: number; unassigned_groups?: number },
+      { id: string; force?: boolean }
+    >({
+      query: ({ id, force = false }) => ({
+        url: `/iam/profiles/${id}?force=${force}`,
         method: 'DELETE',
       }),
-      invalidatesTags: (_result, _error, profileId) => [
+      invalidatesTags: (_result, _error, { id }) => [
         { type: 'Profiles', id: 'LIST' },
-        { type: 'Profiles', id: profileId },
+        { type: 'Profiles', id },
       ],
     }),
     
@@ -229,7 +249,7 @@ export const iamApi = createApi({
     // User Assignments
     assignProfilesToUser: builder.mutation<void, { user_id: string; profile_ids: string[] }>({
       query: ({ user_id, profile_ids }) => ({
-        url: `/users/${user_id}/profiles`,
+        url: `/iam/users/${user_id}/profiles`,
         method: 'POST',
         body: { user_id, profile_ids },
       }),
@@ -238,7 +258,7 @@ export const iamApi = createApi({
     
     assignGroupsToUser: builder.mutation<void, { user_id: string; group_ids: string[] }>({
       query: ({ user_id, group_ids }) => ({
-        url: `/users/${user_id}/groups`,
+        url: `/iam/users/${user_id}/groups`,
         method: 'POST',
         body: { user_id, group_ids },
       }),
@@ -320,6 +340,7 @@ export const {
   useListPermissionsQuery,
   useCreatePermissionMutation,
   useDeletePermissionMutation,
+  useListBundlesQuery,
   
   useListProfilesQuery,
   useGetProfileQuery,

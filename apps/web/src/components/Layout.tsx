@@ -1,12 +1,13 @@
-import { useAppSelector } from '@/store/hooks'
+import { useAppDispatch, useAppSelector } from '@/store/hooks'
+import { logoutAction } from '@/features/auth/slices/authSlice'
 import { useSidebar } from '@/contexts/SidebarContext'
-import { BellIcon, Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
+import { useSidebarTheme } from '@/contexts/SidebarThemeContext'
+import { BellIcon, Bars3Icon, XMarkIcon, ArrowRightOnRectangleIcon } from '@heroicons/react/24/outline'
 import { useGetNotificationsQuery } from '@/features/notifications/api/notificationApi'
 import { useGetMyPresenceQuery } from '@/features/presence/api/presenceApi'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import NotificationDropdown from '@/features/notifications/components/NotificationDropdown'
 import UserStatusIndicator from './UserStatusIndicator'
-import SidebarResolver from './SidebarResolver'
 import Breadcrumb from './Breadcrumb'
 import EmailVerificationBanner from './EmailVerificationBanner'
 import AnimatedGradientBar from './AnimatedGradientBar'
@@ -16,8 +17,10 @@ interface LayoutProps {
 }
 
 export default function Layout({ children }: LayoutProps) {
+  const dispatch = useAppDispatch()
   const { user, isAuthenticated } = useAppSelector((state) => state.auth)
   const { isOpen, toggleSidebar } = useSidebar()
+  const { themeConfig } = useSidebarTheme()
   const [showNotifications, setShowNotifications] = useState(false)
   
   // Fetch presence status ONLY if authenticated and user exists
@@ -40,20 +43,29 @@ export default function Layout({ children }: LayoutProps) {
     { skip: !isAuthenticated }
   )
 
-  return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Sidebar - Only shown for authenticated users */}
-      {isAuthenticated && <SidebarResolver />}
+  const handleLogout = () => {
+    dispatch(logoutAction())
+    window.location.href = '/login'
+  }
 
-      {/* Main content with proper spacing for sidebar */}
+  return (
+    <div className="min-h-screen">
+      {/* Contenu principal avec offset lié au sidebar via CSS var */}
       <div
-        className={`min-h-screen flex flex-col transition-all duration-300 ${
-          isAuthenticated && isOpen ? 'lg:pl-64' : ''
-        }`}
+        className="min-h-screen flex flex-col"
+        style={{
+          paddingLeft: 'var(--sidebar-offset, 0px)',
+          ['--text-primary' as any]: themeConfig.textPrimary,
+          ['--text-secondary' as any]: themeConfig.textSecondary,
+          ['--text-heading' as any]: themeConfig.textHeading,
+          ['--text-accent' as any]: themeConfig.textAccent,
+          background: themeConfig.pageBg,
+          color: themeConfig.textPrimary,
+        }}
       >
         {/* Top Header Bar - Only for authenticated users */}
         {isAuthenticated && (
-          <header className="bg-white sticky top-0 z-20 shadow-sm">
+          <header className="sticky top-0 z-20 backdrop-blur-md bg-white/70 border-b border-white/40">
             <div className="px-4 sm:px-6 lg:px-8">
               <div className="flex justify-between items-center h-16">
                 {/* Left side - menu toggle + espace futur */}
@@ -121,6 +133,16 @@ export default function Layout({ children }: LayoutProps) {
                       />
                     )}
                   </div>
+
+                  {/* Logout */}
+                  <button
+                    onClick={handleLogout}
+                    className="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:text-red-600 hover:bg-red-50 transition-colors min-w-[44px]"
+                  >
+                    <ArrowRightOnRectangleIcon className="h-5 w-5" />
+                    <span className="hidden md:inline">Déconnexion</span>
+                    <span className="inline md:hidden">Quitter</span>
+                  </button>
                 </div>
               </div>
             </div>
@@ -130,9 +152,9 @@ export default function Layout({ children }: LayoutProps) {
         {/* Email Verification Banner */}
         {isAuthenticated && <EmailVerificationBanner />}
 
-        {/* Breadcrumb - Sticky just below header */}
+        {/* Breadcrumb - Sticky just below header (unique instance) */}
         {isAuthenticated && (
-          <div className="sticky top-16 z-10 bg-white relative">
+          <div className="sticky top-16 z-10 bg-transparent relative backdrop-blur-md">
             <div className="px-4 sm:px-6 lg:px-8 py-3">
               <Breadcrumb />
             </div>
@@ -141,8 +163,17 @@ export default function Layout({ children }: LayoutProps) {
         )}
 
         {/* Main content */}
-        <main className="flex-1 px-4 sm:px-6 lg:px-8 py-8">
-          {children}
+        <main className="flex-1 px-4 sm:px-6 lg:px-8 py-8 pr-[10px]">
+          <div
+            className="max-w-7xl mx-auto space-y-6 app-surface rounded-3xl p-6 sm:p-8"
+            style={{
+              ['--app-surface-bg' as any]: themeConfig.contentBg,
+              ['--app-surface-border' as any]: themeConfig.contentBorder,
+              ['--app-surface-glow' as any]: themeConfig.glow,
+            }}
+          >
+            {children}
+          </div>
         </main>
 
         {/* Footer */}

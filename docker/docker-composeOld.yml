@@ -1,0 +1,164 @@
+version: '3.8'
+
+services:
+  # MongoDB
+  mongodb:
+    image: mongo:7.0
+    container_name: jlc-mongodb-dev
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    environment:
+      - MONGO_INITDB_DATABASE=jlc_db
+    networks:
+      - jlc-network
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis (optional - for caching)
+  redis:
+    image: redis:7-alpine
+    container_name: jlc-redis-dev
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - jlc-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  # Auth Microservice
+  auth-microservice:
+    build:
+      context: ../auth-microservice
+      dockerfile: Dockerfile
+    container_name: jlc-auth-dev
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    volumes:
+      - ../auth-microservice:/app
+      - auth_uploads:/app/uploads
+    environment:
+      - MONGO_URL=mongodb://mongodb:27017
+      - DATABASE_NAME=auth_db
+      - REDIS_URL=redis://redis:6379
+      - CORS_ORIGINS=["http://localhost:3000","http://localhost:5173","http://jlc-web:3000"]
+      - JWT_SECRET=dev-secret-key-change-in-production
+      - JWT_ACCESS_TOKEN_EXPIRE_MINUTES=60
+      - ENVIRONMENT=development
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - jlc-network
+
+  # JLC API (FastAPI)
+  jlc-api:
+    build:
+      context: ../apps/api
+      dockerfile: Dockerfile
+    container_name: jlc-api-dev
+    restart: unless-stopped
+    ports:
+      - "8001:8001"
+    volumes:
+      - ../apps/api:/app
+      - api_uploads:/app/uploads
+    environment:
+      - MONGO_URL=mongodb://mongodb:27017
+      - DATABASE_NAME=jlc_db
+      - AUTH_SERVICE_URL=http://auth-microservice:8000
+      - REDIS_URL=redis://redis:6379
+      - CORS_ORIGINS=["http://localhost:3000","http://localhost:5173","http://jlc-web:3000"]
+      - UPLOAD_DIR=/app/uploads
+      - BASE_URL=http://localhost:8001
+      - SMTP_HOST=mailhog
+      - SMTP_PORT=1025
+      - ENVIRONMENT=development
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      auth-microservice:
+        condition: service_started
+      redis:
+        condition: service_healthy
+    networks:
+      - jlc-network
+
+  # Frontend (React + Vite)
+  jlc-web:
+    build:
+      context: ../apps/web
+      dockerfile: Dockerfile
+    container_name: jlc-web-dev
+    restart: unless-stopped
+    ports:
+      - "5173:5173"
+    volumes:
+      - ../apps/web:/app
+      - /app/node_modules
+    environment:
+      - VITE_API_BASE_URL=http://localhost:8001
+      - VITE_AUTH_SERVICE_URL=http://localhost:8000
+      - NODE_ENV=development
+    depends_on:
+      - jlc-api
+      - auth-microservice
+    networks:
+      - jlc-network
+
+  # Mailhog (Email testing)
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: jlc-mailhog-dev
+    restart: unless-stopped
+    ports:
+      - "1025:1025"  # SMTP
+      - "8025:8025"  # Web UI
+    networks:
+      - jlc-network
+
+  # MongoDB Admin (optional)
+  mongo-express:
+    image: mongo-express:1.0-20
+    container_name: jlc-mongo-express-dev
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    environment:
+      - ME_CONFIG_MONGODB_URL=mongodb://mongodb:27017
+      - ME_CONFIG_BASICAUTH_USERNAME=admin
+      - ME_CONFIG_BASICAUTH_PASSWORD=admin
+      - ME_CONFIG_MONGODB_ENABLE_ADMIN=true
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - jlc-network
+
+volumes:
+  mongodb_data:
+    driver: local
+  redis_data:
+    driver: local
+  auth_uploads:
+    driver: local
+  api_uploads:
+    driver: local
+
+networks:
+  jlc-network:
+    driver: bridge

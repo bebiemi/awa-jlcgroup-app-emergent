@@ -7,7 +7,7 @@ from typing import List, Any, Dict, Optional
 from pydantic import BaseModel
 from awana_auth.core.dependencies import get_database
 from awana_auth.services.config_service import ConfigService
-from awana_auth.core.dependencies import get_current_user
+from awana_auth.dependencies.permission_dependencies import require_permission
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
 router = APIRouter(prefix="/config/app", tags=["App Configuration"])
@@ -23,6 +23,7 @@ class ConfigUpdate(BaseModel):
 async def get_config(
     key: Optional[str] = Query(None, description="Configuration key"),
     category: Optional[str] = Query(None, description="Configuration category"),
+    current_user=Depends(require_permission("config.read")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """
@@ -52,6 +53,7 @@ async def get_config(
 @router.get("/value")
 async def get_config_value(
     key: str = Query(..., description="Configuration key"),
+    current_user=Depends(require_permission("config.read")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """
@@ -75,7 +77,7 @@ async def create_config(
     value: Any,
     category: str,
     description: str = "",
-    current_user: dict = Depends(get_current_user),
+    current_user=Depends(require_permission("config.manage")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """
@@ -83,18 +85,13 @@ async def create_config(
     
     Requires: config.manage permission
     """
-    # Check permission
-    user_permissions = current_user.get("permissions", [])
-    if "config.manage" not in user_permissions and "admin" not in current_user.get("roles", []):
-        raise HTTPException(status_code=403, detail="Permission denied")
-    
     service = ConfigService(db)
     success = await service.set_config(
         key=key,
         value=value,
         category=category,
         description=description,
-        updated_by=current_user.get("id", "unknown")
+        updated_by=getattr(current_user, "id", "unknown")
     )
     
     if not success:
@@ -107,7 +104,7 @@ async def create_config(
 async def update_config(
     key: str,
     update: ConfigUpdate,
-    current_user: dict = Depends(get_current_user),
+    current_user=Depends(require_permission("config.manage")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """
@@ -115,11 +112,6 @@ async def update_config(
     
     Requires: config.manage permission
     """
-    # Check permission
-    user_permissions = current_user.get("permissions", [])
-    if "config.manage" not in user_permissions and "admin" not in current_user.get("roles", []):
-        raise HTTPException(status_code=403, detail="Permission denied")
-    
     service = ConfigService(db)
     
     # Get existing config
@@ -133,7 +125,7 @@ async def update_config(
         value=update.value,
         category=existing.get("category", "general"),
         description=update.description or existing.get("description", ""),
-        updated_by=current_user.get("id", "unknown")
+        updated_by=getattr(current_user, "id", "unknown")
     )
     
     if not success:
@@ -145,7 +137,7 @@ async def update_config(
 @router.delete("/{key}")
 async def delete_config(
     key: str,
-    current_user: dict = Depends(get_current_user),
+    current_user=Depends(require_permission("config.manage")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """
@@ -153,11 +145,6 @@ async def delete_config(
     
     Requires: config.manage permission
     """
-    # Check permission
-    user_permissions = current_user.get("permissions", [])
-    if "config.manage" not in user_permissions and "admin" not in current_user.get("roles", []):
-        raise HTTPException(status_code=403, detail="Permission denied")
-    
     service = ConfigService(db)
     success = await service.delete_config(key)
     
@@ -169,6 +156,7 @@ async def delete_config(
 
 @router.get("/categories")
 async def get_categories(
+    current_user=Depends(require_permission("config.read")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """

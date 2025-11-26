@@ -71,7 +71,7 @@ export const emailTemplatesApi = createApi({
       providesTags: ['EmailTemplates'],
     }),
     getTemplate: builder.query<EmailTemplate, string>({
-      query: (id) => `/api/emails/templates/${id}`,
+      query: (id) => `/emails/templates/${id}`,
       providesTags: ['EmailTemplates'],
     }),
     createTemplate: builder.mutation<any, EmailTemplateCreate>({

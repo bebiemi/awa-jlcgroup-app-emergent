@@ -13,7 +13,8 @@ from pydantic import BaseModel, Field
 from awana_auth.core.models import User
 from awana_auth.services.iam_service import IAMService
 from awana_auth.dependencies.permission_dependencies import require_permission
-from awana_auth.core.dependencies import get_database
+from awana_auth.core.dependencies import get_database, get_iam_service
+from awana_auth.utils.iam_helpers import get_resource_filter
 
 
 # ==================== Modèles ====================
@@ -59,6 +60,41 @@ def generate_unique_filename(original_filename: str) -> str:
     return f"{uuid4()}{ext}"
 
 
+async def ensure_document_scope(
+    iam_service: IAMService,
+    user_id: str,
+    owner_id: str,
+    action: str,
+    category: Optional[str] = None,
+    tags: Optional[list] = None
+):
+    """
+    Vérifie les scopes IAM (.own/.all) sur un document en fonction du propriétaire.
+    """
+    iam_filter = await get_resource_filter(
+        iam_service,
+        user_id,
+        owner_id,
+        "documents",
+        action
+    )
+    if iam_filter is None:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Permission insuffisante"
+        )
+    # Cas CV : autorisation via documents.view_cv.all
+    if category == "cv" or (tags and "cv" in tags):
+        can_view_cv = await iam_service.user_has_permission(user_id, "documents.view_cv.all")
+        if can_view_cv.has_permission:
+            return
+    if iam_filter and iam_filter.get("user_id") and owner_id != iam_filter["user_id"]:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Accès restreint à vos documents"
+        )
+
+
 @router.post("/upload", status_code=status.HTTP_201_CREATED, response_model=Document)
 async def upload_document(
     file: UploadFile = File(...),
@@ -69,6 +105,7 @@ async def upload_document(
     is_confidential: bool = Form(default=False),
     retention_period_days: Optional[int] = Form(None),
     current_user: User = Depends(require_permission("documents.create")),
+    iam_service: IAMService = Depends(get_iam_service),
     db = Depends(get_database)
 ):
     """Upload un document avec catégorie validée depuis le référentiel dynamique"""
@@ -130,6 +167,16 @@ async def upload_document(
     if retention_period_days:
         expiry_date = (datetime.now(timezone.utc) + timedelta(days=retention_period_days)).isoformat()
     
+    # Vérifier scope (.own/.all) sur la création (owner = user_id)
+    await ensure_document_scope(
+        iam_service,
+        current_user.id,
+        current_user.id,
+        "create",
+        category=category,
+        tags=parsed_tags
+    )
+
     # Créer le document
     doc_id = str(uuid4())
     now = datetime.now(timezone.utc).isoformat()
@@ -168,6 +215,7 @@ async def list_documents(
     category: Optional[str] = None,
     status_filter: Optional[str] = None,
     current_user: User = Depends(require_permission("documents.read")),
+    iam_service: IAMService = Depends(get_iam_service),
     db = Depends(get_database)
 ):
     """Lister les documents avec filtrage IAM complet
@@ -178,29 +226,29 @@ async def list_documents(
     - Admin : tous les documents (documents.read.all ou documents.manage.all)
     """
     
-    iam_service = IAMService(db)
-    
-    # Vérifier les permissions
+    query = {}
     has_view_all = await iam_service.user_has_permission(current_user.id, "documents.read.all")
     has_manage_all = await iam_service.user_has_permission(current_user.id, "documents.manage.all")
-    has_view_cv_all = await iam_service.user_has_permission(current_user.id, "documents.view_cv.all")
-    
-    query = {}
-    
-    # Admin : voir tous les documents
-    if has_view_all.has_permission or has_manage_all.has_permission:
-        # Pas de filtre user_id
-        pass
-    # RRH/Recrutement : ses documents + tous les CV
-    elif has_view_cv_all.has_permission:
-        query["$or"] = [
-            {"user_id": current_user.id},  # Ses documents
-            {"category": "cv"},  # Tous les CV
-            {"tags": "cv"}  # Documents tagués CV
-        ]
-    # Utilisateur normal : seulement ses documents
-    else:
-        query["user_id"] = current_user.id
+
+    if not (has_view_all.has_permission or has_manage_all.has_permission):
+        iam_filter = await get_resource_filter(
+            iam_service,
+            current_user.id,
+            current_user.id,
+            "documents",
+            "read"
+        )
+        if iam_filter is None:
+            return []
+        if iam_filter.get("user_id"):
+            query["user_id"] = iam_filter["user_id"]
+        has_view_cv_all = await iam_service.user_has_permission(current_user.id, "documents.view_cv.all")
+        if has_view_cv_all.has_permission:
+            query["$or"] = [
+                {"user_id": current_user.id},
+                {"category": "cv"},
+                {"tags": "cv"},
+            ]
     
     # Filtres optionnels
     if category:
@@ -218,6 +266,7 @@ async def list_documents(
 async def get_document(
     document_id: str,
     current_user: User = Depends(require_permission("documents.read")),
+    iam_service: IAMService = Depends(get_iam_service),
     db = Depends(get_database)
 ):
     """Récupérer un document avec vérification IAM complète"""
@@ -227,29 +276,18 @@ async def get_document(
     if not document:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Document not found")
     
-    iam_service = IAMService(db)
-    
-    # Si propriétaire
-    if document["user_id"] == current_user.id:
-        return Document(**document)
-    
-    # Vérifier permissions admin
+    # Vérifier le scope (proprio ou .all ou CV avec permission dédiée)
     has_view_all = await iam_service.user_has_permission(current_user.id, "documents.read.all")
     has_manage_all = await iam_service.user_has_permission(current_user.id, "documents.manage.all")
-    
-    if has_view_all.has_permission or has_manage_all.has_permission:
-        return Document(**document)
-    
-    # Vérifier permission RRH/Recrutement pour les CV
-    if document["category"] == "cv" or "cv" in document.get("tags", []):
-        has_view_cv = await iam_service.user_has_permission(current_user.id, "documents.view_cv.all")
-        if has_view_cv.has_permission:
-            return Document(**document)
-    
-    # Document privé sans permissions
-    if document.get("visibility") == "private":
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Access denied")
-    
+    if not (has_view_all.has_permission or has_manage_all.has_permission):
+        await ensure_document_scope(
+            iam_service,
+            current_user.id,
+            document["user_id"],
+            "read",
+            category=document.get("category"),
+            tags=document.get("tags")
+        )
     return Document(**document)
 
 
@@ -257,6 +295,7 @@ async def get_document(
 async def delete_document(
     document_id: str,
     current_user: User = Depends(require_permission("documents.delete")),
+    iam_service: IAMService = Depends(get_iam_service),
     db = Depends(get_database)
 ):
     """Supprimer un document"""
@@ -266,12 +305,17 @@ async def delete_document(
     if not document:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Document not found")
     
-    # Vérifier propriété ou permission admin
-    iam_service = IAMService(db)
+    # Vérifier propriété ou scope delete.all
     has_delete_all = await iam_service.user_has_permission(current_user.id, "documents.delete.all")
-    
-    if document["user_id"] != current_user.id and not has_delete_all.has_permission:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Access denied")
+    if not has_delete_all.has_permission:
+        await ensure_document_scope(
+            iam_service,
+            current_user.id,
+            document["user_id"],
+            "delete",
+            category=document.get("category"),
+            tags=document.get("tags")
+        )
     
     # Supprimer le fichier physique
     file_path = os.path.join(UPLOAD_DIR, document["filename"])

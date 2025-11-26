@@ -19,6 +19,81 @@ export const createBaseQueryWithAuth = (): BaseQueryFn<
   const customFetch: typeof fetch = async (input, init) => {
     // Validation en développement
     const url = typeof input === 'string' ? input : input.url
+    
+    // Normalisation des anciennes routes IAM (fallback safe)
+    if (url.includes('/api/permissions')) {
+      const normalizedUrl = url.replace('/api/permissions', '/api/iam/permissions')
+      if (process.env.NODE_ENV === 'development') {
+        console.warn('🔁 Normalized legacy IAM permissions route ->', normalizedUrl)
+      }
+      if (typeof input === 'string') {
+        return fetch(normalizedUrl, init)
+      } else {
+        const req = input as Request
+        const reqInit: RequestInit = {
+          method: req.method,
+          headers: req.headers,
+          body: req.body,
+          mode: req.mode,
+          credentials: req.credentials,
+          cache: req.cache,
+          redirect: req.redirect,
+          referrer: req.referrer,
+          integrity: req.integrity,
+        }
+        return fetch(normalizedUrl, { ...reqInit, ...init })
+      }
+    }
+
+    // Normalisation config: certains appels peuvent cibler /api/auth/config/... au lieu de /api/config/...
+    if (url.includes('/api/auth/config/')) {
+      const normalizedUrl = url.replace('/api/auth/config/', '/api/config/')
+      if (process.env.NODE_ENV === 'development') {
+        console.warn('🔁 Normalized config route ->', normalizedUrl)
+      }
+      if (typeof input === 'string') {
+        return fetch(normalizedUrl, init)
+      } else {
+        const req = input as Request
+        const reqInit: RequestInit = {
+          method: req.method,
+          headers: req.headers,
+          body: req.body,
+          mode: req.mode,
+          credentials: req.credentials,
+          cache: req.cache,
+          redirect: req.redirect,
+          referrer: req.referrer,
+          integrity: req.integrity,
+        }
+        return fetch(normalizedUrl, { ...reqInit, ...init })
+      }
+    }
+
+    // Normalisation des routes IAM users (archive/suppressions) : /api/auth/iam/users -> /api/iam/users
+    if (url.includes('/api/auth/iam/users/')) {
+      const normalizedUrl = url.replace('/api/auth/iam/users/', '/api/iam/users/')
+      if (process.env.NODE_ENV === 'development') {
+        console.warn('🔁 Normalized IAM users route ->', normalizedUrl)
+      }
+      if (typeof input === 'string') {
+        return fetch(normalizedUrl, init)
+      } else {
+        const req = input as Request
+        const reqInit: RequestInit = {
+          method: req.method,
+          headers: req.headers,
+          body: req.body,
+          mode: req.mode,
+          credentials: req.credentials,
+          cache: req.cache,
+          redirect: req.redirect,
+          referrer: req.referrer,
+          integrity: req.integrity,
+        }
+        return fetch(normalizedUrl, { ...reqInit, ...init })
+      }
+    }
     if (process.env.NODE_ENV === 'development' && url.includes('/api/api/')) {
       console.error('❌ INVALID ENDPOINT: Duplicate /api/ detected:', url)
     }
@@ -55,6 +130,16 @@ export const createBaseQueryWithAuth = (): BaseQueryFn<
       }
     }
     
+    // Si aucun token (non authentifié), rediriger /api/config/all vers /api/config/public (public minimal)
+    const hasToken = typeof window !== 'undefined' && localStorage.getItem('access_token')
+    if (!hasToken) {
+      const normalizedConfigPublic = url.replace('/api/config/all', '/api/config/public')
+      if (normalizedConfigPublic !== url && process.env.NODE_ENV === 'development') {
+        console.warn('🔁 Using public config endpoint (no token):', normalizedConfigPublic)
+      }
+      input = typeof input === 'string' ? normalizedConfigPublic : new Request(normalizedConfigPublic, input as RequestInit)
+    }
+
     // Pas de conversion nécessaire : utiliser fetch natif
     return fetch(input, init)
   }
@@ -96,6 +181,23 @@ export const createBaseQueryWithAuth = (): BaseQueryFn<
 
     // Handle 401 Unauthorized - Session expired or invalid token
     if (result.error && result.error.status === 401) {
+      const argUrl = typeof args === 'string' ? args : (args as FetchArgs).url
+      // Cas spécial: fallback public pour /config/all
+      if (argUrl && argUrl.toString().includes('/config/all')) {
+        const publicArgs =
+          typeof args === 'string'
+            ? args.replace('/config/all', '/config/public')
+            : {
+                ...(args as FetchArgs),
+                url: (args as FetchArgs).url?.toString().replace('/config/all', '/config/public'),
+              }
+        if (process.env.NODE_ENV === 'development') {
+          console.warn('🔁 401 on /config/all -> retry /config/public')
+        }
+        const retry = await baseQuery(publicArgs, api, extraOptions)
+        return retry
+      }
+
       console.error('🚨 401 Unauthorized - Session expired, logging out...')
       
       // Clear all API caches

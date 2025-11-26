@@ -20,6 +20,7 @@ import {
   type FeatureFlag,
   type CreateFeatureFlagRequest,
 } from '../api/featureFlagApi'
+import { usePermissions } from '@/hooks/usePermission'
 
 export default function FeatureFlagsPage() {
   const { t } = useTranslation()
@@ -32,6 +33,9 @@ export default function FeatureFlagsPage() {
   const [selectedFlag, setSelectedFlag] = useState<FeatureFlag | null>(null)
   const [importFile, setImportFile] = useState<File | null>(null)
   const [overwriteExisting, setOverwriteExisting] = useState(false)
+  const { permissions } = usePermissions(['flags.read', 'flags.manage'])
+  const canRead = permissions['flags.read'] || permissions['flags.manage']
+  const canManage = permissions['flags.manage']
 
   // Form state
   const [formData, setFormData] = useState<CreateFeatureFlagRequest>({
@@ -105,6 +109,7 @@ export default function FeatureFlagsPage() {
 
     if (!editingFlag) return
 
+    if (!canManage) return
     try {
       await updateFlag({
         id: editingFlag.id,
@@ -126,6 +131,7 @@ export default function FeatureFlagsPage() {
   const handleDelete = async (id: string, key: string) => {
     if (!confirm(`Supprimer le flag "${key}" ?`)) return
 
+    if (!canManage) return
     try {
       await deleteFlag(id).unwrap()
       toast.success('Feature flag supprimé')
@@ -136,6 +142,7 @@ export default function FeatureFlagsPage() {
   }
 
   const handleToggle = async (flag: FeatureFlag) => {
+    if (!canManage) return
     try {
       await updateFlag({
         id: flag.id,
@@ -159,6 +166,7 @@ export default function FeatureFlagsPage() {
 
     if (!selectedFlag) return
 
+    if (!canManage) return
     try {
       await applyRollout({
         id: selectedFlag.id,
@@ -208,6 +216,7 @@ export default function FeatureFlagsPage() {
       return
     }
 
+    if (!canManage) return
     try {
       const fileContent = await importFile.text()
       const importData = JSON.parse(fileContent)
@@ -253,6 +262,8 @@ export default function FeatureFlagsPage() {
     }
   }
 
+  if (!canRead) return null
+
   return (
     <Layout>
       <div className="space-y-6">
@@ -264,7 +275,7 @@ export default function FeatureFlagsPage() {
               Gérez les fonctionnalités de l'application par flag
             </p>
           </div>
-          {data?.can_create && (
+          {canManage && (
             <div className="flex gap-2">
               <button
                 onClick={handleExport}

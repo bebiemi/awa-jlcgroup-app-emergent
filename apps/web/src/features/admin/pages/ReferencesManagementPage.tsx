@@ -9,6 +9,7 @@ import {
   useDeleteReferenceMutation,
 } from '../api/configurationApi'
 import { PlusIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline'
+import { usePermissions } from '@/hooks/usePermission'
 
 const categories = [
   { value: 'roles', label: 'Rôles Utilisateurs', icon: '👥' },
@@ -33,6 +34,9 @@ export default function ReferencesManagementPage() {
   const [selectedCategory, setSelectedCategory] = useState('mission_statuses')
   const [showModal, setShowModal] = useState(false)
   const [editingRef, setEditingRef] = useState<any>(null)
+  const { permissions } = usePermissions(['references.read', 'references.manage'])
+  const canRead = permissions['references.read'] || permissions['references.manage']
+  const canManage = permissions['references.manage']
   
   const { data, isLoading } = useGetReferencesQuery({
     category: selectedCategory,
@@ -56,6 +60,7 @@ export default function ReferencesManagementPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
+    if (!canManage) return
     try {
       if (editingRef) {
         await updateReference({
@@ -120,6 +125,8 @@ export default function ReferencesManagementPage() {
     }
   }
   
+  if (!canRead) return null
+
   return (
     <Layout>
       <div className="space-y-6">
@@ -132,16 +139,18 @@ export default function ReferencesManagementPage() {
               Gérez les valeurs configurables de l'application
             </p>
           </div>
-          <button
-            onClick={() => {
-              resetForm()
-              setShowModal(true)
-            }}
-            className="flex items-center gap-2 px-4 py-2 bg-jlc-purple-600 text-white rounded-lg hover:bg-jlc-purple-700"
-          >
-            <PlusIcon className="h-5 w-5" />
-            Nouveau
-          </button>
+          {canManage && (
+            <button
+              onClick={() => {
+                resetForm()
+                setShowModal(true)
+              }}
+              className="flex items-center gap-2 px-4 py-2 bg-jlc-purple-600 text-white rounded-lg hover:bg-jlc-purple-700"
+            >
+              <PlusIcon className="h-5 w-5" />
+              Nouveau
+            </button>
+          )}
         </div>
         
         {/* Sélecteur de catégorie */}
@@ -160,6 +169,7 @@ export default function ReferencesManagementPage() {
                     ? 'bg-jlc-purple-600 text-white shadow-lg scale-105'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:scale-102'
                 }`}
+                disabled={!canRead}
               >
                 <div className="text-lg mb-1">{cat.icon}</div>
                 <div className="text-xs">{cat.label}</div>

@@ -35,15 +35,15 @@ export const useDocumentVisibilityPermissions = () => {
   const { permissions } = usePermissions([
     'documents.read.own',
     'documents.read.all',
-    'documents.view.all',
-    'documents.manage.all',
     'documents.view_cv.all', // Permission spécifique RRH/Recrutement
+    'documents.delete.all',
+    'documents.verify.all',
   ])
 
   return {
     canViewOwnDocuments: permissions['documents.read.own'],
-    canViewAllDocuments: permissions['documents.read.all'] || permissions['documents.view.all'],
-    canManageAllDocuments: permissions['documents.manage.all'],
+    canViewAllDocuments: permissions['documents.read.all'],
+    canManageAllDocuments: permissions['documents.delete.all'] || permissions['documents.verify.all'] || permissions['documents.read.all'],
     canViewAllCV: permissions['documents.view_cv.all'], // RRH/Recrutement
   }
 }

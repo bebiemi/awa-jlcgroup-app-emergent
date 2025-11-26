@@ -88,6 +88,7 @@ async def create_snapshot(
 async def list_versions(
     limit: int = 50,
     skip: int = 0,
+    current_user: User = Depends(require_permission("config.read")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """
@@ -121,6 +122,7 @@ async def list_versions(
 @router.get("/{version_id}")
 async def get_version_details(
     version_id: str,
+    current_user: User = Depends(require_permission("config.read")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """

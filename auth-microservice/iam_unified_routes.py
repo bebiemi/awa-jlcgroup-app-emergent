@@ -11,6 +11,7 @@ import logging
 from awana_auth.core.dependencies import get_database, get_current_user
 from awana_auth.core.models import User
 from awana_auth.services.iam_unified_service import IAMUnifiedService
+from awana_auth.dependencies.permission_dependencies import require_any_permission
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/iam/unified", tags=["iam-unified"])
@@ -44,7 +45,7 @@ class PermissionCheckResponse(BaseModel):
 @router.get("/users/{user_id}/permissions", response_model=UserPermissionsUnifiedResponse)
 async def get_user_permissions_unified(
     user_id: str,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_any_permission(["iam.permissions.read", "admin.dashboard"])),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """
@@ -57,8 +58,9 @@ async def get_user_permissions_unified(
     
     Compatible avec requiredPermissions de ProtectedRoute
     """
-    # Vérification des droits
-    if user_id != current_user.id and "admin" not in current_user.roles and "super_admin" not in current_user.roles:
+    # Vérification des droits (self ou admin/super_admin)
+    normalized_roles = [r.lower() for r in current_user.roles]
+    if user_id != current_user.id and "admin" not in normalized_roles and "super_admin" not in normalized_roles:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Vous ne pouvez consulter que vos propres permissions"
@@ -93,23 +95,17 @@ async def get_user_permissions_unified(
         )
 
 
+from awana_auth.dependencies.permission_dependencies import require_any_permission
 @router.post("/check-permission", response_model=PermissionCheckResponse)
 async def check_user_permission(
     request: PermissionCheckRequest,
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_any_permission(["iam.permissions.read", "admin.dashboard"])),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """
     Vérifie si un utilisateur a une permission spécifique
     Support des wildcards (ex: missions.*)
     """
-    # Vérification des droits
-    if request.user_id != current_user.id and "admin" not in current_user.roles:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Vous ne pouvez vérifier que vos propres permissions"
-        )
-    
     try:
         iam_service = IAMUnifiedService(db)
         has_permission = await iam_service.user_has_permission(

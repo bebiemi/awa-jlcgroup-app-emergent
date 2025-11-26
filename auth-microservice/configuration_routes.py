@@ -65,6 +65,7 @@ async def get_references(
 
 @router.get("/all")
 async def get_all_config(
+    current_user=Depends(require_permission("config.read")),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """
@@ -146,6 +147,31 @@ async def get_all_config(
                 "view_all": config_manager.get("workflows.validation.permissions.view_all"),
             }
         }
+    }
+
+
+@router.get("/public")
+async def get_public_config(
+    db: AsyncIOMotorDatabase = Depends(get_database)
+):
+    """
+    Configuration minimale pour le front public (offres).
+    Inclut uniquement les référentiels nécessaires et actifs.
+    """
+    # Charger les référentiels publics nécessaires (mission/contrat)
+    mission_statuses_refs = await db.system_references.find(
+        {"category": "mission_statuses", "is_active": True},
+        {"_id": 0, "code": 1}
+    ).sort("order", 1).to_list(length=None)
+
+    contract_types_refs = await db.system_references.find(
+        {"category": "contract_types", "is_active": True},
+        {"_id": 0, "code": 1}
+    ).sort("order", 1).to_list(length=None)
+
+    return {
+        "mission_statuses": [ref["code"] for ref in mission_statuses_refs],
+        "contract_types": [ref["code"] for ref in contract_types_refs],
     }
 
 

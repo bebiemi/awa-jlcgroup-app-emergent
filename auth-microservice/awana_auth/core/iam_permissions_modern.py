@@ -172,7 +172,8 @@ class IAMPermissionsModern:
     IAM_PERMISSIONS_UPDATE = "iam.permissions.update"
     IAM_PERMISSIONS_DELETE = "iam.permissions.delete"
     IAM_USERS_ASSIGN = "iam.users.assign"
-    IAM_MANAGE = "iam:manage"
+    # Déprécié : utiliser iam.permissions.read / iam.permissions.update
+    IAM_MANAGE = "iam.permissions.update"
     
     # ============================================
     # RBAC

@@ -293,7 +293,29 @@ async def create_validation_record(
     # Insert validation record
     await db.validations.insert_one(validation)
     logger.info(f"✅ Validation record created for user {user.email}")
-    
+
+    # Mirror validation into main application DB so the admin center sees pending requests
+    try:
+        jlc_db = db.client.get_database("jlc_db")
+        account_validation = {
+            "id": validation["id"],
+            "user_id": user.id,
+            "user_email": user.email,
+            "user_name": register_data.full_name,
+            "validation_type": "company" if validation_type == "company" else validation_type,
+            "status": "pending" if user.status == UserStatus.PENDING else "approved",
+            "comment": None,
+            "reviewed_by": None,
+            "reviewed_by_email": None,
+            "reviewed_at": None,
+            "created_at": datetime.now(timezone.utc),
+            "updated_at": datetime.now(timezone.utc),
+        }
+        await jlc_db.account_validations.insert_one(account_validation)
+        logger.info(f"✅ account_validations record mirrored in jlc_db for user {user.email}")
+    except Exception as mirror_error:
+        logger.error(f"❌ Failed to mirror validation to jlc_db.account_validations: {mirror_error}", exc_info=True)
+
     if validation["has_location_warning"]:
         logger.warning(f"⚠️ Location warning for {user.email}: {validation['location_warning_message']}")
 
@@ -1298,12 +1320,17 @@ async def local_register(
             bcrypt.gensalt()
         ).decode('utf-8')
         
+        # Detect company intent even if company_name is whitespace or only supporting fields are provided
+        raw_company_name = (register_data.company_name or "").strip()
+        is_company_registration = bool(raw_company_name or register_data.legal_representative or register_data.nif)
+
         # Determine user status and role based on registration type
-        if register_data.company_name:
+        if is_company_registration:
             # Company registration -> needs validation
             user_status = UserStatus.PENDING
             assigned_role = UserRoles.COMPANY
             iam_group_code = IAMGroups.COMPANY
+            register_data.company_name = raw_company_name or register_data.full_name  # ensure a non-empty value is persisted
             logger.info(f"Company registration detected for {register_data.email} ({register_data.company_name}) - validation required")
         elif is_collaborator:
             # Collaborator email -> needs validation
@@ -1386,7 +1413,7 @@ async def local_register(
             }
         )
         
-        # Create JWT tokens
+        # Create JWT tokens (company/collaborator stay restricted)
         access_token = await jwt_manager.create_access_token(
             user=user,
             session_id=session.id
@@ -1421,17 +1448,18 @@ async def local_register(
             }
         )
         
-        # Auto-create profile in jlc_db
+        # Auto-create profile in jlc_db (align with IAM profiles instead of legacy roles)
+        profile_type = "company" if register_data.company_name else assigned_role
         await create_user_profile_if_not_exists(
             db=db,
             user_id=user.id,
             email=user.email,
             full_name=register_data.full_name,
-            profile_type=assigned_role,
+            profile_type=profile_type,
             picture=None
         )
         
-        # Create validation record
+        # Create validation record (keeps status pending for company/collaborator)
         await create_validation_record(
             db=db,
             user=user,
@@ -1444,7 +1472,7 @@ async def local_register(
         if user.status == UserStatus.ACTIVE:
             logger.info("✅ Candidat account active - immediate access granted")
         else:
-            logger.info("⚠️ Collaborator account pending - manual validation required")
+            logger.info("⚠️ Collaborator/Company account pending - manual validation required")
         
         return LoginResponse(
             access_token=access_token,
@@ -2749,4 +2777,3 @@ async def mark_user_as_viewed(
         "message": "User marked as viewed",
         "user_id": user_id
     }
-

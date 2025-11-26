@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { XMarkIcon, NoSymbolIcon, CheckCircleIcon } from '@heroicons/react/24/outline'
 import { useUpdateUserStatusMutation, type User } from '@/features/users/api/usersApi'
+import { usePermissions } from '@/hooks/usePermission'
 
 interface BlockUserModalProps {
   user: User
@@ -10,6 +11,7 @@ interface BlockUserModalProps {
 
 export default function BlockUserModal({ user, isOpen, onClose }: BlockUserModalProps) {
   const [updateStatus, { isLoading }] = useUpdateUserStatusMutation()
+  const { permissions } = usePermissions(['users.manage_status', 'users.manage'])
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
 
@@ -36,6 +38,11 @@ export default function BlockUserModal({ user, isOpen, onClose }: BlockUserModal
   }
 
   if (!isOpen) return null
+
+  const canManageStatus = permissions['users.manage_status'] || permissions['users.manage']
+  if (!canManageStatus) {
+    return null
+  }
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">

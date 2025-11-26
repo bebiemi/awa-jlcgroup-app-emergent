@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useResetUserMfaMutation } from '@/features/users/api/usersApi'
 import toast from 'react-hot-toast'
 import { XMarkIcon, ShieldExclamationIcon, ArrowPathIcon } from '@heroicons/react/24/outline'
+import { usePermissions } from '@/hooks/usePermission'
 
 interface ResetMfaModalProps {
   isOpen: boolean
@@ -17,6 +18,7 @@ interface ResetMfaModalProps {
 export default function ResetMfaModal({ isOpen, onClose, user }: ResetMfaModalProps) {
   const [resetMfa, { isLoading }] = useResetUserMfaMutation()
   const [confirmed, setConfirmed] = useState(false)
+  const { permissions } = usePermissions(['users.reset_mfa', 'users.manage'])
 
   const handleReset = async () => {
     if (!confirmed) {
@@ -36,6 +38,10 @@ export default function ResetMfaModal({ isOpen, onClose, user }: ResetMfaModalPr
   }
 
   if (!isOpen) return null
+
+  if (!(permissions['users.reset_mfa'] || permissions['users.manage'])) {
+    return null
+  }
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
