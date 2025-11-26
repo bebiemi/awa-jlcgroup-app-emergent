@@ -18,6 +18,8 @@
 - **Attribution de profils IAM sans valeurs en dur** : `auth-microservice/security_routes.py` mappe désormais les rôles issus de la configuration (`cfg`) vers les profils `IAMProfiles`, supprimant les chaînes inline `admin`/`super_admin`/`interim`/`company`/`commercial` lors de la création d'utilisateurs.
 - **Profils utilisateur alignés IAM côté web** : la page profil (`ProfilePage.tsx`) et le widget de complétion (`ProfileCompletionWidget.tsx`) s'appuient sur `useRoles`/`useValidationTypes` pour sélectionner les formulaires et champs à afficher au lieu de valeurs en dur (`candidat`, `postulant`, `interim`, `company`, `collaborator`).
 - **API profil typée sur les constantes** : `profileApi.ts` déclare désormais `profile_type` via `ValidationType`, garantissant la cohérence des types avec le backend.
+- **Google OAuth sans rôles inline** : `auth-microservice/google_auth_routes.py` crée les profils `interim`/`company`/`admin`/`super_admin` à partir des rôles configurés au lieu de littéraux.
+- **Permissions temporaires/IAM sans chaînes admin** : `auth-microservice/temporary_permissions_routes.py` et `auth-microservice/iam_routes.py` utilisent `cfg.get_admin_role`/`cfg.get_super_admin_role` pour sécuriser l'accès aux permissions, évitant les comparaisons en dur.
 
 ## Actions prioritaires restantes
 1. **Externaliser les rôles/statuts auth** : déplacer les comparaisons en dur dans `apps/api/**/awana_auth_routes.py` vers la configuration (`config/base.yaml`).

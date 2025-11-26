@@ -1,6 +1,6 @@
 # 📊 Progression de la Refactorisation IAM
 
-## ✅ Fichiers Refactorés (15 fichiers)
+## ✅ Fichiers Refactorés (18 fichiers)
 
 ### Frontend (10 fichiers)
 1. ✅ **ValidationsPage.tsx** - 15+ occurrences refactorées
@@ -42,27 +42,39 @@
 10. ✅ **profileApi.ts** - Typage aligné sur les constantes IAM
     - `profile_type` repose sur `ValidationType` plutôt que sur des littéraux inline
 
-### Backend (5 fichiers)
-4. ✅ **initialize_candidat_iam.py** - 17 occurrences refactorées
+### Backend (8 fichiers)
+1. ✅ **initialize_candidat_iam.py** - 17 occurrences refactorées
    - Import: `IAMGroups`, `IAMProfiles`, `IAMPermissions`
    - Tous les codes hardcodés remplacés par constantes
    - Fix de connexion MongoDB
 
-5. ✅ **awana_auth_routes.py** - Partiellement refactoré (déjà fait avant)
+2. ✅ **awana_auth_routes.py** - Partiellement refactoré (déjà fait avant)
    - Import: `IAMGroups`, `IAMProfiles`, `UserRoles`, `ValidationTypes`
    - Rôle/validation « candidat » et codes de groupes intérimaires désormais issus des constantes IAM
 
-6. ✅ **validation_routes.py** - Statuts/types de validation centralisés
+3. ✅ **validation_routes.py** - Statuts/types de validation centralisés
    - Utilise `cfg.get_validation_status` et `cfg.get_validation_type`
    - Remplace les valeurs en dur dans les stats et transitions d'approbation/rejet
 
-7. ✅ **system_references_routes.py** - Rôles admin/super_admin pilotés par la config
+4. ✅ **system_references_routes.py** - Rôles admin/super_admin pilotés par la config
    - Utilise `cfg.get_admin_role` / `cfg.get_super_admin_role` pour les contrôles d'accès publics
    - Mutualise la vérification via `_ensure_admin_or_manage_permission`
 
-8. ✅ **security_routes.py** - Attribution automatique des profils pilotée par la config
+5. ✅ **security_routes.py** - Attribution automatique des profils pilotée par la config
    - Mappe les rôles issus de `cfg` vers les profils IAM (`IAMProfiles`)
    - Supprime les chaînes en dur `admin`/`super_admin`/`interim`/`company`/`commercial` dans la création d'utilisateurs
+
+6. ✅ **google_auth_routes.py** - Création de profils OAuth alignée sur les rôles configurés
+   - Les profils `interim`/`company`/`admin`/`super_admin` reposent sur `cfg` plutôt que sur des littéraux
+   - Les flux Google continuent de provisionner les comptes avec les rôles configurés par défaut
+
+7. ✅ **temporary_permissions_routes.py** - Vérifications admin centralisées
+   - Les contrôles d'accès utilisent `cfg.get_admin_role` et `cfg.get_super_admin_role`
+   - Évite les comparaisons inline pour l'affichage et la gestion des permissions temporaires
+
+8. ✅ **iam_routes.py** - Lecture des permissions utilisateur sans rôles en dur
+   - L'accès administrateur au listing des permissions s'appuie sur les rôles configurés
+   - Prépare la factorisation des contrôles IAM restants
 
 ---
 
@@ -102,13 +114,13 @@
 ## 📈 Statistiques
 
 ### Total
-- **Fichiers refactorés**: 15 / ~34 (~44%)
-- **Occurrences éliminées**: ~80 + statuts/types centralisés dans `validation_routes.py`
+- **Fichiers refactorés**: 18 / ~34 (~53%)
+- **Occurrences éliminées**: ~90 + statuts/types centralisés dans `validation_routes.py`
 - **Tests de sync**: ✅ 100% passés
 
 ### Par Catégorie
 - **Frontend**: 10 fichiers refactorés / ~14 restants
-- **Backend**: 5 fichiers refactorés / ~10 restants
+- **Backend**: 8 fichiers refactorés / ~7 restants
 
 ---
 
@@ -156,5 +168,5 @@ grep -r '"candidat"\|"interim"\|"company"' /app/auth-microservice --include="*.p
 
 ---
 
-**Dernière mise à jour**: 2025-11-28 (ProfilePage + ProfileCompletionWidget alignés sur IAM/config)
-**Statut**: 🔄 En progression (~44% complété)
+**Dernière mise à jour**: 2025-11-28 (Google OAuth + permissions temporaires + IAM roles alignés sur la config)
+**Statut**: 🔄 En progression (~53% complété)
