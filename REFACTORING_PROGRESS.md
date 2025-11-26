@@ -1,6 +1,6 @@
 # 📊 Progression de la Refactorisation IAM
 
-## ✅ Fichiers Refactorés (33 fichiers)
+## ✅ Fichiers Refactorés (35 fichiers)
 
 ### Frontend (14 fichiers)
 1. ✅ **ValidationsPage.tsx** - 15+ occurrences refactorées
@@ -58,7 +58,7 @@
     - Le placeholder de ciblage par rôle réutilise `useRoles()` (fallback configuré)
     - Évite la chaîne inline `admin` dans les formulaires de création/édition
 
-### Backend (19 fichiers)
+### Backend (21 fichiers)
 1. ✅ **initialize_candidat_iam.py** - 17 occurrences refactorées
    - Import: `IAMGroups`, `IAMProfiles`, `IAMPermissions`
    - Tous les codes hardcodés remplacés par constantes
@@ -133,6 +133,12 @@
 19. ✅ **scripts/seed_mission_references.py** - Référentiels mission pilotés par la config
     - Les statuts de mission/candidature et rôles d'action sont lus via `ConfigHelper`
     - Supprime les chaînes inline `company`/`agency` et aligne les transitions sur les codes configurés
+20. ✅ **scripts/initialize_iam_system.py** - Profils/groupes IAM dérivés de la configuration
+    - Codes de rôles super_admin/admin/interim/company/commercial/postulant lus via `ConfigHelper` (fallbacks hérités)
+    - Le groupe super admin est créé à partir du code configuré, supprimant les littéraux inline
+21. ✅ **awana_auth/core/reference_models.py** - Exemple de référentiel aligné sur les rôles configurés
+    - Les imports manquants sont restaurés
+    - L'exemple JSON s'appuie sur le rôle intérim issu de la configuration (fallback `interim`)
 
 ---
 
@@ -152,12 +158,12 @@
 - [ ] **IAMControlPage.tsx** - Déjà propre
 
 ### Backend Prioritaires (~2 fichiers)
-- [ ] **scripts/initialize_iam_system.py** (GROS fichier - ~13KB)
 - [ ] **scripts/update_iam_permissions.py**
+- [x] **scripts/initialize_iam_system.py** (GROS fichier - ~13KB)
 - [x] **scripts/diagnose_login.py** (1 occurrence)
 - [ ] **scripts/seed_additional_references.py** (2 occurrences)
 - [ ] **scripts/add_missing_references.py** (2 occurrences)
-- [ ] **awana_auth/core/reference_models.py** (1 occurrence)
+- [x] **awana_auth/core/reference_models.py** (1 occurrence)
 - [ ] **awana_auth/core/version_models.py** (1 occurrence)
 
 ---
@@ -165,13 +171,13 @@
 ## 📈 Statistiques
 
 ### Total
-- **Fichiers refactorés**: 33 / ~34 (~97%)
+- **Fichiers refactorés**: 35 / ~36 (~97%)
 - **Occurrences éliminées**: ~100 + statuts/types centralisés dans `validation_routes.py`
 - **Tests de sync**: ✅ 100% passés
 
 ### Par Catégorie
 - **Frontend**: 14 fichiers refactorés / ~6 restants
-- **Backend**: 19 fichiers refactorés / ~2 restants
+- **Backend**: 21 fichiers refactorés / ~2 restants
 
 ---
 
@@ -184,8 +190,8 @@
 **Temps estimé**: ~8 min pour 2 fichiers
 
 ### Étape 2: Backend (Scripts importants)
-1. initialize_iam_system.py - Fichier critique, beaucoup d'occurrences
-2. Scripts de migration et seed
+1. scripts/update_iam_permissions.py
+2. Scripts de migration et seed restants
 
 **Temps estimé**: ~30 min
 

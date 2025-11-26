@@ -37,6 +37,8 @@
 - **Configuration exposée sans clés inline** : `auth-microservice/configuration_routes.py` renvoie les rôles et statuts utilisateur directement depuis la configuration via `ConfigHelper`, éliminant les clés `admin`/`super_admin`/`interim`/`company` en dur dans la réponse.
 - **Référentiels missions paramétrables** : `auth-microservice/scripts/seed_mission_references.py` lit désormais les statuts de mission/candidature et les rôles d'action (company/agency) via `ConfigHelper`, supprimant les chaînes inline dans les transitions et métadonnées.
 - **Feature flags côté admin alignés IAM** : `apps/web/src/features/admin/pages/FeatureFlagsPage.tsx` utilise `useRoles()` pour préremplir la cible par rôle au lieu de la chaîne `admin` en dur.
+- **Initialisation IAM pilotée par la config** : `auth-microservice/scripts/initialize_iam_system.py` crée les profils et le groupe super admin à partir des rôles configurés (fallbacks hérités), supprimant les codes inline.
+- **Référentiels système alignés config** : l'exemple JSON de `awana_auth/core/reference_models.py` s'appuie sur le rôle intérim issu de la configuration et restaure les imports manquants pour assurer la validité du modèle.
 
 ## Actions prioritaires restantes
 1. **Externaliser les rôles/statuts auth** : déplacer les comparaisons en dur dans `apps/api/**/awana_auth_routes.py` vers la configuration (`config/base.yaml`).
