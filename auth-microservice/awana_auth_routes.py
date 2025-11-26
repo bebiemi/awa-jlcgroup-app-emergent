@@ -48,6 +48,15 @@ auth_router = APIRouter(prefix="/auth", tags=["Authentication"])
 users_router = APIRouter(prefix="/admin/users", tags=["User Management"])
 roles_router = APIRouter(prefix="/admin/roles", tags=["Role Management"])
 
+# Config-driven constants
+USER_STATUS_PENDING = cfg.get_pending_status()
+ROLE_INTERIM = cfg.get_interim_role()
+ROLE_CANDIDAT = cfg.get_role("candidat")
+VALIDATION_STATUS_PENDING = cfg.get_validation_status("pending")
+VALIDATION_STATUS_APPROVED = cfg.get_validation_status("approved")
+VALIDATION_TYPE_COMPANY = cfg.get_validation_type("company")
+VALIDATION_TYPE_COLLABORATOR = cfg.get_validation_type("collaborator")
+
 
 # ===== Pydantic Models for Requests/Responses =====
 
@@ -161,17 +170,17 @@ async def create_validation_record(
     import uuid
     
     # Determine validation type based on registration data
-    # Priority: 1) company_name provided → "company"
-    #           2) is_collaborator email → "collaborateur"
+    # Priority: 1) company_name provided → company validation type
+    #           2) collaborator email → collaborator validation type
     #           3) assigned role → use role
     if register_data.company_name:
         # Company registration takes priority even if email is @jlcgroup.com
-        validation_type = "company"
+        validation_type = VALIDATION_TYPE_COMPANY
     elif user.is_collaborator:
-        validation_type = "collaborateur"
+        validation_type = VALIDATION_TYPE_COLLABORATOR
     else:
         # For non-collaborators, use the assigned role
-        validation_type = user.roles[0] if user.roles else "candidat"
+        validation_type = user.roles[0] if user.roles else ROLE_CANDIDAT
     
     # Extraire les informations du représentant légal pour les entreprises
     representant_legal_nom = ""
@@ -180,7 +189,7 @@ async def create_validation_record(
     existing_representant_user_id = None
     existing_representant_entreprises = []
     
-    if validation_type == "company":
+    if validation_type == VALIDATION_TYPE_COMPANY:
         # Le représentant légal peut être fourni explicitement ou c'est l'utilisateur lui-même
         representant_legal_nom = register_data.legal_representative or register_data.full_name
         representant_legal_email = register_data.email
@@ -209,7 +218,7 @@ async def create_validation_record(
         "user_email": user.email,
         "user_full_name": register_data.full_name,
         "validation_type": validation_type,
-        "status": cfg.get_pending_status() if user_status_value == cfg.get_pending_status() else "approved",
+        "status": VALIDATION_STATUS_PENDING if user_status_value == USER_STATUS_PENDING else VALIDATION_STATUS_APPROVED,
         "has_location_warning": False,
         "location_warning_message": None,
         "missing_country": None,
@@ -304,8 +313,8 @@ async def create_validation_record(
             "user_id": user.id,
             "user_email": user.email,
             "user_name": register_data.full_name,
-            "validation_type": "company" if validation_type == "company" else validation_type,
-            "status": cfg.get_pending_status() if user_status_value == cfg.get_pending_status() else "approved",
+            "validation_type": VALIDATION_TYPE_COMPANY if validation_type == VALIDATION_TYPE_COMPANY else validation_type,
+            "status": VALIDATION_STATUS_PENDING if user_status_value == USER_STATUS_PENDING else VALIDATION_STATUS_APPROVED,
             "comment": None,
             "reviewed_by": None,
             "reviewed_by_email": None,
@@ -1455,7 +1464,7 @@ async def local_register(
         )
         
         # Auto-create profile in jlc_db (align with IAM profiles instead of legacy roles)
-        profile_type = "company" if register_data.company_name else assigned_role
+        profile_type = cfg.get_profile_type("company") if register_data.company_name else assigned_role
         await create_user_profile_if_not_exists(
             db=db,
             user_id=user.id,
@@ -1610,7 +1619,7 @@ async def promote_candidat_to_interimaire(
             {"id": user_id},
             {
                 "$set": {
-                    "roles": ["interim"],  # Update legacy role
+                    "roles": [ROLE_INTERIM],  # Update legacy role
                     "updated_at": datetime.now(timezone.utc).isoformat()
                 }
             }
@@ -1777,16 +1786,16 @@ async def get_admin_stats(
         return {
             "total_users": total_users,
             "users_by_status": {
-                "active": active_users,
-                "pending": pending_users,
-                "suspended": suspended_users
+                cfg.get_active_status(): active_users,
+                USER_STATUS_PENDING: pending_users,
+                cfg.get_suspended_status(): suspended_users
             },
             "users_by_role": {
-                "admin": admin_users,
-                "super_admin": super_admin_users,
-                "interim": interim_users,
-                "company": company_users,
-                "agency": agency_users
+                cfg.get_admin_role(): admin_users,
+                cfg.get_super_admin_role(): super_admin_users,
+                cfg.get_interim_role(): interim_users,
+                cfg.get_company_role(): company_users,
+                cfg.get_agency_role(): agency_users
             },
             "users_by_provider": {
                 "local": local_users,
