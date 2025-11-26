@@ -64,11 +64,19 @@ class IAMPermissions:
     
     # Admin
     ADMIN_DASHBOARD = "admin.dashboard"
+    USERS_EDIT = "users.edit"
+    USERS_EDIT_OWN = "users.edit.own"
+    USERS_EDIT_ALL = "users.edit.all"
     USERS_READ = "users.read"
     USERS_MANAGE = "users.manage"
     USERS_PASSWORD_UPDATE = "users.password.update"
-    
-    # Email Settings
+
+    # Emails
+    EMAILS_CONFIGURE = "emails.configure"
+    EMAILS_READ_CONFIG = "emails.read_config"
+    EMAILS_READ_HISTORY = "emails.read_history"
+    EMAILS_MANAGE_TEMPLATES = "emails.manage_templates"
+    EMAILS_TEST = "emails.test"
     EMAIL_SETTINGS_READ = "email.settings.read"
     EMAIL_SETTINGS_MANAGE = "email.settings.manage"
     

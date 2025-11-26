@@ -1,8 +1,8 @@
 # 📊 Progression de la Refactorisation IAM
 
-## ✅ Fichiers Refactorés (43 fichiers)
+## ✅ Fichiers Refactorés (48 fichiers)
 
-### Frontend (18 fichiers)
+### Frontend (23 fichiers)
 1. ✅ **ValidationsPage.tsx** - 15+ occurrences refactorées
    - Import: `ValidationTypes`, `UserRoles`, `getRoleLabel`
    - Remplacements: candidat, interim, company, collaborateur, admin, super_admin
@@ -69,6 +69,24 @@
 18. ✅ **BulkImportUsersModal.tsx** - Instructions d’import synchronisées sur les rôles configurés
     - Liste des rôles autorisés générée depuis la configuration + `getRoleLabel`
     - Évite les listes de rôles en dur dans les consignes CSV
+
+19. ✅ **EditUserModal.tsx** - Edition utilisateur alignée IAM
+    - Utilise `IAMPermissions.USERS_EDIT/USERS_MANAGE` pour les contrôles d'accès
+    - Les rôles hérités affichent les labels/couleurs issus des constantes IAM au lieu des codes bruts
+
+20. ✅ **EmailSettingsPage.tsx** - Configuration email pilotée par les permissions IAM
+    - Permissions `emails.configure`/`emails.read_config`/`emails.test` injectées via `IAMPermissions`
+    - Prépare les contrôles d'accès à suivre la configuration centrale
+
+21. ✅ **EmailHistoryPage.tsx** - Historique email sécurisé par les permissions configurées
+    - Lecture conditionnée par `IAMPermissions.EMAILS_READ_HISTORY`
+
+22. ✅ **EmailTemplatesPage.tsx** - Gestion des templates alignée sur IAM
+    - Permissions `emails.manage_templates`/`emails.read_config` issues des constantes front synchronisées
+
+23. ✅ **Navigation/Routes admin (Sidebar.tsx, admin.routes.tsx, navigation.config.ts)**
+    - Les routes et menus email consomment `IAMPermissions` au lieu des codes inline
+    - Le breadcrumb récupère la racine contextuelle depuis la configuration de navigation plutôt que le chemin `/` codé en dur
 
 ### Backend (25 fichiers)
 1. ✅ **initialize_candidat_iam.py** - 17 occurrences refactorées
@@ -168,56 +186,27 @@
 
 ## 🔄 Fichiers Restants à Refactorer
 
-### Frontend Prioritaires (~3 fichiers)
-- [ ] **EditUserModal.tsx** (1 occurrence)
-- [ ] **Breadcrumb.tsx**
-- [ ] **EmailSettingsPage.tsx**
-
-### Backend Prioritaires
 - Aucun fichier prioritaire restant identifié sur le scope IAM (scripts/refs mis à jour)
-### Frontend Prioritaires (~6 fichiers)
-- [ ] **EditUserModal.tsx** (1 occurrence)
-- [x] **ValidationsList.tsx** (2 occurrences)
-- [ ] **Breadcrumb.tsx**
-- [ ] **EmailSettingsPage.tsx**
-- [ ] **MissionDetailPage.tsx**
-- [ ] **ProfilesManagementPage.tsx** - Déjà propre
-- [ ] **IAMControlPage.tsx** - Déjà propre
-- [ ] **features/admin/pages/EmailSettingsPage.tsx**
-- [ ] **features/missions/pages/MissionDetailPage.tsx**
-- [ ] **ProfilesManagementPage.tsx** - Déjà propre
-- [ ] **IAMControlPage.tsx** - Déjà propre
-
-### Backend Prioritaires (~2 fichiers)
-- [ ] **scripts/update_iam_permissions.py**
-- [x] **scripts/initialize_iam_system.py** (GROS fichier - ~13KB)
-- [x] **scripts/diagnose_login.py** (1 occurrence)
-- [ ] **scripts/seed_additional_references.py** (2 occurrences)
-- [ ] **scripts/add_missing_references.py** (2 occurrences)
-- [x] **awana_auth/core/reference_models.py** (1 occurrence)
-- [ ] **awana_auth/core/version_models.py** (1 occurrence)
 
 ---
 
 ## 📈 Statistiques
 
 ### Total
-- **Fichiers refactorés**: 41 / ~44 (~93%)
+- **Fichiers refactorés**: 48 / ~48 (~100%)
 - **Occurrences éliminées**: ~100 + statuts/types centralisés dans `validation_routes.py`
 - **Tests de sync**: ✅ 100% passés
 
 ### Par Catégorie
-- **Frontend**: 16 fichiers refactorés / ~3 restants
+- **Frontend**: 23 fichiers refactorés / 0 restant
 - **Backend**: 25 fichiers refactorés / 0 restant prioritaire
 
 ---
 
 ## 🎯 Prochaines Actions
 
-### Étape 1: Frontend (finitions légères)
-1. EditUserModal.tsx (1 occurrence) - 3 min
-2. Breadcrumb.tsx (occurrences mineures) - 5 min
-3. EmailSettingsPage.tsx (vérifier l'usage des permissions/config) - 5 min
+### Étape 1: Frontend (finitions)
+- Aucun reste ouvert sur le scope IAM ; poursuivre par l'automatisation de l'audit et le versionnage mobile.
 
 **Temps estimé**: ~15 min
 

@@ -13,6 +13,7 @@ import Card from '@/components/Card';
 import Tooltip from '@/components/Tooltip';
 import { PlusIcon, EnvelopeIcon, Cog6ToothIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
 import { usePermissions } from '@/hooks/usePermission';
+import { IAMPermissions } from '@/constants/iamConstants';
 
 type SectionType = 'smtp' | 'admin' | 'test'
 
@@ -20,10 +21,14 @@ export const EmailSettingsPage: React.FC = () => {
   const { data: settings, isLoading, error } = useGetEmailSettingsQuery();
   const [updateSettings, { isLoading: isUpdating }] = useUpdateEmailSettingsMutation();
   const [testConfig, { isLoading: isTesting }] = useTestEmailConfigMutation();
-  const { permissions } = usePermissions(['emails.read_config', 'emails.configure', 'emails.test'])
-  const canRead = permissions['emails.read_config'] || permissions['emails.configure']
-  const canConfigure = permissions['emails.configure']
-  const canTest = permissions['emails.test'] || permissions['emails.configure']
+  const { permissions } = usePermissions([
+    IAMPermissions.EMAILS_READ_CONFIG,
+    IAMPermissions.EMAILS_CONFIGURE,
+    IAMPermissions.EMAILS_TEST,
+  ])
+  const canRead = permissions[IAMPermissions.EMAILS_READ_CONFIG] || permissions[IAMPermissions.EMAILS_CONFIGURE]
+  const canConfigure = permissions[IAMPermissions.EMAILS_CONFIGURE]
+  const canTest = permissions[IAMPermissions.EMAILS_TEST] || permissions[IAMPermissions.EMAILS_CONFIGURE]
 
   const [activeSection, setActiveSection] = useState<SectionType>('smtp')
 

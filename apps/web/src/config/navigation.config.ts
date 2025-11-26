@@ -1,14 +1,15 @@
 /**
  * Configuration Centralisée de la Navigation
- * 
+ *
  * Cette configuration pilote :
  * - Le breadcrumb (fil d'Ariane)
  * - La sidebar (menu latéral)
  * - Les menus contextuels
- * 
+ *
  * Pattern IAM unifié : resource.action.scope
  * Labels via i18n : nav.{context}.{item}
  */
+import { IAMPermissions } from '@/constants/iamConstants'
 
 export type NavigationContext = 'entreprise' | 'commercial' | 'candidat' | 'admin' | 'public'
 
@@ -415,7 +416,7 @@ export const navigationConfig: Record<string, NavigationItem> = {
     labelKey: 'nav.admin.emails',
     icon: 'EnvelopeIcon',
     parentId: 'adminConfig',
-    requiredPermissions: ['emails.configure', 'admin.access'],
+    requiredPermissions: [IAMPermissions.EMAILS_CONFIGURE, 'admin.access'],
     contexts: ['admin'],
     order: 5,
   },

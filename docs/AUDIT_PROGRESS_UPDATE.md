@@ -45,6 +45,9 @@
 - **MissionDetailPage alignée sur la configuration** : la page consomme `useMissionStatuses` / `useApplicationStatuses` pour cartographier les statuts mission et candidature, y compris pour les badges et le bouton de publication, sans chaînes de statuts en dur.
 - **Hook de configuration mission/candidature** : `useAppConfig.ts` renvoie désormais des dictionnaires pour les statuts de mission/candidature en fallback, évitant les accès sur tableaux lorsqu'on lit les codes configurés.
 
+- **Permissions email alignées IAM** : `EmailSettingsPage.tsx`, `EmailHistoryPage.tsx`, `EmailTemplatesPage.tsx`, la navigation admin (`Sidebar.tsx`, `admin.routes.tsx`, `navigation.config.ts`) consomment les codes `emails.*` via `IAMPermissions`, supprimant les chaînes inline pour les contrôles d'accès.
+- **Breadcrumb sans chemin inline** : le fil d'Ariane utilise la racine contextuelle de `navigation.config` plutôt que le `/` codé en dur.
+
 ## Actions prioritaires restantes
 1. **Externaliser les rôles/statuts auth** : déplacer les comparaisons en dur dans `apps/api/**/awana_auth_routes.py` vers la configuration (`config/base.yaml`).
 2. **Centraliser les permissions mission** : consommer des listes de rôles configurées dans `apps/api/**/mission_routes.py` pour la création/publication/édition/lecture globale.
