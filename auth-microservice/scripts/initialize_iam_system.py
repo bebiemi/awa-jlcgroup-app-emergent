@@ -12,6 +12,16 @@ import uuid
 # Add parent directory to path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from awana_auth.utils.config_helpers import ConfigHelper as cfg
+
+# Config-driven role codes (fallbacks preserve legacy behavior)
+SUPER_ADMIN_ROLE = cfg.get_super_admin_role() or "super_admin"
+ADMIN_ROLE = cfg.get_admin_role() or "admin"
+COMMERCIAL_ROLE = cfg.get_commercial_role() or "commercial"
+COMPANY_ROLE = cfg.get_company_role() or "company_admin"
+INTERIM_ROLE = cfg.get_interim_role() or "interim_user"
+POSTULANT_ROLE = cfg.get_role("postulant") or "applicant"
+
 
 # System Permissions Definitions
 SYSTEM_PERMISSIONS = [
@@ -53,7 +63,7 @@ SYSTEM_PERMISSIONS = [
 # System Profiles Definitions
 SYSTEM_PROFILES = [
     {
-        "code": "super_admin",
+        "code": SUPER_ADMIN_ROLE,
         "name": "Super Administrateur",
         "description": "Accès complet et illimité à toutes les fonctionnalités",
         "is_system_role": True,
@@ -65,7 +75,7 @@ SYSTEM_PROFILES = [
         "permission_codes": ["*"]  # All permissions
     },
     {
-        "code": "admin",
+        "code": ADMIN_ROLE,
         "name": "Administrateur",
         "description": "Gestion complète sauf configuration système",
         "is_system_role": True,
@@ -99,7 +109,7 @@ SYSTEM_PROFILES = [
         ]
     },
     {
-        "code": "commercial",
+        "code": COMMERCIAL_ROLE,
         "name": "Commercial",
         "description": "Gestion des missions et matching",
         "is_system_role": True,
@@ -116,7 +126,7 @@ SYSTEM_PROFILES = [
         ]
     },
     {
-        "code": "company_admin",
+        "code": COMPANY_ROLE,
         "name": "Admin Société",
         "description": "Gestion des missions et intérimaires de la société",
         "is_system_role": True,
@@ -148,7 +158,7 @@ SYSTEM_PROFILES = [
         ]
     },
     {
-        "code": "interim_user",
+        "code": INTERIM_ROLE,
         "name": "Intérimaire",
         "description": "Gestion profil et candidatures",
         "is_system_role": True,
@@ -163,7 +173,7 @@ SYSTEM_PROFILES = [
         ]
     },
     {
-        "code": "applicant",
+        "code": POSTULANT_ROLE,
         "name": "Postulant",
         "description": "Consultation missions avant signature contrat",
         "is_system_role": True,
@@ -289,10 +299,10 @@ async def initialize_iam():
     groups_collection = db.groups
     
     # Admin Group
-    super_admin_profile = await profiles_collection.find_one({"code": "super_admin"})
+    super_admin_profile = await profiles_collection.find_one({"code": SUPER_ADMIN_ROLE})
     admin_group_data = {
         "id": str(uuid.uuid4()),
-        "code": "super_admins",
+        "code": f"{SUPER_ADMIN_ROLE}s",
         "name": "Super Administrateurs",
         "description": "Groupe des super administrateurs",
         "profile_ids": [super_admin_profile["id"]] if super_admin_profile else [],
@@ -303,7 +313,7 @@ async def initialize_iam():
         "updated_at": datetime.now(timezone.utc)
     }
     
-    existing_group = await groups_collection.find_one({"code": "super_admins"})
+    existing_group = await groups_collection.find_one({"code": f"{SUPER_ADMIN_ROLE}s"})
     if not existing_group:
         await groups_collection.insert_one(admin_group_data)
         print("  ✅ Created: Super Administrateurs group")

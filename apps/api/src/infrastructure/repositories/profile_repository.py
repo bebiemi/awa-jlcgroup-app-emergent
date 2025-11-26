@@ -1,5 +1,5 @@
 """Profile repository"""
-from typing import Optional, List
+from typing import Optional, List, Union
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from src.domain.entities.profile import Profile, ProfileType, AgencyProfile, CompanyProfile, InterimProfile
 from datetime import datetime
@@ -66,13 +66,14 @@ class ProfileRepository:
 
     async def list_by_type(
         self,
-        profile_type: ProfileType,
+        profile_type: Union[ProfileType, str],
         skip: int = 0,
         limit: int = 100
     ) -> List[Profile]:
-        """List profiles by type"""
+        """List profiles by type (enum or raw value)"""
+        profile_type_value = profile_type.value if isinstance(profile_type, ProfileType) else profile_type
         cursor = self.collection.find(
-            {"profile_type": profile_type.value},
+            {"profile_type": profile_type_value},
             {"_id": 0}
         ).skip(skip).limit(limit)
         
