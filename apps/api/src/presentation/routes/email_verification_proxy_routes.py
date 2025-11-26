@@ -1,11 +1,8 @@
-"""
-Email Verification Proxy Routes
-Proxies /email-verification/* requests to auth-microservice
-"""
-from fastapi import APIRouter, Request, Response
-import httpx
+"""Email Verification Proxy Routes."""
+from fastapi import APIRouter, Request
 
 from src.infrastructure.config import get_settings
+from src.presentation.routes.proxy_helpers import proxy_request
 
 router = APIRouter()
 
@@ -19,41 +16,12 @@ async def proxy_email_verification_requests(path: str, request: Request):
     Proxy all /email-verification/* requests to auth-microservice
     Preserves headers, body, query params, and method
     """
-    # Target path
-    target_path = f"/api/email-verification/{path}" if path else "/api/email-verification"
-    target_url = f"{AUTH_SERVICE_URL}{target_path}"
-    
-    # Get query params
-    query_params = dict(request.query_params)
-    
-    # Get headers (exclude host and connection headers)
-    headers = {
-        key: value for key, value in request.headers.items()
-        if key.lower() not in ["host", "connection", "content-length", "x-forwarded-proto", "x-forwarded-for", "x-forwarded-host"]
-    }
-    
-    # Get request body
-    body = await request.body()
-    
-    try:
-        async with httpx.AsyncClient(timeout=30.0, follow_redirects=True) as client:
-            response = await client.request(
-                method=request.method,
-                url=target_url,
-                params=query_params,
-                headers=headers,
-                content=body,
-            )
-            
-            # Return response with same status code and content
-            return Response(
-                content=response.content,
-                status_code=response.status_code,
-                headers=dict(response.headers),
-            )
-    except httpx.RequestError as e:
-        return Response(
-            content=f'{{"detail": "Email verification service unavailable: {str(e)}"}}',
-            status_code=503,
-            media_type="application/json",
-        )
+    return await proxy_request(
+        request=request,
+        target_base_url=AUTH_SERVICE_URL,
+        target_path=f"/api/email-verification/{path}" if path else "/api/email-verification",
+        cache=request.app.state.response_cache if hasattr(request.app.state, "response_cache") else None,
+        cache_namespace="email-verification",
+        cache_enabled_for_get=True,
+        follow_redirects=True,
+    )

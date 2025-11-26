@@ -1,12 +1,8 @@
-"""
-Besoins Proxy Routes
-Proxies /api/besoins/* requests to auth-microservice
-"""
-from fastapi import APIRouter, Request, Response
-import httpx
+"""Besoins Proxy Routes."""
+from fastapi import APIRouter, Request
 
 from src.infrastructure.config import get_settings
-from src.infrastructure.http_client import get_async_client
+from src.presentation.routes.proxy_helpers import proxy_request
 
 router = APIRouter()
 
@@ -16,42 +12,14 @@ AUTH_SERVICE_URL = get_settings().auth_service_url
 @router.api_route("/{path:path}", methods=["GET", "POST", "PUT", "PATCH", "DELETE"], include_in_schema=False)
 async def proxy_besoins_requests(path: str, request: Request):
     """Proxy all /api/besoins/* requests to auth-microservice"""
-    target_url = f"{AUTH_SERVICE_URL}/api/besoins/{path}" if path else f"{AUTH_SERVICE_URL}/api/besoins"
-    
-    query_params = dict(request.query_params)
-    # Preserve ALL headers including Authorization
-    headers = dict(request.headers)
-    # Remove problematic headers
-    headers.pop("host", None)
-    headers.pop("connection", None)
-    headers.pop("content-length", None)
-    # Remove X-Forwarded headers to prevent SSL issues in internal communication
-    headers.pop("x-forwarded-proto", None)
-    headers.pop("x-forwarded-for", None)
-    headers.pop("x-forwarded-host", None)
-    body = await request.body()
-    
-    try:
-        async with get_async_client() as client:
-            response = await client.request(
-                method=request.method,
-                url=target_url,
-                params=query_params,
-                headers=headers,
-                content=body,
-            )
-
-            return Response(
-                content=response.content,
-                status_code=response.status_code,
-                headers=dict(response.headers),
-            )
-    except httpx.RequestError as e:
-        return Response(
-            content=f'{{"detail": "Auth service unavailable: {str(e)}"}}',
-            status_code=503,
-            media_type="application/json",
-        )
+    return await proxy_request(
+        request=request,
+        target_base_url=AUTH_SERVICE_URL,
+        target_path=f"/api/besoins/{path}" if path else "/api/besoins",
+        cache=request.app.state.response_cache if hasattr(request.app.state, "response_cache") else None,
+        cache_namespace="besoins",
+        cache_enabled_for_get=True,
+    )
 
 
 @router.get("", include_in_schema=False)

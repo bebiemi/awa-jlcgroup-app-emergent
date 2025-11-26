@@ -23,6 +23,9 @@ class Settings(BaseSettings):
     rate_limit_window_seconds: int = Field(
         default=60, alias="RATE_LIMIT_WINDOW_SECONDS"
     )
+    response_cache_ttl_seconds: int = Field(
+        default=60, alias="RESPONSE_CACHE_TTL_SECONDS"
+    )
     api_client_timeout_seconds: float = Field(
         default=10.0, alias="API_CLIENT_TIMEOUT_SECONDS"
     )
