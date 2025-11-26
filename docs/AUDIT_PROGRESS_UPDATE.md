@@ -1,4 +1,4 @@
-# 🔎 Audit des valeurs en dur – État d'avancement (26/11/2025)
+# 🔎 Audit des valeurs en dur – État d'avancement (28/11/2025)
 
 ## Synthèse rapide
 - L'audit initial recense **886 occurrences** à supprimer et reste la référence (voir `docs/AUDIT_INDEX.md`).
@@ -13,9 +13,11 @@
 - **Création utilisateur admin sans rôles inline** : `CreateUserPage.tsx` construit la liste des rôles proposés à partir de la configuration (admin/super_admin/interim/company/agency).
 - **Constantes IAM synchronisées** : `apps/web/src/constants/iamConstants.ts` inclut désormais les valeurs `POSTULANT` pour refléter les constantes backend (`iam_constants.py`).
 - **ValidationsList.tsx alignée sur la config** : les filtres « En attente/Approuvées/Refusées » consomment désormais les statuts issus de la configuration/référentiels au lieu des chaînes `pending/approved/rejected` en dur.
-- **Documentation de progression mise à jour** : `REFACTORING_PROGRESS.md` reflète 12 fichiers refactorés (~35% du périmètre) dont les flux auth frontend, la création d'utilisateur et les filtres de validations alignés sur la config.
+- **Documentation de progression mise à jour** : `REFACTORING_PROGRESS.md` reflète 15 fichiers refactorés (~44% du périmètre) dont les flux auth frontend, la création d'utilisateur, la page profil et les filtres de validations alignés sur la config.
 - **Contrôles d'accès référentiels alignés IAM** : `auth-microservice/system_references_routes.py` n’utilise plus les rôles `admin`/`super_admin` en dur et s'appuie sur `cfg.get_admin_role` / `cfg.get_super_admin_role` pour sécuriser l'accès public aux référentiels.
 - **Attribution de profils IAM sans valeurs en dur** : `auth-microservice/security_routes.py` mappe désormais les rôles issus de la configuration (`cfg`) vers les profils `IAMProfiles`, supprimant les chaînes inline `admin`/`super_admin`/`interim`/`company`/`commercial` lors de la création d'utilisateurs.
+- **Profils utilisateur alignés IAM côté web** : la page profil (`ProfilePage.tsx`) et le widget de complétion (`ProfileCompletionWidget.tsx`) s'appuient sur `useRoles`/`useValidationTypes` pour sélectionner les formulaires et champs à afficher au lieu de valeurs en dur (`candidat`, `postulant`, `interim`, `company`, `collaborator`).
+- **API profil typée sur les constantes** : `profileApi.ts` déclare désormais `profile_type` via `ValidationType`, garantissant la cohérence des types avec le backend.
 
 ## Actions prioritaires restantes
 1. **Externaliser les rôles/statuts auth** : déplacer les comparaisons en dur dans `apps/api/**/awana_auth_routes.py` vers la configuration (`config/base.yaml`).

@@ -1,8 +1,8 @@
 # 📊 Progression de la Refactorisation IAM
 
-## ✅ Fichiers Refactorés (11 fichiers)
+## ✅ Fichiers Refactorés (15 fichiers)
 
-### Frontend (7 fichiers)
+### Frontend (10 fichiers)
 1. ✅ **ValidationsPage.tsx** - 15+ occurrences refactorées
    - Import: `ValidationTypes`, `UserRoles`, `getRoleLabel`
    - Remplacements: candidat, interim, company, collaborateur, admin, super_admin
@@ -31,7 +31,18 @@
    - Les cases à cocher admin/super_admin/interim/company/agency utilisent `useRoles`
    - Supprime les valeurs en dur dans la création d'utilisateur
 
-### Backend (4 fichiers)
+8. ✅ **ProfilePage.tsx** - Sélecteurs de profils basés sur la config
+   - Utilise `useRoles` et `useValidationTypes` pour déterminer les expériences et formulaires affichés
+   - Remplace les chaînes `candidat`/`postulant`/`interim`/`company`/`collaborator` en dur
+
+9. ✅ **ProfileCompletionWidget.tsx** - Widgets alignés sur les types configurés
+   - Détecte les profils intérim via les types de validation configurés
+   - Supprime la dépendance au statut inline `interim`
+
+10. ✅ **profileApi.ts** - Typage aligné sur les constantes IAM
+    - `profile_type` repose sur `ValidationType` plutôt que sur des littéraux inline
+
+### Backend (5 fichiers)
 4. ✅ **initialize_candidat_iam.py** - 17 occurrences refactorées
    - Import: `IAMGroups`, `IAMProfiles`, `IAMPermissions`
    - Tous les codes hardcodés remplacés par constantes
@@ -57,24 +68,20 @@
 
 ## 🔄 Fichiers Restants à Refactorer
 
-### Frontend Prioritaires (~13 fichiers)
+### Frontend Prioritaires (~10 fichiers)
 - [ ] **EditUserModal.tsx** (1 occurrence)
 - [x] **ValidationsList.tsx** (2 occurrences)
-- [ ] **ProfilePage.tsx** (2 occurrences)
-- [ ] **MfaVerificationPage.tsx** (2 occurrences)
 - [ ] **Breadcrumb.tsx**
 - [ ] **LoginModal.tsx** (2 occurrences)
 - [ ] **LandingPage.tsx** (2 occurrences)
 - [ ] **types/index.ts** (2 occurrences)
-- [ ] **hooks/useAppConfig.ts** (6 occurrences)
-- [ ] **features/profile/api/profileApi.ts** (1 occurrence)
 - [ ] **features/admin/pages/FeatureFlagsPage.tsx**
 - [ ] **features/admin/pages/EmailSettingsPage.tsx**
 - [ ] **features/missions/pages/MissionDetailPage.tsx**
 - [ ] **ProfilesManagementPage.tsx** - Déjà propre
 - [ ] **IAMControlPage.tsx** - Déjà propre
 
-### Backend Prioritaires (~11 fichiers)
+### Backend Prioritaires (~10 fichiers)
 - [ ] **scripts/initialize_iam_system.py** (GROS fichier - ~13KB)
 - [ ] **scripts/migrate_users_to_iam.py**
 - [ ] **scripts/update_iam_permissions.py**
@@ -95,13 +102,13 @@
 ## 📈 Statistiques
 
 ### Total
-- **Fichiers refactorés**: 12 / ~34 (~35%)
-- **Occurrences éliminées**: ~72 + statuts/types centralisés dans `validation_routes.py`
+- **Fichiers refactorés**: 15 / ~34 (~44%)
+- **Occurrences éliminées**: ~80 + statuts/types centralisés dans `validation_routes.py`
 - **Tests de sync**: ✅ 100% passés
 
 ### Par Catégorie
-- **Frontend**: 8 fichiers refactorés / ~16 restants
-- **Backend**: 4 fichiers refactorés / ~11 restants
+- **Frontend**: 10 fichiers refactorés / ~14 restants
+- **Backend**: 5 fichiers refactorés / ~10 restants
 
 ---
 
@@ -109,7 +116,7 @@
 
 ### Étape 1: Frontend (Fichiers simples)
 1. EditUserModal.tsx (1 occurrence) - 3 min
-2. ProfilePage.tsx (2 occurrences) - 5 min
+2. LoginModal.tsx (2 occurrences) - 5 min
 
 **Temps estimé**: ~8 min pour 2 fichiers
 
@@ -149,5 +156,5 @@ grep -r '"candidat"\|"interim"\|"company"' /app/auth-microservice --include="*.p
 
 ---
 
-**Dernière mise à jour**: 2025-11-27 (ValidationsList.tsx aligné sur les statuts config)
-**Statut**: 🔄 En progression (~32% complété)
+**Dernière mise à jour**: 2025-11-28 (ProfilePage + ProfileCompletionWidget alignés sur IAM/config)
+**Statut**: 🔄 En progression (~44% complété)
