@@ -95,7 +95,7 @@ async def mark_notifications_read(
 @router.post("", response_model=NotificationResponse, status_code=status.HTTP_201_CREATED)
 async def create_notification(
     notification_data: CreateNotificationRequest,
-    current_user=Depends(get_current_user),
+    current_user=Depends(require_admin),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """Create a notification (admin only)"""

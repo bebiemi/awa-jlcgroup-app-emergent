@@ -17,17 +17,35 @@ AUTH_TIMEOUT = httpx.Timeout(5.0)
 
 logger = logging.getLogger(__name__)
 
+DEFAULT_SECURITY_ROLES = {
+    "admin": "admin",
+    "super_admin": "super_admin",
+    "company": "company",
+    "interim": "interim",
+    "agency": "agency",
+    "commercial": "commercial",
+    "validator": "validator",
+}
+
+DEFAULT_VALIDATOR_ROLES = [
+    DEFAULT_SECURITY_ROLES["admin"],
+    DEFAULT_SECURITY_ROLES["super_admin"],
+    DEFAULT_SECURITY_ROLES["commercial"],
+]
+
 DEFAULT_ADMIN_ROLES = ["admin", "super_admin"]
-DEFAULT_VALIDATOR_ROLES = ["admin", "super_admin", "commercial"]
+
 DEFAULT_VALIDATION_STATUSES = {
     "pending": ValidationStatus.PENDING.value,
     "approved": ValidationStatus.APPROVED.value,
     "rejected": ValidationStatus.REJECTED.value,
 }
+
 DEFAULT_VALIDATION_TYPES = {
     "company": ValidationType.COMPANY.value,
     "interim": ValidationType.INTERIM.value,
 }
+
 DEFAULT_VALIDATION_TRANSITIONS = {
     "approve": {"from": [DEFAULT_VALIDATION_STATUSES["pending"]], "to": DEFAULT_VALIDATION_STATUSES["approved"]},
     "reject": {"from": [DEFAULT_VALIDATION_STATUSES["pending"]], "to": DEFAULT_VALIDATION_STATUSES["rejected"]},
@@ -72,8 +90,8 @@ def _get_dict(config: dict[str, Any], keys: Iterable[str]) -> dict[str, Any] | N
 
 
 @lru_cache()
-def get_admin_roles_from_config() -> list[str]:
-    """Read admin and super-admin roles from configuration (security.roles)."""
+def get_security_roles_from_config() -> dict[str, str]:
+    """Read security roles from configuration (security.roles)."""
     config_path = Path(
         os.getenv(
             "AUTH_CONFIG_PATH",
@@ -83,26 +101,29 @@ def get_admin_roles_from_config() -> list[str]:
 
     config = _read_config_file(config_path)
     roles = _get_dict(config, ["security", "roles"]) or {}
+    return {**DEFAULT_SECURITY_ROLES, **{k: v for k, v in roles.items() if isinstance(v, str)}}
 
-    admin_roles: list[str] = []
-    for key in ("admin", "super_admin"):
-        role_value = roles.get(key)
-        if isinstance(role_value, str):
-            admin_roles.append(role_value)
 
-    if admin_roles:
-        return admin_roles
+def _dedupe_preserve_order(values: list[str]) -> list[str]:
+    seen: set[str] = set()
+    deduped: list[str] = []
+    for value in values:
+        if value not in seen:
+            deduped.append(value)
+            seen.add(value)
+    return deduped
 
-    all_roles = roles.get("all")
-    if isinstance(all_roles, list):
-        normalized_roles = [role for role in all_roles if isinstance(role, str)]
-        if normalized_roles:
-            return normalized_roles
 
-    logger.warning(
-        "Using default admin roles because config is missing security.roles.admin/super_admin"
+@lru_cache()
+def get_admin_roles_from_config() -> list[str]:
+    """Return admin and super admin roles from configuration (with defaults)."""
+    roles = get_security_roles_from_config()
+    return _dedupe_preserve_order(
+        [
+            roles.get("admin", DEFAULT_SECURITY_ROLES["admin"]),
+            roles.get("super_admin", DEFAULT_SECURITY_ROLES["super_admin"]),
+        ]
     )
-    return DEFAULT_ADMIN_ROLES
 
 
 @lru_cache()
@@ -120,10 +141,19 @@ def get_validator_roles_from_config() -> list[str]:
     if roles:
         return roles
 
+    security_roles = get_security_roles_from_config()
+    default_roles = _dedupe_preserve_order(
+        [
+            security_roles.get("admin", DEFAULT_SECURITY_ROLES["admin"]),
+            security_roles.get("super_admin", DEFAULT_SECURITY_ROLES["super_admin"]),
+            security_roles.get("commercial", DEFAULT_SECURITY_ROLES["commercial"]),
+        ]
+    )
+
     logger.warning(
         "Using default validator roles because config is missing the path workflows.validation.permissions.validator_roles"
     )
-    return DEFAULT_VALIDATOR_ROLES
+    return default_roles
 
 
 @lru_cache()
@@ -237,8 +267,9 @@ async def require_role(required_roles: list[str]):
 
 async def require_admin(current_user = Depends(get_current_user)):
     """Require admin role"""
+    admin_roles = get_admin_roles_from_config()
     user_roles = current_user.get('roles', [])
-    if 'admin' not in user_roles:
+    if not any(role in admin_roles for role in user_roles):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Admin role required",

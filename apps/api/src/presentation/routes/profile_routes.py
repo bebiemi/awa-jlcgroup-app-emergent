@@ -1,7 +1,11 @@
 """Profile routes"""
 from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File, Request
 from motor.motor_asyncio import AsyncIOMotorDatabase
-from src.presentation.dependencies import get_admin_roles_from_config, get_database, get_current_user
+from src.presentation.dependencies import (
+    get_admin_roles_from_config,
+    get_database,
+    get_current_user,
+)
 from src.application.dtos.profile_dtos import (
     ProfileResponse,
     UpdateProfileRequest,

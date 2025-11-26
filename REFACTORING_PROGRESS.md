@@ -1,6 +1,6 @@
 # 📊 Progression de la Refactorisation IAM
 
-## ✅ Fichiers Refactorés (19 fichiers)
+## ✅ Fichiers Refactorés (22 fichiers)
 
 ### Frontend (10 fichiers)
 1. ✅ **ValidationsPage.tsx** - 15+ occurrences refactorées
@@ -42,7 +42,7 @@
 10. ✅ **profileApi.ts** - Typage aligné sur les constantes IAM
     - `profile_type` repose sur `ValidationType` plutôt que sur des littéraux inline
 
-### Backend (9 fichiers)
+### Backend (12 fichiers)
 1. ✅ **initialize_candidat_iam.py** - 17 occurrences refactorées
    - Import: `IAMGroups`, `IAMProfiles`, `IAMPermissions`
    - Tous les codes hardcodés remplacés par constantes
@@ -80,6 +80,16 @@
    - Les rôles sources s'appuient sur `ConfigHelper` pour éviter les littéraux `admin`/`interim`/`company`
    - Le mapping rôles → profils ignore automatiquement les rôles non définis
 
+10. ✅ **dependencies.py** - Rôles admin/validator lus depuis la configuration
+    - Les rôles `admin`/`super_admin`/`commercial` par défaut proviennent des clés `security.roles`
+    - Fournit des listes dédupliquées pour les dépendances `require_admin` / `require_validator`
+
+11. ✅ **notification_routes.py** - Création de notifications sécurisée via les rôles configurés
+    - Le contrôle d'accès admin repose sur la dépendance `require_admin` alimentée par la configuration
+
+12. ✅ **profile_routes.py** - Accès profil admin/self aligné sur la config
+    - Vérifie l'appartenance aux rôles admin/super_admin issus de `security.roles` avant l'accès aux profils tiers
+
 ---
 
 ## 🔄 Fichiers Restants à Refactorer
@@ -101,7 +111,6 @@
 - [ ] **scripts/initialize_iam_system.py** (GROS fichier - ~13KB)
 - [ ] **scripts/update_iam_permissions.py**
 - [ ] **scripts/diagnose_login.py** (1 occurrence)
-- [ ] **profile_routes.py** (2 occurrences)
 - [ ] **contract_routes.py** (2 occurrences)
 - [ ] **configuration_routes.py** (2 occurrences)
 - [ ] **scripts/seed_mission_references.py** (4 occurrences)
@@ -116,13 +125,13 @@
 ## 📈 Statistiques
 
 ### Total
-- **Fichiers refactorés**: 19 / ~34 (~56%)
+- **Fichiers refactorés**: 22 / ~34 (~65%)
 - **Occurrences éliminées**: ~90 + statuts/types centralisés dans `validation_routes.py`
 - **Tests de sync**: ✅ 100% passés
 
 ### Par Catégorie
-- **Frontend**: 10 fichiers refactorés / ~14 restants
-- **Backend**: 9 fichiers refactorés / ~6 restants
+- **Frontend**: 10 fichiers refactorés / ~10 restants
+- **Backend**: 12 fichiers refactorés / ~7 restants
 
 ---
 
@@ -170,5 +179,5 @@ grep -r '"candidat"\|"interim"\|"company"' /app/auth-microservice --include="*.p
 
 ---
 
-**Dernière mise à jour**: 2025-11-28 (Migration IAM pilotée par la config pour les rôles)
-**Statut**: 🔄 En progression (~56% complété)
+**Dernière mise à jour**: 2025-11-28 (Contrôles admin API pilotés par la config)
+**Statut**: 🔄 En progression (~65% complété)
