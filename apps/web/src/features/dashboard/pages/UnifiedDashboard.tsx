@@ -7,6 +7,7 @@ import Layout from '@/components/Layout'
 import { useSelector } from 'react-redux'
 import { RootState } from '@/store/store'
 import { useDashboardWidgets } from '@/features/config/api/appConfigApi'
+import { useGetMyProfileQuery } from '@/features/profile/api/profileApi'
 import ProfileCompletionWidget from '../components/ProfileCompletionWidget'
 import MissingDocumentsWidget from '../components/MissingDocumentsWidget'
 import RecentNotificationsWidget from '../components/RecentNotificationsWidget'
@@ -16,6 +17,7 @@ import { SparklesIcon } from '@heroicons/react/24/solid'
 export default function UnifiedDashboard() {
   const user = useSelector((state: RootState) => state.auth.user)
   const { data: widgetsConfig, isLoading } = useDashboardWidgets()
+  const { data: profileData } = useGetMyProfileQuery(undefined, { skip: !user })
 
   if (isLoading) {
     return (
@@ -101,6 +103,30 @@ export default function UnifiedDashboard() {
     }
   }
 
+  const getCountryDisplay = (country?: string) => {
+    if (!country) return { flag: '🌍', name: 'Pays non renseigné' }
+
+    const normalized = country.trim().toUpperCase()
+    switch (normalized) {
+      case 'GABON':
+        return { flag: '🇬🇦', name: 'Gabon' }
+      case 'CAMEROUN':
+        return { flag: '🇨🇲', name: 'Cameroun' }
+      case 'CONGO':
+        return { flag: '🇨🇬', name: 'Congo' }
+      case 'BANGUI':
+      case 'RCA':
+      case 'CENTRAFRIQUE':
+        return { flag: '🇨🇫', name: 'République centrafricaine' }
+      default:
+        return { flag: '🌍', name: country }
+    }
+  }
+
+  const shouldShowAgencyContext =
+    userRole === 'agency' && profileData?.profile_type === 'agency_country'
+  const countryDisplay = getCountryDisplay(profileData?.profile?.country)
+
   return (
     <Layout>
       <div className="space-y-6">
@@ -129,6 +155,26 @@ export default function UnifiedDashboard() {
                 <p className="mt-2 text-purple-100 text-lg">
                   Bienvenue sur votre tableau de bord personnalisé
                 </p>
+                {shouldShowAgencyContext && (
+                  <div className="mt-3 inline-flex items-center gap-3 px-3 py-2 bg-white/10 rounded-xl text-sm text-purple-100 border border-white/20">
+                    <div className="flex items-center gap-2">
+                      <span className="text-lg" aria-hidden="true">
+                        {countryDisplay.flag}
+                      </span>
+                      <div className="flex flex-col leading-tight">
+                        <span className="font-semibold">Agence</span>
+                        <span className="text-purple-100/80">
+                          {user?.full_name || user?.username || 'Agence JLC'}
+                        </span>
+                      </div>
+                    </div>
+                    <span className="h-6 w-px bg-white/30" aria-hidden="true" />
+                    <div className="flex flex-col leading-tight">
+                      <span className="font-semibold">Pays</span>
+                      <span className="text-purple-100/80">{countryDisplay.name}</span>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 

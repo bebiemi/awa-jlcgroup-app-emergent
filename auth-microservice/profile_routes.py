@@ -23,9 +23,11 @@ COMPANY_ROLE = cfg.get_company_role()
 CANDIDATE_ROLE = cfg.get_candidate_role()
 POSTULANT_ROLE = cfg.get_postulant_role()
 COLLABORATOR_ROLE = cfg.get_collaborator_role()
+AGENCY_ROLE = cfg.get_agency_role()
 
 PROFILE_TYPE_INTERIM = cfg.get_profile_type("interim")
 PROFILE_TYPE_COMPANY = cfg.get_profile_type("company")
+PROFILE_TYPE_AGENCY_COUNTRY = cfg.get_profile_type("agency_country")
 PROFILE_TYPE_CANDIDATE = cfg.get_profile_type("candidat")
 PROFILE_TYPE_POSTULANT = cfg.get_profile_type("postulant")
 PROFILE_TYPE_COLLABORATOR = cfg.get_profile_type("collaborator")
@@ -60,6 +62,9 @@ def get_profile_context(current_user: User, db: AsyncIOMotorDatabase):
 
     if INTERIM_ROLE in current_user.roles:
         return db.interim_profiles, PROFILE_TYPE_INTERIM
+
+    if AGENCY_ROLE in current_user.roles:
+        return db.agency_country_profiles, PROFILE_TYPE_AGENCY_COUNTRY
 
     if COMPANY_ROLE in current_user.roles:
         return db.company_manager_profiles, PROFILE_TYPE_COMPANY
@@ -223,11 +228,31 @@ async def get_my_profile(
 
             # Reload profile without _id
             profile = await profile_collection.find_one({"user_id": current_user.id}, {"_id": 0})
-        
+
         # Add is_verified from user to profile response
         profile["is_verified"] = current_user.is_verified
-        
+
         return {"profile_type": PROFILE_TYPE_COMPANY, "profile": profile}
+
+    elif AGENCY_ROLE in current_user.roles:
+        profile = await profile_collection.find_one({"user_id": current_user.id}, {"_id": 0})
+        if not profile:
+            profile = {
+                "user_id": current_user.id,
+                "document_ids": [],
+                "profile_completed": False,
+                "country": "GABON",
+                "updated_at": datetime.now(timezone.utc).isoformat()
+            }
+            await profile_collection.insert_one(profile)
+
+            # Reload profile without _id
+            profile = await profile_collection.find_one({"user_id": current_user.id}, {"_id": 0})
+
+        # Add is_verified from user to profile response
+        profile["is_verified"] = current_user.is_verified
+
+        return {"profile_type": PROFILE_TYPE_AGENCY_COUNTRY, "profile": profile}
     
     else:
         # Collaborator or other roles

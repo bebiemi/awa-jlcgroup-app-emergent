@@ -11,6 +11,7 @@
 ### Pour Développeurs
 - **Ce fichier** - Guide technique complet
 - `/app/docs/FAQ_IAM_COMPLETE.md` - FAQ technique détaillée
+- `/app/docs/AGENCY_COUNTRY_PROFILE_OPERATIONS.md` - Exploitation du profil agence multi-pays
 - `/app/auth-microservice/tests/test_iam_service.py` - Tests unitaires
 
 ### Pour Utilisateurs
