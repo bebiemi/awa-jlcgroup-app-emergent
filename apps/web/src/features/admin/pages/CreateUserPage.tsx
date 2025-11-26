@@ -17,12 +17,14 @@ import {
   EyeSlashIcon,
 } from '@heroicons/react/24/outline'
 import { Link } from 'react-router-dom'
+import { useRoles } from '@/hooks/useAppConfig'
 
 export default function CreateUserPage() {
   const navigate = useNavigate()
   const [createUser, { isLoading }] = useCreateUserMutation()
   const { data: groups } = useGetGroupsQuery()
   const { data: profiles } = useGetProfilesQuery()
+  const roles = useRoles()
 
   const [formData, setFormData] = useState({
     email: '',
@@ -263,17 +265,19 @@ export default function CreateUserPage() {
             </div>
 
             <div className="space-y-2">
-              {['admin', 'super_admin', 'interim', 'company', 'agency'].map((role) => (
-                <label key={role} className="flex items-center cursor-pointer hover:bg-gray-50 p-2 rounded">
-                  <input
-                    type="checkbox"
-                    checked={formData.roles.includes(role)}
-                    onChange={() => toggleRole(role)}
-                    className="h-4 w-4 text-jlc-purple-600 focus:ring-jlc-purple-500 border-gray-300 rounded"
-                  />
-                  <span className="ml-3 text-sm text-gray-700 capitalize">{role}</span>
-                </label>
-              ))}
+              {[roles.admin, roles.super_admin, roles.interim, roles.company, roles.agency]
+                .filter(Boolean)
+                .map((role) => (
+                  <label key={role} className="flex items-center cursor-pointer hover:bg-gray-50 p-2 rounded">
+                    <input
+                      type="checkbox"
+                      checked={formData.roles.includes(role)}
+                      onChange={() => toggleRole(role)}
+                      className="h-4 w-4 text-jlc-purple-600 focus:ring-jlc-purple-500 border-gray-300 rounded"
+                    />
+                    <span className="ml-3 text-sm text-gray-700 capitalize">{role}</span>
+                  </label>
+                ))}
             </div>
           </Card>
 
