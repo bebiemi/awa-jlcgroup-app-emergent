@@ -13,18 +13,29 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from motor.motor_asyncio import AsyncIOMotorClient
 from datetime import datetime, timezone
 
+from awana_auth.utils.config_helpers import ConfigHelper as cfg
+
 MONGO_URL = os.getenv("MONGO_URL", "mongodb://localhost:27017")
 
+
+def _build_role_to_profile_mapping():
+    """Build a config-driven mapping from roles to IAM profile codes."""
+    mapping = {
+        cfg.get_super_admin_role(): "super_admin",
+        cfg.get_admin_role(): "admin",
+        cfg.get_interim_role(): "interim_user",  # Fixed: map to interim_user profile
+        cfg.get_company_role(): "company_admin",  # Fixed: map to company_admin profile
+        cfg.get_commercial_role(): "commercial",
+        cfg.get_validator_role(): "validator",
+        cfg.get_agency_role(): "agency",
+    }
+
+    # Remove any undefined entries to avoid None keys in lookups
+    return {role: profile for role, profile in mapping.items() if role}
+
+
 # Role to Profile mapping
-ROLE_TO_PROFILE_MAPPING = {
-    "super_admin": "super_admin",
-    "admin": "admin",
-    "interim": "interim_user",  # Fixed: map to interim_user profile
-    "company": "company_admin",  # Fixed: map to company_admin profile
-    "commercial": "commercial",
-    "validator": "validator",
-    "agency": "agency"
-}
+ROLE_TO_PROFILE_MAPPING = _build_role_to_profile_mapping()
 
 async def migrate_users():
     """Migrate all users to IAM by assigning profiles based on roles"""
