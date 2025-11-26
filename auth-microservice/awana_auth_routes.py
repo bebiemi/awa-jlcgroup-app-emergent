@@ -18,6 +18,7 @@ from awana_auth.core.dependencies import (
     get_session_storage,
     get_rbac_manager
 )
+from awana_auth.core.iam_constants import IAMGroups, UserRoles, get_validation_type_for_role
 from awana_auth.dependencies.permission_dependencies import (
     require_permission,
     require_any_permission,
@@ -54,6 +55,7 @@ VALIDATION_STATUS_PENDING = cfg.get_validation_status("pending")
 VALIDATION_STATUS_APPROVED = cfg.get_validation_status("approved")
 VALIDATION_TYPE_COMPANY = cfg.get_validation_type("company")
 VALIDATION_TYPE_COLLABORATOR = cfg.get_validation_type("collaborator")
+VALIDATION_TYPE_INTERIM = cfg.get_validation_type("interim")
 
 
 # ===== Pydantic Models for Requests/Responses =====
@@ -168,17 +170,27 @@ async def create_validation_record(
     import uuid
     
     # Determine validation type based on registration data
-    # Priority: 1) company_name provided → company validation type
-    #           2) collaborator email → collaborator validation type
-    #           3) assigned role → use role
+    # Priority: 1) company_name provided → company validation
+    #           2) collaborator email → collaborator validation
+    #           3) assigned role → mapped validation type
     if register_data.company_name:
         # Company registration takes priority even if email is @jlcgroup.com
         validation_type = VALIDATION_TYPE_COMPANY
     elif user.is_collaborator:
         validation_type = VALIDATION_TYPE_COLLABORATOR
-    else:
-        # For non-collaborators, use the assigned role
-        validation_type = user.roles[0] if user.roles else "candidat"
+    elif user.roles:
+        role_validation_type = get_validation_type_for_role(user.roles[0])
+        if role_validation_type == UserRoles.COMPANY:
+            validation_type = VALIDATION_TYPE_COMPANY
+        elif role_validation_type == UserRoles.COLLABORATEUR:
+            validation_type = VALIDATION_TYPE_COLLABORATOR
+        elif role_validation_type == UserRoles.INTERIM:
+            validation_type = VALIDATION_TYPE_INTERIM
+        else:
+            validation_type = role_validation_type
+      else:
+        # Default to candidat validation type when no role is assigned
+        validation_type = get_validation_type_for_role(UserRoles.CANDIDAT)
     
     # Extraire les informations du représentant légal pour les entreprises
     representant_legal_nom = ""
@@ -209,6 +221,12 @@ async def create_validation_record(
             logger.warning(f"   Entreprises liées: {len(existing_representant_entreprises)}")
     
     user_status_value = user.status.value if isinstance(user.status, UserStatus) else user.status
+
+    validation_status = (
+        VALIDATION_STATUS_PENDING
+        if user_status_value == cfg.get_pending_status()
+        else VALIDATION_STATUS_APPROVED
+    )
 
     validation = {
         "id": str(uuid.uuid4()),
@@ -1298,8 +1316,6 @@ async def local_register(
     """
     import bcrypt
     from awana_auth.services.email_domain_service import EmailDomainService
-    from awana_auth.core.iam_constants import IAMGroups, UserRoles, get_validation_type_for_role
-    
     try:
         # Check if username already exists
         existing_username = await db.users.find_one({
