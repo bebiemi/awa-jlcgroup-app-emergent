@@ -1633,7 +1633,7 @@ async def promote_candidat_to_interimaire(
             {"id": user_id},
             {
                 "$set": {
-                    "roles": ["interim"],  # Update legacy role
+                    "roles": [ROLE_INTERIM],  # Update legacy role
                     "updated_at": datetime.now(timezone.utc).isoformat()
                 }
             }

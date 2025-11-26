@@ -23,6 +23,11 @@
 
 5. ✅ **awana_auth_routes.py** - Partiellement refactoré (déjà fait avant)
    - Import: `IAMGroups`, `IAMProfiles`, `UserRoles`, `ValidationTypes`
+   - Ajout des rôles config-driven (`interim`, `candidat`) dans les flux de validation et de promotion
+
+6. ✅ **validation_routes.py** - Statuts/types de validation centralisés
+   - Utilise `cfg.get_validation_status` et `cfg.get_validation_type`
+   - Remplace les valeurs en dur dans les stats et transitions d'approbation/rejet
 
 6. ✅ **validation_routes.py** - Statuts/types de validation centralisés
    - Utilise `cfg.get_validation_status` et `cfg.get_validation_type`
@@ -74,7 +79,7 @@
 
 ### Total
 - **Fichiers refactorés**: 6 / ~34 (~17.6%)
-- **Occurrences éliminées**: ~44 + statuts/types centralisés dans `validation_routes.py`
+- **Occurrences éliminées**: ~46 + statuts/types centralisés dans `validation_routes.py`
 - **Tests de sync**: ✅ 100% passés
 
 ### Par Catégorie
@@ -129,5 +134,5 @@ grep -r '"candidat"\|"interim"\|"company"' /app/auth-microservice --include="*.p
 
 ---
 
-**Dernière mise à jour**: 2025-11-26
+**Dernière mise à jour**: 2025-11-27
 **Statut**: 🔄 En progression (~18% complété)

@@ -1,4 +1,4 @@
-# 🔎 Audit des valeurs en dur – État d'avancement (26/11/2025)
+# 🔎 Audit des valeurs en dur – État d'avancement (27/11/2025)
 
 ## Synthèse rapide
 - L'audit initial recense **886 occurrences** à supprimer et reste la référence (voir `docs/AUDIT_INDEX.md`).
@@ -7,6 +7,7 @@
 
 ## Travaux déjà effectués
 - **Centralisation des statuts/types de validation** : `auth-microservice/validation_routes.py` lit désormais les statuts (`pending`, `approved`, `rejected`) et types (`interim`, `company`, `collaborator`) via `cfg.get_validation_status` / `cfg.get_validation_type`, couvrant les statistiques, les flux d'approbation/rejet et les contrôles spécifiques aux entreprises.
+- **Rôles config-driven dans l'auth** : la création de validation et la promotion candidat→intérimaire réutilisent les rôles issus de la config (`interim`, `candidat`), et la config centralisée expose désormais `security.roles.candidat`.
 - **Documentation de progression mise à jour** : `REFACTORING_PROGRESS.md` reflète 6 fichiers refactorés (~18% du périmètre) dont la refonte des validations.
 
 ## Actions prioritaires restantes
