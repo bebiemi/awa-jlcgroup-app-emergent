@@ -46,17 +46,23 @@ security:
   user_statuses:
     active: "active"
     pending: "pending"
+    inactive: "inactive"
     suspended: "suspended"
     deleted: "deleted"
     blocked: "blocked"
     archived: "archived"
+    pending_deletion: "pending_deletion"
+    to_delete: "to_delete"
     all:
       - "active"
       - "pending"
+      - "inactive"
       - "suspended"
       - "deleted"
       - "blocked"
       - "archived"
+      - "pending_deletion"
+      - "to_delete"
   
   # User Archival/Retention Configuration
   user_retention:

@@ -201,13 +201,15 @@ async def create_validation_record(
             logger.warning(f"⚠️ Représentant légal existant détecté: {representant_legal_nom} ({representant_legal_email})")
             logger.warning(f"   Entreprises liées: {len(existing_representant_entreprises)}")
     
+    user_status_value = user.status.value if isinstance(user.status, UserStatus) else user.status
+
     validation = {
         "id": str(uuid.uuid4()),
         "user_id": user.id,
         "user_email": user.email,
         "user_full_name": register_data.full_name,
         "validation_type": validation_type,
-        "status": cfg.get_pending_status() if user.status == UserStatus.PENDING else "approved",
+        "status": cfg.get_pending_status() if user_status_value == cfg.get_pending_status() else "approved",
         "has_location_warning": False,
         "location_warning_message": None,
         "missing_country": None,
@@ -303,7 +305,7 @@ async def create_validation_record(
             "user_email": user.email,
             "user_name": register_data.full_name,
             "validation_type": "company" if validation_type == "company" else validation_type,
-            "status": "pending" if user.status == UserStatus.PENDING else "approved",
+            "status": cfg.get_pending_status() if user_status_value == cfg.get_pending_status() else "approved",
             "comment": None,
             "reviewed_by": None,
             "reviewed_by_email": None,
@@ -885,9 +887,10 @@ async def local_login(
                 if password_valid:
                     # Check if user is active
                     user_status = user_doc.get("status")
-                    logger.info(f"👤 User status: {user_status} (expecting: {UserStatus.ACTIVE.value})")
-                    
-                    if user_status != UserStatus.ACTIVE.value:
+                    active_status = cfg.get_active_status()
+                    logger.info(f"👤 User status: {user_status} (expecting: {active_status})")
+
+                    if user_status != active_status:
                         logger.warning(f"Login attempt for inactive user: {login_data.username} (status: {user_status})")
                         audit_logger = AuditLogger(db, auth_config)
                         await audit_logger.log(
@@ -1469,7 +1472,7 @@ async def local_register(
         logger.info(f"✅ Registration completed for {user.email} - Role: {assigned_role}, Status: {user_status}")
         
         # Log status message
-        if user.status == UserStatus.ACTIVE:
+        if user_status_value == cfg.get_active_status():
             logger.info("✅ Candidat account active - immediate access granted")
         else:
             logger.info("⚠️ Collaborator/Company account pending - manual validation required")
