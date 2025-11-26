@@ -3,9 +3,12 @@ Diagnostic Script for Login Issue
 Tests user "lala" and verifies all IAM components
 """
 import asyncio
-from motor.motor_asyncio import AsyncIOMotorClient
 import os
+
 import bcrypt
+from motor.motor_asyncio import AsyncIOMotorClient
+
+from awana_auth.core.iam_constants import IAMGroups
 
 async def diagnose_login_issue():
     print("\n" + "="*80)
@@ -90,15 +93,17 @@ async def diagnose_login_issue():
             print(f"     Users: {len(group.get('user_ids', []))} utilisateur(s)")
     
     # 4. Check candidat group specifically
-    print(f"\n📋 Vérification du Groupe 'grp.candidat'")
+    candidat_group_code = IAMGroups.CANDIDAT
+
+    print(f"\n📋 Vérification du Groupe '{candidat_group_code}'")
     print("-" * 80)
-    
-    candidat_group = await db.iam_groups.find_one({"code": "grp.candidat"})
+
+    candidat_group = await db.iam_groups.find_one({"code": candidat_group_code})
     
     if not candidat_group:
-        print("❌ ERREUR: Le groupe 'grp.candidat' n'existe pas !")
+        print(f"❌ ERREUR: Le groupe '{candidat_group_code}' n'existe pas !")
     else:
-        print("✅ Groupe 'grp.candidat' existe")
+        print(f"✅ Groupe '{candidat_group_code}' existe")
         print(f"   - ID: {candidat_group.get('id')}")
         print(f"   - Nom: {candidat_group.get('name')}")
         print(f"   - Profile IDs: {candidat_group.get('profile_ids')}")
@@ -162,7 +167,7 @@ async def diagnose_login_issue():
     if not groups_with_user:
         issues.append("❌ Utilisateur pas dans de groupe IAM")
     elif candidat_group and user_id not in candidat_group.get('user_ids', []):
-        issues.append("❌ Utilisateur pas dans grp.candidat")
+        issues.append(f"❌ Utilisateur pas dans {candidat_group_code}")
     
     if candidat_group and not candidat_group.get('profile_ids'):
         issues.append("⚠️ Groupe candidat sans profils")

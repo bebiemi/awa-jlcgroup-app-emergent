@@ -1,6 +1,6 @@
 # 📊 Progression de la Refactorisation IAM
 
-## ✅ Fichiers Refactorés (22 fichiers)
+## ✅ Fichiers Refactorés (23 fichiers)
 
 ### Frontend (10 fichiers)
 1. ✅ **ValidationsPage.tsx** - 15+ occurrences refactorées
@@ -42,7 +42,7 @@
 10. ✅ **profileApi.ts** - Typage aligné sur les constantes IAM
     - `profile_type` repose sur `ValidationType` plutôt que sur des littéraux inline
 
-### Backend (12 fichiers)
+### Backend (13 fichiers)
 1. ✅ **initialize_candidat_iam.py** - 17 occurrences refactorées
    - Import: `IAMGroups`, `IAMProfiles`, `IAMPermissions`
    - Tous les codes hardcodés remplacés par constantes
@@ -90,6 +90,9 @@
 12. ✅ **profile_routes.py** - Accès profil admin/self aligné sur la config
     - Vérifie l'appartenance aux rôles admin/super_admin issus de `security.roles` avant l'accès aux profils tiers
 
+13. ✅ **scripts/diagnose_login.py** - Diagnostic IAM basé sur les constantes
+    - Vérifie le groupe candidat via `IAMGroups.CANDIDAT` plutôt que la chaîne `grp.candidat`
+
 ---
 
 ## 🔄 Fichiers Restants à Refactorer
@@ -107,10 +110,10 @@
 - [ ] **ProfilesManagementPage.tsx** - Déjà propre
 - [ ] **IAMControlPage.tsx** - Déjà propre
 
-### Backend Prioritaires (~9 fichiers)
+### Backend Prioritaires (~10 fichiers)
 - [ ] **scripts/initialize_iam_system.py** (GROS fichier - ~13KB)
 - [ ] **scripts/update_iam_permissions.py**
-- [ ] **scripts/diagnose_login.py** (1 occurrence)
+- [x] **scripts/diagnose_login.py** (1 occurrence)
 - [ ] **contract_routes.py** (2 occurrences)
 - [ ] **configuration_routes.py** (2 occurrences)
 - [ ] **scripts/seed_mission_references.py** (4 occurrences)
@@ -125,13 +128,13 @@
 ## 📈 Statistiques
 
 ### Total
-- **Fichiers refactorés**: 22 / ~34 (~65%)
+- **Fichiers refactorés**: 23 / ~34 (~68%)
 - **Occurrences éliminées**: ~90 + statuts/types centralisés dans `validation_routes.py`
 - **Tests de sync**: ✅ 100% passés
 
 ### Par Catégorie
 - **Frontend**: 10 fichiers refactorés / ~10 restants
-- **Backend**: 12 fichiers refactorés / ~7 restants
+- **Backend**: 13 fichiers refactorés / ~6 restants
 
 ---
 
@@ -179,5 +182,5 @@ grep -r '"candidat"\|"interim"\|"company"' /app/auth-microservice --include="*.p
 
 ---
 
-**Dernière mise à jour**: 2025-11-28 (Contrôles admin API pilotés par la config)
-**Statut**: 🔄 En progression (~65% complété)
+**Dernière mise à jour**: 2025-11-28 (Diagnostic IAM aligné sur les constantes)
+**Statut**: 🔄 En progression (~68% complété)
