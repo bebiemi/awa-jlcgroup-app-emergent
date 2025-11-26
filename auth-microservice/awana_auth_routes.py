@@ -8,6 +8,12 @@ from datetime import datetime, timezone, timedelta
 from motor.motor_asyncio import AsyncIOMotorDatabase
 import os
 
+from awana_auth.core.iam_constants import (
+    IAMGroups,
+    IAMProfiles,
+    UserRoles,
+    get_validation_type_for_role,
+)
 from awana_auth.core.models import User, UserStatus, AuthProvider as AuthProviderEnum
 from awana_auth.core.location_models import Validation, ValidationStatus
 from awana_auth.core.config import auth_config
@@ -55,7 +61,6 @@ VALIDATION_STATUS_PENDING = cfg.get_validation_status("pending")
 VALIDATION_STATUS_APPROVED = cfg.get_validation_status("approved")
 VALIDATION_TYPE_COMPANY = cfg.get_validation_type("company")
 VALIDATION_TYPE_COLLABORATOR = cfg.get_validation_type("collaborator")
-VALIDATION_TYPE_INTERIM = cfg.get_validation_type("interim")
 
 
 # ===== Pydantic Models for Requests/Responses =====
@@ -178,19 +183,10 @@ async def create_validation_record(
         validation_type = VALIDATION_TYPE_COMPANY
     elif user.is_collaborator:
         validation_type = VALIDATION_TYPE_COLLABORATOR
-    elif user.roles:
-        role_validation_type = get_validation_type_for_role(user.roles[0])
-        if role_validation_type == UserRoles.COMPANY:
-            validation_type = VALIDATION_TYPE_COMPANY
-        elif role_validation_type == UserRoles.COLLABORATEUR:
-            validation_type = VALIDATION_TYPE_COLLABORATOR
-        elif role_validation_type == UserRoles.INTERIM:
-            validation_type = VALIDATION_TYPE_INTERIM
-        else:
-            validation_type = role_validation_type
-      else:
-        # Default to candidat validation type when no role is assigned
-        validation_type = get_validation_type_for_role(UserRoles.CANDIDAT)
+    else:
+        # For non-collaborators, use the assigned role mapped to a validation type
+        base_role = user.roles[0] if user.roles else UserRoles.CANDIDAT
+        validation_type = get_validation_type_for_role(base_role)
     
     # Extraire les informations du représentant légal pour les entreprises
     representant_legal_nom = ""
@@ -1316,6 +1312,7 @@ async def local_register(
     """
     import bcrypt
     from awana_auth.services.email_domain_service import EmailDomainService
+    
     try:
         # Check if username already exists
         existing_username = await db.users.find_one({
@@ -1582,7 +1579,7 @@ async def promote_candidat_to_interimaire(
             )
         
         # Check if user is currently a candidat
-        candidat_group = await db.iam_groups.find_one({"code": "grp.candidat"})
+        candidat_group = await db.iam_groups.find_one({"code": IAMGroups.CANDIDAT})
         if candidat_group and user_id in candidat_group.get("user_ids", []):
             # Remove from candidat group
             await db.iam_groups.update_one(
@@ -1592,19 +1589,19 @@ async def promote_candidat_to_interimaire(
                     "$set": {"updated_at": datetime.now(timezone.utc).isoformat()}
                 }
             )
-            logger.info(f"✅ User {user_id} removed from grp.candidat")
+            logger.info(f"✅ User {user_id} removed from {IAMGroups.CANDIDAT}")
         
         # Add to interimaire group (or create if doesn't exist)
-        interimaire_group = await db.iam_groups.find_one({"code": "grp.interimaire"})
+        interimaire_group = await db.iam_groups.find_one({"code": IAMGroups.INTERIMAIRE})
         if not interimaire_group:
             # Create interimaire group if doesn't exist
             import uuid
-            interimaire_profile = await db.iam_profiles.find_one({"code": "role.interim_user"})
+            interimaire_profile = await db.iam_profiles.find_one({"code": IAMProfiles.INTERIM_USER})
             
             interimaire_group_id = str(uuid.uuid4())
             interimaire_group = {
                 "id": interimaire_group_id,
-                "code": "grp.interimaire",
+                "code": IAMGroups.INTERIMAIRE,
                 "name": "Intérimaires",
                 "description": "Groupe des intérimaires (après signature de contrat)",
                 "profile_ids": [interimaire_profile["id"]] if interimaire_profile else [],
@@ -1615,7 +1612,7 @@ async def promote_candidat_to_interimaire(
                 "created_at": datetime.now(timezone.utc).isoformat()
             }
             await db.iam_groups.insert_one(interimaire_group)
-            logger.info("✅ Created grp.interimaire group")
+            logger.info(f"✅ Created {IAMGroups.INTERIMAIRE} group")
         
         # Add user to interimaire group
         if user_id not in interimaire_group.get("user_ids", []):
@@ -1626,14 +1623,14 @@ async def promote_candidat_to_interimaire(
                     "$set": {"updated_at": datetime.now(timezone.utc).isoformat()}
                 }
             )
-            logger.info(f"✅ User {user_id} added to grp.interimaire")
+            logger.info(f"✅ User {user_id} added to {IAMGroups.INTERIMAIRE}")
         
         # Update user's roles array
         await db.users.update_one(
             {"id": user_id},
             {
                 "$set": {
-                    "roles": [ROLE_INTERIM],  # Update legacy role
+                    "roles": [UserRoles.INTERIM],  # Update legacy role
                     "updated_at": datetime.now(timezone.utc).isoformat()
                 }
             }
@@ -1649,18 +1646,18 @@ async def promote_candidat_to_interimaire(
             target_email=user.get("email"),
             metadata={
                 "action": "promote_candidat_to_interimaire",
-                "from_group": "grp.candidat",
-                "to_group": "grp.interimaire"
+                "from_group": IAMGroups.CANDIDAT,
+                "to_group": IAMGroups.INTERIMAIRE
             }
         )
-        
+
         logger.info(f"✅ User {user_id} promoted from candidat to intérimaire")
         
         return {
             "success": True,
             "message": "User promoted to intérimaire successfully",
             "user_id": user_id,
-            "new_group": "grp.interimaire"
+            "new_group": IAMGroups.INTERIMAIRE
         }
         
     except HTTPException:
