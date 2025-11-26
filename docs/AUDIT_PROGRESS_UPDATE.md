@@ -34,6 +34,7 @@
 - **KPIs admin sans statuts/profils en dur** : `apps/api/src/presentation/routes/admin_routes.py` lit les statuts/types de validation et les profils depuis la configuration pour calculer les compteurs et totaux, avec fallback enum si nécessaire. Les dépôts validation/profil acceptent désormais les valeurs brutes issues de la config.
 - **Contrats intérim configurables** : `auth-microservice/contract_routes.py` utilise le rôle intérim issu de la configuration et les statuts d'application configurés (`contract_signed`/`contract_pending`) pour filtrer les contrats et détecter les contrats actifs sans chaînes inline.
 - **Modèles de validation/location alignés sur la config** : `awana_auth/core/location_models.py` utilise désormais les statuts/roles de validation issus de `ConfigHelper` (avec fallback sur les valeurs historiques) et centralise les imports pour préparer la consommation des codes configurés.
+- **Configuration exposée sans clés inline** : `auth-microservice/configuration_routes.py` renvoie les rôles et statuts utilisateur directement depuis la configuration via `ConfigHelper`, éliminant les clés `admin`/`super_admin`/`interim`/`company` en dur dans la réponse.
 
 ## Actions prioritaires restantes
 1. **Externaliser les rôles/statuts auth** : déplacer les comparaisons en dur dans `apps/api/**/awana_auth_routes.py` vers la configuration (`config/base.yaml`).

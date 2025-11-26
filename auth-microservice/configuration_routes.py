@@ -12,6 +12,7 @@ from awana_auth.core.reference_models import (
     BusinessRule
 )
 from awana_auth.core.cache import reference_cache, get_cache_key
+from awana_auth.utils.config_helpers import cfg
 import uuid
 from datetime import datetime
 
@@ -76,28 +77,9 @@ async def get_all_config(
     from awana_auth.core.config_manager import get_config
     config_manager = get_config()
     
-    # Charger les rôles depuis la configuration YAML
-    roles = {
-        "admin": config_manager.get("security.roles.admin"),
-        "super_admin": config_manager.get("security.roles.super_admin"),
-        "company": config_manager.get("security.roles.company"),
-        "interim": config_manager.get("security.roles.interim"),
-        "agency": config_manager.get("security.roles.agency"),
-        "commercial": config_manager.get("security.roles.commercial"),
-        "validator": config_manager.get("security.roles.validator"),
-        "all": config_manager.get("security.roles.all")
-    }
-    
-    # Charger les statuts utilisateur
-    user_statuses = {
-        "active": config_manager.get("security.user_statuses.active"),
-        "pending": config_manager.get("security.user_statuses.pending"),
-        "suspended": config_manager.get("security.user_statuses.suspended"),
-        "deleted": config_manager.get("security.user_statuses.deleted"),
-        "blocked": config_manager.get("security.user_statuses.blocked"),
-        "archived": config_manager.get("security.user_statuses.archived"),
-        "all": config_manager.get("security.user_statuses.all")
-    }
+    # Charger les rôles et statuts utilisateur depuis la configuration YAML (sans clés en dur)
+    roles = cfg.get_roles_map()
+    user_statuses = cfg.get_user_statuses_map()
     
     # Charger les référentiels dynamiques depuis la BD
     mission_statuses_refs = await db.system_references.find(
