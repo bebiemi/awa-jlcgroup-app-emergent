@@ -8,6 +8,7 @@ import httpx
 import logging
 
 from src.infrastructure.config import get_settings
+from src.infrastructure.http_client import get_async_client
 
 logger = logging.getLogger(__name__)
 
@@ -35,14 +36,13 @@ async def proxy_iam_requests(path: str, request: Request):
     headers.pop('host', None)
     
     try:
-        async with httpx.AsyncClient() as client:
+        async with get_async_client() as client:
             response = await client.request(
                 method=request.method,
                 url=target_url,
                 headers=headers,
                 content=body,
                 params=dict(request.query_params),
-                timeout=30.0
             )
             
             # Return the response from auth-microservice

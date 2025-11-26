@@ -7,15 +7,18 @@ import logging
 from contextlib import asynccontextmanager
 
 from src.infrastructure.config import get_settings
+from src.infrastructure.rate_limiter import RateLimiter
+from src.presentation.middleware.rate_limit import rate_limit_middleware
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 settings = get_settings()
 
-# Global database client
+# Global database client and rate limiter
 client = None
 db = None
+rate_limiter: RateLimiter | None = None
 
 
 @asynccontextmanager
@@ -47,12 +50,24 @@ async def lifespan(app: FastAPI):
     upload_dir.mkdir(parents=True, exist_ok=True)
     logger.info(f"Upload directory ready: {upload_dir}")
 
+    # Initialize rate limiter (Redis when configured)
+    global rate_limiter
+    rate_limiter = RateLimiter(
+        limit=settings.rate_limit_requests_per_minute,
+        window_seconds=settings.rate_limit_window_seconds,
+        redis_url=settings.redis_url,
+    )
+    await rate_limiter.initialize()
+    app.state.rate_limiter = rate_limiter
+
     yield
 
     # Cleanup
     if client:
         client.close()
         logger.info("MongoDB connection closed")
+    if rate_limiter:
+        await rate_limiter.shutdown()
 
 
 app = FastAPI(
@@ -72,13 +87,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Global middleware
+app.middleware("http")(rate_limit_middleware)
+
 # Mount static files for uploads
 upload_dir = settings.upload_dir
 if upload_dir.exists():
     app.mount("/uploads", StaticFiles(directory=str(upload_dir)), name="uploads")
 
 # Import and include routers
-from src.presentation.routes import profile_routes, validation_routes, notification_routes, admin_routes, iam_proxy_routes, config_proxy_routes, security_proxy_routes, auth_api_proxy_routes, auth_proxy_routes, besoins_proxy_routes, entreprises_proxy_routes, auth_endpoints_proxy, email_verification_proxy_routes, auth_admin_users_proxy, admin_users_proxy, documents_proxy_routes, entreprise_grouping_proxy
+from src.presentation.routes import profile_routes, validation_routes, notification_routes, admin_routes, iam_proxy_routes, config_proxy_routes, security_proxy_routes, auth_api_proxy_routes, auth_proxy_routes, besoins_proxy_routes, entreprises_proxy_routes, auth_endpoints_proxy, email_verification_proxy_routes, auth_admin_users_proxy, admin_users_proxy, documents_proxy_routes, entreprise_grouping_proxy, mobile_v1_routes
 
 # ⚠️ IMPORTANT: Proxy routes MUST be mounted BEFORE local routes to avoid conflicts
 # Proxy Admin Users routes (most specific - must be first)
@@ -113,6 +131,8 @@ app.include_router(entreprise_grouping_proxy.grouping_proxy_router, prefix="/api
 app.include_router(email_verification_proxy_routes.router, prefix="/api/email-verification", tags=["Email Verification Proxy"])
 # Proxy /api/documents and /api/support to auth-microservice
 app.include_router(documents_proxy_routes.router, prefix="/api", tags=["Documents & Support Proxy"])
+# Versioned mobile contract (v1)
+app.include_router(mobile_v1_routes.router, prefix="/api/v1", tags=["Mobile v1"])
 
 
 @app.get("/health")

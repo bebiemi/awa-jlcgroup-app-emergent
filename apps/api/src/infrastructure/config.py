@@ -17,6 +17,19 @@ class Settings(BaseSettings):
     database_name: str = Field(default="jlc_db", alias="DATABASE_NAME")
     redis_url: Optional[str] = Field(default=None, alias="REDIS_URL")
 
+    rate_limit_requests_per_minute: int = Field(
+        default=60, alias="RATE_LIMIT_REQUESTS_PER_MINUTE"
+    )
+    rate_limit_window_seconds: int = Field(
+        default=60, alias="RATE_LIMIT_WINDOW_SECONDS"
+    )
+    api_client_timeout_seconds: float = Field(
+        default=10.0, alias="API_CLIENT_TIMEOUT_SECONDS"
+    )
+    api_client_connect_timeout_seconds: float = Field(
+        default=5.0, alias="API_CLIENT_CONNECT_TIMEOUT_SECONDS"
+    )
+
     auth_service_url: str = Field(default="http://localhost:8000", alias="AUTH_SERVICE_URL")
     base_url: str = Field(default="http://localhost:8001", alias="BASE_URL")
     upload_dir: Path = Field(default=Path("/app/uploads"), alias="UPLOAD_DIR")

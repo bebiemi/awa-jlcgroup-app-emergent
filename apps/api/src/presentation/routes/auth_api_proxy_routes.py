@@ -7,6 +7,7 @@ from fastapi import APIRouter, Request, Response
 import httpx
 
 from src.infrastructure.config import get_settings
+from src.infrastructure.http_client import get_async_client
 
 router = APIRouter()
 
@@ -38,7 +39,7 @@ async def proxy_auth_api_requests(path: str, request: Request):
     body = await request.body()
     
     try:
-        async with httpx.AsyncClient(timeout=30.0, follow_redirects=True) as client:
+        async with get_async_client() as client:
             response = await client.request(
                 method=request.method,
                 url=target_url,
@@ -46,7 +47,7 @@ async def proxy_auth_api_requests(path: str, request: Request):
                 headers=headers,
                 content=body,
             )
-            
+
             # Return response with same status code and content
             return Response(
                 content=response.content,
