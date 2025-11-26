@@ -1,9 +1,29 @@
 """
 Modèles pour le versioning de configuration
 """
+import uuid
+
 from pydantic import BaseModel, Field
 from typing import Optional, Dict, Any
 from datetime import datetime
+
+from awana_auth.utils.config_helpers import ConfigHelper as cfg
+
+ROLES_EXAMPLE = [
+    role
+    for role in [
+        cfg.get_admin_role() or "admin",
+        cfg.get_company_role() or "company",
+        cfg.get_interim_role() or "interim",
+    ]
+    if role
+]
+
+USER_STATUS_EXAMPLE = [
+    status
+    for status in [cfg.get_active_status() or "active", cfg.get_pending_status() or "pending"]
+    if status
+]
 
 class ConfigurationSnapshot(BaseModel):
     """Snapshot de configuration à un moment donné"""
@@ -33,8 +53,8 @@ class ConfigurationSnapshot(BaseModel):
                 "created_by_name": "Admin User",
                 "snapshot_type": "manual",
                 "config_data": {
-                    "roles": ["admin", "company", "interim", "supervisor"],
-                    "statuses": ["active", "pending"]
+                    "roles": ROLES_EXAMPLE,
+                    "statuses": USER_STATUS_EXAMPLE,
                 },
                 "environment": "production",
                 "tags": ["roles", "major-change"]
@@ -54,5 +74,3 @@ class ConfigurationDiff(BaseModel):
     added: list[str] = []
     removed: list[str] = []
     modified: list[str] = []
-
-import uuid

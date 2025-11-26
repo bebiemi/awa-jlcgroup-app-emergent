@@ -8,7 +8,6 @@ import {
   useGetMissionStatsQuery,
   useUpdateMissionMutation,
   usePublishMissionMutation,
-  type ApplicationStatus,
 } from '../api/missionApi'
 import {
   BriefcaseIcon,
@@ -25,39 +24,7 @@ import {
 import { useAppSelector } from '@/store/hooks'
 import toast from 'react-hot-toast'
 import { usePermissions } from '@/hooks/usePermission'
-
-const STATUS_LABELS: Record<string, string> = {
-  draft: 'Brouillon',
-  published: 'Publiée',
-  accepting_applications: 'Accepte candidatures',
-  in_review: 'En analyse',
-  completed: 'Terminée',
-  cancelled: 'Annulée',
-}
-
-const APPLICATION_STATUS_LABELS: Record<ApplicationStatus, string> = {
-  submitted: 'Soumise',
-  received: 'Reçue',
-  under_review: 'En analyse',
-  shortlisted: 'Présélectionnée',
-  rejected_initial: 'Rejetée',
-  interview_scheduled: 'Entretien programmé',
-  interview_completed: 'Entretien passé',
-  selected_for_client: 'Retenue pour client',
-  rejected_after_interview: 'Rejetée après entretien',
-  sent_to_client: 'Envoyée au client',
-  selected_by_client: 'Retenue par client',
-  rejected_by_client: 'Rejetée par client',
-  standby: 'En attente',
-  medical_check_pending: 'Visite médicale en attente',
-  medical_approved: 'Apte',
-  medical_rejected: 'Inapte',
-  contract_pending: 'Contrat en attente',
-  contract_signed: 'Contrat signé',
-  hired: 'Embauché',
-  rejected: 'Rejeté',
-  withdrawn: 'Retirée',
-}
+import { useMissionStatuses, useApplicationStatuses } from '@/hooks/useAppConfig'
 
 export default function MissionDetailPage() {
   const { id } = useParams<{ id: string }>()
@@ -82,6 +49,52 @@ export default function MissionDetailPage() {
     'missions.publish.all',
     'missions.manage.all',
   ])
+
+  const missionStatuses = useMissionStatuses() as Record<string, string>
+  const applicationStatuses = useApplicationStatuses() as Record<string, string>
+
+  const missionStatusLabels: Record<string, string> = {
+    [missionStatuses.draft ?? 'draft']: 'Brouillon',
+    [missionStatuses.published ?? 'published']: 'Publiée',
+    [missionStatuses.accepting_applications ?? 'accepting_applications']: 'Accepte candidatures',
+    [missionStatuses.in_review ?? 'in_review']: 'En analyse',
+    [missionStatuses.completed ?? 'completed']: 'Terminée',
+    [missionStatuses.cancelled ?? 'cancelled']: 'Annulée',
+  }
+
+  const applicationStatusLabels: Record<string, string> = {
+    [applicationStatuses.submitted ?? 'submitted']: 'Soumise',
+    [applicationStatuses.received ?? 'received']: 'Reçue',
+    [applicationStatuses.under_review ?? 'under_review']: 'En analyse',
+    [applicationStatuses.shortlisted ?? 'shortlisted']: 'Présélectionnée',
+    [applicationStatuses.rejected_initial ?? 'rejected_initial']: 'Rejetée',
+    [applicationStatuses.interview_scheduled ?? 'interview_scheduled']: 'Entretien programmé',
+    [applicationStatuses.interview_completed ?? 'interview_completed']: 'Entretien passé',
+    [applicationStatuses.selected_for_client ?? 'selected_for_client']: 'Retenue pour client',
+    [applicationStatuses.rejected_after_interview ?? 'rejected_after_interview']: 'Rejetée après entretien',
+    [applicationStatuses.sent_to_client ?? 'sent_to_client']: 'Envoyée au client',
+    [applicationStatuses.selected_by_client ?? 'selected_by_client']: 'Retenue par client',
+    [applicationStatuses.rejected_by_client ?? 'rejected_by_client']: 'Rejetée par client',
+    [applicationStatuses.standby ?? 'standby']: 'En attente',
+    [applicationStatuses.medical_check_pending ?? 'medical_check_pending']: 'Visite médicale en attente',
+    [applicationStatuses.medical_approved ?? 'medical_approved']: 'Apte',
+    [applicationStatuses.medical_rejected ?? 'medical_rejected']: 'Inapte',
+    [applicationStatuses.contract_pending ?? 'contract_pending']: 'Contrat en attente',
+    [applicationStatuses.contract_signed ?? 'contract_signed']: 'Contrat signé',
+    [applicationStatuses.hired ?? 'hired']: 'Embauché',
+    [applicationStatuses.rejected ?? 'rejected']: 'Rejeté',
+    [applicationStatuses.withdrawn ?? 'withdrawn']: 'Retirée',
+  }
+
+  const draftStatus = missionStatuses.draft ?? 'draft'
+  const shortlistedStatus = applicationStatuses.shortlisted ?? 'shortlisted'
+  const hiredStatus = applicationStatuses.hired ?? 'hired'
+  const rejectedStatuses = [
+    applicationStatuses.rejected_initial ?? 'rejected_initial',
+    applicationStatuses.rejected ?? 'rejected',
+    applicationStatuses.rejected_after_interview ?? 'rejected_after_interview',
+    applicationStatuses.rejected_by_client ?? 'rejected_by_client',
+  ].filter(Boolean)
 
   const canRead =
     permissions['missions.read.all'] ||
@@ -128,6 +141,8 @@ export default function MissionDetailPage() {
     )
   }
 
+  const missionStatusLabel = missionStatusLabels[mission.status] ?? mission.status
+
   return (
     <Layout>
       <div className="space-y-6">
@@ -143,7 +158,7 @@ export default function MissionDetailPage() {
           
           {canEdit && (
             <div className="flex gap-2">
-              {mission.status === 'draft' && canPublish && (
+              {mission.status === draftStatus && canPublish && (
                 <button
                   onClick={handlePublish}
                   className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
@@ -168,11 +183,14 @@ export default function MissionDetailPage() {
           <div className="flex items-start justify-between mb-6">
             <div className="flex-1">
               <h1 className="text-3xl font-bold text-gray-900 mb-2">{mission.title}</h1>
-              <StatusBadge
-                category="mission_statuses"
-                status={mission.status}
-                showIcon
-              />
+              <div className="flex items-center gap-2">
+                <StatusBadge
+                  category="mission_statuses"
+                  status={mission.status}
+                  showIcon
+                />
+                <span className="text-sm text-gray-600">{missionStatusLabel}</span>
+              </div>
             </div>
           </div>
 
@@ -319,24 +337,33 @@ export default function MissionDetailPage() {
               </Link>
             </div>
             <div className="space-y-3">
-              {applications.slice(0, 5).map((app) => (
-                <div key={app.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50">
-                  <div className="flex-1">
-                    <p className="font-medium text-gray-900">Candidat #{app.user_id.slice(0, 8)}</p>
-                    <p className="text-sm text-gray-600">
-                      {new Date(app.created_at).toLocaleDateString('fr-FR')}
-                    </p>
+              {applications.slice(0, 5).map((app) => {
+                const isShortlisted = app.status === shortlistedStatus
+                const isHired = app.status === hiredStatus
+                const isRejected = rejectedStatuses.includes(app.status) || app.status.includes('rejected')
+
+                const statusClasses = isShortlisted
+                  ? 'bg-purple-100 text-purple-800'
+                  : isHired
+                    ? 'bg-green-100 text-green-800'
+                    : isRejected
+                      ? 'bg-red-100 text-red-800'
+                      : 'bg-gray-100 text-gray-800'
+
+                return (
+                  <div key={app.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50">
+                    <div className="flex-1">
+                      <p className="font-medium text-gray-900">Candidat #{app.user_id.slice(0, 8)}</p>
+                      <p className="text-sm text-gray-600">
+                        {new Date(app.created_at).toLocaleDateString('fr-FR')}
+                      </p>
+                    </div>
+                    <span className={`px-3 py-1 text-xs font-medium rounded-full ${statusClasses}`}>
+                      {applicationStatusLabels[app.status] ?? app.status}
+                    </span>
                   </div>
-                  <span className={`px-3 py-1 text-xs font-medium rounded-full ${
-                    app.status === 'shortlisted' ? 'bg-purple-100 text-purple-800' :
-                    app.status === 'hired' ? 'bg-green-100 text-green-800' :
-                    app.status.includes('rejected') ? 'bg-red-100 text-red-800' :
-                    'bg-gray-100 text-gray-800'
-                  }`}>
-                    {APPLICATION_STATUS_LABELS[app.status]}
-                  </span>
-                </div>
-              ))}
+                )
+              })}
             </div>
           </div>
         )}

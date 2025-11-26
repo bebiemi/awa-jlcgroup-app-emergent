@@ -95,11 +95,14 @@ export const useUserStatuses = () => {
  */
 export const useMissionStatuses = () => {
   const { data, isLoading, isError } = useGetAllConfigQuery()
-  
+
   if (isLoading || isError || !data) {
-    return DEFAULT_CONFIG.missionStatuses
+    return DEFAULT_CONFIG.missionStatuses.reduce((acc, status) => {
+      acc[status] = status
+      return acc
+    }, {} as Record<string, string>)
   }
-  
+
   // Convertir array en objet pour compatibilité
   const statuses = data.mission_statuses
   return statuses.reduce((acc, status) => {
@@ -113,11 +116,14 @@ export const useMissionStatuses = () => {
  */
 export const useApplicationStatuses = () => {
   const { data, isLoading, isError } = useGetAllConfigQuery()
-  
+
   if (isLoading || isError || !data) {
-    return DEFAULT_CONFIG.applicationStatuses
+    return DEFAULT_CONFIG.applicationStatuses.reduce((acc, status) => {
+      acc[status] = status
+      return acc
+    }, {} as Record<string, string>)
   }
-  
+
   const statuses = data.application_statuses
   return statuses.reduce((acc, status) => {
     acc[status] = status

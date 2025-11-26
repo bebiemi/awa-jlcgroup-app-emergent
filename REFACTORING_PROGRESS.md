@@ -1,8 +1,8 @@
 # 📊 Progression de la Refactorisation IAM
 
-## ✅ Fichiers Refactorés (35 fichiers)
+## ✅ Fichiers Refactorés (41 fichiers)
 
-### Frontend (14 fichiers)
+### Frontend (16 fichiers)
 1. ✅ **ValidationsPage.tsx** - 15+ occurrences refactorées
    - Import: `ValidationTypes`, `UserRoles`, `getRoleLabel`
    - Remplacements: candidat, interim, company, collaborateur, admin, super_admin
@@ -57,8 +57,14 @@
 14. ✅ **FeatureFlagsPage.tsx** - Formulaire aligné sur les rôles configurés
     - Le placeholder de ciblage par rôle réutilise `useRoles()` (fallback configuré)
     - Évite la chaîne inline `admin` dans les formulaires de création/édition
+15. ✅ **MissionDetailPage.tsx** - Statuts mission/candidature pilotés par la configuration
+    - Cartographie des labels basée sur `useMissionStatuses` / `useApplicationStatuses`
+    - Bouton de publication et badges de candidatures sans chaînes de statut en dur
+16. ✅ **useAppConfig.ts** - Fallbacks des statuts mission/candidature retournés en dictionnaire
+    - Les statuts de mission et de candidature sont normalisés en map pour éviter les accès sur tableaux
+    - Prépare les composants à consommer des codes configurés sans dépendre des valeurs par défaut
 
-### Backend (21 fichiers)
+### Backend (25 fichiers)
 1. ✅ **initialize_candidat_iam.py** - 17 occurrences refactorées
    - Import: `IAMGroups`, `IAMProfiles`, `IAMPermissions`
    - Tous les codes hardcodés remplacés par constantes
@@ -139,11 +145,30 @@
 21. ✅ **awana_auth/core/reference_models.py** - Exemple de référentiel aligné sur les rôles configurés
     - Les imports manquants sont restaurés
     - L'exemple JSON s'appuie sur le rôle intérim issu de la configuration (fallback `interim`)
+22. ✅ **scripts/update_iam_permissions.py** - Mise à jour des profils admins sans code inline
+    - Le profil admin ciblé est récupéré via `ConfigHelper` avant d'assigner toutes les permissions
+    - Évite la chaîne `admin` codée en dur dans la mise à jour des permissions systèmes
+23. ✅ **scripts/seed_additional_references.py** - Rôles référentiels dérivés de la configuration
+    - Les codes admin/super_admin/company/agency/commercial/interim sont injectés depuis `ConfigHelper`
+    - Supprime les valeurs en dur tout en conservant les métadonnées de permissions/rendu
+24. ✅ **scripts/add_missing_references.py** - Statuts/types/roles de validation paramétrés
+    - Les statuts utilisateur, validation et mission utilisent les codes issus de la configuration (fallbacks inclus)
+    - Le rôle validator et les statuts de candidature sont alignés sur la configuration centrale
+25. ✅ **awana_auth/core/version_models.py** - Exemple de snapshot aligné sur les rôles/statuts configurés
+    - L'exemple `config_data` lit les rôles et statuts via `ConfigHelper` (fallback admin/company/interim/active/pending)
+    - L'import `uuid` est repositionné pour éviter les erreurs de référence
 
 ---
 
 ## 🔄 Fichiers Restants à Refactorer
 
+### Frontend Prioritaires (~3 fichiers)
+- [ ] **EditUserModal.tsx** (1 occurrence)
+- [ ] **Breadcrumb.tsx**
+- [ ] **EmailSettingsPage.tsx**
+
+### Backend Prioritaires
+- Aucun fichier prioritaire restant identifié sur le scope IAM (scripts/refs mis à jour)
 ### Frontend Prioritaires (~6 fichiers)
 - [ ] **EditUserModal.tsx** (1 occurrence)
 - [x] **ValidationsList.tsx** (2 occurrences)
@@ -171,18 +196,22 @@
 ## 📈 Statistiques
 
 ### Total
-- **Fichiers refactorés**: 35 / ~36 (~97%)
+- **Fichiers refactorés**: 41 / ~44 (~93%)
 - **Occurrences éliminées**: ~100 + statuts/types centralisés dans `validation_routes.py`
 - **Tests de sync**: ✅ 100% passés
 
 ### Par Catégorie
-- **Frontend**: 14 fichiers refactorés / ~6 restants
-- **Backend**: 21 fichiers refactorés / ~2 restants
+- **Frontend**: 16 fichiers refactorés / ~3 restants
+- **Backend**: 25 fichiers refactorés / 0 restant prioritaire
 
 ---
 
 ## 🎯 Prochaines Actions
 
+### Étape 1: Frontend (finitions légères)
+1. EditUserModal.tsx (1 occurrence) - 3 min
+2. Breadcrumb.tsx (occurrences mineures) - 5 min
+3. EmailSettingsPage.tsx (vérifier l'usage des permissions/config) - 5 min
 ### Étape 1: Frontend (Fichiers simples)
 1. EditUserModal.tsx (1 occurrence) - 3 min
 2. Breadcrumb.tsx (occurrences mineures) - 5 min
@@ -193,9 +222,9 @@
 1. scripts/update_iam_permissions.py
 2. Scripts de migration et seed restants
 
-**Temps estimé**: ~30 min
+**Temps estimé**: ~15 min
 
-### Étape 3: Tests Unitaires
+### Étape 2: Tests Unitaires
 1. Créer tests backend pour constantes
 2. Créer tests frontend pour constantes
 

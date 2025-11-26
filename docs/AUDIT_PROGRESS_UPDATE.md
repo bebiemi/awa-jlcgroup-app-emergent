@@ -39,6 +39,10 @@
 - **Feature flags côté admin alignés IAM** : `apps/web/src/features/admin/pages/FeatureFlagsPage.tsx` utilise `useRoles()` pour préremplir la cible par rôle au lieu de la chaîne `admin` en dur.
 - **Initialisation IAM pilotée par la config** : `auth-microservice/scripts/initialize_iam_system.py` crée les profils et le groupe super admin à partir des rôles configurés (fallbacks hérités), supprimant les codes inline.
 - **Référentiels système alignés config** : l'exemple JSON de `awana_auth/core/reference_models.py` s'appuie sur le rôle intérim issu de la configuration et restaure les imports manquants pour assurer la validité du modèle.
+- **Mises à jour IAM et seeds sans rôles en dur** : `auth-microservice/scripts/update_iam_permissions.py`, `scripts/seed_additional_references.py` et `scripts/add_missing_references.py` récupèrent désormais les rôles/statuts via `ConfigHelper`, évitant les codes `admin`/`interim`/`company`/`validator` inline lors des migrations et seeds.
+- **Snapshots de configuration dynamiques** : `awana_auth/core/version_models.py` utilise les rôles/statuts configurés (avec fallback) dans l'exemple `config_data` et charge correctement `uuid` pour le `default_factory`.
+- **MissionDetailPage alignée sur la configuration** : la page consomme `useMissionStatuses` / `useApplicationStatuses` pour cartographier les statuts mission et candidature, y compris pour les badges et le bouton de publication, sans chaînes de statuts en dur.
+- **Hook de configuration mission/candidature** : `useAppConfig.ts` renvoie désormais des dictionnaires pour les statuts de mission/candidature en fallback, évitant les accès sur tableaux lorsqu'on lit les codes configurés.
 
 ## Actions prioritaires restantes
 1. **Externaliser les rôles/statuts auth** : déplacer les comparaisons en dur dans `apps/api/**/awana_auth_routes.py` vers la configuration (`config/base.yaml`).
