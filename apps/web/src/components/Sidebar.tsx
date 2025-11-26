@@ -9,6 +9,7 @@ import LanguageSwitcher from './LanguageSwitcher'
 import UserStatusDropdown from './UserStatusDropdown'
 import { usePermissions } from '@/hooks/usePermission'
 import { useCandidateTrackingAccess } from '@/hooks/useCandidateTracking'
+import { IAMPermissions } from '@/constants/iamConstants'
 import {
   HomeIcon,
   UserGroupIcon,
@@ -144,9 +145,9 @@ export default function Sidebar() {
     'config.read',
     'forms.read',
     'forms.manage',
-    'emails.configure',
-    'emails.read_history',
-    'emails.manage_templates',
+    IAMPermissions.EMAILS_CONFIGURE,
+    IAMPermissions.EMAILS_READ_HISTORY,
+    IAMPermissions.EMAILS_MANAGE_TEMPLATES,
     'profile.manage.own',
     'profile.view.own',
     'profile.edit.own',

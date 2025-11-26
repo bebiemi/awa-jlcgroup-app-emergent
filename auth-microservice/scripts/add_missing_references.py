@@ -8,6 +8,8 @@ from motor.motor_asyncio import AsyncIOMotorClient
 import os
 from dotenv import load_dotenv
 
+from awana_auth.utils.config_helpers import ConfigHelper as cfg
+
 # Charger les variables d'environnement
 load_dotenv()
 
@@ -15,11 +17,39 @@ load_dotenv()
 MONGO_URL = os.environ.get('MONGO_URL', 'mongodb://localhost:27017/auth_db')
 
 # Références à ajouter (celles qui manquent par rapport à base.yaml)
+USER_STATUS_DELETED = cfg.get_deleted_status() or "deleted"
+
+VALIDATION_TYPES = {
+    "interim": cfg.get_validation_type("interim") or "interim",
+    "company": cfg.get_validation_type("company") or "company",
+    "collaborator": cfg.get_validation_type("collaborator") or "collaborator",
+}
+
+VALIDATION_STATUSES = {
+    "pending": cfg.get_validation_status("pending") or "pending",
+    "approved": cfg.get_validation_status("approved") or "approved",
+    "rejected": cfg.get_validation_status("rejected") or "rejected",
+}
+
+VALIDATOR_ROLE = cfg.get_validator_role() or "validator"
+
+MISSION_STATUSES = {
+    "closed": cfg.get_mission_status("closed") or "closed",
+    "archived": cfg.get_mission_status("archived") or "archived",
+}
+
+APPLICATION_STATUSES = {
+    "submitted": cfg.get_application_status("submitted") or "submitted",
+    "review": cfg.get_application_status("review") or "review",
+    "interviewed": cfg.get_application_status("interviewed") or "interviewed",
+    "withdrawn": cfg.get_application_status("withdrawn") or "withdrawn",
+}
+
 MISSING_REFERENCES = {
     # User Statuses - ajouter deleted qui manque
     "user_statuses": [
         {
-            "code": "deleted",
+            "code": USER_STATUS_DELETED,
             "label_fr": "Supprimé",
             "label_en": "Deleted",
             "description": "Compte utilisateur supprimé",
@@ -31,7 +61,7 @@ MISSING_REFERENCES = {
     # Validation Types - ajouter types manquants
     "validation_types": [
         {
-            "code": "interim",
+            "code": VALIDATION_TYPES["interim"],
             "label_fr": "Validation Intérimaire",
             "label_en": "Interim Validation",
             "description": "Validation du profil intérimaire",
@@ -39,7 +69,7 @@ MISSING_REFERENCES = {
             "metadata": {"color": "#3B82F6", "icon": "user"}
         },
         {
-            "code": "company",
+            "code": VALIDATION_TYPES["company"],
             "label_fr": "Validation Entreprise",
             "label_en": "Company Validation",
             "description": "Validation du profil entreprise",
@@ -47,7 +77,7 @@ MISSING_REFERENCES = {
             "metadata": {"color": "#8B5CF6", "icon": "building"}
         },
         {
-            "code": "collaborator",
+            "code": VALIDATION_TYPES["collaborator"],
             "label_fr": "Validation Collaborateur",
             "label_en": "Collaborator Validation",
             "description": "Validation du profil collaborateur",
@@ -59,7 +89,7 @@ MISSING_REFERENCES = {
     # Validation Statuses
     "validation_statuses": [
         {
-            "code": "pending",
+            "code": VALIDATION_STATUSES["pending"],
             "label_fr": "En attente",
             "label_en": "Pending",
             "description": "Validation en attente de traitement",
@@ -67,7 +97,7 @@ MISSING_REFERENCES = {
             "metadata": {"color": "#F59E0B", "icon": "clock"}
         },
         {
-            "code": "approved",
+            "code": VALIDATION_STATUSES["approved"],
             "label_fr": "Approuvé",
             "label_en": "Approved",
             "description": "Validation approuvée",
@@ -75,7 +105,7 @@ MISSING_REFERENCES = {
             "metadata": {"color": "#10B981", "icon": "check-circle"}
         },
         {
-            "code": "rejected",
+            "code": VALIDATION_STATUSES["rejected"],
             "label_fr": "Rejeté",
             "label_en": "Rejected",
             "description": "Validation rejetée",
@@ -87,7 +117,7 @@ MISSING_REFERENCES = {
     # Ajouter validator role
     "roles": [
         {
-            "code": "validator",
+            "code": VALIDATOR_ROLE,
             "label_fr": "Validateur",
             "label_en": "Validator",
             "description": "Rôle de validateur des profils",
@@ -119,7 +149,7 @@ MISSING_REFERENCES = {
     # Mission statuses supplémentaires
     "mission_statuses": [
         {
-            "code": "closed",
+            "code": MISSION_STATUSES["closed"],
             "label_fr": "Clôturée",
             "label_en": "Closed",
             "description": "Mission clôturée (recrutement terminé)",
@@ -127,7 +157,7 @@ MISSING_REFERENCES = {
             "metadata": {"color": "#6B7280", "icon": "lock-closed"}
         },
         {
-            "code": "archived",
+            "code": MISSION_STATUSES["archived"],
             "label_fr": "Archivée",
             "label_en": "Archived",
             "description": "Mission archivée",
@@ -139,7 +169,7 @@ MISSING_REFERENCES = {
     # Application statuses manquants
     "application_statuses": [
         {
-            "code": "submitted",
+            "code": APPLICATION_STATUSES["submitted"],
             "label_fr": "Soumise",
             "label_en": "Submitted",
             "description": "Candidature soumise",
@@ -147,7 +177,7 @@ MISSING_REFERENCES = {
             "metadata": {"color": "#3B82F6", "icon": "paper-airplane"}
         },
         {
-            "code": "review",
+            "code": APPLICATION_STATUSES["review"],
             "label_fr": "En révision",
             "label_en": "Under Review",
             "description": "Candidature en cours de révision",
@@ -155,7 +185,7 @@ MISSING_REFERENCES = {
             "metadata": {"color": "#F59E0B", "icon": "eye"}
         },
         {
-            "code": "interviewed",
+            "code": APPLICATION_STATUSES["interviewed"],
             "label_fr": "Entretien passé",
             "label_en": "Interviewed",
             "description": "Candidat a passé l'entretien",
@@ -163,7 +193,7 @@ MISSING_REFERENCES = {
             "metadata": {"color": "#8B5CF6", "icon": "chat-bubble-left-right"}
         },
         {
-            "code": "withdrawn",
+            "code": APPLICATION_STATUSES["withdrawn"],
             "label_fr": "Retirée",
             "label_en": "Withdrawn",
             "description": "Candidature retirée par le candidat",

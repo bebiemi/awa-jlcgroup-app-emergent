@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { useGetEmailHistoryQuery, useGetEmailStatsQuery } from '../api/emailHistoryApi';
 import { usePermissions } from '@/hooks/usePermission';
+import { IAMPermissions } from '@/constants/iamConstants';
 
 export const EmailHistoryPage: React.FC = () => {
   const [page, setPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState<string>('');
-  const { permissions } = usePermissions(['emails.read_history'])
-  const canRead = permissions['emails.read_history']
+  const { permissions } = usePermissions([IAMPermissions.EMAILS_READ_HISTORY])
+  const canRead = permissions[IAMPermissions.EMAILS_READ_HISTORY]
   
   const { data: history, isLoading } = useGetEmailHistoryQuery({
     page,

@@ -3,15 +3,33 @@ import Card from '@/components/Card'
 import Button from '@/components/Button'
 import { useGetValidationsQuery, useApproveValidationMutation, useRejectValidationMutation } from '../api/validationApi'
 import { useReferences } from '@/hooks/useReferences'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { CheckIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import toast from 'react-hot-toast'
 import clsx from 'clsx'
+import { useAppConfig } from '@/hooks/useAppConfig'
 
 export default function ValidationsList() {
-  const { data: validationStatuses = [] } = useReferences('validation_statuses')
-  const pendingStatus = validationStatuses.find(vs => vs.code === 'pending')?.code || 'pending'
-  
+  const { validationStatuses } = useAppConfig()
+  const { data: validationStatusesRefs = [] } = useReferences('validation_statuses')
+
+  const validationStatusesConfig = useMemo(() => {
+    const resolveStatus = (target: string) =>
+      validationStatusesRefs.find(vs => vs.code === target)?.code ||
+      validationStatuses.find(status => status.toLowerCase() === target.toLowerCase()) ||
+      target
+
+    const fallback = validationStatuses[0] || validationStatusesRefs[0]?.code || 'pending'
+
+    return {
+      pending: resolveStatus('pending') || fallback,
+      approved: resolveStatus('approved') || fallback,
+      rejected: resolveStatus('rejected') || fallback,
+    }
+  }, [validationStatuses, validationStatusesRefs])
+
+  const { pending: pendingStatus, approved: approvedStatus, rejected: rejectedStatus } = validationStatusesConfig
+
   const [statusFilter, setStatusFilter] = useState<string>(pendingStatus)
   const [selectedValidation, setSelectedValidation] = useState<string | null>(null)
   const [showApproveModal, setShowApproveModal] = useState(false)
@@ -96,10 +114,10 @@ export default function ValidationsList() {
               En attente ({data?.items.filter(v => v.status === pendingStatus).length || 0})
             </button>
             <button
-              onClick={() => setStatusFilter('approved')}
+              onClick={() => setStatusFilter(approvedStatus)}
               className={clsx(
                 'px-4 py-2 rounded-lg font-medium transition-colors',
-                statusFilter === 'approved'
+                statusFilter === approvedStatus
                   ? 'bg-green-600 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               )}
@@ -107,10 +125,10 @@ export default function ValidationsList() {
               Approuvées
             </button>
             <button
-              onClick={() => setStatusFilter('rejected')}
+              onClick={() => setStatusFilter(rejectedStatus)}
               className={clsx(
                 'px-4 py-2 rounded-lg font-medium transition-colors',
-                statusFilter === 'rejected'
+                statusFilter === rejectedStatus
                   ? 'bg-red-600 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               )}
@@ -186,12 +204,12 @@ export default function ValidationsList() {
                         <span className={clsx(
                           'px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full',
                           validation.status === pendingStatus && 'bg-yellow-100 text-yellow-800',
-                          validation.status === 'approved' && 'bg-green-100 text-green-800',
-                          validation.status === 'rejected' && 'bg-red-100 text-red-800'
+                          validation.status === approvedStatus && 'bg-green-100 text-green-800',
+                          validation.status === rejectedStatus && 'bg-red-100 text-red-800'
                         )}>
                           {validation.status === pendingStatus && 'En attente'}
-                          {validation.status === 'approved' && 'Approuvé'}
-                          {validation.status === 'rejected' && 'Refusé'}
+                          {validation.status === approvedStatus && 'Approuvé'}
+                          {validation.status === rejectedStatus && 'Refusé'}
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -222,7 +240,7 @@ export default function ValidationsList() {
                             </button>
                           </div>
                         )}
-                        {validation.status !== 'pending' && (
+                          {validation.status !== pendingStatus && (
                           <span className="text-gray-400">Traité</span>
                         )}
                       </td>

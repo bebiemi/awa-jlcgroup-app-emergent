@@ -4,6 +4,8 @@ import { XMarkIcon } from '@heroicons/react/24/outline'
 import { useLocalLoginMutation } from '@/features/auth/api/authApi'
 import { useAppDispatch } from '@/store/hooks'
 import { setCredentials } from '@/features/auth/slices/authSlice'
+import { useRoles } from '@/hooks/useAppConfig'
+import { UserRoles } from '@/constants/iamConstants'
 
 interface LoginModalProps {
   isOpen: boolean
@@ -14,6 +16,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
   const [login, { isLoading }] = useLocalLoginMutation()
+  const roles = useRoles()
 
   const [formData, setFormData] = useState({
     username: '',
@@ -37,16 +40,33 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
 
       onClose()
 
-      // Redirect based on role
-      if (result.user.roles.includes('admin') || result.user.roles.includes('super_admin')) {
-        navigate('/admin')
-      } else if (result.user.roles.includes('interim')) {
-        navigate('/interimaire')
-      } else if (result.user.roles.includes('company')) {
-        navigate('/entreprise')
-      } else {
-        navigate('/profile')
+      const userRoles = result.user.roles || []
+      const resolvedRoles = {
+        admin: roles?.admin || UserRoles.ADMIN,
+        superAdmin: roles?.super_admin || UserRoles.SUPER_ADMIN,
+        interim: roles?.interim || UserRoles.INTERIM,
+        company: roles?.company || UserRoles.COMPANY,
+        agency: roles?.agency || 'agency',
+        commercial: roles?.commercial || 'commercial',
       }
+
+      const hasRole = (role?: string) => Boolean(role && userRoles.includes(role))
+
+      let dashboardPath = '/profile'
+
+      if (hasRole(resolvedRoles.commercial)) {
+        dashboardPath = '/commercial'
+      } else if (hasRole(resolvedRoles.admin) || hasRole(resolvedRoles.superAdmin)) {
+        dashboardPath = '/admin'
+      } else if (hasRole(resolvedRoles.interim)) {
+        dashboardPath = '/interimaire'
+      } else if (hasRole(resolvedRoles.company)) {
+        dashboardPath = '/entreprise'
+      } else if (hasRole(resolvedRoles.agency)) {
+        dashboardPath = '/agence'
+      }
+
+      navigate(dashboardPath, { replace: true })
     } catch (err: any) {
       setError(err?.data?.detail || 'Identifiants incorrects')
     }

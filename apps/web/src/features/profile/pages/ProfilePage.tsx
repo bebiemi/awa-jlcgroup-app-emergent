@@ -12,17 +12,27 @@ import { UserCircleIcon, DocumentTextIcon, BriefcaseIcon, ShieldCheckIcon, Paint
 import { useAppSelector } from '@/store/hooks'
 import toast from 'react-hot-toast'
 import SidebarPreferencesPanel from '@/components/sidebar/SidebarPreferencesPanel'
+import { useRoles, useValidationTypes } from '@/hooks/useAppConfig'
+import { UserRoles, ValidationTypes } from '@/constants/iamConstants'
 
 export default function ProfilePage() {
   const { data, isLoading } = useGetMyProfileQuery()
   const [updateProfile] = useUpdateMyProfileMutation()
   const currentUser = useAppSelector((state) => state.auth.user)
   const [activeTab, setActiveTab] = useState<'info' | 'documents' | 'experiences' | 'permissions' | 'preferences'>('info')
-  
+  const roles = useRoles()
+  const validationTypes = useValidationTypes()
+
   // Vérifier si l'utilisateur est candidat ou intérimaire (profils avec expériences)
-  const canHaveExperiences = currentUser?.roles?.includes('candidat') || 
-                             currentUser?.roles?.includes('postulant') ||
-                             currentUser?.roles?.includes('intérimaire')
+  const resolvedRoles = {
+    candidat: UserRoles.CANDIDAT,
+    postulant: UserRoles.POSTULANT,
+    interim: roles.interim || UserRoles.INTERIM,
+  }
+
+  const canHaveExperiences = currentUser?.roles?.includes(resolvedRoles.candidat) ||
+                             currentUser?.roles?.includes(resolvedRoles.postulant) ||
+                             currentUser?.roles?.includes(resolvedRoles.interim)
 
   if (isLoading) {
     return (
@@ -35,6 +45,14 @@ export default function ProfilePage() {
   }
 
   const profileType = data?.profile_type
+  const resolvedValidationTypes = {
+    interim: validationTypes.interim || ValidationTypes.INTERIM,
+    company: validationTypes.company || ValidationTypes.COMPANY,
+    candidat: validationTypes.candidat || ValidationTypes.CANDIDAT,
+    postulant: validationTypes.postulant || ValidationTypes.POSTULANT,
+    collaborateur:
+      validationTypes.collaborator || validationTypes.collaborateur || ValidationTypes.COLLABORATEUR,
+  }
   const profile = data?.profile
 
   return (
@@ -136,12 +154,14 @@ export default function ProfilePage() {
         <div className={activeTab === 'preferences' ? '' : 'bg-white rounded-lg shadow p-6'}>
           {activeTab === 'info' && (
             <>
-              {profileType === 'interim' && <InterimProfileForm profile={profile} />}
-              {profileType === 'company' && <CompanyProfileForm profile={profile} />}
-              {(profileType === 'candidat' || profileType === 'postulant' || !profileType) && (
+              {profileType === resolvedValidationTypes.interim && <InterimProfileForm profile={profile} />}
+              {profileType === resolvedValidationTypes.company && <CompanyProfileForm profile={profile} />}
+              {(profileType === resolvedValidationTypes.candidat ||
+                profileType === resolvedValidationTypes.postulant ||
+                !profileType) && (
                 <CandidatProfileForm profile={profile} />
               )}
-              {profileType === 'collaborator' && (
+              {profileType === resolvedValidationTypes.collaborateur && (
                 <div className="text-center py-12 text-gray-500">
                   <p>Profil collaborateur - Configuration minimale</p>
                 </div>

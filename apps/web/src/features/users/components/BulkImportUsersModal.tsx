@@ -3,6 +3,8 @@ import { Dialog, Transition } from '@headlessui/react'
 import { XMarkIcon, CloudArrowUpIcon, CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/outline'
 import toast from 'react-hot-toast'
 import { usePermissions } from '@/hooks/usePermission'
+import { useRoles } from '@/hooks/useAppConfig'
+import { getRoleLabel } from '@/constants/iamConstants'
 
 interface BulkImportUsersModalProps {
   isOpen: boolean
@@ -36,6 +38,8 @@ export default function BulkImportUsersModal({ isOpen, onClose, onSuccess }: Bul
   const [isUploading, setIsUploading] = useState(false)
   const [result, setResult] = useState<ImportResult | null>(null)
   const { permissions } = usePermissions(['users.import', 'users.create'])
+  const roles = useRoles()
+  const availableRoles = Array.from(new Set(Object.values(roles))).filter(Boolean)
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0]
@@ -178,7 +182,12 @@ jane_smith,jane@jlcgroup.com,Jane Smith,collaborator,+241062345678`
                         <code className="bg-blue-100 px-2 py-1 rounded">username,email,full_name,roles,phone</code>
                       </p>
                       <ul className="text-sm text-blue-800 space-y-1 list-disc list-inside">
-                        <li>Les rôles disponibles : <code>interim, collaborator, candidat, postulant, admin</code></li>
+                        <li>
+                          Les rôles disponibles :
+                          <code className="ml-1">
+                            {availableRoles.map((role) => getRoleLabel(role)).join(', ')}
+                          </code>
+                        </li>
                         <li>Les domaines email autorisés seront vérifiés automatiquement</li>
                         <li>Les mots de passe sont générés automatiquement (16 caractères sécurisés)</li>
                         <li>Les emails d'invitation seront envoyés aux utilisateurs créés</li>
