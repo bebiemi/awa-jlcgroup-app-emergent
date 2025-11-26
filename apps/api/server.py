@@ -3,16 +3,15 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from motor.motor_asyncio import AsyncIOMotorClient
-import os
-from dotenv import load_dotenv
 import logging
 from contextlib import asynccontextmanager
-from pathlib import Path
 
-load_dotenv()
+from src.infrastructure.config import get_settings
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+settings = get_settings()
 
 # Global database client
 client = None
@@ -26,9 +25,9 @@ async def lifespan(app: FastAPI):
     logger.info("Starting JLC API...")
 
     # Connect to MongoDB
-    mongo_url = os.getenv('MONGO_URL', 'mongodb://localhost:27017')
+    mongo_url = settings.mongo_url
     client = AsyncIOMotorClient(mongo_url)
-    db_name = os.getenv('DATABASE_NAME', 'jlc_db')
+    db_name = settings.database_name
     db = client[db_name]
     app.state.db = db
     logger.info(f"Connected to MongoDB: {db_name}")
@@ -44,7 +43,7 @@ async def lifespan(app: FastAPI):
     logger.info("Database indexes created")
 
     # Create upload directory
-    upload_dir = Path(os.getenv('UPLOAD_DIR', '/app/uploads'))
+    upload_dir = settings.upload_dir
     upload_dir.mkdir(parents=True, exist_ok=True)
     logger.info(f"Upload directory ready: {upload_dir}")
 
@@ -64,7 +63,7 @@ app = FastAPI(
 )
 
 # CORS configuration
-allowed_origins = os.getenv('CORS_ORIGINS', 'http://localhost:3000,http://localhost:5173').split(',')
+allowed_origins = settings.cors_origins
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,
@@ -74,7 +73,7 @@ app.add_middleware(
 )
 
 # Mount static files for uploads
-upload_dir = Path(os.getenv('UPLOAD_DIR', '/app/uploads'))
+upload_dir = settings.upload_dir
 if upload_dir.exists():
     app.mount("/uploads", StaticFiles(directory=str(upload_dir)), name="uploads")
 

@@ -4,12 +4,13 @@ Proxies /email-verification/* requests to auth-microservice
 """
 from fastapi import APIRouter, Request, Response
 import httpx
-import os
+
+from src.infrastructure.config import get_settings
 
 router = APIRouter()
 
 # Auth microservice URL (internal communication)
-AUTH_SERVICE_URL = os.getenv("AUTH_SERVICE_URL", "http://localhost:8000")
+AUTH_SERVICE_URL = get_settings().auth_service_url
 
 
 @router.api_route("/{path:path}", methods=["GET", "POST", "PUT", "PATCH", "DELETE"])

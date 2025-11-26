@@ -1,9 +1,7 @@
 """Dependency injection for routes"""
 from fastapi import Depends, HTTPException, status, Request
 from motor.motor_asyncio import AsyncIOMotorDatabase
-from typing import Optional
 import httpx
-import os
 import logging
 
 

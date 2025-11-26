@@ -5,14 +5,15 @@ Forwards /api/iam/* requests to auth-microservice
 from fastapi import APIRouter, Request, HTTPException
 from fastapi.responses import Response
 import httpx
-import os
 import logging
+
+from src.infrastructure.config import get_settings
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
-AUTH_SERVICE_URL = os.getenv('AUTH_SERVICE_URL', 'http://localhost:8000')
+AUTH_SERVICE_URL = get_settings().auth_service_url
 
 
 @router.api_route("/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH"])

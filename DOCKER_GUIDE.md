@@ -212,6 +212,8 @@ API_BASE_URL=https://api.votredomaine.com
 AUTH_SERVICE_URL=https://auth.votredomaine.com
 ```
 
+> ℹ️ Les valeurs par défaut consommées par l'API, les proxys d'authentification et le proxy email sont typées et documentées dans `backend/src/infrastructure/config.py`, qui sert désormais de source de vérité unique pour les variables (MONGO_URL, DATABASE_NAME, AUTH_SERVICE_URL, SMTP_*, etc.).
+
 3. **Configurer SSL (optionnel mais recommandé)**
 
 ```bash

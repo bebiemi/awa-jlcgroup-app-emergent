@@ -184,6 +184,8 @@ MONGO_URL=mongodb://localhost:27017
 DATABASE_NAME=jlc_db
 ```
 
+Les valeurs par défaut du backend (MongoDB, AUTH_SERVICE_URL, SMTP_*, etc.) sont désormais centralisées et validées dans `backend/src/infrastructure/config.py` afin d'aligner l'API, les proxys d'authentification et le proxy email quelle que soit la cible (local ou Docker).
+
 ### Docker (docker-compose.yml)
 
 ```yaml
