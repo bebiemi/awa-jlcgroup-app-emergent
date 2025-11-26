@@ -5,12 +5,15 @@ from fastapi import APIRouter, Depends, HTTPException, status, Query
 from motor.motor_asyncio import AsyncIOMotorDatabase, AsyncIOMotorClient
 from awana_auth.core.dependencies import get_current_user, get_iam_service
 from awana_auth.core.models import User
+from awana_auth.core.mission_models import ApplicationStatus
 from awana_auth.dependencies.permission_dependencies import require_permission
 from awana_auth.services.iam_service import IAMService
 from datetime import datetime, timezone, timedelta
 from typing import Optional, List
 import logging
 import os
+
+from awana_auth.utils.config_helpers import cfg
 
 logger = logging.getLogger(__name__)
 
@@ -19,6 +22,12 @@ router = APIRouter(prefix="/api/contracts", tags=["contracts"])
 # Connexion dédiée à jlc_db (base de données métier)
 _jlc_db_client = None
 _jlc_db = None
+
+# Config-driven constants
+INTERIM_ROLE = (cfg.get_interim_role() or "interim").lower()
+CONTRACT_STATUS_SIGNED = cfg.get_application_status("contract_signed") or ApplicationStatus.CONTRACT_SIGNED
+CONTRACT_STATUS_PENDING = cfg.get_application_status("contract_pending") or ApplicationStatus.CONTRACT_PENDING
+CONTRACT_STATUSES_WITH_CONTRACT = [CONTRACT_STATUS_SIGNED, CONTRACT_STATUS_PENDING]
 
 def get_jlc_database() -> AsyncIOMotorDatabase:
     """
@@ -50,7 +59,7 @@ async def get_my_contracts(
     """
     # Vérifier que l'utilisateur est un intérimaire ou dispose du scope read.all
     normalized_roles = [r.lower() for r in current_user.roles]
-    if "interim" not in normalized_roles:
+    if INTERIM_ROLE not in normalized_roles:
         has_all = await iam_service.user_has_permission(current_user.id, "contracts.read.all")
         if not has_all.has_permission:
             raise HTTPException(
@@ -71,7 +80,7 @@ async def get_my_contracts(
     # Construire le filtre pour les applications
     app_query = {
         "interim_id": current_user.id,
-        "status": {"$in": ["contract_signed", "contract_pending"]}
+        "status": {"$in": CONTRACT_STATUSES_WITH_CONTRACT}
     }
     
     # Récupérer les applications avec contrat
@@ -102,7 +111,7 @@ async def get_my_contracts(
             "contract_type": mission.get("contract_type", ""),
             "status": app["status"],
             "application_date": app.get("created_at"),
-            "contract_signed_date": app.get("updated_at") if app["status"] == "contract_signed" else None,
+            "contract_signed_date": app.get("updated_at") if app["status"] == CONTRACT_STATUS_SIGNED else None,
             "salary_range": mission.get("salary_range", ""),
             "work_schedule": mission.get("work_schedule", "")
         }
@@ -111,7 +120,7 @@ async def get_my_contracts(
         is_active = False
         is_ended = False
         
-        if contract_data["status"] == "contract_signed":
+        if contract_data["status"] == CONTRACT_STATUS_SIGNED:
             if contract_data["start_date"] and contract_data["end_date"]:
                 try:
                     start = datetime.fromisoformat(contract_data["start_date"].replace('Z', '+00:00'))
@@ -181,7 +190,7 @@ async def get_active_contract(
     """
     # Vérifier que l'utilisateur est un intérimaire ou dispose du scope read.all
     normalized_roles = [r.lower() for r in current_user.roles]
-    if "interim" not in normalized_roles:
+    if INTERIM_ROLE not in normalized_roles:
         has_all = await iam_service.user_has_permission(current_user.id, "contracts.read.all")
         if not has_all.has_permission:
             raise HTTPException(
@@ -202,7 +211,7 @@ async def get_active_contract(
     # Construire le filtre pour les applications
     app_query = {
         "interim_id": current_user.id,
-        "status": {"$in": ["contract_signed", "contract_pending"]}
+        "status": {"$in": CONTRACT_STATUSES_WITH_CONTRACT}
     }
     
     # Récupérer les applications avec contrat
@@ -220,7 +229,7 @@ async def get_active_contract(
         if not mission:
             continue
         
-        if app["status"] == "contract_signed":
+        if app["status"] == CONTRACT_STATUS_SIGNED:
             if mission.get("start_date") and mission.get("end_date"):
                 try:
                     start = datetime.fromisoformat(mission["start_date"].replace('Z', '+00:00'))

@@ -3,6 +3,7 @@
  * Charge depuis l'API backend avec fallback sur valeurs par défaut
  */
 import { useGetAllConfigQuery } from '@/features/admin/api/configurationApi'
+import { ValidationTypes, UserRoles } from '@/constants/iamConstants'
 
 export interface AppConfig {
   roles: {
@@ -32,10 +33,10 @@ export interface AppConfig {
 // Valeurs par défaut (fallback si API échoue)
 const DEFAULT_CONFIG: AppConfig = {
   roles: {
-    admin: 'admin',
-    super_admin: 'super_admin',
-    company: 'company',
-    interim: 'interim',
+    admin: UserRoles.ADMIN,
+    super_admin: UserRoles.SUPER_ADMIN,
+    company: UserRoles.COMPANY,
+    interim: UserRoles.INTERIM,
     agency: 'agency',
     commercial: 'commercial',
     validator: 'validator'
@@ -51,7 +52,13 @@ const DEFAULT_CONFIG: AppConfig = {
   missionStatuses: ['draft', 'published', 'closed', 'cancelled', 'archived'],
   applicationStatuses: ['submitted', 'review', 'interview_scheduled', 'interviewed', 'selected', 'rejected', 'medical_pending', 'medical_completed', 'contract_pending', 'contract_signed'],
   validationStatuses: ['pending', 'approved', 'rejected'],
-  validationTypes: ['interim', 'company', 'collaborator'],
+  validationTypes: [
+    ValidationTypes.CANDIDAT,
+    ValidationTypes.POSTULANT,
+    ValidationTypes.INTERIM,
+    ValidationTypes.COMPANY,
+    ValidationTypes.COLLABORATEUR,
+  ],
   contractTypes: ['cdi', 'cdd', 'interim', 'freelance', 'stage'],
 }
 
@@ -123,20 +130,21 @@ export const useApplicationStatuses = () => {
  */
 export const useValidationTypes = () => {
   const { data, isLoading, isError } = useGetAllConfigQuery()
-  
-  if (isLoading || isError || !data) {
-    return {
-      interim: 'interim',
-      company: 'company',
-      collaborator: 'collaborator'
-    }
+
+  const fallbackTypes = {
+    [ValidationTypes.CANDIDAT]: ValidationTypes.CANDIDAT,
+    [ValidationTypes.POSTULANT]: ValidationTypes.POSTULANT,
+    [ValidationTypes.INTERIM]: ValidationTypes.INTERIM,
+    [ValidationTypes.COMPANY]: ValidationTypes.COMPANY,
+    [ValidationTypes.COLLABORATEUR]: ValidationTypes.COLLABORATEUR,
+    collaborator: ValidationTypes.COLLABORATEUR,
   }
-  
-  const types = data.validation_types
+
+  const types = !isLoading && !isError && data ? data.validation_types : DEFAULT_CONFIG.validationTypes
   return types.reduce((acc, type) => {
     acc[type] = type
     return acc
-  }, {} as Record<string, string>)
+  }, { ...fallbackTypes } as Record<string, string>)
 }
 
 /**
