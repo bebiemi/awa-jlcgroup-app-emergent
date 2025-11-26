@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, Link, useLocation } from 'react-router-dom'
 import { useLocalLoginMutation } from '../api/authApi'
-import { useAppSelector } from '@/store/hooks'
 import toast from 'react-hot-toast'
 import Button from '@/components/Button'
 import { ArrowPathIcon, ShieldCheckIcon, CheckCircleIcon } from '@heroicons/react/24/outline'
 import MfaVerificationPage from './MfaVerificationPage'
 import { UserRoles } from '@/constants/iamConstants'
+import { useRoles } from '@/hooks/useAppConfig'
 
 export default function LoginPage() {
   const location = useLocation()
@@ -19,6 +19,7 @@ export default function LoginPage() {
   const [mfaSessionId, setMfaSessionId] = useState('')
   const [mfaMethod, setMfaMethod] = useState<'totp' | 'email'>('totp')
   const navigate = useNavigate()
+  const roles = useRoles()
 
   // Show success message from registration if present
   useEffect(() => {
@@ -77,20 +78,33 @@ export default function LoginPage() {
 
         // Redirect to appropriate dashboard based on user role
         const userRoles = result.user?.roles || []
+        const resolvedRoles = {
+          commercial: roles?.commercial || 'commercial',
+          admin: roles?.admin || UserRoles.ADMIN,
+          superAdmin: roles?.super_admin || UserRoles.SUPER_ADMIN,
+          interim: roles?.interim || UserRoles.INTERIM,
+          company: roles?.company || UserRoles.COMPANY,
+          agency: roles?.agency || 'agency',
+          postulant: UserRoles.POSTULANT,
+          candidat: UserRoles.CANDIDAT,
+        }
+
+        const hasRole = (role?: string) => Boolean(role && userRoles.includes(role))
+
         let dashboardPath = '/profile'
 
         // Priority order: commercial > admin > interim > company > agency > postulant/candidat
-        if (userRoles.includes('commercial')) {
+        if (hasRole(resolvedRoles.commercial)) {
           dashboardPath = '/commercial'
-        } else if (userRoles.includes(UserRoles.ADMIN) || userRoles.includes(UserRoles.SUPER_ADMIN)) {
+        } else if (hasRole(resolvedRoles.admin) || hasRole(resolvedRoles.superAdmin)) {
           dashboardPath = '/admin'
-        } else if (userRoles.includes(UserRoles.INTERIM)) {
+        } else if (hasRole(resolvedRoles.interim)) {
           dashboardPath = '/interimaire'
-        } else if (userRoles.includes(UserRoles.COMPANY)) {
+        } else if (hasRole(resolvedRoles.company)) {
           dashboardPath = '/entreprise'
-        } else if (userRoles.includes('agency')) {
+        } else if (hasRole(resolvedRoles.agency)) {
           dashboardPath = '/agence'
-        } else if (userRoles.includes('postulant') || userRoles.includes('candidat')) {
+        } else if (hasRole(resolvedRoles.postulant) || hasRole(resolvedRoles.candidat)) {
           dashboardPath = '/postulant'
         }
 

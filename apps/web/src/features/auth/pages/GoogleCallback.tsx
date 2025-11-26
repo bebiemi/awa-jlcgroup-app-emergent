@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useAppDispatch } from '@/store/hooks'
 import { setCredentials } from '../slices/authSlice'
 import { useRoles, useUserStatuses } from '@/hooks/useAppConfig'
+import { UserRoles } from '@/constants/iamConstants'
 import toast from 'react-hot-toast'
 
 export default function GoogleCallback() {
@@ -81,15 +82,28 @@ export default function GoogleCallback() {
 
         // Redirect to appropriate dashboard based on user role
         const userRoles = data.user.roles || []
+        const resolvedRoles = {
+          admin: roles.admin || UserRoles.ADMIN,
+          superAdmin: roles.super_admin || UserRoles.SUPER_ADMIN,
+          interim: roles.interim || UserRoles.INTERIM,
+          company: roles.company || UserRoles.COMPANY,
+          agency: roles.agency || 'agency',
+          commercial: roles.commercial || 'commercial',
+        }
+
+        const hasRole = (role?: string) => Boolean(role && userRoles.includes(role))
+
         let dashboardPath = '/profile'
-        
-        if (userRoles.includes('admin') || userRoles.includes('super_admin')) {
+
+        if (hasRole(resolvedRoles.commercial)) {
+          dashboardPath = '/commercial'
+        } else if (hasRole(resolvedRoles.admin) || hasRole(resolvedRoles.superAdmin)) {
           dashboardPath = '/admin'
-        } else if (userRoles.includes('interim')) {
+        } else if (hasRole(resolvedRoles.interim)) {
           dashboardPath = '/interimaire'
-        } else if (userRoles.includes('company')) {
+        } else if (hasRole(resolvedRoles.company)) {
           dashboardPath = '/entreprise'
-        } else if (userRoles.includes('agency')) {
+        } else if (hasRole(resolvedRoles.agency)) {
           dashboardPath = '/agence'
         }
         
@@ -102,7 +116,7 @@ export default function GoogleCallback() {
     }
 
     handleCallback()
-  }, [searchParams, navigate, dispatch])
+  }, [searchParams, navigate, dispatch, roles, userStatuses])
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-jlc-purple-600 via-jlc-purple-700 to-jlc-purple-800 flex items-center justify-center">
