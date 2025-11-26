@@ -19,11 +19,21 @@ from awana_auth.core.dependencies import get_current_user, get_database
 from awana_auth.dependencies.permission_dependencies import require_permission, require_any_permission
 from awana_auth.core.models import User
 from awana_auth.services.iam_service import IAMService
+from awana_auth.utils.config_helpers import cfg
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api/iam", tags=["IAM"])
+
+ADMIN_ROLE = cfg.get_admin_role()
+SUPER_ADMIN_ROLE = cfg.get_super_admin_role()
+
+
+def _has_admin_role(roles) -> bool:
+    """Check if a role list contains one of the configured admin roles."""
+    normalized_roles = {role.lower() for role in (roles or [])}
+    return ADMIN_ROLE.lower() in normalized_roles or SUPER_ADMIN_ROLE.lower() in normalized_roles
 
 
 # ============================================================================
@@ -805,9 +815,8 @@ async def get_user_permissions(
     Supports both old format (permission_ids) and new format (permissions codes)
     """
     # Users can only see their own permissions unless admin or super_admin
-    normalized_roles = [r.lower() for r in current_user.roles]
-    is_admin = any(role in normalized_roles for role in ["admin", "super_admin"])
-    if user_id != current_user.id and not is_admin:
+    normalized_roles = current_user.roles or []
+    if user_id != current_user.id and not _has_admin_role(normalized_roles):
         # Optionnel: autoriser via permission IAM dédiée
         raise HTTPException(status_code=403, detail="Not authorized")
     
