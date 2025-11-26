@@ -1,8 +1,8 @@
 # 📊 Progression de la Refactorisation IAM
 
-## ✅ Fichiers Refactorés (41 fichiers)
+## ✅ Fichiers Refactorés (43 fichiers)
 
-### Frontend (16 fichiers)
+### Frontend (18 fichiers)
 1. ✅ **ValidationsPage.tsx** - 15+ occurrences refactorées
    - Import: `ValidationTypes`, `UserRoles`, `getRoleLabel`
    - Remplacements: candidat, interim, company, collaborateur, admin, super_admin
@@ -63,6 +63,12 @@
 16. ✅ **useAppConfig.ts** - Fallbacks des statuts mission/candidature retournés en dictionnaire
     - Les statuts de mission et de candidature sont normalisés en map pour éviter les accès sur tableaux
     - Prépare les composants à consommer des codes configurés sans dépendre des valeurs par défaut
+17. ✅ **UsersPage.tsx** - Filtres rôle/statut alimentés par la configuration
+    - Options de filtres construites via `useRoles` et `useUserStatuses`
+    - Badges de statut colorés sur les statuts configurés (fallback inclus pour archived/blocked)
+18. ✅ **BulkImportUsersModal.tsx** - Instructions d’import synchronisées sur les rôles configurés
+    - Liste des rôles autorisés générée depuis la configuration + `getRoleLabel`
+    - Évite les listes de rôles en dur dans les consignes CSV
 
 ### Backend (25 fichiers)
 1. ✅ **initialize_candidat_iam.py** - 17 occurrences refactorées
@@ -212,15 +218,6 @@
 1. EditUserModal.tsx (1 occurrence) - 3 min
 2. Breadcrumb.tsx (occurrences mineures) - 5 min
 3. EmailSettingsPage.tsx (vérifier l'usage des permissions/config) - 5 min
-### Étape 1: Frontend (Fichiers simples)
-1. EditUserModal.tsx (1 occurrence) - 3 min
-2. Breadcrumb.tsx (occurrences mineures) - 5 min
-
-**Temps estimé**: ~8 min pour 2 fichiers
-
-### Étape 2: Backend (Scripts importants)
-1. scripts/update_iam_permissions.py
-2. Scripts de migration et seed restants
 
 **Temps estimé**: ~15 min
 
@@ -254,5 +251,5 @@ grep -r '"candidat"\|"interim"\|"company"' /app/auth-microservice --include="*.p
 
 ---
 
-**Dernière mise à jour**: 2025-11-28 (Statuts/roles de validation alignés dans les modèles de localisation)
-**Statut**: 🔄 En progression (~75% complété)
+**Dernière mise à jour**: 2025-11-28 (Filtres UsersPage/Bulk import alignés sur les rôles/statuts configurés)
+**Statut**: 🔄 En progression (~78% complété)
