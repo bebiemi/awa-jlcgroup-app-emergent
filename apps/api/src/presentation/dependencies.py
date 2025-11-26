@@ -17,6 +17,7 @@ AUTH_TIMEOUT = httpx.Timeout(5.0)
 
 logger = logging.getLogger(__name__)
 
+DEFAULT_ADMIN_ROLES = ["admin", "super_admin"]
 DEFAULT_VALIDATOR_ROLES = ["admin", "super_admin", "commercial"]
 DEFAULT_VALIDATION_STATUSES = {
     "pending": ValidationStatus.PENDING.value,
@@ -68,6 +69,40 @@ def _get_list(config: dict[str, Any], keys: Iterable[str]) -> list[str] | None:
 def _get_dict(config: dict[str, Any], keys: Iterable[str]) -> dict[str, Any] | None:
     value = _get_nested(config, keys)
     return value if isinstance(value, dict) else None
+
+
+@lru_cache()
+def get_admin_roles_from_config() -> list[str]:
+    """Read admin and super-admin roles from configuration (security.roles)."""
+    config_path = Path(
+        os.getenv(
+            "AUTH_CONFIG_PATH",
+            Path(__file__).resolve().parents[4] / "auth-microservice/config/base.yaml",
+        )
+    )
+
+    config = _read_config_file(config_path)
+    roles = _get_dict(config, ["security", "roles"]) or {}
+
+    admin_roles: list[str] = []
+    for key in ("admin", "super_admin"):
+        role_value = roles.get(key)
+        if isinstance(role_value, str):
+            admin_roles.append(role_value)
+
+    if admin_roles:
+        return admin_roles
+
+    all_roles = roles.get("all")
+    if isinstance(all_roles, list):
+        normalized_roles = [role for role in all_roles if isinstance(role, str)]
+        if normalized_roles:
+            return normalized_roles
+
+    logger.warning(
+        "Using default admin roles because config is missing security.roles.admin/super_admin"
+    )
+    return DEFAULT_ADMIN_ROLES
 
 
 @lru_cache()
