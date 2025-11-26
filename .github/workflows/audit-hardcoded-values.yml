@@ -1,0 +1,42 @@
+name: Audit valeurs en dur
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+permissions:
+  contents: read
+
+env:
+  PYTHON_VERSION: "3.11"
+  AUDIT_MAX_OCCURRENCES: 2040
+
+jobs:
+  audit-hardcoded-values:
+    name: Audit des valeurs en dur
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Run audit script
+        run: |
+          python scripts/audit_hardcoded_values.py \
+            --root-dir . \
+            --markdown-output audit_reports/AUDIT_VALEURS_EN_DUR.md \
+            --max-occurrences "${AUDIT_MAX_OCCURRENCES}"
+
+      - name: Upload audit report
+        uses: actions/upload-artifact@v4
+        with:
+          name: audit-hardcoded-values-report
+          path: audit_reports/AUDIT_VALEURS_EN_DUR.md
+          retention-days: 7
