@@ -13,11 +13,21 @@ from awana_auth.services.temporary_permissions_service import (
     TemporaryPermission
 )
 from awana_auth.dependencies.permission_dependencies import require_permission
+from awana_auth.utils.config_helpers import cfg
 import logging
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api/temporary-permissions", tags=["Temporary Permissions"])
+
+ADMIN_ROLE = cfg.get_admin_role()
+SUPER_ADMIN_ROLE = cfg.get_super_admin_role()
+
+
+def _has_admin_role(roles: list) -> bool:
+    """Check whether the user has one of the configured admin roles."""
+    normalized_roles = {role.lower() for role in (roles or [])}
+    return ADMIN_ROLE.lower() in normalized_roles or SUPER_ADMIN_ROLE.lower() in normalized_roles
 
 
 class GrantTempPermissionRequest(BaseModel):
@@ -102,8 +112,8 @@ async def get_user_temporary_permissions(
     - Utilisateur peut voir ses propres permissions
     - Admin peut voir toutes les permissions
     """
-    normalized_roles = [r.lower() for r in current_user.roles]
-    if user_id != current_user.id and "admin" not in normalized_roles and "super_admin" not in normalized_roles:
+    normalized_roles = current_user.roles or []
+    if user_id != current_user.id and not _has_admin_role(normalized_roles):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Vous ne pouvez consulter que vos propres permissions temporaires"
@@ -126,8 +136,8 @@ async def get_active_temporary_permissions(
     """
     Récupérer uniquement les permissions temporaires actives d'un utilisateur
     """
-    normalized_roles = [r.lower() for r in current_user.roles]
-    if user_id != current_user.id and "admin" not in normalized_roles and "super_admin" not in normalized_roles:
+    normalized_roles = current_user.roles or []
+    if user_id != current_user.id and not _has_admin_role(normalized_roles):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Accès refusé"

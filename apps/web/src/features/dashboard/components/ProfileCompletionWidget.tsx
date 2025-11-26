@@ -7,9 +7,12 @@ import Card from '@/components/Card'
 import { Link } from 'react-router-dom'
 import { CheckCircleIcon, ExclamationCircleIcon } from '@heroicons/react/24/outline'
 import { useGetMyProfileQuery } from '@/features/profile/api/profileApi'
+import { useValidationTypes } from '@/hooks/useAppConfig'
+import { ValidationTypes } from '@/constants/iamConstants'
 
 export default function ProfileCompletionWidget() {
   const { data: profile, isLoading } = useGetMyProfileQuery()
+  const validationTypes = useValidationTypes()
 
   if (isLoading) {
     return (
@@ -23,6 +26,9 @@ export default function ProfileCompletionWidget() {
   }
 
   const completeness = profile?.profile?.profile_completion_percentage || 0
+  const resolvedValidationTypes = {
+    interim: validationTypes.interim || ValidationTypes.INTERIM,
+  }
   
   const getMissingFields = () => {
     if (!profile?.profile) return []
@@ -35,7 +41,7 @@ export default function ProfileCompletionWidget() {
     if (!p.address) missing.push('Adresse')
     if (!p.date_of_birth) missing.push('Date de naissance')
     // Additional fields based on profile type
-    if (profile.profile_type === 'interim') {
+    if (profile.profile_type === resolvedValidationTypes.interim) {
       if (!p.skills || p.skills.length === 0) missing.push('Compétences')
       if (!p.years_of_experience) missing.push('Années d\'expérience')
       if (!p.cv_document_id) missing.push('CV')
