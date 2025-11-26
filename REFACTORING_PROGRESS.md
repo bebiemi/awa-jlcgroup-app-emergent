@@ -169,6 +169,27 @@
 
 ### Backend Prioritaires
 - Aucun fichier prioritaire restant identifié sur le scope IAM (scripts/refs mis à jour)
+### Frontend Prioritaires (~6 fichiers)
+- [ ] **EditUserModal.tsx** (1 occurrence)
+- [x] **ValidationsList.tsx** (2 occurrences)
+- [ ] **Breadcrumb.tsx**
+- [ ] **EmailSettingsPage.tsx**
+- [ ] **MissionDetailPage.tsx**
+- [ ] **ProfilesManagementPage.tsx** - Déjà propre
+- [ ] **IAMControlPage.tsx** - Déjà propre
+- [ ] **features/admin/pages/EmailSettingsPage.tsx**
+- [ ] **features/missions/pages/MissionDetailPage.tsx**
+- [ ] **ProfilesManagementPage.tsx** - Déjà propre
+- [ ] **IAMControlPage.tsx** - Déjà propre
+
+### Backend Prioritaires (~2 fichiers)
+- [ ] **scripts/update_iam_permissions.py**
+- [x] **scripts/initialize_iam_system.py** (GROS fichier - ~13KB)
+- [x] **scripts/diagnose_login.py** (1 occurrence)
+- [ ] **scripts/seed_additional_references.py** (2 occurrences)
+- [ ] **scripts/add_missing_references.py** (2 occurrences)
+- [x] **awana_auth/core/reference_models.py** (1 occurrence)
+- [ ] **awana_auth/core/version_models.py** (1 occurrence)
 
 ---
 
@@ -191,6 +212,15 @@
 1. EditUserModal.tsx (1 occurrence) - 3 min
 2. Breadcrumb.tsx (occurrences mineures) - 5 min
 3. EmailSettingsPage.tsx (vérifier l'usage des permissions/config) - 5 min
+### Étape 1: Frontend (Fichiers simples)
+1. EditUserModal.tsx (1 occurrence) - 3 min
+2. Breadcrumb.tsx (occurrences mineures) - 5 min
+
+**Temps estimé**: ~8 min pour 2 fichiers
+
+### Étape 2: Backend (Scripts importants)
+1. scripts/update_iam_permissions.py
+2. Scripts de migration et seed restants
 
 **Temps estimé**: ~15 min
 
