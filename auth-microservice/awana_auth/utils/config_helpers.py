@@ -68,10 +68,14 @@ class ConfigHelper:
     @staticmethod
     def get_pending_status() -> str:
         return config.get("security.user_statuses.pending")
-    
+
     @staticmethod
     def get_suspended_status() -> str:
         return config.get("security.user_statuses.suspended")
+
+    @staticmethod
+    def get_archived_status() -> str:
+        return config.get("security.user_statuses.archived")
     
     @staticmethod
     def get_deleted_status() -> str:
