@@ -175,9 +175,9 @@ async def create_validation_record(
     import uuid
     
     # Determine validation type based on registration data
-    # Priority: 1) company_name provided → company validation
-    #           2) collaborator email → collaborator validation
-    #           3) assigned role → mapped validation type
+    # Priority: 1) company_name provided → company validation type
+    #           2) collaborator email → collaborator validation type
+    #           3) assigned role → use role
     if register_data.company_name:
         # Company registration takes priority even if email is @jlcgroup.com
         validation_type = VALIDATION_TYPE_COMPANY
