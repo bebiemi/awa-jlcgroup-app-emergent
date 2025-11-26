@@ -2,12 +2,14 @@ import httpx
 import pytest
 from fastapi import HTTPException
 from starlette.requests import Request
+from textwrap import dedent
 import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from src.presentation.dependencies import get_current_user
+from src.presentation import dependencies
+from src.presentation.dependencies import get_admin_roles_from_config, get_current_user
 
 
 class MockAsyncClient:
@@ -28,6 +30,13 @@ def build_request(headers: dict[str, str] | None = None) -> Request:
     headers = headers or {}
     header_items = [(k.lower().encode(), v.encode()) for k, v in headers.items()]
     return Request({"type": "http", "headers": header_items})
+
+
+@pytest.fixture(autouse=True)
+def clear_admin_roles_cache():
+    dependencies.get_admin_roles_from_config.cache_clear()
+    yield
+    dependencies.get_admin_roles_from_config.cache_clear()
 
 
 @pytest.fixture
@@ -81,3 +90,42 @@ async def test_get_current_user_truncates_large_body(monkeypatch, caplog):
     # Ensure the logged body is truncated to avoid leaking large payloads
     assert long_text[:500] in caplog.text
     assert long_text not in caplog.text
+
+
+def test_get_admin_roles_from_config_prefers_specific_keys(tmp_path, monkeypatch):
+    config_file = tmp_path / "config.yaml"
+    config_file.write_text(
+        dedent(
+            """
+            security:
+              roles:
+                admin: administrator
+                super_admin: root_admin
+                all:
+                  - should_be_ignored
+            """
+        )
+    )
+
+    monkeypatch.setenv("AUTH_CONFIG_PATH", str(config_file))
+
+    assert get_admin_roles_from_config() == ["administrator", "root_admin"]
+
+
+def test_get_admin_roles_from_config_falls_back_to_all(tmp_path, monkeypatch):
+    config_file = tmp_path / "config.yaml"
+    config_file.write_text(
+        dedent(
+            """
+            security:
+              roles:
+                all:
+                  - ops_admin
+                  - support_admin
+            """
+        )
+    )
+
+    monkeypatch.setenv("AUTH_CONFIG_PATH", str(config_file))
+
+    assert get_admin_roles_from_config() == ["ops_admin", "support_admin"]

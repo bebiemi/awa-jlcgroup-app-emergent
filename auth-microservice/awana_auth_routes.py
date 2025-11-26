@@ -24,6 +24,7 @@ from awana_auth.core.dependencies import (
     get_session_storage,
     get_rbac_manager
 )
+from awana_auth.core.iam_constants import IAMGroups, UserRoles, get_validation_type_for_role
 from awana_auth.dependencies.permission_dependencies import (
     require_permission,
     require_any_permission,
@@ -216,6 +217,12 @@ async def create_validation_record(
             logger.warning(f"   Entreprises liées: {len(existing_representant_entreprises)}")
     
     user_status_value = user.status.value if isinstance(user.status, UserStatus) else user.status
+
+    validation_status = (
+        VALIDATION_STATUS_PENDING
+        if user_status_value == cfg.get_pending_status()
+        else VALIDATION_STATUS_APPROVED
+    )
 
     validation = {
         "id": str(uuid.uuid4()),
