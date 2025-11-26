@@ -6,6 +6,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 import logging
 from contextlib import asynccontextmanager
 
+from src.infrastructure.cache import ResponseCache
 from src.infrastructure.config import get_settings
 from src.infrastructure.rate_limiter import RateLimiter
 from src.presentation.middleware.rate_limit import rate_limit_middleware
@@ -19,6 +20,7 @@ settings = get_settings()
 client = None
 db = None
 rate_limiter: RateLimiter | None = None
+response_cache: ResponseCache | None = None
 
 
 @asynccontextmanager
@@ -60,6 +62,15 @@ async def lifespan(app: FastAPI):
     await rate_limiter.initialize()
     app.state.rate_limiter = rate_limiter
 
+    # Initialize shared cache (Redis or in-memory)
+    global response_cache
+    response_cache = ResponseCache(
+        ttl_seconds=settings.response_cache_ttl_seconds,
+        redis_url=settings.redis_url,
+    )
+    await response_cache.initialize()
+    app.state.response_cache = response_cache
+
     yield
 
     # Cleanup
@@ -68,6 +79,8 @@ async def lifespan(app: FastAPI):
         logger.info("MongoDB connection closed")
     if rate_limiter:
         await rate_limiter.shutdown()
+    if response_cache:
+        await response_cache.shutdown()
 
 
 app = FastAPI(

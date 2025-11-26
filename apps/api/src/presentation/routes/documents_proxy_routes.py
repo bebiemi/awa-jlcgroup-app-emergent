@@ -1,12 +1,10 @@
-"""
-Documents Proxy Routes
-Proxies /api/documents/* and /api/support/* requests to auth-microservice
-This ensures production compatibility where only backend (port 8001) is exposed
-"""
-from fastapi import APIRouter, Request, Response
-import httpx
+"""Documents & Support Proxy Routes with normalized behaviors."""
+from __future__ import annotations
+
+from fastapi import APIRouter, Request
 
 from src.infrastructure.config import get_settings
+from src.presentation.routes.proxy_helpers import proxy_request
 
 router = APIRouter()
 
@@ -16,173 +14,55 @@ AUTH_SERVICE_URL = get_settings().auth_service_url
 
 @router.api_route("/entreprises/form-config/{path:path}", methods=["GET", "POST", "PUT", "PATCH", "DELETE"])
 async def proxy_entreprise_form_config_requests(path: str, request: Request):
-    """
-    Proxy all /api/entreprises/form-config/* requests to auth-microservice
-    """
-    target_url = f"{AUTH_SERVICE_URL}/api/entreprises/form-config/{path}"
-    query_params = dict(request.query_params)
-    headers = {
-        key: value for key, value in request.headers.items()
-        if key.lower() not in ["host", "connection", "content-length", "x-forwarded-proto", "x-forwarded-for", "x-forwarded-host"]
-    }
-    body = await request.body()
-    
-    try:
-        async with httpx.AsyncClient(timeout=30.0, follow_redirects=True) as client:
-            response = await client.request(
-                method=request.method,
-                url=target_url,
-                params=query_params,
-                headers=headers,
-                content=body,
-            )
-            return Response(
-                content=response.content,
-                status_code=response.status_code,
-                headers=dict(response.headers),
-                media_type=response.headers.get('content-type', 'application/json'),
-            )
-    except httpx.RequestError as e:
-        return Response(
-            content=f'{{"detail": "Auth service unavailable: {str(e)}"}}',
-            status_code=503,
-            media_type="application/json",
-        )
+    """Proxy all /api/entreprises/form-config/* requests to auth-microservice"""
+    return await proxy_request(
+        request=request,
+        target_base_url=AUTH_SERVICE_URL,
+        target_path=f"/api/entreprises/form-config/{path}",
+        cache=request.app.state.response_cache if hasattr(request.app.state, "response_cache") else None,
+        cache_namespace="entreprises-form-config",
+        cache_enabled_for_get=True,
+        follow_redirects=True,
+    )
 
 
 @router.api_route("/documents/{path:path}", methods=["GET", "POST", "PUT", "PATCH", "DELETE"])
 async def proxy_documents_requests(path: str, request: Request):
-    """
-    Proxy all /api/documents/* requests to auth-microservice
-    Preserves headers, body, query params, and method
-    """
-    # Build target URL
-    target_url = f"{AUTH_SERVICE_URL}/api/documents/{path}"
-    
-    # Get query params
-    query_params = dict(request.query_params)
-    
-    # Get headers (exclude host and connection headers)
-    headers = {
-        key: value for key, value in request.headers.items()
-        if key.lower() not in ["host", "connection", "content-length", "x-forwarded-proto", "x-forwarded-for", "x-forwarded-host"]
-    }
-    
-    # Get request body
-    body = await request.body()
-    
-    try:
-        async with httpx.AsyncClient(timeout=30.0, follow_redirects=True) as client:
-            response = await client.request(
-                method=request.method,
-                url=target_url,
-                params=query_params,
-                headers=headers,
-                content=body,
-            )
-            
-            # Return response with same status code and content
-            return Response(
-                content=response.content,
-                status_code=response.status_code,
-                headers=dict(response.headers),
-                media_type=response.headers.get('content-type', 'application/json'),
-            )
-    except httpx.RequestError as e:
-        return Response(
-            content=f'{{"detail": "Auth service unavailable: {str(e)}"}}',
-            status_code=503,
-            media_type="application/json",
-        )
+    """Proxy all /api/documents/* requests to auth-microservice"""
+    return await proxy_request(
+        request=request,
+        target_base_url=AUTH_SERVICE_URL,
+        target_path=f"/api/documents/{path}",
+        cache=request.app.state.response_cache if hasattr(request.app.state, "response_cache") else None,
+        cache_namespace="documents",
+        cache_enabled_for_get=False,
+        follow_redirects=True,
+    )
 
 
 @router.api_route("/invitations/{path:path}", methods=["GET", "POST", "PUT", "PATCH", "DELETE"])
 async def proxy_invitations_requests(path: str, request: Request):
-    """
-    Proxy all /api/invitations/* requests to auth-microservice
-    Preserves headers, body, query params, and method
-    """
-    # Build target URL
-    target_url = f"{AUTH_SERVICE_URL}/api/invitations/{path}"
-    
-    # Get query params
-    query_params = dict(request.query_params)
-    
-    # Get headers (exclude host and connection headers)
-    headers = {
-        key: value for key, value in request.headers.items()
-        if key.lower() not in ["host", "connection", "content-length", "x-forwarded-proto", "x-forwarded-for", "x-forwarded-host"]
-    }
-    
-    # Get request body
-    body = await request.body()
-    
-    try:
-        async with httpx.AsyncClient(timeout=30.0, follow_redirects=True) as client:
-            response = await client.request(
-                method=request.method,
-                url=target_url,
-                params=query_params,
-                headers=headers,
-                content=body,
-            )
-            
-            # Return response with same status code and content
-            return Response(
-                content=response.content,
-                status_code=response.status_code,
-                headers=dict(response.headers),
-                media_type=response.headers.get('content-type', 'application/json'),
-            )
-    except httpx.RequestError as e:
-        return Response(
-            content=f'{{"detail": "Auth service unavailable: {str(e)}"}}',
-            status_code=503,
-            media_type="application/json",
-        )
+    """Proxy all /api/invitations/* requests to auth-microservice"""
+    return await proxy_request(
+        request=request,
+        target_base_url=AUTH_SERVICE_URL,
+        target_path=f"/api/invitations/{path}",
+        cache=request.app.state.response_cache if hasattr(request.app.state, "response_cache") else None,
+        cache_namespace="invitations",
+        cache_enabled_for_get=False,
+        follow_redirects=True,
+    )
 
 
 @router.api_route("/support/{path:path}", methods=["GET", "POST", "PUT", "PATCH", "DELETE"])
 async def proxy_support_requests(path: str, request: Request):
-    """
-    Proxy all /api/support/* requests to auth-microservice
-    Preserves headers, body, query params, and method
-    """
-    # Build target URL
-    target_url = f"{AUTH_SERVICE_URL}/api/support/{path}"
-    
-    # Get query params
-    query_params = dict(request.query_params)
-    
-    # Get headers (exclude host and connection headers)
-    headers = {
-        key: value for key, value in request.headers.items()
-        if key.lower() not in ["host", "connection", "content-length", "x-forwarded-proto", "x-forwarded-for", "x-forwarded-host"]
-    }
-    
-    # Get request body
-    body = await request.body()
-    
-    try:
-        async with httpx.AsyncClient(timeout=30.0, follow_redirects=True) as client:
-            response = await client.request(
-                method=request.method,
-                url=target_url,
-                params=query_params,
-                headers=headers,
-                content=body,
-            )
-            
-            # Return response with same status code and content
-            return Response(
-                content=response.content,
-                status_code=response.status_code,
-                headers=dict(response.headers),
-                media_type=response.headers.get('content-type', 'application/json'),
-            )
-    except httpx.RequestError as e:
-        return Response(
-            content=f'{{"detail": "Auth service unavailable: {str(e)}"}}',
-            status_code=503,
-            media_type="application/json",
-        )
+    """Proxy all /api/support/* requests to auth-microservice"""
+    return await proxy_request(
+        request=request,
+        target_base_url=AUTH_SERVICE_URL,
+        target_path=f"/api/support/{path}",
+        cache=request.app.state.response_cache if hasattr(request.app.state, "response_cache") else None,
+        cache_namespace="support",
+        cache_enabled_for_get=True,
+        follow_redirects=True,
+    )
