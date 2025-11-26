@@ -13,7 +13,7 @@
     "status": "DOCUMENTED"
   },
   {
-    "name": "Inscription Candidat/Int\u00e9rimaire",
+    "name": "Inscription Candidat/Intérimaire",
     "category": "Authentication",
     "files": [
       "/app/auth-microservice/awana_auth_routes.py"
@@ -21,7 +21,7 @@
     "endpoints": [
       "POST /api/auth/local/register (candidat)"
     ],
-    "status": "TO_DOCUMENT"
+    "status": "DOCUMENTED"
   },
   {
     "name": "Inscription Collaborateur",
@@ -32,7 +32,7 @@
     "endpoints": [
       "POST /api/auth/local/register (collaborateur)"
     ],
-    "status": "TO_DOCUMENT"
+    "status": "DOCUMENTED"
   },
   {
     "name": "Authentification Locale",
@@ -45,7 +45,7 @@
       "POST /api/auth/refresh",
       "POST /api/auth/logout"
     ],
-    "status": "TO_DOCUMENT"
+    "status": "DOCUMENTED"
   },
   {
     "name": "Authentification EntraID (SSO)",
@@ -57,7 +57,7 @@
       "POST /api/auth/entraid/login",
       "POST /api/auth/entraid/callback"
     ],
-    "status": "TO_DOCUMENT"
+    "status": "DOCUMENTED"
   },
   {
     "name": "Authentification Google",
@@ -69,10 +69,10 @@
       "POST /api/auth/google/login",
       "POST /api/auth/google/callback"
     ],
-    "status": "TO_DOCUMENT"
+    "status": "DOCUMENTED"
   },
   {
-    "name": "Cr\u00e9ation Mission",
+    "name": "Création Mission",
     "category": "Business",
     "files": [
       "/app/auth-microservice/mission_routes.py"
@@ -82,10 +82,10 @@
       "PUT /api/missions/{id}",
       "DELETE /api/missions/{id}"
     ],
-    "status": "TO_DOCUMENT"
+    "status": "DOCUMENTED"
   },
   {
-    "name": "Candidature \u00e0 une Mission",
+    "name": "Candidature à une Mission",
     "category": "Business",
     "files": [
       "/app/auth-microservice/application_routes.py",
@@ -95,7 +95,7 @@
       "POST /api/applications",
       "GET /api/missions/{id}/applications"
     ],
-    "status": "TO_DOCUMENT"
+    "status": "DOCUMENTED"
   },
   {
     "name": "Validation Candidature",
@@ -107,7 +107,7 @@
       "POST /api/applications/{id}/approve",
       "POST /api/applications/{id}/reject"
     ],
-    "status": "TO_DOCUMENT"
+    "status": "DOCUMENTED"
   },
   {
     "name": "Gestion des Besoins",
@@ -120,7 +120,7 @@
       "PUT /api/besoins/{id}",
       "POST /api/besoins/{id}/convert-to-mission"
     ],
-    "status": "TO_DOCUMENT"
+    "status": "DOCUMENTED"
   },
   {
     "name": "Upload Documents",
@@ -133,7 +133,7 @@
       "GET /api/documents/{id}",
       "DELETE /api/documents/{id}"
     ],
-    "status": "TO_DOCUMENT"
+    "status": "DOCUMENTED"
   },
   {
     "name": "Gestion Profil Utilisateur",
@@ -147,7 +147,7 @@
       "PUT /api/profiles/me",
       "POST /api/users/{user_id}/profiles"
     ],
-    "status": "TO_DOCUMENT"
+    "status": "DOCUMENTED"
   },
   {
     "name": "Archivage Utilisateur",
@@ -159,10 +159,10 @@
       "PATCH /api/users/{user_id}/archive",
       "PATCH /api/users/{user_id}/restore"
     ],
-    "status": "TO_DOCUMENT"
+    "status": "DOCUMENTED"
   },
   {
-    "name": "R\u00e9initialisation Mot de Passe",
+    "name": "Réinitialisation Mot de Passe",
     "category": "Security",
     "files": [
       "/app/auth-microservice/awana_auth_routes.py"
@@ -172,10 +172,10 @@
       "POST /api/auth/reset-password",
       "POST /api/users/{user_id}/password/admin-update"
     ],
-    "status": "TO_DOCUMENT"
+    "status": "DOCUMENTED"
   },
   {
-    "name": "V\u00e9rification Email",
+    "name": "Vérification Email",
     "category": "Security",
     "files": [
       "/app/auth-microservice/email_verification_routes.py"
@@ -185,7 +185,7 @@
       "POST /api/email/verify",
       "POST /api/email/resend"
     ],
-    "status": "TO_DOCUMENT"
+    "status": "DOCUMENTED"
   },
   {
     "name": "Multi-Factor Authentication (MFA)",
@@ -198,7 +198,7 @@
       "POST /api/auth/mfa/verify",
       "POST /api/auth/mfa/disable"
     ],
-    "status": "TO_DOCUMENT"
+    "status": "DOCUMENTED"
   },
   {
     "name": "Gestion IAM (Permissions)",
@@ -212,7 +212,7 @@
       "POST /api/iam/profiles",
       "POST /api/iam/groups"
     ],
-    "status": "TO_DOCUMENT"
+    "status": "DOCUMENTED"
   },
   {
     "name": "Notifications",
@@ -224,10 +224,10 @@
       "GET /api/notifications",
       "POST /api/notifications/mark-read"
     ],
-    "status": "TO_DOCUMENT"
+    "status": "DOCUMENTED"
   },
   {
-    "name": "Emails Syst\u00e8me",
+    "name": "Emails Système",
     "category": "Communication",
     "files": [
       "/app/auth-microservice/email_routes.py",
@@ -237,6 +237,6 @@
       "POST /api/email/send",
       "GET /api/email/settings"
     ],
-    "status": "TO_DOCUMENT"
+    "status": "DOCUMENTED"
   }
 ]
