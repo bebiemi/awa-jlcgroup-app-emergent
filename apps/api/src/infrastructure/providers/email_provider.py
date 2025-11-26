@@ -4,8 +4,9 @@ from typing import List, Optional
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-import os
 import logging
+
+from src.infrastructure.config import get_settings
 
 logger = logging.getLogger(__name__)
 
@@ -29,12 +30,13 @@ class SMTPEmailProvider(EmailProvider):
     """SMTP email provider (Mailhog for dev, production SMTP for prod)"""
 
     def __init__(self):
-        self.smtp_host = os.getenv('SMTP_HOST', 'localhost')
-        self.smtp_port = int(os.getenv('SMTP_PORT', '1025'))  # Mailhog default
-        self.smtp_user = os.getenv('SMTP_USER', '')
-        self.smtp_password = os.getenv('SMTP_PASSWORD', '')
-        self.from_email = os.getenv('FROM_EMAIL', 'noreply@jlcgroup.com')
-        self.from_name = os.getenv('FROM_NAME', 'JLC Group')
+        settings = get_settings()
+        self.smtp_host = settings.smtp_host
+        self.smtp_port = settings.smtp_port
+        self.smtp_user = settings.smtp_username
+        self.smtp_password = settings.smtp_password
+        self.from_email = settings.from_email
+        self.from_name = settings.from_name
 
     async def send_email(
         self,
@@ -90,7 +92,7 @@ class MockEmailProvider(EmailProvider):
 
 def get_email_provider() -> EmailProvider:
     """Get configured email provider"""
-    env = os.getenv('ENVIRONMENT', 'development')
+    env = get_settings().environment
     if env == 'test':
         return MockEmailProvider()
     return SMTPEmailProvider()

@@ -1,10 +1,11 @@
 """File storage provider abstraction"""
 from abc import ABC, abstractmethod
 from typing import BinaryIO, Optional
-import os
 import uuid
 import logging
 from pathlib import Path
+
+from src.infrastructure.config import get_settings
 
 logger = logging.getLogger(__name__)
 
@@ -33,8 +34,9 @@ class LocalStorageProvider(StorageProvider):
     """Local file storage provider"""
 
     def __init__(self):
-        self.base_path = Path(os.getenv('UPLOAD_DIR', '/app/uploads'))
-        self.base_url = os.getenv('BASE_URL', 'http://localhost:8001')
+        settings = get_settings()
+        self.base_path = settings.upload_dir
+        self.base_url = settings.base_url
         self.base_path.mkdir(parents=True, exist_ok=True)
 
     async def upload_file(

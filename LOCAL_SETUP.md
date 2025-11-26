@@ -369,11 +369,16 @@ ENVIRONMENT=local
 ```
 
 ### Backend (apps/api/.env)
+Les valeurs par défaut et leur validation sont centralisées dans `backend/src/infrastructure/config.py`, qui aligne l'API, les proxys d'authentification et le provider email sur une même source de vérité.
 ```env
 MONGO_URL=mongodb://localhost:27017
 DATABASE_NAME=jlc_db
 AUTH_SERVICE_URL=http://localhost:8000
 CORS_ORIGINS=http://localhost:3000,http://localhost:5173
+SMTP_HOST=localhost
+SMTP_PORT=1025
+SMTP_USERNAME=
+SMTP_PASSWORD=
 ENVIRONMENT=local
 ```
 
