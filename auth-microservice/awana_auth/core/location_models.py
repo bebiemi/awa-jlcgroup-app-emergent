@@ -2,11 +2,24 @@
 Location Management Models
 Hierarchical structure: Country → Province → City (Chef-lieu) → District (Arrondissement) → Neighborhood (Quartier)
 """
-from pydantic import BaseModel, Field
-from typing import Optional, Dict, Any, List
+import uuid
 from datetime import datetime, timezone
 from enum import Enum
-import uuid
+from typing import List, Optional
+
+from pydantic import BaseModel, Field
+
+from awana_auth.utils.config_helpers import cfg
+
+
+# Config-driven validation statuses and validator roles
+VALIDATION_STATUS_PENDING = cfg.get_validation_status("pending") or "pending"
+VALIDATION_STATUS_APPROVED = cfg.get_validation_status("approved") or "approved"
+VALIDATION_STATUS_REJECTED = cfg.get_validation_status("rejected") or "rejected"
+
+VALIDATOR_ROLE_COMMERCIAL = cfg.get_commercial_role() or "commercial"
+VALIDATOR_ROLE_ADMIN = cfg.get_admin_role() or "admin"
+VALIDATOR_ROLE_SUPER_ADMIN = cfg.get_super_admin_role() or "super_admin"
 
 
 class LocationType(str, Enum):
@@ -117,17 +130,17 @@ LocationTree.model_rebuild()
 
 class ValidatorRole(str, Enum):
     """Roles that can validate registrations"""
-    COMMERCIAL = "commercial"
-    ADMIN = "admin"
-    SUPER_ADMIN = "super_admin"
+    COMMERCIAL = VALIDATOR_ROLE_COMMERCIAL
+    ADMIN = VALIDATOR_ROLE_ADMIN
+    SUPER_ADMIN = VALIDATOR_ROLE_SUPER_ADMIN
     # Can be extended dynamically
 
 
 class ValidationStatus(str, Enum):
     """Validation status"""
-    PENDING = "pending"
-    APPROVED = "approved"
-    REJECTED = "rejected"
+    PENDING = VALIDATION_STATUS_PENDING
+    APPROVED = VALIDATION_STATUS_APPROVED
+    REJECTED = VALIDATION_STATUS_REJECTED
 
 
 class Validation(BaseModel):

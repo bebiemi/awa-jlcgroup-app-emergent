@@ -31,6 +31,12 @@ logger = logging.getLogger(__name__)
 # Create router
 google_router = APIRouter(prefix="/auth/google", tags=["Google OAuth"])
 
+# Config-driven roles and profile types
+ADMIN_ROLE = cfg.get_admin_role()
+SUPER_ADMIN_ROLE = cfg.get_super_admin_role()
+INTERIM_ROLE = cfg.get_interim_role()
+COMPANY_ROLE = cfg.get_company_role()
+
 
 # ===== Pydantic Models =====
 
@@ -152,7 +158,7 @@ async def create_user_profile(
     }
     
     # Add role-specific fields
-    if profile_type == 'interim':
+    if profile_type == INTERIM_ROLE:
         profile.update({
             "skills": [],
             "experience_years": 0,
@@ -166,7 +172,7 @@ async def create_user_profile(
             "city": None,
             "postal_code": None
         })
-    elif profile_type == 'company':
+    elif profile_type == COMPANY_ROLE:
         profile.update({
             "legal_representative": None,  # Représentant légal
             "company_name": None,  # Nom de la société
@@ -181,7 +187,7 @@ async def create_user_profile(
             "website": None,
             "description": None
         })
-    elif profile_type in ['admin', 'super_admin']:
+    elif profile_type in [ADMIN_ROLE, SUPER_ADMIN_ROLE]:
         profile.update({
             "department": "Administration",
             "position": "Administrator"

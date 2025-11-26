@@ -10,9 +10,38 @@ from motor.motor_asyncio import AsyncIOMotorDatabase
 from awana_auth.core.dependencies import get_database, get_current_user, get_iam_service
 from awana_auth.dependencies.permission_dependencies import require_permission
 from awana_auth.services.iam_service import IAMService
+from awana_auth.utils.config_helpers import cfg
 
 router = APIRouter(prefix="/api/system-references", tags=["system-references"])
 public_router = APIRouter(prefix="/api/public/system-references", tags=["system-references-public"])
+
+
+ADMIN_ROLE = cfg.get_admin_role()
+SUPER_ADMIN_ROLE = cfg.get_super_admin_role()
+
+
+def _has_admin_role(roles: list) -> bool:
+    """Check if the user has one of the configured admin roles."""
+    normalized_roles = {role.lower() for role in (roles or [])}
+    return ADMIN_ROLE.lower() in normalized_roles or SUPER_ADMIN_ROLE.lower() in normalized_roles
+
+
+async def _ensure_admin_or_manage_permission(current_user, iam_service: IAMService) -> None:
+    """
+    Enforce admin role (config-driven) or explicit permission for reference management.
+    """
+
+    roles = getattr(current_user, "roles", []) if not isinstance(current_user, dict) else current_user.get("roles", [])
+    user_id = getattr(current_user, "id", None) or current_user.get("id")
+    has_manage = await iam_service.user_has_permission(user_id, "references.manage")
+
+    if not _has_admin_role(roles) and not has_manage.has_permission:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=(
+                "Accès réservé aux administrateurs ou aux titulaires de la permission references.manage"
+            ),
+        )
 
 
 @router.get("/document-types")
@@ -59,16 +88,7 @@ async def get_public_document_types(
     Référentiels de types de documents accessibles publiquement (actifs uniquement).
     Champs minimalistes (code, label_fr, label_en optionnel).
     """
-    roles = getattr(current_user, "roles", []) if not isinstance(current_user, dict) else current_user.get("roles", [])
-    has_manage = await iam_service.user_has_permission(
-        getattr(current_user, "id", None) or current_user.get("id"),
-        "references.manage"
-    )
-    if "admin" not in roles and "super_admin" not in roles and not has_manage.has_permission:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Accès réservé aux administrateurs ou aux titulaires de la permission references.manage"
-        )
+    await _ensure_admin_or_manage_permission(current_user, iam_service)
     docs = await db.system_references.find(
         {"category": "document_types", "is_active": True},
         {"_id": 0, "code": 1, "label_fr": 1, "label_en": 1}
@@ -86,16 +106,7 @@ async def get_public_references_by_category(
     """
     Référentiels publics filtrés (actifs) par catégorie.
     """
-    roles = getattr(current_user, "roles", []) if not isinstance(current_user, dict) else current_user.get("roles", [])
-    has_manage = await iam_service.user_has_permission(
-        getattr(current_user, "id", None) or current_user.get("id"),
-        "references.manage"
-    )
-    if "admin" not in roles and "super_admin" not in roles and not has_manage.has_permission:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Accès réservé aux administrateurs ou aux titulaires de la permission references.manage"
-        )
+    await _ensure_admin_or_manage_permission(current_user, iam_service)
     refs = await db.system_references.find(
         {"category": category, "is_active": True},
         {"_id": 0, "code": 1, "label_fr": 1, "label_en": 1}

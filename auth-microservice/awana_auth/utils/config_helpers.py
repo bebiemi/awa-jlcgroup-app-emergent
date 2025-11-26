@@ -16,6 +16,11 @@ class ConfigHelper:
     def get_role(role_name: str) -> str:
         """Obtenir un rôle spécifique"""
         return config.get(f"security.roles.{role_name}")
+
+    @staticmethod
+    def get_roles_map():
+        """Obtenir la carte complète des rôles depuis la configuration"""
+        return config.get("security.roles") or {}
     
     @staticmethod
     def get_all_roles() -> List[str]:
@@ -55,11 +60,16 @@ class ConfigHelper:
     def get_user_status(status_name: str) -> str:
         """Obtenir un statut utilisateur spécifique"""
         return config.get(f"security.user_statuses.{status_name}")
-    
+
     @staticmethod
     def get_all_user_statuses() -> List[str]:
         """Obtenir tous les statuts utilisateur"""
         return config.get("security.user_statuses.all")
+
+    @staticmethod
+    def get_user_statuses_map():
+        """Obtenir la carte complète des statuts utilisateur depuis la configuration"""
+        return config.get("security.user_statuses") or {}
     
     @staticmethod
     def get_active_status() -> str:
