@@ -1,6 +1,6 @@
 # 📊 Progression de la Refactorisation IAM
 
-## ✅ Fichiers Refactorés (28 fichiers)
+## ✅ Fichiers Refactorés (29 fichiers)
 
 ### Frontend (13 fichiers)
 1. ✅ **ValidationsPage.tsx** - 15+ occurrences refactorées
@@ -54,7 +54,7 @@
     - `ProfileType` s'appuie sur `IAMProfiles`/`UserRoles` au lieu de littéraux
     - `ValidationType` réutilise le type exporté par `iamConstants.ts`
 
-### Backend (15 fichiers)
+### Backend (16 fichiers)
 1. ✅ **initialize_candidat_iam.py** - 17 occurrences refactorées
    - Import: `IAMGroups`, `IAMProfiles`, `IAMPermissions`
    - Tous les codes hardcodés remplacés par constantes
@@ -115,6 +115,11 @@
     - Les filtres par type de validation et les totaux de profils consomment les codes de config (fallback enum)
     - Expose la liste des codes de profils configurés pour faciliter le suivi dashboard
 
+16. ✅ **contract_routes.py** - Contrats alignés sur les statuts configurés
+    - Les vérifications d'accès intérim utilisent le rôle configuré (fallback `interim`)
+    - Les filtres/contrôles de contrats consomment les statuts d'application `contract_signed`/`contract_pending` depuis la configuration
+    - Supprime les chaînes inline dans les requêtes MongoDB et la détection de contrats actifs
+
 ---
 
 ## 🔄 Fichiers Restants à Refactorer
@@ -152,13 +157,13 @@
 ## 📈 Statistiques
 
 ### Total
-- **Fichiers refactorés**: 28 / ~34 (~82%)
+- **Fichiers refactorés**: 29 / ~34 (~85%)
 - **Occurrences éliminées**: ~100 + statuts/types centralisés dans `validation_routes.py`
 - **Tests de sync**: ✅ 100% passés
 
 ### Par Catégorie
 - **Frontend**: 13 fichiers refactorés / ~7 restants
-- **Backend**: 15 fichiers refactorés / ~4 restants
+- **Backend**: 16 fichiers refactorés / ~3 restants
 
 ---
 
@@ -166,7 +171,7 @@
 
 ### Étape 1: Frontend (Fichiers simples)
 1. EditUserModal.tsx (1 occurrence) - 3 min
-2. LoginModal.tsx (2 occurrences) - 5 min
+2. Breadcrumb.tsx (occurrences mineures) - 5 min
 
 **Temps estimé**: ~8 min pour 2 fichiers
 
@@ -206,5 +211,5 @@ grep -r '"candidat"\|"interim"\|"company"' /app/auth-microservice --include="*.p
 
 ---
 
-**Dernière mise à jour**: 2025-11-28 (Flux mission – re-candidature alignée sur `ApplicationStatus`)
+**Dernière mise à jour**: 2025-11-28 (Contrats alignés sur statuts/rôles configurés)
 **Statut**: 🔄 En progression (~70% complété)
