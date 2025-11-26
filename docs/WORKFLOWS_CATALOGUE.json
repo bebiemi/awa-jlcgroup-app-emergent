@@ -1,0 +1,242 @@
+[
+  {
+    "name": "Inscription Entreprise",
+    "category": "Authentication",
+    "files": [
+      "/app/auth-microservice/awana_auth_routes.py",
+      "/app/apps/api/src/presentation/routes/validation_routes.py"
+    ],
+    "endpoints": [
+      "POST /api/auth/local/register (company)",
+      "POST /api/admin/{validation_id}/approve"
+    ],
+    "status": "DOCUMENTED"
+  },
+  {
+    "name": "Inscription Candidat/Int\u00e9rimaire",
+    "category": "Authentication",
+    "files": [
+      "/app/auth-microservice/awana_auth_routes.py"
+    ],
+    "endpoints": [
+      "POST /api/auth/local/register (candidat)"
+    ],
+    "status": "TO_DOCUMENT"
+  },
+  {
+    "name": "Inscription Collaborateur",
+    "category": "Authentication",
+    "files": [
+      "/app/auth-microservice/awana_auth_routes.py"
+    ],
+    "endpoints": [
+      "POST /api/auth/local/register (collaborateur)"
+    ],
+    "status": "TO_DOCUMENT"
+  },
+  {
+    "name": "Authentification Locale",
+    "category": "Authentication",
+    "files": [
+      "/app/auth-microservice/awana_auth_routes.py"
+    ],
+    "endpoints": [
+      "POST /api/auth/local/login",
+      "POST /api/auth/refresh",
+      "POST /api/auth/logout"
+    ],
+    "status": "TO_DOCUMENT"
+  },
+  {
+    "name": "Authentification EntraID (SSO)",
+    "category": "Authentication",
+    "files": [
+      "/app/auth-microservice/awana_auth_routes.py"
+    ],
+    "endpoints": [
+      "POST /api/auth/entraid/login",
+      "POST /api/auth/entraid/callback"
+    ],
+    "status": "TO_DOCUMENT"
+  },
+  {
+    "name": "Authentification Google",
+    "category": "Authentication",
+    "files": [
+      "/app/auth-microservice/google_auth_routes.py"
+    ],
+    "endpoints": [
+      "POST /api/auth/google/login",
+      "POST /api/auth/google/callback"
+    ],
+    "status": "TO_DOCUMENT"
+  },
+  {
+    "name": "Cr\u00e9ation Mission",
+    "category": "Business",
+    "files": [
+      "/app/auth-microservice/mission_routes.py"
+    ],
+    "endpoints": [
+      "POST /api/missions",
+      "PUT /api/missions/{id}",
+      "DELETE /api/missions/{id}"
+    ],
+    "status": "TO_DOCUMENT"
+  },
+  {
+    "name": "Candidature \u00e0 une Mission",
+    "category": "Business",
+    "files": [
+      "/app/auth-microservice/application_routes.py",
+      "/app/auth-microservice/mission_routes.py"
+    ],
+    "endpoints": [
+      "POST /api/applications",
+      "GET /api/missions/{id}/applications"
+    ],
+    "status": "TO_DOCUMENT"
+  },
+  {
+    "name": "Validation Candidature",
+    "category": "Business",
+    "files": [
+      "/app/auth-microservice/application_routes.py"
+    ],
+    "endpoints": [
+      "POST /api/applications/{id}/approve",
+      "POST /api/applications/{id}/reject"
+    ],
+    "status": "TO_DOCUMENT"
+  },
+  {
+    "name": "Gestion des Besoins",
+    "category": "Business",
+    "files": [
+      "/app/auth-microservice/besoin_routes.py"
+    ],
+    "endpoints": [
+      "POST /api/besoins",
+      "PUT /api/besoins/{id}",
+      "POST /api/besoins/{id}/convert-to-mission"
+    ],
+    "status": "TO_DOCUMENT"
+  },
+  {
+    "name": "Upload Documents",
+    "category": "Documents",
+    "files": [
+      "/app/auth-microservice/document_routes.py"
+    ],
+    "endpoints": [
+      "POST /api/documents/upload",
+      "GET /api/documents/{id}",
+      "DELETE /api/documents/{id}"
+    ],
+    "status": "TO_DOCUMENT"
+  },
+  {
+    "name": "Gestion Profil Utilisateur",
+    "category": "User Management",
+    "files": [
+      "/app/auth-microservice/profile_routes.py",
+      "/app/auth-microservice/user_detail_routes.py"
+    ],
+    "endpoints": [
+      "GET /api/profiles/me",
+      "PUT /api/profiles/me",
+      "POST /api/users/{user_id}/profiles"
+    ],
+    "status": "TO_DOCUMENT"
+  },
+  {
+    "name": "Archivage Utilisateur",
+    "category": "User Management",
+    "files": [
+      "/app/auth-microservice/user_archive_routes.py"
+    ],
+    "endpoints": [
+      "PATCH /api/users/{user_id}/archive",
+      "PATCH /api/users/{user_id}/restore"
+    ],
+    "status": "TO_DOCUMENT"
+  },
+  {
+    "name": "R\u00e9initialisation Mot de Passe",
+    "category": "Security",
+    "files": [
+      "/app/auth-microservice/awana_auth_routes.py"
+    ],
+    "endpoints": [
+      "POST /api/auth/forgot-password",
+      "POST /api/auth/reset-password",
+      "POST /api/users/{user_id}/password/admin-update"
+    ],
+    "status": "TO_DOCUMENT"
+  },
+  {
+    "name": "V\u00e9rification Email",
+    "category": "Security",
+    "files": [
+      "/app/auth-microservice/email_verification_routes.py"
+    ],
+    "endpoints": [
+      "POST /api/email/send",
+      "POST /api/email/verify",
+      "POST /api/email/resend"
+    ],
+    "status": "TO_DOCUMENT"
+  },
+  {
+    "name": "Multi-Factor Authentication (MFA)",
+    "category": "Security",
+    "files": [
+      "/app/auth-microservice/mfa_routes.py"
+    ],
+    "endpoints": [
+      "POST /api/auth/mfa/setup",
+      "POST /api/auth/mfa/verify",
+      "POST /api/auth/mfa/disable"
+    ],
+    "status": "TO_DOCUMENT"
+  },
+  {
+    "name": "Gestion IAM (Permissions)",
+    "category": "Administration",
+    "files": [
+      "/app/auth-microservice/iam_routes.py",
+      "/app/auth-microservice/iam_unified_routes.py"
+    ],
+    "endpoints": [
+      "POST /api/iam/permissions",
+      "POST /api/iam/profiles",
+      "POST /api/iam/groups"
+    ],
+    "status": "TO_DOCUMENT"
+  },
+  {
+    "name": "Notifications",
+    "category": "Communication",
+    "files": [
+      "/app/auth-microservice/notification_routes.py"
+    ],
+    "endpoints": [
+      "GET /api/notifications",
+      "POST /api/notifications/mark-read"
+    ],
+    "status": "TO_DOCUMENT"
+  },
+  {
+    "name": "Emails Syst\u00e8me",
+    "category": "Communication",
+    "files": [
+      "/app/auth-microservice/email_routes.py",
+      "/app/auth-microservice/email_settings_routes.py"
+    ],
+    "endpoints": [
+      "POST /api/email/send",
+      "GET /api/email/settings"
+    ],
+    "status": "TO_DOCUMENT"
+  }
+]
