@@ -12,6 +12,38 @@ class ValidationRepository:
         self.db = db
         self.collection = db.account_validations
 
+    DATETIME_FIELDS = ("created_at", "updated_at", "reviewed_at")
+
+    @staticmethod
+    def _parse_datetime(value: Optional[object]) -> Optional[datetime]:
+        """Parse stored datetime values whether already datetime or ISO strings."""
+        if not value:
+            return None
+
+        if isinstance(value, datetime):
+            return value
+
+        if isinstance(value, str):
+            sanitized_value = value.replace("Z", "+00:00")
+            try:
+                return datetime.fromisoformat(sanitized_value)
+            except ValueError:
+                return None
+
+        return None
+
+    @classmethod
+    def _hydrate_validation(cls, doc: dict) -> AccountValidation:
+        """Convert raw MongoDB document into AccountValidation with datetime objects."""
+        data = dict(doc)
+
+        for field in cls.DATETIME_FIELDS:
+            parsed_value = cls._parse_datetime(data.get(field))
+            if parsed_value:
+                data[field] = parsed_value
+
+        return AccountValidation(**data)
+
     async def create(self, validation: AccountValidation) -> AccountValidation:
         """Create a new validation request"""
         validation_dict = validation.dict()
@@ -28,16 +60,8 @@ class ValidationRepository:
         doc = await self.collection.find_one({"id": validation_id}, {"_id": 0})
         if not doc:
             return None
-        
-        # Convert datetime strings
-        if 'created_at' in doc and isinstance(doc['created_at'], str):
-            doc['created_at'] = datetime.fromisoformat(doc['created_at'])
-        if 'updated_at' in doc and isinstance(doc['updated_at'], str):
-            doc['updated_at'] = datetime.fromisoformat(doc['updated_at'])
-        if 'reviewed_at' in doc and doc['reviewed_at'] and isinstance(doc['reviewed_at'], str):
-            doc['reviewed_at'] = datetime.fromisoformat(doc['reviewed_at'])
-        
-        return AccountValidation(**doc)
+
+        return self._hydrate_validation(doc)
 
     async def get_by_user_id(self, user_id: str) -> Optional[AccountValidation]:
         """Get validation by user ID (most recent)"""
@@ -48,15 +72,8 @@ class ValidationRepository:
         )
         if not doc:
             return None
-        
-        if 'created_at' in doc and isinstance(doc['created_at'], str):
-            doc['created_at'] = datetime.fromisoformat(doc['created_at'])
-        if 'updated_at' in doc and isinstance(doc['updated_at'], str):
-            doc['updated_at'] = datetime.fromisoformat(doc['updated_at'])
-        if 'reviewed_at' in doc and doc['reviewed_at'] and isinstance(doc['reviewed_at'], str):
-            doc['reviewed_at'] = datetime.fromisoformat(doc['reviewed_at'])
-        
-        return AccountValidation(**doc)
+
+        return self._hydrate_validation(doc)
 
     async def update(self, validation: AccountValidation) -> AccountValidation:
         """Update validation"""
@@ -92,17 +109,9 @@ class ValidationRepository:
         # Get paginated results
         cursor = self.collection.find(query, {"_id": 0}).sort("created_at", -1).skip(skip).limit(limit)
         docs = await cursor.to_list(length=None)
-        
-        validations = []
-        for doc in docs:
-            if 'created_at' in doc and isinstance(doc['created_at'], str):
-                doc['created_at'] = datetime.fromisoformat(doc['created_at'])
-            if 'updated_at' in doc and isinstance(doc['updated_at'], str):
-                doc['updated_at'] = datetime.fromisoformat(doc['updated_at'])
-            if 'reviewed_at' in doc and doc['reviewed_at'] and isinstance(doc['reviewed_at'], str):
-                doc['reviewed_at'] = datetime.fromisoformat(doc['reviewed_at'])
-            validations.append(AccountValidation(**doc))
-        
+
+        validations = [self._hydrate_validation(doc) for doc in docs]
+
         return validations, total
 
     async def count_by_status(self, status: ValidationStatus) -> int:

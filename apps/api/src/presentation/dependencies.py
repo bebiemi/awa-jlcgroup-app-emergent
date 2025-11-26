@@ -6,6 +6,11 @@ import httpx
 import os
 import logging
 
+
+AUTH_SERVICE_URL = os.getenv("AUTH_SERVICE_URL", "http://localhost:8000").rstrip("/")
+AUTH_ME_ENDPOINT = "/api/auth/me"
+AUTH_TIMEOUT = httpx.Timeout(5.0)
+
 logger = logging.getLogger(__name__)
 
 
@@ -26,17 +31,17 @@ async def get_current_user(request: Request, db: AsyncIOMotorDatabase = Depends(
     token = auth_header.replace("Bearer ", "")
 
     # Verify token with auth-microservice
-    auth_service_url = os.getenv('AUTH_SERVICE_URL', 'http://localhost:8000')
-
     try:
-        async with httpx.AsyncClient() as client:
+        async with httpx.AsyncClient(base_url=AUTH_SERVICE_URL, timeout=AUTH_TIMEOUT) as client:
             response = await client.get(
-                f"{auth_service_url}/api/auth/me",
-                headers={"Authorization": f"Bearer {token}"},
-                timeout=5.0
+                AUTH_ME_ENDPOINT,
+                headers={"Authorization": f"Bearer {token}"}
             )
 
             if response.status_code != 200:
+                logger.warning(
+                    "Auth service responded with status %s for /me", response.status_code
+                )
                 raise HTTPException(
                     status_code=status.HTTP_401_UNAUTHORIZED,
                     detail="Invalid or expired token"
