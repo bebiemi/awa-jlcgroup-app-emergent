@@ -107,7 +107,7 @@
 - [ ] **ProfilesManagementPage.tsx** - Déjà propre
 - [ ] **IAMControlPage.tsx** - Déjà propre
 
-### Backend Prioritaires (~10 fichiers)
+### Backend Prioritaires (~9 fichiers)
 - [ ] **scripts/initialize_iam_system.py** (GROS fichier - ~13KB)
 - [ ] **scripts/update_iam_permissions.py**
 - [ ] **scripts/diagnose_login.py** (1 occurrence)
