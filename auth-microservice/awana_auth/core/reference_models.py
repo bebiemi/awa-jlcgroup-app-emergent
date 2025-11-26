@@ -1,8 +1,11 @@
-from pydantic import BaseModel, Field
-from typing import Optional, Dict, Any, List
+import uuid
 from datetime import datetime
 from enum import Enum
-import uuid
+from typing import Any, Dict, Optional
+
+from pydantic import BaseModel, Field
+
+from awana_auth.utils.config_helpers import ConfigHelper
 
 
 class ReferenceCategory(str, Enum):
@@ -41,7 +44,7 @@ class SystemReference(BaseModel):
         json_schema_extra = {
             "example": {
                 "category": "roles",
-                "code": "interim",
+                "code": ConfigHelper.get_interim_role() or "interim",
                 "label_fr": "Intérimaire",
                 "label_en": "Temporary Worker",
                 "description": "Utilisateur cherchant des missions intérim",
