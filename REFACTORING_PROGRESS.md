@@ -205,40 +205,22 @@
 
 ## 🎯 Prochaines Actions
 
-### Étape 1: Frontend (finitions)
-- Aucun reste ouvert sur le scope IAM ; poursuivre par l'automatisation de l'audit et le versionnage mobile.
-
-**Temps estimé**: ~15 min
-
-### Étape 2: Tests Unitaires
-1. Créer tests backend pour constantes
-2. Créer tests frontend pour constantes
-
-**Temps estimé**: ~20 min
-
-### Étape 4: Intégration CI/CD
-1. Ajouter test_iam_constants_sync.py au pipeline
-2. Configurer pour bloquer les merges si désynchronisé
-
-**Temps estimé**: ~10 min
+- 🔍 **Suivi audit automatisé** : le workflow `.github/workflows/audit-hardcoded-values.yml` tourne sur `main` et les PR avec un seuil d'augmentation des occurrences fixé à 0 et un plafond global à 2100. La dernière exécution locale reporte **1934 occurrences** (dont 788 critiques).
+- 🧹 **Réduction progressive des occurrences critiques/hautes** : prioriser les messages d'erreur et textes codés en dur listés dans `docs/AUDIT_VALEURS_EN_DUR.md` (ex. routes MFA, invitations, validations) en les externalisant dans la configuration ou les fichiers de traduction.
 
 ---
 
 ## 🔧 Commandes de Vérification
 
 ```bash
-# Vérifier la synchronisation
-python /app/scripts/test_iam_constants_sync.py
+# Vérifier la synchronisation IAM
+python scripts/test_iam_constants_sync.py
 
-# Trouver les fichiers restants
-bash /app/scripts/migrate_to_constants.sh
-
-# Compter les occurrences hardcodées
-grep -r "'candidat'\|'interim'\|'company'" /app/apps/web/src --include="*.tsx" | wc -l
-grep -r '"candidat"\|"interim"\|"company"' /app/auth-microservice --include="*.py" | wc -l
+# Relancer l'audit des valeurs en dur
+python scripts/audit_hardcoded_values.py --markdown-output docs/AUDIT_VALEURS_EN_DUR.md --stats-output audit_reports/stats.json
 ```
 
 ---
 
-**Dernière mise à jour**: 2025-11-28 (Filtres UsersPage/Bulk import alignés sur les rôles/statuts configurés)
-**Statut**: 🔄 En progression (~78% complété)
+**Dernière mise à jour**: 2025-11-29 (Audit automatisé en place, 1934 occurrences restantes identifiées)
+**Statut**: ✅ Phase IAM terminée – suivi audit en cours (100% fichiers IAM refactorés)

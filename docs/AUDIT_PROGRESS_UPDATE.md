@@ -1,13 +1,13 @@
-# 🔎 Audit des valeurs en dur – État d'avancement (28/11/2025)
+# 🔎 Audit des valeurs en dur – État d'avancement (29/11/2025)
 
 ## Synthèse rapide
-- L'audit initial recense **886 occurrences** à supprimer et reste la référence (voir `docs/AUDIT_INDEX.md`).
-- Les statuts et types de validation utilisés par l'API d'authentification sont désormais **pilotés par la configuration** (`validation_routes.py`).
-- Les parcours d'authentification web (login, callback Google, MFA, modal de connexion) et la création d'utilisateurs côté admin consomment maintenant les rôles issus de la configuration/IAM, éliminant les comparaisons inline.
-- La trajectoire reste inchangée : suppression des valeurs en dur, factorisation via la config, et préparation à l'usage mobile.
+- Dernier audit automatisé : **1934 occurrences** détectées (788 critiques, 351 hautes, 156 moyennes, 639 basses) – voir `docs/AUDIT_VALEURS_EN_DUR.md` pour le détail.
+- Le workflow CI `audit-hardcoded-values.yml` s'exécute sur `main` et PR avec un seuil de nouvelle occurrence à 0 et un plafond global à 2100.
+- Les statuts/types IAM et permissions emails sont maintenant pilotés par la configuration sur l'ensemble web/API/auth ; la phase de refactorisation IAM est close, le focus passe à la dé-hardcodification des messages et références restantes.
 
 ## Travaux déjà effectués
 - **Centralisation des statuts/types de validation** : `auth-microservice/validation_routes.py` lit désormais les statuts (`pending`, `approved`, `rejected`) et types (`interim`, `company`, `collaborator`) via `cfg.get_validation_status` / `cfg.get_validation_type`, couvrant les statistiques, les flux d'approbation/rejet et les contrôles spécifiques aux entreprises.
+- **Audit automatisé en CI** : `.github/workflows/audit-hardcoded-values.yml` exécute `scripts/audit_hardcoded_values.py` sur `main`/PR, publie le rapport en artefact et bloque toute augmentation des occurrences au-delà du seuil configuré.
 - **Filtres admin compatibles codes config** : `apps/api/src/presentation/routes/validation_routes.py` accepte désormais les statuts/types issus de la configuration (clé ou valeur) pour les filtres de liste, et applique les transitions d'approbation/rejet avec résolution des codes configurés.
 - **Assignation de validations pilotée par la config** : l'attribution d'un validateur dans `auth-microservice/validation_routes.py` s'appuie maintenant sur `cfg.get_validator_roles()` (avec fallback admin/super_admin/commercial), supprimant les listes en dur.
 - **Dé-hardcodage du flux candidat → intérimaire** : `auth-microservice/awana_auth_routes.py` s’appuie sur `IAMGroups`, `IAMProfiles`, `UserRoles` et `get_validation_type_for_role` pour éviter les chaînes `candidat`/`grp.*` codées en dur (création des validations, promotion interimaire, mise à jour des rôles).
@@ -49,10 +49,9 @@
 - **Breadcrumb sans chemin inline** : le fil d'Ariane utilise la racine contextuelle de `navigation.config` plutôt que le `/` codé en dur.
 
 ## Actions prioritaires restantes
-1. **Externaliser les rôles/statuts auth** : déplacer les comparaisons en dur dans `apps/api/**/awana_auth_routes.py` vers la configuration (`config/base.yaml`).
-2. **Centraliser les permissions mission** : consommer des listes de rôles configurées dans `apps/api/**/mission_routes.py` pour la création/publication/édition/lecture globale.
-3. **Automatiser l'audit en CI** : exécuter `scripts/audit_hardcoded_values.py` sur chaque PR et échouer en cas de nouvelles occurrences.
-4. **Préparer l'exposition mobile** : stabiliser un contrat API v1, ajouter pagination/filtrage systématiques, timeouts et rate limiting pour la résilience.
+1. **Réduire les occurrences critiques/hautes** : externaliser les messages d'erreur répétés dans `auth-microservice/mfa_routes.py`, `invitation_routes.py`, `validation_routes.py` et `location_routes.py` vers un référentiel de messages ou un fichier de configuration/i18n.
+2. **Suivre le budget d'occurrences CI** : garder le total < `AUDIT_MAX_OCCURRENCES` (2100) et sans augmentation sur PR (`AUDIT_NEW_OCCURRENCES_THRESHOLD=0`) ; ajuster la configuration si le scope évolue.
+3. **Préparer l'exposition mobile** : stabiliser un contrat API v1 (pagination/filtrage/tri homogènes), ajouter rate limiting/timeouts côté client et réponses prêtes pour l'offline-first.
 
 ## Commandes utiles
 ```bash
