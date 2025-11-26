@@ -39,8 +39,7 @@ class ValidationRepository:
 
         for field in cls.DATETIME_FIELDS:
             parsed_value = cls._parse_datetime(data.get(field))
-            if parsed_value:
-                data[field] = parsed_value
+            data[field] = parsed_value
 
         return AccountValidation(**data)
 
