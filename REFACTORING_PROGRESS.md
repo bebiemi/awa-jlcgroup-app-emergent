@@ -1,8 +1,8 @@
 # 📊 Progression de la Refactorisation IAM
 
-## ✅ Fichiers Refactorés (5 fichiers)
+## ✅ Fichiers Refactorés (11 fichiers)
 
-### Frontend (3 fichiers)
+### Frontend (7 fichiers)
 1. ✅ **ValidationsPage.tsx** - 15+ occurrences refactorées
    - Import: `ValidationTypes`, `UserRoles`, `getRoleLabel`
    - Remplacements: candidat, interim, company, collaborateur, admin, super_admin
@@ -15,7 +15,23 @@
    - Import: `ValidationTypes`
    - Remplacements: 'candidat' → ValidationTypes.CANDIDAT, 'company' → ValidationTypes.COMPANY
 
-### Backend (2 fichiers)
+4. ✅ **LoginPage.tsx** - Redirections basées sur rôles config-driven
+   - Utilise `useRoles` pour récupérer admin/super_admin/interim/company/agency/commercial
+   - Les rôles postulant/candidat utilisent `UserRoles` (legacy) pour éviter les chaînes inline
+
+5. ✅ **GoogleCallback.tsx** - Redirections OAuth sans rôles hardcodés
+   - Mapping admin/super_admin/interim/company/agency/commercial via `useRoles`
+   - Ajout des constantes IAM pour les comparaisons de rôles
+
+6. ✅ **MfaVerificationPage.tsx** - Navigation post-MFA alignée IAM/config
+   - Repose sur `useRoles` + `UserRoles` pour éliminer les comparaisons en dur
+   - Couvre les flux commercial/admin/interim/company/agency/postulant/candidat
+
+7. ✅ **CreateUserPage.tsx** - Liste des rôles alimentée par la configuration
+   - Les cases à cocher admin/super_admin/interim/company/agency utilisent `useRoles`
+   - Supprime les valeurs en dur dans la création d'utilisateur
+
+### Backend (4 fichiers)
 4. ✅ **initialize_candidat_iam.py** - 17 occurrences refactorées
    - Import: `IAMGroups`, `IAMProfiles`, `IAMPermissions`
    - Tous les codes hardcodés remplacés par constantes
@@ -23,16 +39,26 @@
 
 5. ✅ **awana_auth_routes.py** - Partiellement refactoré (déjà fait avant)
    - Import: `IAMGroups`, `IAMProfiles`, `UserRoles`, `ValidationTypes`
+   - Rôle/validation « candidat » et codes de groupes intérimaires désormais issus des constantes IAM
+
+6. ✅ **validation_routes.py** - Statuts/types de validation centralisés
+   - Utilise `cfg.get_validation_status` et `cfg.get_validation_type`
+   - Remplace les valeurs en dur dans les stats et transitions d'approbation/rejet
+
+7. ✅ **system_references_routes.py** - Rôles admin/super_admin pilotés par la config
+   - Utilise `cfg.get_admin_role` / `cfg.get_super_admin_role` pour les contrôles d'accès publics
+   - Mutualise la vérification via `_ensure_admin_or_manage_permission`
+
+8. ✅ **security_routes.py** - Attribution automatique des profils pilotée par la config
+   - Mappe les rôles issus de `cfg` vers les profils IAM (`IAMProfiles`)
+   - Supprime les chaînes en dur `admin`/`super_admin`/`interim`/`company`/`commercial` dans la création d'utilisateurs
 
 ---
 
 ## 🔄 Fichiers Restants à Refactorer
 
-### Frontend Prioritaires (~17 fichiers)
-- [ ] **LoginPage.tsx** (2 occurrences) - admin, super_admin
-- [ ] **GoogleCallback.tsx** (2 occurrences)
+### Frontend Prioritaires (~13 fichiers)
 - [ ] **EditUserModal.tsx** (1 occurrence)
-- [ ] **CreateUserPage.tsx** (1 occurrence)
 - [ ] **ValidationsList.tsx** (2 occurrences)
 - [ ] **ProfilePage.tsx** (2 occurrences)
 - [ ] **MfaVerificationPage.tsx** (2 occurrences)
@@ -48,7 +74,7 @@
 - [ ] **ProfilesManagementPage.tsx** - Déjà propre
 - [ ] **IAMControlPage.tsx** - Déjà propre
 
-### Backend Prioritaires (~12 fichiers)
+### Backend Prioritaires (~11 fichiers)
 - [ ] **scripts/initialize_iam_system.py** (GROS fichier - ~13KB)
 - [ ] **scripts/migrate_users_to_iam.py**
 - [ ] **scripts/update_iam_permissions.py**
@@ -69,25 +95,24 @@
 ## 📈 Statistiques
 
 ### Total
-- **Fichiers refactorés**: 5 / ~34 (14.7%)
-- **Occurrences éliminées**: ~44
+- **Fichiers refactorés**: 11 / ~34 (~32%)
+- **Occurrences éliminées**: ~70 + statuts/types centralisés dans `validation_routes.py`
 - **Tests de sync**: ✅ 100% passés
 
 ### Par Catégorie
-- **Frontend**: 3 fichiers refactorés / ~21 restants
-- **Backend**: 2 fichiers refactorés / ~13 restants
+- **Frontend**: 7 fichiers refactorés / ~17 restants
+- **Backend**: 4 fichiers refactorés / ~11 restants
 
 ---
 
 ## 🎯 Prochaines Actions
 
 ### Étape 1: Frontend (Fichiers simples)
-1. LoginPage.tsx (2 occurrences) - 5 min
-2. GoogleCallback.tsx (2 occurrences) - 5 min
-3. EditUserModal.tsx (1 occurrence) - 3 min
-4. CreateUserPage.tsx (1 occurrence) - 3 min
+1. EditUserModal.tsx (1 occurrence) - 3 min
+2. ValidationsList.tsx (2 occurrences) - 5 min
+3. ProfilePage.tsx (2 occurrences) - 5 min
 
-**Temps estimé**: ~16 min pour 4 fichiers
+**Temps estimé**: ~13 min pour 3 fichiers
 
 ### Étape 2: Backend (Scripts importants)
 1. initialize_iam_system.py - Fichier critique, beaucoup d'occurrences
@@ -125,5 +150,5 @@ grep -r '"candidat"\|"interim"\|"company"' /app/auth-microservice --include="*.p
 
 ---
 
-**Dernière mise à jour**: 2025-01-10  
-**Statut**: 🔄 En progression (14.7% complété)
+**Dernière mise à jour**: 2025-11-27 (ajout redirections auth config-driven + CreateUserPage)
+**Statut**: 🔄 En progression (~32% complété)
