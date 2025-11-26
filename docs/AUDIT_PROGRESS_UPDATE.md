@@ -8,6 +8,7 @@
 
 ## Travaux déjà effectués
 - **Centralisation des statuts/types de validation** : `auth-microservice/validation_routes.py` lit désormais les statuts (`pending`, `approved`, `rejected`) et types (`interim`, `company`, `collaborator`) via `cfg.get_validation_status` / `cfg.get_validation_type`, couvrant les statistiques, les flux d'approbation/rejet et les contrôles spécifiques aux entreprises.
+- **Filtres admin compatibles codes config** : `apps/api/src/presentation/routes/validation_routes.py` accepte désormais les statuts/types issus de la configuration (clé ou valeur) pour les filtres de liste, et applique les transitions d'approbation/rejet avec résolution des codes configurés.
 - **Assignation de validations pilotée par la config** : l'attribution d'un validateur dans `auth-microservice/validation_routes.py` s'appuie maintenant sur `cfg.get_validator_roles()` (avec fallback admin/super_admin/commercial), supprimant les listes en dur.
 - **Dé-hardcodage du flux candidat → intérimaire** : `auth-microservice/awana_auth_routes.py` s’appuie sur `IAMGroups`, `IAMProfiles`, `UserRoles` et `get_validation_type_for_role` pour éviter les chaînes `candidat`/`grp.*` codées en dur (création des validations, promotion interimaire, mise à jour des rôles).
 - **Frontends auth alignés sur la config** : `LoginPage.tsx`, `GoogleCallback.tsx`, `LoginModal.tsx` et `MfaVerificationPage.tsx` redirigent selon les rôles issus de `useRoles`/`UserRoles`, sans dépendre de chaînes `admin`/`super_admin`/`interim`/`company`/`agency` en dur.
