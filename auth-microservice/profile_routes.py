@@ -325,6 +325,10 @@ async def upload_document(
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """Upload a document (CV, diploma, certificate, etc.)"""
+    allowed_document_types = cfg.get_all_document_types()
+    if document_type not in allowed_document_types:
+        raise HTTPException(status_code=400, detail="Document type not allowed")
+
     # Validate file size
     file_content = await file.read()
     file_size = len(file_content)
