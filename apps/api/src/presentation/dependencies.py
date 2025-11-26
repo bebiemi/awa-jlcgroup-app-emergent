@@ -7,6 +7,7 @@ import os
 from functools import lru_cache
 from pathlib import Path
 from typing import Any, Iterable
+from src.domain.entities.validation import ValidationStatus, ValidationType
 import yaml
 
 
@@ -17,6 +18,19 @@ AUTH_TIMEOUT = httpx.Timeout(5.0)
 logger = logging.getLogger(__name__)
 
 DEFAULT_VALIDATOR_ROLES = ["admin", "super_admin", "commercial"]
+DEFAULT_VALIDATION_STATUSES = {
+    "pending": ValidationStatus.PENDING.value,
+    "approved": ValidationStatus.APPROVED.value,
+    "rejected": ValidationStatus.REJECTED.value,
+}
+DEFAULT_VALIDATION_TYPES = {
+    "company": ValidationType.COMPANY.value,
+    "interim": ValidationType.INTERIM.value,
+}
+DEFAULT_VALIDATION_TRANSITIONS = {
+    "approve": {"from": [DEFAULT_VALIDATION_STATUSES["pending"]], "to": DEFAULT_VALIDATION_STATUSES["approved"]},
+    "reject": {"from": [DEFAULT_VALIDATION_STATUSES["pending"]], "to": DEFAULT_VALIDATION_STATUSES["rejected"]},
+}
 
 
 async def get_database(request: Request) -> AsyncIOMotorDatabase:
@@ -37,23 +51,37 @@ def _read_config_file(config_path: Path) -> dict[str, Any]:
         return {}
 
 
-def _get_nested(config: dict[str, Any], keys: Iterable[str]) -> list[str] | None:
+def _get_nested(config: dict[str, Any], keys: Iterable[str]) -> Any:
     current: Any = config
     for key in keys:
         if not isinstance(current, dict) or key not in current:
             return None
         current = current[key]
-    if isinstance(current, list):
-        return current
-    return None
+    return current
+
+
+def _get_list(config: dict[str, Any], keys: Iterable[str]) -> list[str] | None:
+    value = _get_nested(config, keys)
+    return value if isinstance(value, list) else None
+
+
+def _get_dict(config: dict[str, Any], keys: Iterable[str]) -> dict[str, Any] | None:
+    value = _get_nested(config, keys)
+    return value if isinstance(value, dict) else None
 
 
 @lru_cache()
 def get_validator_roles_from_config() -> list[str]:
     """Read validator roles from configuration (workflows.validation.permissions.validator_roles)."""
-    config_path = Path(os.getenv("AUTH_CONFIG_PATH", "/app/auth-microservice/config/base.yaml"))
+    config_path = Path(
+        os.getenv(
+            "AUTH_CONFIG_PATH",
+            Path(__file__).resolve().parents[4] / "auth-microservice/config/base.yaml",
+        )
+    )
+
     config = _read_config_file(config_path)
-    roles = _get_nested(config, ["workflows", "validation", "permissions", "validator_roles"])
+    roles = _get_list(config, ["workflows", "validation", "permissions", "validator_roles"])
     if roles:
         return roles
 
@@ -61,6 +89,53 @@ def get_validator_roles_from_config() -> list[str]:
         "Using default validator roles because config is missing the path workflows.validation.permissions.validator_roles"
     )
     return DEFAULT_VALIDATOR_ROLES
+
+
+@lru_cache()
+def get_validation_workflow_config() -> dict[str, Any]:
+    """Read validation workflow statuses, types and transitions from configuration."""
+    config_path = Path(
+        os.getenv(
+            "AUTH_CONFIG_PATH",
+            Path(__file__).resolve().parents[4] / "auth-microservice/config/base.yaml",
+        )
+    )
+    config = _read_config_file(config_path)
+
+    statuses = _get_dict(config, ["workflows", "validation", "statuses"]) or {}
+    types = _get_dict(config, ["workflows", "validation", "types"]) or {}
+    transitions = _get_dict(config, ["workflows", "validation", "transitions"]) or {}
+
+    approve_transition = transitions.get("approve", {}) if isinstance(transitions, dict) else {}
+    reject_transition = transitions.get("reject", {}) if isinstance(transitions, dict) else {}
+
+    def _sanitize_from(value: Any, default: list[str]) -> list[str]:
+        if isinstance(value, list):
+            return value
+        if isinstance(value, str):
+            return [value]
+        return default
+
+    return {
+        "statuses": {**DEFAULT_VALIDATION_STATUSES, **{k: v for k, v in statuses.items() if isinstance(v, str)}},
+        "types": {**DEFAULT_VALIDATION_TYPES, **{k: v for k, v in types.items() if isinstance(v, str)}},
+        "transitions": {
+            "approve": {
+                "from": _sanitize_from(
+                    approve_transition.get("from"),
+                    DEFAULT_VALIDATION_TRANSITIONS["approve"]["from"],
+                ),
+                "to": approve_transition.get("to", DEFAULT_VALIDATION_TRANSITIONS["approve"]["to"]),
+            },
+            "reject": {
+                "from": _sanitize_from(
+                    reject_transition.get("from"),
+                    DEFAULT_VALIDATION_TRANSITIONS["reject"]["from"],
+                ),
+                "to": reject_transition.get("to", DEFAULT_VALIDATION_TRANSITIONS["reject"]["to"]),
+            },
+        },
+    }
 
 
 async def get_current_user(request: Request, db: AsyncIOMotorDatabase = Depends(get_database)):

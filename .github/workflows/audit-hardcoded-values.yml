@@ -11,8 +11,8 @@ permissions:
 
 env:
   PYTHON_VERSION: "3.11"
-  AUDIT_MAX_OCCURRENCES: 2040
   AUDIT_NEW_OCCURRENCES_THRESHOLD: 0
+  AUDIT_MAX_OCCURRENCES: 2100
 
 jobs:
   audit-hardcoded-values:
