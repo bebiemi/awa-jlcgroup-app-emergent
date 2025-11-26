@@ -52,13 +52,14 @@ os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 def get_profile_context(current_user: User, db: AsyncIOMotorDatabase):
     """Return the profile collection and configured profile type for the current user."""
-    if INTERIM_ROLE in current_user.roles or CANDIDATE_ROLE in current_user.roles or POSTULANT_ROLE in current_user.roles:
-        profile_type = PROFILE_TYPE_INTERIM
-        if CANDIDATE_ROLE in current_user.roles:
-            profile_type = PROFILE_TYPE_CANDIDATE
-        elif POSTULANT_ROLE in current_user.roles:
-            profile_type = PROFILE_TYPE_POSTULANT
-        return db.interim_profiles, profile_type
+    if CANDIDATE_ROLE in current_user.roles:
+        return db.candidat_profiles, PROFILE_TYPE_CANDIDATE
+
+    if POSTULANT_ROLE in current_user.roles:
+        return db.candidat_profiles, PROFILE_TYPE_POSTULANT
+
+    if INTERIM_ROLE in current_user.roles:
+        return db.interim_profiles, PROFILE_TYPE_INTERIM
 
     if COMPANY_ROLE in current_user.roles:
         return db.company_manager_profiles, PROFILE_TYPE_COMPANY
@@ -361,19 +362,38 @@ async def upload_document(
     await db.documents.insert_one(document)
     
     # Update profile with document ID
-    collection, _ = get_profile_context(current_user, db)
+    collection, profile_type = get_profile_context(current_user, db)
+
+    update_doc = {
+        "$set": {"updated_at": datetime.now(timezone.utc).isoformat()},
+        "$setOnInsert": {"user_id": current_user.id}
+    }
 
     if document_type == DOCUMENT_TYPE_CV:
-        await collection.update_one(
-            {"user_id": current_user.id},
-            {"$set": {"cv_document_id": document["id"]}}
-        )
+        update_doc["$set"]["cv_document_id"] = document["id"]
     else:
-        await collection.update_one(
-            {"user_id": current_user.id},
-            {"$addToSet": {"document_ids": document["id"]}}
-        )
-    
+        update_doc["$addToSet"] = {"document_ids": document["id"]}
+        update_doc["$setOnInsert"]["document_ids"] = []
+
+    await collection.update_one(
+        {"user_id": current_user.id},
+        update_doc,
+        upsert=True
+    )
+
+    # Recalculate completion after document change
+    profile = await collection.find_one({"user_id": current_user.id}, {"_id": 0}) or {}
+    completion = calculate_profile_completion(profile, profile_type)
+
+    await collection.update_one(
+        {"user_id": current_user.id},
+        {"$set": {
+            "profile_completion_percentage": completion,
+            "profile_completed": completion >= 80,
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        }}
+    )
+
     return DocumentUploadResponse(
         success=True,
         document_id=document["id"],
@@ -424,7 +444,7 @@ async def delete_document(
     await db.documents.delete_one({"id": document_id})
     
     # Remove from profile
-    collection, _ = get_profile_context(current_user, db)
+    collection, profile_type = get_profile_context(current_user, db)
 
     if document["type"] == DOCUMENT_TYPE_CV:
         await collection.update_one(
@@ -436,5 +456,18 @@ async def delete_document(
             {"user_id": current_user.id},
             {"$pull": {"document_ids": document_id}}
         )
-    
+
+    # Recalculate completion after document removal
+    profile = await collection.find_one({"user_id": current_user.id}, {"_id": 0}) or {}
+    completion = calculate_profile_completion(profile, profile_type)
+
+    await collection.update_one(
+        {"user_id": current_user.id},
+        {"$set": {
+            "profile_completion_percentage": completion,
+            "profile_completed": completion >= 80,
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        }}
+    )
+
     return {"success": True, "message": "Document supprimé"}
