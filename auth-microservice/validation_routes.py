@@ -20,6 +20,14 @@ from services.representant_detection_service import (
 
 validation_router = APIRouter(prefix="/validations", tags=["Validations"])
 
+# Centralized validation config values
+VALIDATION_STATUS_PENDING = cfg.get_validation_status("pending")
+VALIDATION_STATUS_APPROVED = cfg.get_validation_status("approved")
+VALIDATION_STATUS_REJECTED = cfg.get_validation_status("rejected")
+VALIDATION_TYPE_INTERIM = cfg.get_validation_type("interim")
+VALIDATION_TYPE_COMPANY = cfg.get_validation_type("company")
+VALIDATION_TYPE_COLLABORATOR = cfg.get_validation_type("collaborator")
+
 
 class ValidationApproval(BaseModel):
     """Model for approving a validation"""
@@ -109,18 +117,18 @@ async def get_validation_stats(
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """Get validation statistics"""
-    total_pending = await db.validations.count_documents({"status": cfg.get_pending_status()})
-    pending_interim = await db.validations.count_documents({"status": cfg.get_pending_status(), "validation_type": cfg.get_interim_role()})
-    pending_company = await db.validations.count_documents({"status": cfg.get_pending_status(), "validation_type": cfg.get_company_role()})
-    pending_collaborator = await db.validations.count_documents({"status": cfg.get_pending_status(), "validation_type": "collaborator"})
+    total_pending = await db.validations.count_documents({"status": VALIDATION_STATUS_PENDING})
+    pending_interim = await db.validations.count_documents({"status": VALIDATION_STATUS_PENDING, "validation_type": VALIDATION_TYPE_INTERIM})
+    pending_company = await db.validations.count_documents({"status": VALIDATION_STATUS_PENDING, "validation_type": VALIDATION_TYPE_COMPANY})
+    pending_collaborator = await db.validations.count_documents({"status": VALIDATION_STATUS_PENDING, "validation_type": VALIDATION_TYPE_COLLABORATOR})
     
     with_warnings = await db.validations.count_documents({
-        "status": cfg.get_pending_status(),
+        "status": VALIDATION_STATUS_PENDING,
         "has_location_warning": True
     })
-    
-    total_approved = await db.validations.count_documents({"status": "approved"})
-    total_rejected = await db.validations.count_documents({"status": "rejected"})
+
+    total_approved = await db.validations.count_documents({"status": VALIDATION_STATUS_APPROVED})
+    total_rejected = await db.validations.count_documents({"status": VALIDATION_STATUS_REJECTED})
     
     return {
         "total_pending": total_pending,
@@ -196,7 +204,7 @@ async def approve_validation(
             detail="Validation not found"
         )
     
-    if validation["status"] != cfg.get_pending_status():
+    if validation["status"] != VALIDATION_STATUS_PENDING:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Validation already processed"
@@ -261,7 +269,7 @@ async def approve_validation(
         {"id": validation_id},
         {
             "$set": {
-                "status": "approved",
+                "status": VALIDATION_STATUS_APPROVED,
                 "validated_by": current_user.id,
                 "validated_at": datetime.now(timezone.utc).isoformat(),
                 "notes": approval.notes,
@@ -291,7 +299,7 @@ async def reject_validation(
             detail="Validation not found"
         )
     
-    if validation["status"] != cfg.get_pending_status():
+    if validation["status"] != VALIDATION_STATUS_PENDING:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Validation already processed"
@@ -313,7 +321,7 @@ async def reject_validation(
         {"id": validation_id},
         {
             "$set": {
-                "status": "rejected",
+                "status": VALIDATION_STATUS_REJECTED,
                 "validated_by": current_user.id,
                 "validated_at": datetime.now(timezone.utc).isoformat(),
                 "rejection_reason": rejection.rejection_reason,
@@ -524,8 +532,8 @@ async def attach_to_existing_representant(
         {"id": validation_id},
         {
             "$set": {
-                "status": "approved",
-                "rattachement_status": "approved",
+                "status": VALIDATION_STATUS_APPROVED,
+                "rattachement_status": VALIDATION_STATUS_APPROVED,
                 "rattachement_to_entreprise_id": target_entreprise["id"],
                 "contact_confirmation": True,
                 "validated_by": current_user.id,
