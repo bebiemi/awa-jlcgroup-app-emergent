@@ -13,7 +13,9 @@
 - **Création utilisateur admin sans rôles inline** : `CreateUserPage.tsx` construit la liste des rôles proposés à partir de la configuration (admin/super_admin/interim/company/agency).
 - **Constantes IAM synchronisées** : `apps/web/src/constants/iamConstants.ts` inclut désormais les valeurs `POSTULANT` pour refléter les constantes backend (`iam_constants.py`).
 - **ValidationsList.tsx alignée sur la config** : les filtres « En attente/Approuvées/Refusées » consomment désormais les statuts issus de la configuration/référentiels au lieu des chaînes `pending/approved/rejected` en dur.
-- **Documentation de progression mise à jour** : `REFACTORING_PROGRESS.md` reflète 26 fichiers refactorés (~76% du périmètre) dont les flux auth frontend (pages + modal), la création d'utilisateur, la page profil, les filtres de validations alignés sur la config et le typage partagé.
+- **Documentation de progression mise à jour** : `REFACTORING_PROGRESS.md` reflète 27 fichiers refactorés (~78% du périmètre) dont les flux auth frontend (pages + modal), la création d'utilisateur, la page profil, les filtres de validations alignés sur la config et le typage partagé.
+
+- **Re-candidature mission sans statuts en dur** : `auth-microservice/mission_routes.py` vérifie désormais les statuts de rejet via `ApplicationStatus.REJECTED`/`REJECTED_INITIAL` pour éviter les chaînes inline dans les contrôles de re-application.
 
 - **LandingPage sans rôles inline** : le bouton « Accéder à mon espace » calcule la redirection via les rôles configurés (admin/super_admin/interim/company/agency/commercial) au lieu de chaînes en dur.
 

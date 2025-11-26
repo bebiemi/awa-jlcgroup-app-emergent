@@ -129,7 +129,7 @@ async def check_application_restrictions(
     
     if existing_app:
         # Vérifier si peut re-candidater après rejet
-        if existing_app["status"] in ["rejected", "rejected_initial"]:
+        if existing_app["status"] in [ApplicationStatus.REJECTED, ApplicationStatus.REJECTED_INITIAL]:
             allow_reapply_days = config.get(
                 "workflows.application.restrictions.allow_reapplication_after_rejection_days",
                 default=30
