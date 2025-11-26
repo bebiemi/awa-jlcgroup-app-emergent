@@ -2,7 +2,11 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from typing import Optional
-from src.presentation.dependencies import get_database, get_current_user
+from src.presentation.dependencies import (
+    get_admin_roles_from_config,
+    get_database,
+    get_current_user,
+)
 from src.application.dtos.notification_dtos import (
     NotificationResponse,
     CreateNotificationRequest,
@@ -96,8 +100,9 @@ async def create_notification(
 ):
     """Create a notification (admin only)"""
     # Check admin role
-    user_roles = current_user.get('roles', [])
-    if 'admin' not in user_roles:
+    user_roles = set(current_user.get('roles', []))
+    admin_roles = set(get_admin_roles_from_config())
+    if not user_roles.intersection(admin_roles):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Admin role required"

@@ -24,6 +24,11 @@
 5. ✅ **awana_auth_routes.py** - Partiellement refactoré (déjà fait avant)
    - Import: `IAMGroups`, `IAMProfiles`, `UserRoles`, `ValidationTypes`
    - Rôle/validation « candidat » et codes de groupes intérimaires désormais issus des constantes IAM
+   - Ajout des rôles config-driven (`interim`, `candidat`) dans les flux de validation et de promotion
+
+6. ✅ **validation_routes.py** - Statuts/types de validation centralisés
+   - Utilise `cfg.get_validation_status` et `cfg.get_validation_type`
+   - Remplace les valeurs en dur dans les stats et transitions d'approbation/rejet
 
 6. ✅ **validation_routes.py** - Statuts/types de validation centralisés
    - Utilise `cfg.get_validation_status` et `cfg.get_validation_type`
