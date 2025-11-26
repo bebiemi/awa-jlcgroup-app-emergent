@@ -34,6 +34,8 @@ security:
     commercial: "commercial"
     validator: "validator"
     candidat: "candidat"
+    postulant: "postulant"
+    collaborator: "collaborator"
     all:
       - "admin"
       - "super_admin"
@@ -43,6 +45,8 @@ security:
       - "commercial"
       - "validator"
       - "candidat"
+      - "postulant"
+      - "collaborator"
   
   # User Status Configuration
   user_statuses:
@@ -294,10 +298,16 @@ profiles:
     interim: "interim"
     company: "company"
     agency: "agency"
+    candidat: "candidat"
+    postulant: "postulant"
+    collaborator: "collaborator"
     all:
       - "interim"
       - "company"
       - "agency"
+      - "candidat"
+      - "postulant"
+      - "collaborator"
 
 # Contract Types Configuration
 contracts:

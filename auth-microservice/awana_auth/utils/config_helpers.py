@@ -38,11 +38,23 @@ class ConfigHelper:
     @staticmethod
     def get_company_role() -> str:
         return config.get("security.roles.company")
-    
+
     @staticmethod
     def get_interim_role() -> str:
         return config.get("security.roles.interim")
-    
+
+    @staticmethod
+    def get_candidate_role() -> str:
+        return config.get("security.roles.candidat")
+
+    @staticmethod
+    def get_postulant_role() -> str:
+        return config.get("security.roles.postulant")
+
+    @staticmethod
+    def get_collaborator_role() -> str:
+        return config.get("security.roles.collaborator")
+
     @staticmethod
     def get_commercial_role() -> str:
         return config.get("security.roles.commercial")
