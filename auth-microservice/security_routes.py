@@ -16,6 +16,8 @@ from awana_auth.core.models import (
 from awana_auth.core.dependencies import get_database, get_current_user
 from awana_auth.dependencies.permission_dependencies import require_permission
 from awana_auth.core.config import auth_config
+from awana_auth.core.iam_constants import IAMProfiles
+from awana_auth.utils.config_helpers import cfg
 
 security_router = APIRouter(prefix="/auth/security", tags=["security"])
 
@@ -331,15 +333,15 @@ async def create_user(
         # If profile_id is provided, use it
         profile_ids = [request.profile_id]
     else:
-        # Auto-assign profiles based on roles
+        # Auto-assign profiles based on roles from configuration
         role_to_profile_map = {
-            'admin': 'admin',
-            'super_admin': 'super_admin',
-            'company': 'entreprise',
-            'interim': 'interim_user',
-            'commercial': 'commercial',
+            cfg.get_admin_role(): IAMProfiles.ADMIN,
+            cfg.get_super_admin_role(): IAMProfiles.SUPER_ADMIN,
+            cfg.get_company_role(): IAMProfiles.COMPANY_ADMIN,
+            cfg.get_interim_role(): IAMProfiles.INTERIM_USER,
+            cfg.get_commercial_role(): IAMProfiles.COLLABORATEUR,
         }
-        
+
         # Get profiles collection to find profile IDs
         for role in request.roles:
             profile_code = role_to_profile_map.get(role)
