@@ -32,9 +32,6 @@ DEFAULT_VALIDATOR_ROLES = [
     DEFAULT_SECURITY_ROLES["super_admin"],
     DEFAULT_SECURITY_ROLES["commercial"],
 ]
-
-DEFAULT_ADMIN_ROLES = ["admin", "super_admin"]
-
 DEFAULT_VALIDATION_STATUSES = {
     "pending": ValidationStatus.PENDING.value,
     "approved": ValidationStatus.APPROVED.value,

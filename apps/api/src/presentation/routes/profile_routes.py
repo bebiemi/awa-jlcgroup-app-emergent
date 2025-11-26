@@ -284,9 +284,9 @@ async def get_user_profile(
 ):
     """Get user profile by ID (admin or self only)"""
     # Check permission: admin or self
-    user_roles = set(current_user.get('roles', []))
-    admin_roles = set(get_admin_roles_from_config())
-    if not user_roles.intersection(admin_roles) and current_user['id'] != user_id:
+    user_roles = current_user.get('roles', [])
+    admin_roles = get_admin_roles_from_config()
+    if not any(role in admin_roles for role in user_roles) and current_user['id'] != user_id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Access denied"

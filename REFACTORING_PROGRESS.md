@@ -1,8 +1,8 @@
 # 📊 Progression de la Refactorisation IAM
 
-## ✅ Fichiers Refactorés (23 fichiers)
+## ✅ Fichiers Refactorés (26 fichiers)
 
-### Frontend (10 fichiers)
+### Frontend (13 fichiers)
 1. ✅ **ValidationsPage.tsx** - 15+ occurrences refactorées
    - Import: `ValidationTypes`, `UserRoles`, `getRoleLabel`
    - Remplacements: candidat, interim, company, collaborateur, admin, super_admin
@@ -41,6 +41,18 @@
 
 10. ✅ **profileApi.ts** - Typage aligné sur les constantes IAM
     - `profile_type` repose sur `ValidationType` plutôt que sur des littéraux inline
+
+11. ✅ **LoginModal.tsx** - Redirections configurées sur les rôles IAM
+    - Les chemins `/admin`/`/interimaire`/`/entreprise`/`/agence`/`/commercial` utilisent `useRoles`
+    - Supprime les comparaisons inline `admin`/`super_admin`/`interim`/`company`/`agency`
+
+12. ✅ **LandingPage.tsx** - Bouton « Accéder à mon espace » aligné IAM
+    - Résout les redirections via les rôles configurés (admin/super_admin/interim/company/agency/commercial)
+    - Évite les chaînes en dur pour déterminer le tableau de bord cible
+
+13. ✅ **types/index.ts** - Typage relié aux constantes IAM
+    - `ProfileType` s'appuie sur `IAMProfiles`/`UserRoles` au lieu de littéraux
+    - `ValidationType` réutilise le type exporté par `iamConstants.ts`
 
 ### Backend (13 fichiers)
 1. ✅ **initialize_candidat_iam.py** - 17 occurrences refactorées
@@ -97,13 +109,15 @@
 
 ## 🔄 Fichiers Restants à Refactorer
 
-### Frontend Prioritaires (~10 fichiers)
+### Frontend Prioritaires (~7 fichiers)
 - [ ] **EditUserModal.tsx** (1 occurrence)
 - [x] **ValidationsList.tsx** (2 occurrences)
 - [ ] **Breadcrumb.tsx**
-- [ ] **LoginModal.tsx** (2 occurrences)
-- [ ] **LandingPage.tsx** (2 occurrences)
-- [ ] **types/index.ts** (2 occurrences)
+- [ ] **FeatureFlagsPage.tsx**
+- [ ] **EmailSettingsPage.tsx**
+- [ ] **MissionDetailPage.tsx**
+- [ ] **ProfilesManagementPage.tsx** - Déjà propre
+- [ ] **IAMControlPage.tsx** - Déjà propre
 - [ ] **features/admin/pages/FeatureFlagsPage.tsx**
 - [ ] **features/admin/pages/EmailSettingsPage.tsx**
 - [ ] **features/missions/pages/MissionDetailPage.tsx**
@@ -128,12 +142,12 @@
 ## 📈 Statistiques
 
 ### Total
-- **Fichiers refactorés**: 23 / ~34 (~68%)
-- **Occurrences éliminées**: ~90 + statuts/types centralisés dans `validation_routes.py`
+- **Fichiers refactorés**: 26 / ~34 (~76%)
+- **Occurrences éliminées**: ~100 + statuts/types centralisés dans `validation_routes.py`
 - **Tests de sync**: ✅ 100% passés
 
 ### Par Catégorie
-- **Frontend**: 10 fichiers refactorés / ~10 restants
+- **Frontend**: 13 fichiers refactorés / ~7 restants
 - **Backend**: 13 fichiers refactorés / ~6 restants
 
 ---

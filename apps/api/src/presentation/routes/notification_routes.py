@@ -2,12 +2,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from typing import Optional
-from src.presentation.dependencies import (
-    get_admin_roles_from_config,
-    get_database,
-    get_current_user,
-    require_admin
-)
+from src.presentation.dependencies import get_database, get_current_user, require_admin
 from src.application.dtos.notification_dtos import (
     NotificationResponse,
     CreateNotificationRequest,
