@@ -33,6 +33,7 @@ security:
     agency: "agency"
     commercial: "commercial"
     validator: "validator"
+    candidat: "candidat"
     all:
       - "admin"
       - "super_admin"
@@ -41,6 +42,7 @@ security:
       - "agency"
       - "commercial"
       - "validator"
+      - "candidat"
   
   # User Status Configuration
   user_statuses:

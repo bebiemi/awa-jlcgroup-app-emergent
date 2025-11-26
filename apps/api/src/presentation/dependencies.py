@@ -37,10 +37,12 @@ DEFAULT_VALIDATION_STATUSES = {
     "approved": ValidationStatus.APPROVED.value,
     "rejected": ValidationStatus.REJECTED.value,
 }
+
 DEFAULT_VALIDATION_TYPES = {
     "company": ValidationType.COMPANY.value,
     "interim": ValidationType.INTERIM.value,
 }
+
 DEFAULT_VALIDATION_TRANSITIONS = {
     "approve": {"from": [DEFAULT_VALIDATION_STATUSES["pending"]], "to": DEFAULT_VALIDATION_STATUSES["approved"]},
     "reject": {"from": [DEFAULT_VALIDATION_STATUSES["pending"]], "to": DEFAULT_VALIDATION_STATUSES["rejected"]},
