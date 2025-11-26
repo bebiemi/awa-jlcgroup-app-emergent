@@ -63,6 +63,7 @@ export const IAMPermissions = {
   ADMIN_DASHBOARD: 'admin.dashboard',
   USERS_READ: 'users.read',
   USERS_MANAGE: 'users.manage',
+  USERS_PASSWORD_UPDATE: 'users.password.update',
   
   // Email Settings
   EMAIL_SETTINGS_READ: 'email.settings.read',
@@ -74,6 +75,59 @@ export const IAMPermissions = {
   IAM_GROUPS_READ: 'iam.groups.read',
   IAM_GROUPS_MANAGE: 'iam.groups.manage',
   IAM_PERMISSIONS_READ: 'iam.permissions.read',
+
+  // Besoins (Hiring Needs)
+  BESOINS_CREATE: 'besoins.create',
+  BESOINS_READ: 'besoins.read',
+  BESOINS_EDIT: 'besoins.edit',
+  BESOINS_DELETE: 'besoins.delete',
+  BESOINS_SUBMIT: 'besoins.submit',
+  BESOINS_VALIDATE: 'besoins.validate',
+  BESOINS_CONVERT_TO_MISSION: 'besoins.convert_to_mission',
+  BESOINS_COMMENT: 'besoins.comment',
+
+  // Entreprises (Company Management)
+  ENTREPRISES_CREATE: 'entreprises.create',
+  ENTREPRISES_READ: 'entreprises.read',
+  ENTREPRISES_EDIT: 'entreprises.edit',
+  ENTREPRISES_DELETE: 'entreprises.delete',
+  ENTREPRISES_VALIDATE: 'entreprises.validate',
+  ENTREPRISES_LINK_EXISTING: 'entreprises.link_existing',
+  ENTREPRISES_GROUP_REQUEST: 'entreprises.group_request',
+  ENTREPRISES_GROUP_APPROVE: 'entreprises.group_approve',
+  ENTREPRISES_VIEW_LINKED: 'entreprises.view_linked',
+
+  // Forms & Configuration
+  FORMS_MANAGE: 'forms.manage',
+  CONFIG_READ: 'config.read',
+  CONFIG_MANAGE: 'config.manage',
+
+  // Documents (Phase 2)
+  DOCUMENTS_READ_OWN: 'documents.read_own',
+  DOCUMENTS_UPLOAD_OWN: 'documents.upload_own',
+  DOCUMENTS_DELETE_OWN: 'documents.delete_own',
+  DOCUMENTS_READ_ALL: 'documents.read_all',
+  DOCUMENTS_VERIFY: 'documents.verify',
+  DOCUMENTS_CONFIGURE: 'documents.configure',
+
+  // Notifications (Phase 2)
+  NOTIFICATIONS_READ_OWN: 'notifications.read_own',
+  NOTIFICATIONS_MANAGE_OWN: 'notifications.manage_own',
+  NOTIFICATIONS_SEND: 'notifications.send',
+
+  // Dashboard (Phase 2)
+  DASHBOARD_VIEW_OWN: 'dashboard.view_own',
+  DASHBOARD_CUSTOMIZE: 'dashboard.customize',
+
+  // Chat/Messages (Phase 3)
+  MESSAGES_READ_OWN: 'messages.read_own',
+  MESSAGES_SEND_OWN: 'messages.send_own',
+  MESSAGES_READ_ALL: 'messages.read_all',
+  MESSAGES_MANAGE: 'messages.manage',
+
+  // Matching AI (Phase 3)
+  MATCHING_VIEW_RECOMMENDATIONS: 'matching.view_recommendations',
+  MATCHING_CONFIGURE: 'matching.configure',
 } as const
 
 // ============================================
