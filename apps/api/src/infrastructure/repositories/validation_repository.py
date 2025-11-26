@@ -1,5 +1,5 @@
 """Validation repository"""
-from typing import Optional, List
+from typing import Optional, List, Union
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from src.domain.entities.validation import AccountValidation, ValidationStatus, ValidationType
 from datetime import datetime
@@ -90,17 +90,19 @@ class ValidationRepository:
 
     async def list(
         self,
-        status: Optional[ValidationStatus] = None,
-        validation_type: Optional[ValidationType] = None,
+        status: Optional[Union[ValidationStatus, str]] = None,
+        validation_type: Optional[Union[ValidationType, str]] = None,
         skip: int = 0,
         limit: int = 100
     ) -> tuple[List[AccountValidation], int]:
-        """List validations with filters"""
+        """List validations with filters (accepting enum or raw values)."""
         query = {}
         if status:
-            query["status"] = status.value
+            query["status"] = status.value if isinstance(status, ValidationStatus) else status
         if validation_type:
-            query["validation_type"] = validation_type.value
+            query["validation_type"] = (
+                validation_type.value if isinstance(validation_type, ValidationType) else validation_type
+            )
         
         # Get total count
         total = await self.collection.count_documents(query)
@@ -113,6 +115,7 @@ class ValidationRepository:
 
         return validations, total
 
-    async def count_by_status(self, status: ValidationStatus) -> int:
-        """Count validations by status"""
-        return await self.collection.count_documents({"status": status.value})
+    async def count_by_status(self, status: Union[ValidationStatus, str]) -> int:
+        """Count validations by status (enum or raw value)."""
+        status_value = status.value if isinstance(status, ValidationStatus) else status
+        return await self.collection.count_documents({"status": status_value})

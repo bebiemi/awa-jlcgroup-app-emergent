@@ -2,7 +2,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from typing import Optional
-from src.presentation.dependencies import get_database, get_current_user
+from src.presentation.dependencies import get_database, get_current_user, require_admin
 from src.application.dtos.notification_dtos import (
     NotificationResponse,
     CreateNotificationRequest,
@@ -91,18 +91,10 @@ async def mark_notifications_read(
 @router.post("", response_model=NotificationResponse, status_code=status.HTTP_201_CREATED)
 async def create_notification(
     notification_data: CreateNotificationRequest,
-    current_user=Depends(get_current_user),
+    current_user=Depends(require_admin),
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """Create a notification (admin only)"""
-    # Check admin role
-    user_roles = current_user.get('roles', [])
-    if 'admin' not in user_roles:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Admin role required"
-        )
-
     repo = NotificationRepository(db)
 
     notification = Notification(

@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
+import type { ValidationType } from '@/constants/iamConstants'
 
 export interface InterimProfile {
   user_id: string
@@ -47,7 +48,7 @@ export interface Document {
 }
 
 export interface ProfileResponse {
-  profile_type: 'interim' | 'company' | 'collaborator'
+  profile_type: ValidationType
   profile: InterimProfile | CompanyManagerProfile | any
 }
 
