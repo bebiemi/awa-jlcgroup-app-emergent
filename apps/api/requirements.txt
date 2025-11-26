@@ -5,6 +5,7 @@ python-multipart==0.0.12
 
 # Database
 motor==3.6.0
+redis==5.0.8
 
 # Validation and models
 pydantic==2.10.2
