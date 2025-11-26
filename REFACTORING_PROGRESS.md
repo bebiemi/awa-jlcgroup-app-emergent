@@ -1,6 +1,6 @@
 # 📊 Progression de la Refactorisation IAM
 
-## ✅ Fichiers Refactorés (18 fichiers)
+## ✅ Fichiers Refactorés (19 fichiers)
 
 ### Frontend (10 fichiers)
 1. ✅ **ValidationsPage.tsx** - 15+ occurrences refactorées
@@ -42,7 +42,7 @@
 10. ✅ **profileApi.ts** - Typage aligné sur les constantes IAM
     - `profile_type` repose sur `ValidationType` plutôt que sur des littéraux inline
 
-### Backend (8 fichiers)
+### Backend (9 fichiers)
 1. ✅ **initialize_candidat_iam.py** - 17 occurrences refactorées
    - Import: `IAMGroups`, `IAMProfiles`, `IAMPermissions`
    - Tous les codes hardcodés remplacés par constantes
@@ -76,6 +76,10 @@
    - L'accès administrateur au listing des permissions s'appuie sur les rôles configurés
    - Prépare la factorisation des contrôles IAM restants
 
+9. ✅ **scripts/migrate_users_to_iam.py** - Migration des utilisateurs basée sur la config
+   - Les rôles sources s'appuient sur `ConfigHelper` pour éviter les littéraux `admin`/`interim`/`company`
+   - Le mapping rôles → profils ignore automatiquement les rôles non définis
+
 ---
 
 ## 🔄 Fichiers Restants à Refactorer
@@ -93,9 +97,8 @@
 - [ ] **ProfilesManagementPage.tsx** - Déjà propre
 - [ ] **IAMControlPage.tsx** - Déjà propre
 
-### Backend Prioritaires (~10 fichiers)
+### Backend Prioritaires (~9 fichiers)
 - [ ] **scripts/initialize_iam_system.py** (GROS fichier - ~13KB)
-- [ ] **scripts/migrate_users_to_iam.py**
 - [ ] **scripts/update_iam_permissions.py**
 - [ ] **scripts/diagnose_login.py** (1 occurrence)
 - [ ] **profile_routes.py** (2 occurrences)
@@ -103,7 +106,6 @@
 - [ ] **configuration_routes.py** (2 occurrences)
 - [ ] **scripts/seed_mission_references.py** (4 occurrences)
 - [ ] **scripts/seed_additional_references.py** (2 occurrences)
-- [ ] **scripts/migrate_users_to_iam.py** (2 occurrences)
 - [ ] **scripts/add_missing_references.py** (2 occurrences)
 - [ ] **awana_auth/core/location_models.py** (1 occurrence)
 - [ ] **awana_auth/core/reference_models.py** (1 occurrence)
@@ -114,13 +116,13 @@
 ## 📈 Statistiques
 
 ### Total
-- **Fichiers refactorés**: 18 / ~34 (~53%)
+- **Fichiers refactorés**: 19 / ~34 (~56%)
 - **Occurrences éliminées**: ~90 + statuts/types centralisés dans `validation_routes.py`
 - **Tests de sync**: ✅ 100% passés
 
 ### Par Catégorie
 - **Frontend**: 10 fichiers refactorés / ~14 restants
-- **Backend**: 8 fichiers refactorés / ~7 restants
+- **Backend**: 9 fichiers refactorés / ~6 restants
 
 ---
 
@@ -168,5 +170,5 @@ grep -r '"candidat"\|"interim"\|"company"' /app/auth-microservice --include="*.p
 
 ---
 
-**Dernière mise à jour**: 2025-11-28 (Google OAuth + permissions temporaires + IAM roles alignés sur la config)
-**Statut**: 🔄 En progression (~53% complété)
+**Dernière mise à jour**: 2025-11-28 (Migration IAM pilotée par la config pour les rôles)
+**Statut**: 🔄 En progression (~56% complété)

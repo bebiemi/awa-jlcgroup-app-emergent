@@ -20,6 +20,7 @@
 - **API profil typée sur les constantes** : `profileApi.ts` déclare désormais `profile_type` via `ValidationType`, garantissant la cohérence des types avec le backend.
 - **Google OAuth sans rôles inline** : `auth-microservice/google_auth_routes.py` crée les profils `interim`/`company`/`admin`/`super_admin` à partir des rôles configurés au lieu de littéraux.
 - **Permissions temporaires/IAM sans chaînes admin** : `auth-microservice/temporary_permissions_routes.py` et `auth-microservice/iam_routes.py` utilisent `cfg.get_admin_role`/`cfg.get_super_admin_role` pour sécuriser l'accès aux permissions, évitant les comparaisons en dur.
+- **Migration IAM pilotée par la config** : `auth-microservice/scripts/migrate_users_to_iam.py` s'appuie désormais sur `ConfigHelper` pour traduire les rôles configurés en profils cibles, en filtrant automatiquement les rôles inconnus.
 
 ## Actions prioritaires restantes
 1. **Externaliser les rôles/statuts auth** : déplacer les comparaisons en dur dans `apps/api/**/awana_auth_routes.py` vers la configuration (`config/base.yaml`).
