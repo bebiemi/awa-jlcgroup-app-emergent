@@ -693,6 +693,16 @@ PROFILE_BUNDLES = {
         "notifications.user"
     ],
     
+    "recruitment": [  # ⭐ Nouveau profil Recrutement
+        "auth.basic",
+        "missions.read",
+        "applications.review",
+        "recruitment.manage",  # Bundle complet recrutement
+        "documents.recruitment_access",
+        "notifications.user",
+        "analytics.view"
+    ],
+    
     "admin": [
         "auth.basic",
         "users.manage",
