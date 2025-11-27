@@ -109,7 +109,7 @@
 
 ---
 
-## 📊 Tous les Bundles (37 au total)
+## 📊 Tous les Bundles (41 au total)
 
 ### Authentification (4)
 - `auth.basic` - Authentification de base
