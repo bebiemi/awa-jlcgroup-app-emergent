@@ -987,13 +987,62 @@ PROFILE_PAIE = {
 
 ---
 
+---
+
+## 👥 Profil Recrutement - Détails
+
+### Description
+Le profil **Recrutement** a un accès complet aux candidats et intérimaires pour faciliter le processus de recrutement et d'attribution aux missions.
+
+### Bundles Assignés
+```javascript
+[
+  "auth.basic",
+  "missions.read",
+  "applications.review",
+  "recruitment.manage",       // Bundle complet recrutement
+  "documents.recruitment_access",
+  "notifications.user",
+  "analytics.view"
+]
+```
+
+### Capacités Principales
+✅ **Consultation candidats**
+- Voir tous les profils candidats/intérimaires
+- Consulter compétences, expériences, disponibilités
+- Rechercher et filtrer les candidats
+
+✅ **Évaluation**
+- Noter les candidats (rating)
+- Créer et consulter des commentaires/feedbacks
+- Gérer des notes internes sur les candidats
+
+✅ **Attribution missions**
+- Consulter toutes les missions disponibles
+- Attribuer des candidats aux missions
+- Voir le matching candidat-mission
+
+✅ **Documents**
+- Accès lecture aux CV
+- Télécharger les CV
+- Consulter lettres de motivation
+
+✅ **Candidatures**
+- Voir toutes les candidatures
+- Commenter les candidatures
+
+---
+
 ## 📊 Statistiques
 
-- **Total Bundles:** 37
+- **Total Bundles:** 41 (mis à jour)
 - **Bundles Émargements/Signatures:** 8 (dont 1 nouveau ⭐)
+- **Bundles Recrutement:** 4 ⭐ NOUVEAU
 - **Profils utilisant consolidation.read:** 4 (Commercial, HR Manager, Paie, Admin)
 - **Permissions atomiques émargements:** 26
 - **Permissions atomiques signatures:** 9
+- **Permissions atomiques recrutement:** ~20
 
 ---
 
