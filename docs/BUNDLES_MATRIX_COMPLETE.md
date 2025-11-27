@@ -819,6 +819,12 @@ missions.full_access = [
 | **Documents** |
 | `documents.upload` | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ |
 | `documents.manage` | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | ✅ | ✅ |
+| `documents.recruitment_access` | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| **Recrutement** ⭐ |
+| `recruitment.users_view` | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| `recruitment.evaluate` | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| `recruitment.assign` | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| `recruitment.manage` | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
 | **Communication** |
 | `notifications.user` | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | `notifications.send` | ❌ | ❌ | ❌ | ✅ | ✅ | ❌ | ✅ | ✅ |
