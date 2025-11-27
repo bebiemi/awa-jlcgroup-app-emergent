@@ -793,16 +793,16 @@ missions.full_access = [
 | `users.manage` | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ✅ |
 | `users.hr_access` | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ | ✅ | ✅ |
 | **Missions** |
-| `missions.read` | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ |
-| `missions.create` | ❌ | ❌ | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ |
-| `missions.manage` | ❌ | ❌ | ❌ | ✅ | ✅ | ❌ | ✅ | ✅ |
+| `missions.read` | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | ✅ |
+| `missions.create` | ❌ | ❌ | ✅ | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ |
+| `missions.manage` | ❌ | ❌ | ❌ | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ |
 | **Candidatures** |
-| `applications.submit` | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| `applications.review` | ❌ | ❌ | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ |
-| `applications.manage` | ❌ | ❌ | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ |
+| `applications.submit` | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| `applications.review` | ❌ | ❌ | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | ✅ |
+| `applications.manage` | ❌ | ❌ | ✅ | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ |
 | **Besoins RH** |
-| `besoins.create` | ❌ | ❌ | ❌ | ✅ | ✅ | ❌ | ✅ | ✅ |
-| `besoins.manage` | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | ✅ | ✅ |
+| `besoins.create` | ❌ | ❌ | ❌ | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ |
+| `besoins.manage` | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ | ✅ | ✅ |
 | **Émargements & Signatures** ⭐ |
 | `emargements.submit` | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
 | `emargements.validate_interim` | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
