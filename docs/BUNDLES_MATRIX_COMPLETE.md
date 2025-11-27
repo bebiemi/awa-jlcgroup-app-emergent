@@ -784,14 +784,14 @@ missions.full_access = [
 
 ## Matrice des Bundles par Profil
 
-| Bundle | Candidat | Intérimaire | Entreprise | Commercial | HR Manager | Paie | Admin | Super Admin |
-|--------|----------|-------------|------------|------------|------------|------|-------|-------------|
+| Bundle | Candidat | Intérimaire | Entreprise | Commercial | HR Manager | Paie | Recrutement | Admin | Super Admin |
+|--------|----------|-------------|------------|------------|------------|------|-------------|-------|-------------|
 | **Authentification** |
-| `auth.basic` | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| `auth.basic` | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | **Utilisateurs** |
-| `users.read` | ❌ | ❌ | ❌ | ✅ | ✅ | ❌ | ✅ | ✅ |
-| `users.manage` | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ✅ |
-| `users.hr_access` | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | ✅ | ✅ |
+| `users.read` | ❌ | ❌ | ❌ | ✅ | ✅ | ❌ | ✅ | ✅ | ✅ |
+| `users.manage` | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ✅ |
+| `users.hr_access` | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ | ✅ | ✅ |
 | **Missions** |
 | `missions.read` | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ |
 | `missions.create` | ❌ | ❌ | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ |
