@@ -480,7 +480,132 @@ missions.full_access = [
 
 ---
 
-## 7. Bundles Communication
+### 📄 Bundle: `documents.recruitment_access`
+**Description:** Accès recrutement aux documents (CV, lettres motivation)  
+**Permissions incluses:**
+```javascript
+[
+  "documents.view.all",
+  "documents.download.all",
+  "documents.cv.view",
+  "documents.cv.download",
+  "documents.motivation_letter.view"
+]
+```
+**Assigné aux profils:** Recrutement
+
+---
+
+## 7. Bundles Recrutement ⭐
+
+### 🟣 Bundle: `recruitment.users_view`
+**Description:** Consultation des profils candidats/intérimaires  
+**Permissions incluses:**
+```javascript
+[
+  "users.view.all",
+  "users.read.all",
+  "users.profiles.view",
+  "users.skills.view",
+  "users.experience.view",
+  "users.availability.view",
+  "users.search",
+  "users.filter"
+]
+```
+**Assigné aux profils:** Recrutement
+
+---
+
+### 🟣 Bundle: `recruitment.evaluate`
+**Description:** Évaluation et notation des candidats  
+**Permissions incluses:**
+```javascript
+[
+  "users.rate",
+  "users.rating.view",
+  "users.comment.create",
+  "users.comment.view",
+  "users.feedback.create",
+  "users.feedback.view",
+  "users.notes.create",
+  "users.notes.view",
+  "users.notes.edit.own"
+]
+```
+**Assigné aux profils:** Recrutement
+
+---
+
+### 🟣 Bundle: `recruitment.assign`
+**Description:** Attribution de candidats aux missions  
+**Permissions incluses:**
+```javascript
+[
+  "missions.view.all",
+  "missions.read.all",
+  "missions.assign",
+  "missions.users.assign",
+  "missions.users.unassign",
+  "missions.matching.view",
+  "applications.assign_candidate"
+]
+```
+**Assigné aux profils:** Recrutement
+
+---
+
+### 🟣 Bundle: `recruitment.manage`
+**Description:** Gestion complète recrutement (bundle complet)  
+**Permissions incluses:**
+```javascript
+[
+  // Utilisateurs
+  "users.view.all",
+  "users.read.all",
+  "users.profiles.view",
+  "users.skills.view",
+  "users.experience.view",
+  "users.availability.view",
+  "users.search",
+  "users.filter",
+  
+  // Évaluation
+  "users.rate",
+  "users.rating.view",
+  "users.comment.create",
+  "users.comment.view",
+  "users.feedback.create",
+  "users.feedback.view",
+  "users.notes.create",
+  "users.notes.view",
+  "users.notes.edit.own",
+  
+  // Missions & Attribution
+  "missions.view.all",
+  "missions.read.all",
+  "missions.assign",
+  "missions.users.assign",
+  "missions.users.unassign",
+  "missions.matching.view",
+  "applications.assign_candidate",
+  
+  // Documents
+  "documents.cv.view",
+  "documents.cv.download",
+  "documents.motivation_letter.view",
+  
+  // Applications
+  "applications.view.all",
+  "applications.read.all",
+  "applications.comment"
+]
+```
+**Assigné aux profils:** Recrutement
+
+---
+
+## 8. Bundles Communication
 
 ### 📧 Bundle: `notifications.user`
 **Description:** Notifications utilisateur standard  
