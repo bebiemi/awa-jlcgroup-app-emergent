@@ -804,39 +804,39 @@ missions.full_access = [
 | `besoins.create` | ❌ | ❌ | ❌ | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ |
 | `besoins.manage` | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ | ✅ | ✅ |
 | **Émargements & Signatures** ⭐ |
-| `emargements.submit` | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| `emargements.validate_interim` | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| `emargements.validate_client` | ❌ | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| `emargements.consolidate` | ❌ | ❌ | ❌ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| `emargements.manage` | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | ✅ | ✅ |
-| `signatures.read` | ❌ | ❌ | ❌ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| `signatures.manage` | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | ✅ | ✅ |
-| `consolidation.read` ⭐ | ❌ | ❌ | ❌ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| `emargements.submit` | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| `emargements.validate_interim` | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| `emargements.validate_client` | ❌ | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| `emargements.consolidate` | ❌ | ❌ | ❌ | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ |
+| `emargements.manage` | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ | ✅ | ✅ |
+| `signatures.read` | ❌ | ❌ | ❌ | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ |
+| `signatures.manage` | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ | ✅ | ✅ |
+| `consolidation.read` ⭐ | ❌ | ❌ | ❌ | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ |
 | **Entreprises** |
-| `entreprises.view` | ❌ | ❌ | ❌ | ✅ | ✅ | ❌ | ✅ | ✅ |
-| `entreprises.manage` | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | ✅ | ✅ |
-| `entreprises.own_manage` | ❌ | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| `entreprises.view` | ❌ | ❌ | ❌ | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ |
+| `entreprises.manage` | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ | ✅ | ✅ |
+| `entreprises.own_manage` | ❌ | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
 | **Documents** |
-| `documents.upload` | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ |
-| `documents.manage` | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | ✅ | ✅ |
-| `documents.recruitment_access` | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| `documents.upload` | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | ✅ |
+| `documents.manage` | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ | ✅ | ✅ |
+| `documents.recruitment_access` | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ✅ | ✅ |
 | **Recrutement** ⭐ |
-| `recruitment.users_view` | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| `recruitment.evaluate` | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| `recruitment.assign` | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| `recruitment.manage` | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| `recruitment.users_view` | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ✅ | ✅ |
+| `recruitment.evaluate` | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ✅ | ✅ |
+| `recruitment.assign` | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ✅ | ✅ |
+| `recruitment.manage` | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
 | **Communication** |
-| `notifications.user` | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| `notifications.send` | ❌ | ❌ | ❌ | ✅ | ✅ | ❌ | ✅ | ✅ |
-| `emails.send` | ❌ | ❌ | ❌ | ✅ | ✅ | ❌ | ✅ | ✅ |
-| `emails.manage` | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ✅ |
+| `notifications.user` | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| `notifications.send` | ❌ | ❌ | ❌ | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ |
+| `emails.send` | ❌ | ❌ | ❌ | ✅ | ✅ | ❌ | ❌ | ✅ | ✅ |
+| `emails.manage` | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ✅ |
 | **Administration** |
-| `iam.read` | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ✅ |
-| `iam.manage` | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ |
-| `config.read` | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ✅ |
-| `config.manage` | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ |
-| `audit.read` | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ✅ |
-| `analytics.view` | ❌ | ❌ | ❌ | ✅ | ✅ | ❌ | ✅ | ✅ |
+| `iam.read` | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ✅ |
+| `iam.manage` | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ |
+| `config.read` | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ✅ |
+| `config.manage` | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ |
+| `audit.read` | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ✅ |
+| `analytics.view` | ❌ | ❌ | ❌ | ✅ | ✅ | ❌ | ✅ | ✅ | ✅ |
 
 ---
 
