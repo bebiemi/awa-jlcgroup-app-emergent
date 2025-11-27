@@ -366,8 +366,111 @@ BUNDLES = {
         ]
     },
     
+    "documents.recruitment_access": {
+        "name": "Accès recrutement documents",
+        "description": "Accès lecture aux CV et documents candidats (recrutement)",
+        "permissions": [
+            "documents.view.all",
+            "documents.download.all",
+            "documents.cv.view",
+            "documents.cv.download",
+            "documents.motivation_letter.view"
+        ]
+    },
+    
     # ========================================================================
-    # 7. COMMUNICATION
+    # 7. RECRUTEMENT ⭐
+    # ========================================================================
+    
+    "recruitment.users_view": {
+        "name": "Consultation profils candidats",
+        "description": "Voir et rechercher tous les profils candidats/intérimaires",
+        "permissions": [
+            "users.view.all",
+            "users.read.all",
+            "users.profiles.view",
+            "users.skills.view",
+            "users.experience.view",
+            "users.availability.view",
+            "users.search",
+            "users.filter"
+        ]
+    },
+    
+    "recruitment.evaluate": {
+        "name": "Évaluation candidats",
+        "description": "Noter et émettre des avis sur les candidats",
+        "permissions": [
+            "users.rate",
+            "users.rating.view",
+            "users.comment.create",
+            "users.comment.view",
+            "users.feedback.create",
+            "users.feedback.view",
+            "users.notes.create",
+            "users.notes.view",
+            "users.notes.edit.own"
+        ]
+    },
+    
+    "recruitment.assign": {
+        "name": "Attribution missions",
+        "description": "Attribuer des candidats aux missions",
+        "permissions": [
+            "missions.view.all",
+            "missions.read.all",
+            "missions.assign",
+            "missions.users.assign",
+            "missions.users.unassign",
+            "missions.matching.view",
+            "applications.assign_candidate"
+        ]
+    },
+    
+    "recruitment.manage": {
+        "name": "Gestion recrutement complète",
+        "description": "Bundle complet pour le profil Recrutement",
+        "permissions": [
+            # Utilisateurs
+            "users.view.all",
+            "users.read.all",
+            "users.profiles.view",
+            "users.skills.view",
+            "users.experience.view",
+            "users.availability.view",
+            "users.search",
+            "users.filter",
+            # Évaluation
+            "users.rate",
+            "users.rating.view",
+            "users.comment.create",
+            "users.comment.view",
+            "users.feedback.create",
+            "users.feedback.view",
+            "users.notes.create",
+            "users.notes.view",
+            "users.notes.edit.own",
+            # Missions & Attribution
+            "missions.view.all",
+            "missions.read.all",
+            "missions.assign",
+            "missions.users.assign",
+            "missions.users.unassign",
+            "missions.matching.view",
+            "applications.assign_candidate",
+            # Documents
+            "documents.cv.view",
+            "documents.cv.download",
+            "documents.motivation_letter.view",
+            # Applications
+            "applications.view.all",
+            "applications.read.all",
+            "applications.comment"
+        ]
+    },
+    
+    # ========================================================================
+    # 8. COMMUNICATION
     # ========================================================================
     
     "notifications.user": {
