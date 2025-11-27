@@ -111,6 +111,9 @@
 
 ## 📊 Tous les Bundles (41 au total)
 
+**Authentification (4)** | **Missions (6)** | **Besoins (2)** | **Émargements (8)** ⭐  
+**Entreprises (3)** | **Documents (3)** | **Recrutement (4)** ⭐ | **Communication (4)** | **Administration (6)** | **Audit (2)**
+
 ### Authentification (4)
 - `auth.basic` - Authentification de base
 - `users.read` - Lecture utilisateurs
