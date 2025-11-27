@@ -144,9 +144,16 @@
 - `entreprises.manage` - Gestion entreprises
 - `entreprises.own_manage` - Gestion propre entreprise
 
-### Documents (2)
+### Documents (3)
 - `documents.upload` - Upload documents
 - `documents.manage` - Gestion documents
+- `documents.recruitment_access` - Accès recrutement (CV, lettres)
+
+### Recrutement (4) ⭐ NOUVEAU
+- `recruitment.users_view` - Consultation profils candidats
+- `recruitment.evaluate` - Évaluation et notation candidats
+- `recruitment.assign` - Attribution missions
+- `recruitment.manage` - Gestion recrutement complète
 
 ### Communication (4)
 - `notifications.user` - Notifications utilisateur
