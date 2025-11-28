@@ -4,11 +4,16 @@ Script d'initialisation des référentiels depuis la configuration YAML
 - Crée/met à jour tous les référentiels de données
 - Supprime les référentiels obsolètes
 - Gère les versions
+- Validation des données
 
 Usage:
   python3 init_referentials.py
   python3 init_referentials.py --config /path/to/custom.yaml
   python3 init_referentials.py --clean  # Supprime les anciens référentiels
+  python3 init_referentials.py --dry-run  # Simule sans modifier
+  python3 init_referentials.py --validate  # Valide seulement la config
+  
+Version: 2.0 (26 Novembre 2025)
 """
 import asyncio
 import sys
