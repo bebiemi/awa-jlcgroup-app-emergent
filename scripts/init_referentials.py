@@ -212,11 +212,12 @@ async def init_referentials(config, clean_old=False, dry_run=False):
             if existing:
                 # Mettre à jour
                 if existing.get('version') != version or existing.get('items') != items:
-                    await db[collection_name].update_one(
-                        {"key": key},
-                        {"$set": referential_doc}
-                    )
-                    print(f"   ✅ Mis à jour")
+                    if not dry_run:
+                        await db[collection_name].update_one(
+                            {"key": key},
+                            {"$set": referential_doc}
+                        )
+                    print(f"   ✅ Mis à jour" + (" (simulation)" if dry_run else ""))
                     stats['updated'] += 1
                 else:
                     print(f"   ⏭️  Déjà à jour")
@@ -224,8 +225,9 @@ async def init_referentials(config, clean_old=False, dry_run=False):
             else:
                 # Créer
                 referential_doc["created_at"] = datetime.now(timezone.utc).isoformat()
-                await db[collection_name].insert_one(referential_doc)
-                print(f"   ✅ Créé")
+                if not dry_run:
+                    await db[collection_name].insert_one(referential_doc)
+                print(f"   ✅ Créé" + (" (simulation)" if dry_run else ""))
                 stats['created'] += 1
             
             print()
