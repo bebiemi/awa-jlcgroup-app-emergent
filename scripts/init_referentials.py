@@ -261,12 +261,16 @@ async def init_referentials(config, clean_old=False, dry_run=False):
             print(f"   ℹ️  {obsolete_count} référentiel(s) obsolète(s) seraient supprimés (simulation)")
     
     # Créer les index
-    print("\n🔧 Création des index...")
-    try:
-        await db.referentials.create_index([("key", 1)], unique=True)
-        print("   ✅ Index créés")
-    except Exception as e:
-        print(f"   ℹ️  Index déjà existants")
+    if not dry_run:
+        print("\n🔧 Création des index...")
+        try:
+            await db.referentials.create_index([("key", 1)], unique=True)
+            await db.referentials.create_index([("updated_at", -1)])
+            print("   ✅ Index créés")
+        except Exception as e:
+            print(f"   ℹ️  Index déjà existants")
+    else:
+        print("\n🔧 Création d'index (simulation - pas de modification)")
     
     # Vérification finale
     print("\n🔍 Vérification finale...")
