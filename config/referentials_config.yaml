@@ -658,3 +658,314 @@ language_levels:
         en: "Native"
       description: "Natif"
       order: 5
+
+# ========================================
+# STATUTS ÉMARGEMENTS
+# ========================================
+emargement_statuses:
+  collection: "referentials"
+  key: "emargement_statuses"
+  version: "1.0"
+  items:
+    - code: "draft"
+      label:
+        fr: "Brouillon"
+        en: "Draft"
+      color: "gray"
+      description: "Émargement en cours de saisie"
+      order: 1
+      
+    - code: "submitted_interim"
+      label:
+        fr: "Soumis par l'intérimaire"
+        en: "Submitted by Worker"
+      color: "blue"
+      description: "En attente de signature intérimaire"
+      order: 2
+      
+    - code: "signed_interim"
+      label:
+        fr: "Signé intérimaire"
+        en: "Worker Signed"
+      color: "purple"
+      description: "Signé par l'intérimaire, en attente client"
+      order: 3
+      
+    - code: "pending_client"
+      label:
+        fr: "En attente client"
+        en: "Pending Client"
+      color: "yellow"
+      description: "En attente de validation client"
+      order: 4
+      
+    - code: "validated"
+      label:
+        fr: "Validé"
+        en: "Validated"
+      color: "green"
+      description: "Validé et signé par le client"
+      order: 5
+      
+    - code: "rejected"
+      label:
+        fr: "Rejeté"
+        en: "Rejected"
+      color: "red"
+      description: "Rejeté par le client"
+      order: 6
+      
+    - code: "consolidated"
+      label:
+        fr: "Consolidé"
+        en: "Consolidated"
+      color: "green"
+      description: "Consolidé pour traitement paie"
+      order: 7
+      
+    - code: "archived"
+      label:
+        fr: "Archivé"
+        en: "Archived"
+      color: "gray"
+      description: "Traité et archivé"
+      order: 8
+
+# ========================================
+# TYPES DE SIGNATURE
+# ========================================
+signature_types:
+  collection: "referentials"
+  key: "signature_types"
+  version: "1.0"
+  items:
+    - code: "interim_emargement"
+      label:
+        fr: "Signature intérimaire (émargement)"
+        en: "Worker Signature (Timesheet)"
+      description: "Signature de l'intérimaire sur ses heures"
+      order: 1
+      
+    - code: "client_emargement"
+      label:
+        fr: "Signature client (émargement)"
+        en: "Client Signature (Timesheet)"
+      description: "Validation client des heures travaillées"
+      order: 2
+      
+    - code: "contract"
+      label:
+        fr: "Signature contrat"
+        en: "Contract Signature"
+      description: "Signature de contrat de travail"
+      order: 3
+      
+    - code: "document_legal"
+      label:
+        fr: "Signature document légal"
+        en: "Legal Document Signature"
+      description: "Signature de documents administratifs"
+      order: 4
+
+# ========================================
+# TYPES DE NOTES/ÉVALUATIONS
+# ========================================
+evaluation_types:
+  collection: "referentials"
+  key: "evaluation_types"
+  version: "1.0"
+  items:
+    - code: "phone_interview"
+      label:
+        fr: "Entretien téléphonique"
+        en: "Phone Interview"
+      icon: "📞"
+      order: 1
+      
+    - code: "face_to_face"
+      label:
+        fr: "Entretien en personne"
+        en: "Face-to-Face Interview"
+      icon: "👥"
+      order: 2
+      
+    - code: "technical_test"
+      label:
+        fr: "Test technique"
+        en: "Technical Test"
+      icon: "💻"
+      order: 3
+      
+    - code: "reference_check"
+      label:
+        fr: "Vérification références"
+        en: "Reference Check"
+      icon: "📋"
+      order: 4
+      
+    - code: "general_feedback"
+      label:
+        fr: "Feedback général"
+        en: "General Feedback"
+      icon: "📝"
+      order: 5
+
+# ========================================
+# NIVEAUX DE RATING
+# ========================================
+rating_levels:
+  collection: "referentials"
+  key: "rating_levels"
+  version: "1.0"
+  items:
+    - code: "1"
+      label:
+        fr: "Très insatisfaisant"
+        en: "Very Poor"
+      value: 1
+      color: "red"
+      emoji: "😞"
+      order: 1
+      
+    - code: "2"
+      label:
+        fr: "Insatisfaisant"
+        en: "Poor"
+      value: 2
+      color: "orange"
+      emoji: "😐"
+      order: 2
+      
+    - code: "3"
+      label:
+        fr: "Satisfaisant"
+        en: "Satisfactory"
+      value: 3
+      color: "yellow"
+      emoji: "🙂"
+      order: 3
+      
+    - code: "4"
+      label:
+        fr: "Bon"
+        en: "Good"
+      value: 4
+      color: "lightgreen"
+      emoji: "😊"
+      order: 4
+      
+    - code: "5"
+      label:
+        fr: "Excellent"
+        en: "Excellent"
+      value: 5
+      color: "green"
+      emoji: "🌟"
+      order: 5
+
+# ========================================
+# PRIORITÉS
+# ========================================
+priority_levels:
+  collection: "referentials"
+  key: "priority_levels"
+  version: "1.0"
+  items:
+    - code: "low"
+      label:
+        fr: "Basse"
+        en: "Low"
+      color: "gray"
+      value: 1
+      order: 1
+      
+    - code: "medium"
+      label:
+        fr: "Moyenne"
+        en: "Medium"
+      color: "yellow"
+      value: 2
+      order: 2
+      
+    - code: "high"
+      label:
+        fr: "Haute"
+        en: "High"
+      color: "orange"
+      value: 3
+      order: 3
+      
+    - code: "urgent"
+      label:
+        fr: "Urgente"
+        en: "Urgent"
+      color: "red"
+      value: 4
+      order: 4
+
+# ========================================
+# TYPES DE NOTIFICATION
+# ========================================
+notification_types:
+  collection: "referentials"
+  key: "notification_types"
+  version: "1.0"
+  items:
+    - code: "info"
+      label:
+        fr: "Information"
+        en: "Information"
+      color: "blue"
+      icon: "ℹ️"
+      order: 1
+      
+    - code: "success"
+      label:
+        fr: "Succès"
+        en: "Success"
+      color: "green"
+      icon: "✅"
+      order: 2
+      
+    - code: "warning"
+      label:
+        fr: "Avertissement"
+        en: "Warning"
+      color: "orange"
+      icon: "⚠️"
+      order: 3
+      
+    - code: "error"
+      label:
+        fr: "Erreur"
+        en: "Error"
+      color: "red"
+      icon: "❌"
+      order: 4
+      
+    - code: "mission_new"
+      label:
+        fr: "Nouvelle mission"
+        en: "New Mission"
+      color: "blue"
+      icon: "🎯"
+      category: "mission"
+      order: 5
+      
+    - code: "application_status"
+      label:
+        fr: "Statut candidature"
+        en: "Application Status"
+      color: "purple"
+      icon: "📋"
+      category: "application"
+      order: 6
+      
+    - code: "emargement_pending"
+      label:
+        fr: "Émargement en attente"
+        en: "Timesheet Pending"
+      color: "yellow"
+      icon: "⏰"
+      category: "emargement"
+      order: 7
