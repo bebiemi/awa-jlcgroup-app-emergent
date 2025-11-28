@@ -303,7 +303,28 @@ async def init_referentials(config, clean_old=False, dry_run=False):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="Initialiser les référentiels depuis la configuration YAML"
+        description="Initialiser les référentiels depuis la configuration YAML",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Exemples d'utilisation:
+  # Mode normal (applique les changements)
+  python3 init_referentials.py
+  
+  # Avec fichier de config personnalisé
+  python3 init_referentials.py --config /path/to/custom.yaml
+  
+  # Mode simulation (aucune modification)
+  python3 init_referentials.py --dry-run
+  
+  # Validation seulement
+  python3 init_referentials.py --validate
+  
+  # Nettoyer les référentiels obsolètes
+  python3 init_referentials.py --clean
+  
+  # Combinaison: simulation + nettoyage
+  python3 init_referentials.py --dry-run --clean
+        """
     )
     parser.add_argument(
         "--config",
@@ -315,11 +336,32 @@ if __name__ == "__main__":
         action="store_true",
         help="Supprimer les référentiels obsolètes"
     )
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Mode simulation (aucune modification en base)"
+    )
+    parser.add_argument(
+        "--validate",
+        action="store_true",
+        help="Valider seulement la configuration sans modifier la base"
+    )
     
     args = parser.parse_args()
     
     # Charger la configuration
     config = load_config(args.config)
     
+    # Valider la configuration
+    is_valid = validate_config(config)
+    
+    if not is_valid:
+        sys.exit(1)
+    
+    # Si mode validation seulement, on s'arrête ici
+    if args.validate:
+        print("\n✅ Validation terminée avec succès!")
+        sys.exit(0)
+    
     # Exécuter l'initialisation
-    asyncio.run(init_referentials(config, clean_old=args.clean))
+    asyncio.run(init_referentials(config, clean_old=args.clean, dry_run=args.dry_run))
