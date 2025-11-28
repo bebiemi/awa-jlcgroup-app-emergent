@@ -243,15 +243,22 @@ async def init_referentials(config, clean_old=False, dry_run=False):
         # Récupérer les clés actuelles
         current_keys = [ref_config.get('key', key) for key, ref_config in config.items() if not key.startswith('_')]
         
-        # Supprimer les référentiels qui ne sont plus dans la config
-        result = await db.referentials.delete_many({
-            "key": {"$nin": current_keys}
-        })
-        
-        if result.deleted_count > 0:
-            print(f"   ✅ {result.deleted_count} référentiel(s) obsolète(s) supprimé(s)")
+        if not dry_run:
+            # Supprimer les référentiels qui ne sont plus dans la config
+            result = await db.referentials.delete_many({
+                "key": {"$nin": current_keys}
+            })
+            
+            if result.deleted_count > 0:
+                print(f"   ✅ {result.deleted_count} référentiel(s) obsolète(s) supprimé(s)")
+            else:
+                print(f"   ℹ️  Aucun référentiel obsolète trouvé")
         else:
-            print(f"   ℹ️  Aucun référentiel obsolète trouvé")
+            # Mode simulation : compter seulement
+            obsolete_count = await db.referentials.count_documents({
+                "key": {"$nin": current_keys}
+            })
+            print(f"   ℹ️  {obsolete_count} référentiel(s) obsolète(s) seraient supprimés (simulation)")
     
     # Créer les index
     print("\n🔧 Création des index...")
