@@ -151,14 +151,16 @@ def load_config(config_path=None):
         sys.exit(1)
 
 
-async def init_referentials(config, clean_old=False):
+async def init_referentials(config, clean_old=False, dry_run=False):
     """Initialise les référentiels depuis la configuration"""
     
     client = AsyncIOMotorClient(MONGO_URL)
     db = client[DB_NAME]
     
+    mode = "MODE SIMULATION (DRY-RUN)" if dry_run else "MODE PRODUCTION"
     print("=" * 80)
     print(f"🔄 INITIALISATION DES RÉFÉRENTIELS ({DB_NAME})")
+    print(f"   {mode}")
     print("=" * 80)
     
     stats = {
