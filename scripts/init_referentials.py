@@ -33,6 +33,95 @@ DB_NAME = "jlc_db"
 DEFAULT_CONFIG_FILE = Path(__file__).parent.parent / "config" / "referentials_config.yaml"
 
 
+def validate_referential_item(item, ref_key):
+    """Valide un item de référentiel"""
+    errors = []
+    
+    # Vérifier les champs obligatoires
+    if 'code' not in item:
+        errors.append(f"  ❌ Item sans 'code' dans {ref_key}")
+    
+    if 'label' not in item:
+        errors.append(f"  ❌ Item '{item.get('code', 'unknown')}' sans 'label' dans {ref_key}")
+    elif not isinstance(item['label'], dict):
+        errors.append(f"  ❌ Item '{item.get('code')}': 'label' doit être un dictionnaire (fr, en)")
+    elif 'fr' not in item['label']:
+        errors.append(f"  ❌ Item '{item.get('code')}': label doit contenir 'fr'")
+    
+    return errors
+
+
+def validate_config(config):
+    """Valide la configuration YAML"""
+    print("\n🔍 VALIDATION DE LA CONFIGURATION")
+    print("=" * 80)
+    
+    errors = []
+    warnings = []
+    
+    for ref_key, ref_config in config.items():
+        if ref_key.startswith('_'):
+            continue
+        
+        print(f"\n📦 Validation de '{ref_key}'...")
+        
+        # Vérifier les champs requis
+        if 'items' not in ref_config:
+            errors.append(f"❌ '{ref_key}': champ 'items' manquant")
+            continue
+        
+        if 'collection' not in ref_config:
+            warnings.append(f"⚠️ '{ref_key}': 'collection' non spécifié, utilisation par défaut 'referentials'")
+        
+        if 'key' not in ref_config:
+            warnings.append(f"⚠️ '{ref_key}': 'key' non spécifié, utilisation de '{ref_key}'")
+        
+        if 'version' not in ref_config:
+            warnings.append(f"⚠️ '{ref_key}': 'version' non spécifiée, utilisation par défaut '1.0'")
+        
+        # Valider les items
+        items = ref_config.get('items', [])
+        if not items:
+            warnings.append(f"⚠️ '{ref_key}': aucun item défini")
+        
+        # Vérifier les codes uniques
+        codes = [item.get('code') for item in items]
+        duplicates = [code for code in codes if codes.count(code) > 1]
+        if duplicates:
+            errors.append(f"❌ '{ref_key}': codes dupliqués: {set(duplicates)}")
+        
+        # Valider chaque item
+        for i, item in enumerate(items):
+            item_errors = validate_referential_item(item, ref_key)
+            errors.extend(item_errors)
+        
+        print(f"   ✅ {len(items)} items trouvés")
+    
+    # Afficher le résumé
+    print("\n" + "=" * 80)
+    print("📊 RÉSUMÉ VALIDATION")
+    print("=" * 80)
+    
+    if warnings:
+        print(f"\n⚠️  {len(warnings)} avertissement(s):")
+        for warning in warnings[:10]:  # Limiter l'affichage
+            print(f"   {warning}")
+        if len(warnings) > 10:
+            print(f"   ... et {len(warnings) - 10} autres")
+    
+    if errors:
+        print(f"\n❌ {len(errors)} erreur(s) trouvée(s):")
+        for error in errors[:10]:
+            print(f"   {error}")
+        if len(errors) > 10:
+            print(f"   ... et {len(errors) - 10} autres")
+        print("\n❌ La configuration contient des erreurs. Veuillez les corriger avant de continuer.")
+        return False
+    else:
+        print(f"\n✅ Configuration valide!")
+        return True
+
+
 def load_config(config_path=None):
     """Charge la configuration des référentiels"""
     config_file = Path(config_path) if config_path else DEFAULT_CONFIG_FILE
@@ -43,8 +132,23 @@ def load_config(config_path=None):
     
     print(f"📖 Chargement de la configuration depuis: {config_file}")
     
-    with open(config_file, 'r', encoding='utf-8') as f:
-        return yaml.safe_load(f)
+    try:
+        with open(config_file, 'r', encoding='utf-8') as f:
+            config = yaml.safe_load(f)
+        
+        if not config:
+            print("❌ Fichier de configuration vide")
+            sys.exit(1)
+        
+        print(f"   ✅ {len([k for k in config.keys() if not k.startswith('_')])} référentiel(s) trouvé(s)")
+        return config
+        
+    except yaml.YAMLError as e:
+        print(f"❌ Erreur de parsing YAML: {e}")
+        sys.exit(1)
+    except Exception as e:
+        print(f"❌ Erreur lors du chargement: {e}")
+        sys.exit(1)
 
 
 async def init_referentials(config, clean_old=False):
